@@ -8,10 +8,10 @@
 		"Pryzmm"
 	],
 	"contact": {
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"sources": "https://github.com/Pryzmm/split-self"
 	},
 	"license": "CC0-1.0",
-	"icon": "assets/split-self/icon.png",
+	"icon": "assets/splitself/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
@@ -25,7 +25,7 @@
 		]
 	},
 	"mixins": [
-		"split-self.mixins.json"
+		"splitself.mixins.json"
 	],
 	"depends": {
 		"fabricloader": ">=0.16.14",

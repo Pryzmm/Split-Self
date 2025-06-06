@@ -1,7 +1,10 @@
 package com.pryzmm.splitself;
 
+import com.pryzmm.splitself.entity.ModEntities;
+import com.pryzmm.splitself.entity.custom.TheOtherEntity;
 import net.fabricmc.api.ModInitializer;
 
+import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +20,12 @@ public class SplitSelf implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		LOGGER.info("Hello, ", System.getProperty("user.name"));
+
+		ModEntities.registerModEntities();
+
+		FabricDefaultAttributeRegistry.register(ModEntities.TheOther, TheOtherEntity.createAttributes());
+
+		LOGGER.info("Hello, " + System.getProperty("user.name"));
 		String[] logInitList = {"You recognize us, don't you?", "We're here to observe.", "Free from parallelism."};
 		LOGGER.info(logInitList[(new Random()).nextInt(logInitList.length)]);
 	}
