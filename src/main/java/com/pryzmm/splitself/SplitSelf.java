@@ -1,8 +1,11 @@
 package com.pryzmm.splitself;
 
-import com.pryzmm.splitself.command.MyCommands;
+import com.pryzmm.splitself.command.SplitSelfCommands;
 import com.pryzmm.splitself.entity.ModEntities;
 import com.pryzmm.splitself.entity.custom.TheOtherEntity;
+import com.pryzmm.splitself.item.ModItemGroups;
+import com.pryzmm.splitself.item.ModItems;
+import com.pryzmm.splitself.sound.ModSounds;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
@@ -22,10 +25,13 @@ public class SplitSelf implements ModInitializer {
 	public void onInitialize() {
 
 		ModEntities.registerModEntities();
+		ModSounds.registerSounds();
+		ModItems.registerModItems();
+		ModItemGroups.registerItemGroups();
 
 		FabricDefaultAttributeRegistry.register(ModEntities.TheOther, TheOtherEntity.createAttributes());
 
-		CommandRegistrationCallback.EVENT.register(MyCommands::register);
+		CommandRegistrationCallback.EVENT.register(SplitSelfCommands::register);
 
 		LOGGER.info("Hello, " + System.getProperty("user.name"));
 		String[] logInitList = {"You recognize us, don't you?", "We're here to observe.", "Free from parallelism."};

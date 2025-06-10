@@ -8,9 +8,8 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 
-public class MyCommands {
+public class SplitSelfCommands {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher, CommandRegistryAccess registryAccess, CommandManager.RegistrationEnvironment environment) {
         dispatcher.register(CommandManager.literal("splitself")
                 .executes(context -> {
@@ -23,10 +22,28 @@ public class MyCommands {
                             if (argument.equals("warning")) {
                                 MinecraftClient client = MinecraftClient.getInstance();
                                 client.execute(() -> client.setScreen(new WarningScreen()));
+                            } else if (argument.equals("runevent")) {
+                                context.getSource().sendFeedback(() -> Text.literal("<" + context.getSource().getName() + "> No."), false);
                             } else {
                                 context.getSource().sendFeedback(() -> Text.literal("<" + context.getSource().getName() + "> ..."), false);
                             }
                             return 1;
-                        })));
+                        })
+                        .then(CommandManager.argument("event", StringArgumentType.greedyString())
+                                .executes(context -> {
+                                    String firstArg = StringArgumentType.getString(context, "text").toLowerCase();
+                                    String secondArg = StringArgumentType.getString(context, "event").toLowerCase();
+                                    if (firstArg.equals("runevent")) {
+                                        // Handle runevent with second argument
+                                        context.getSource().sendFeedback(() -> Text.literal("<" + context.getSource().getName() + "> Running event: " + secondArg), false);
+                                    } else {
+                                        // Second argument not a registered event
+                                        context.getSource().sendFeedback(() -> Text.literal("<" + context.getSource().getName() + "> No."), false);
+                                    }
+                                    return 1;
+                                })
+                        )
+                )
+        );
     }
 }

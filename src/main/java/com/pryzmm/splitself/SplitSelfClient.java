@@ -11,6 +11,7 @@ public class SplitSelfClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         EntityModelLayerRegistry.registerModelLayer(TheOtherModel.THEOTHER, TheOtherModel::getTexturedModelData);
+        EntityModelLayerRegistry.registerModelLayer(TheOtherModel.THEOTHER_SLIM, TheOtherModel::getSlimTexturedModelData);
         EntityRendererRegistry.register(ModEntities.TheOther, TheOtherRenderer::new);
     }
 }

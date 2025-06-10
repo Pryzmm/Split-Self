@@ -1,0 +1,12 @@
+{
+  "in_my_life": {
+    "category": "record",
+    "subtitle": "item.splitself.in_my_life_music_disc.subtitle",
+    "sounds": [
+      {
+        "name": "splitself:in_my_life",
+        "stream": true
+      }
+    ]
+  }
+}

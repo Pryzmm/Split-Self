@@ -1,0 +1,8 @@
+{
+  "comparator_output": 1,
+  "description": {
+    "translate": "item.splitself.in_my_life_music_disc.desc"
+  },
+  "length_in_seconds": 72.5,
+  "sound_event": "splitself:in_my_life"
+}

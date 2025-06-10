@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "splitself:item/in_my_life_music_disc"
+  }
+}

@@ -18,6 +18,7 @@ public class WarningScreen extends Screen {
                         Text.literal("Continue"),
                         button -> {
                             DesktopFileUtil.createFileOnDesktop("begin.txt", "Can't you see yourself?");
+                            this.close();
                         }
                 ).position(this.width / 2 - 50, this.height - 50)
                 .size(100, 20)
