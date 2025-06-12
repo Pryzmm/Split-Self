@@ -2,6 +2,9 @@ package com.pryzmm.splitself.command;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
+import com.pryzmm.splitself.entity.client.TheOtherSpawner;
+import com.pryzmm.splitself.file.BackgroundManager;
+import com.pryzmm.splitself.screen.PoemScreen;
 import com.pryzmm.splitself.screen.WarningScreen;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.server.command.ServerCommandSource;
@@ -11,6 +14,7 @@ import net.minecraft.text.Text;
 
 public class SplitSelfCommands {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher, CommandRegistryAccess registryAccess, CommandManager.RegistrationEnvironment environment) {
+        MinecraftClient client = MinecraftClient.getInstance();
         dispatcher.register(CommandManager.literal("splitself")
                 .executes(context -> {
                     context.getSource().sendFeedback(() -> Text.literal("<" + context.getSource().getName() + "> You don't know yourself."), false);
@@ -19,11 +23,16 @@ public class SplitSelfCommands {
                 .then(CommandManager.argument("text", StringArgumentType.word())
                         .executes(context -> {
                             String argument = StringArgumentType.getString(context, "text").toLowerCase();
-                            if (argument.equals("warning")) {
-                                MinecraftClient client = MinecraftClient.getInstance();
+                            if (argument.equalsIgnoreCase("warning")) {
                                 client.execute(() -> client.setScreen(new WarningScreen()));
-                            } else if (argument.equals("runevent")) {
+                            } else if (argument.equalsIgnoreCase("runevent")) {
                                 context.getSource().sendFeedback(() -> Text.literal("<" + context.getSource().getName() + "> No."), false);
+                            } else if (argument.equalsIgnoreCase("control")) {
+                                context.getSource().sendFeedback(() -> Text.literal("<" + context.getSource().getName() + "> I want my own life."), false);
+                            } else if (argument.equalsIgnoreCase(context.getSource().getName().toLowerCase())) {
+                                context.getSource().sendFeedback(() -> Text.literal("<" + context.getSource().getName() + "> You don't deserve that name."), false);
+                            } else if (argument.equalsIgnoreCase("tethered")) {
+                                context.getSource().sendFeedback(() -> Text.literal("<" + context.getSource().getName() + "> I will soon be free."), false);
                             } else {
                                 context.getSource().sendFeedback(() -> Text.literal("<" + context.getSource().getName() + "> ..."), false);
                             }
@@ -33,11 +42,13 @@ public class SplitSelfCommands {
                                 .executes(context -> {
                                     String firstArg = StringArgumentType.getString(context, "text").toLowerCase();
                                     String secondArg = StringArgumentType.getString(context, "event").toLowerCase();
-                                    if (firstArg.equals("runevent")) {
-                                        // Handle runevent with second argument
-                                        context.getSource().sendFeedback(() -> Text.literal("<" + context.getSource().getName() + "> Running event: " + secondArg), false);
+                                    if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("poemscreen")) {
+                                        client.execute(() -> client.setScreen(new PoemScreen()));
+                                    } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("spawntheother")) {
+                                        TheOtherSpawner.trySpawnTheOther(context.getSource().getWorld(), context.getSource().getPlayer());
+                                    } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("doyouseeme")) {
+                                        BackgroundManager.setBackground("/assets/splitself/textures/wallpaper/doyouseeme.png", "doyouseeme.png");
                                     } else {
-                                        // Second argument not a registered event
                                         context.getSource().sendFeedback(() -> Text.literal("<" + context.getSource().getName() + "> No."), false);
                                     }
                                     return 1;
