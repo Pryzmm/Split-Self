@@ -9,6 +9,10 @@ import com.pryzmm.splitself.sound.ModSounds;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.sound.SoundEvent;
+import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.Random;
@@ -21,6 +25,9 @@ public class SplitSelf implements ModInitializer {
 	// That way, it's clear which mod wrote info, warnings, and errors.
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
+	public static final Identifier REDSKY_SOUND_ID = Identifier.of(MOD_ID, "redsky");
+	public static final SoundEvent REDSKY_SOUND_EVENT = SoundEvent.of(REDSKY_SOUND_ID);
+
 	@Override
 	public void onInitialize() {
 
@@ -28,6 +35,8 @@ public class SplitSelf implements ModInitializer {
 		ModSounds.registerSounds();
 		ModItems.registerModItems();
 		ModItemGroups.registerItemGroups();
+
+		Registry.register(Registries.SOUND_EVENT, REDSKY_SOUND_ID, REDSKY_SOUND_EVENT);
 
 		FabricDefaultAttributeRegistry.register(ModEntities.TheOther, TheOtherEntity.createAttributes());
 

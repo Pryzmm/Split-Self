@@ -2,8 +2,10 @@
   "entity.splitself.the_other": "The Other",
 
   "item.splitself.in_my_life_music_disc": "In My Life Music Disc",
-  "item.splitself.in_my_life_music_disc.desc": "I followed your every step.",
+  "item.splitself.in_my_life_music_disc.desc": "In My Life - Me",
   "item.splitself.in_my_life_music_disc.subtitle": "Let me free.",
+
+  "sound.splitself.redsky.subtitle": "Welcome to my hell.",
 
   "itemgroup.splitself.splitself_items": "Split Self Items"
 }

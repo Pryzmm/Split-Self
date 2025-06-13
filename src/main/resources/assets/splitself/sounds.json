@@ -8,5 +8,15 @@
         "stream": true
       }
     ]
+  },
+  "redsky": {
+    "category": "master",
+    "subtitle": "sound.splitself.redsky.subtitle",
+    "sounds": [
+      {
+        "name": "splitself:redsky",
+        "stream": true
+      }
+    ]
   }
 }

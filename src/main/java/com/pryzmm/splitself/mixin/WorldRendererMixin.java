@@ -2,7 +2,7 @@ package com.pryzmm.splitself.mixin;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.pryzmm.splitself.events.SkyColor;
-import net.minecraft.client.render.WorldRenderer;
+import net.minecraft.client.render.*;
 import net.minecraft.util.math.Vec3d;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -16,14 +16,14 @@ public class WorldRendererMixin {
     // Inject at the very beginning of renderSky to set the fog color
     @Inject(method = "renderSky", at = @At("HEAD"))
     private void setFogSkyColorAtStart(CallbackInfo ci) {
-        float[] rgb = SkyColor.getFogSkyRGBComponents();
+        float[] rgb = SkyColor.getFogRGBComponents();
         RenderSystem.setShaderFogColor(rgb[0], rgb[1], rgb[2]);
     }
 
     // Also inject right before the method ends to make sure it sticks
     @Inject(method = "renderSky", at = @At("TAIL"))
     private void setFogSkyColorAtEnd(CallbackInfo ci) {
-        float[] rgb = SkyColor.getFogSkyRGBComponents();
+        float[] rgb = SkyColor.getFogRGBComponents();
         RenderSystem.setShaderFogColor(rgb[0], rgb[1], rgb[2]);
     }
 
