@@ -17,8 +17,7 @@ public class ModEntities {
 
     public static final EntityType<TheOtherEntity> TheOther = Registry.register(Registries.ENTITY_TYPE,
             Identifier.of(SplitSelf.MOD_ID, "the_other"),
-            EntityType.Builder.create(TheOtherEntity::new, SpawnGroup.CREATURE)
-                    .dimensions(0.6f, 1.8f).build());
+            EntityType.Builder.create(TheOtherEntity::new, SpawnGroup.CREATURE).dimensions(0.6f, 1.8f).build());
 
     public static void registerModEntities() {
         SplitSelf.LOGGER.info("Loading and registering entities...");

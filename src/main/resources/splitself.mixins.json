@@ -1,8 +1,11 @@
 {
-	"required": false,
-	"package": "",
+	"required": true,
+	"package": "com.pryzmm.splitself.mixin",
 	"compatibilityLevel": "JAVA_21",
-	"mixins": [],
+	"client": [
+		"BackgroundRendererMixin",
+		"WorldRendererMixin"
+	],
 	"injectors": {
 		"defaultRequire": 1
 	}

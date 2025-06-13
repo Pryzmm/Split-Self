@@ -40,7 +40,6 @@ public class TheOtherSpawner {
 
             // Check if the spawn location is valid
             if (isValidSpawnLocation(world, finalSpawnPos)) {
-                // Create and spawn the entity
                 TheOtherEntity theOther = new TheOtherEntity(ModEntities.TheOther, world);
                 theOther.refreshPositionAndAngles(finalSpawnPos.getX() + 0.5, finalSpawnPos.getY(), finalSpawnPos.getZ() + 0.5,
                         random.nextFloat() * 360.0F, 0.0F);
@@ -48,7 +47,7 @@ public class TheOtherSpawner {
                 // Spawn the entity
                 if (theOther.canSpawn(world, SpawnReason.TRIGGERED)) {
                     world.spawnEntity(theOther);
-                    break; // Successfully spawned, exit loop
+                    break;
                 }
             }
         }

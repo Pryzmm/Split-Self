@@ -3,6 +3,8 @@ package com.pryzmm.splitself.command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.pryzmm.splitself.entity.client.TheOtherSpawner;
+import com.pryzmm.splitself.events.SkyColor;
+import com.pryzmm.splitself.events.UndergroundMining;
 import com.pryzmm.splitself.file.BackgroundManager;
 import com.pryzmm.splitself.screen.PoemScreen;
 import com.pryzmm.splitself.screen.WarningScreen;
@@ -11,6 +13,7 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.text.Text;
+import net.minecraft.world.World;
 
 public class SplitSelfCommands {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher, CommandRegistryAccess registryAccess, CommandManager.RegistrationEnvironment environment) {
@@ -48,6 +51,12 @@ public class SplitSelfCommands {
                                         TheOtherSpawner.trySpawnTheOther(context.getSource().getWorld(), context.getSource().getPlayer());
                                     } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("doyouseeme")) {
                                         BackgroundManager.setBackground("/assets/splitself/textures/wallpaper/doyouseeme.png", "doyouseeme.png");
+                                    } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("undergroundmining")) {
+                                        UndergroundMining.Execute(client.player, client.world);
+                                    } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("redsky")) {
+                                        SkyColor.changeSkyColor("AA0000");
+                                        SkyColor.changeFogColor("880000");
+                                        SkyColor.changeFogSkyColor("880000");
                                     } else {
                                         context.getSource().sendFeedback(() -> Text.literal("<" + context.getSource().getName() + "> No."), false);
                                     }

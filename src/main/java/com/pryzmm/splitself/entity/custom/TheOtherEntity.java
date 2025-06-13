@@ -7,6 +7,7 @@ import net.minecraft.entity.ai.goal.LookAtEntityGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -31,7 +32,6 @@ public class TheOtherEntity extends HostileEntity {
         return MobEntity.createMobAttributes()
                 .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 0)
                 .add(EntityAttributes.GENERIC_JUMP_STRENGTH, 0)
-                .add(EntityAttributes.GENERIC_GRAVITY, 0)
                 .add(EntityAttributes.GENERIC_MAX_HEALTH, 1024)
                 .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0);
     }
@@ -54,6 +54,11 @@ public class TheOtherEntity extends HostileEntity {
                 --this.playerUpdateTimer;
             }
         }
+    }
+
+    @Override
+    public boolean damage(DamageSource source, float amount) {
+        return false;
     }
 
     public TheOtherEntity(EntityType<? extends HostileEntity> entityType, World world) {
