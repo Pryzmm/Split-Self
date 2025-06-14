@@ -6,12 +6,10 @@ import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 
 public class ScreenOverlayRenderer {
-    public static KeyBinding toggleOverlayKey;
     public static boolean overlayVisible = false;
     public static long lastShakeUpdate = 0;
     public static long lastShakeUpdate2 = 0;
@@ -102,7 +100,6 @@ public class ScreenOverlayRenderer {
         } catch (Exception e) {
             // If image fails to load, we'll see this in the console
             System.err.println("Failed to render overlay image: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 

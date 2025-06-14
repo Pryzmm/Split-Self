@@ -10,12 +10,10 @@ import com.pryzmm.splitself.events.SkyColor;
 import com.pryzmm.splitself.events.UndergroundMining;
 import com.pryzmm.splitself.file.BackgroundManager;
 import com.pryzmm.splitself.screen.PoemScreen;
-import com.pryzmm.splitself.screen.ScreenOverlayRenderer;
 import com.pryzmm.splitself.screen.WarningScreen;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.server.command.CommandManager;
@@ -63,7 +61,7 @@ public class SplitSelfCommands {
                                     } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("undergroundmining")) {
                                         UndergroundMining.Execute(client.player, client.world);
                                     } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("redsky")) {
-                                        context.getSource().getWorld().playSound(null, context.getSource().getPlayer(). getBlockPos(), SplitSelf.REDSKY_SOUND_EVENT, SoundCategory.MASTER, 1.0f, 1.0f);
+                                        context.getSource().getWorld().playSound(null, Objects.requireNonNull(context.getSource().getPlayer()). getBlockPos(), SplitSelf.REDSKY_SOUND_EVENT, SoundCategory.MASTER, 1.0f, 1.0f);
                                         context.getSource().getPlayer().addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, 430, 1, false, false, false));
                                         SkyColor.changeSkyColor("AA0000");
                                         SkyColor.changeFogColor("880000");

@@ -28,7 +28,6 @@ public class DesktopFileUtil {
 
         } catch (IOException e) {
             System.err.println("Failed to create or write to file: " + file.getAbsolutePath());
-            e.printStackTrace();
         }
     }
 }

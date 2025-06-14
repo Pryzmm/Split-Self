@@ -17,9 +17,7 @@ public class PoemScreen extends Screen {
     protected void init() {
         this.addDrawableChild(ButtonWidget.builder(
                         Text.literal("..."),
-                        button -> {
-                            this.close();
-                        }
+                        button -> this.close()
                 ).position(this.width / 2 - 50, this.height - 50)
                 .size(100, 20)
                 .build());
@@ -27,6 +25,7 @@ public class PoemScreen extends Screen {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        assert client != null;
         String UserName = client.getName();
         this.renderBackground(context, mouseX, mouseY, delta);
         super.render(context, mouseX, mouseY, delta);

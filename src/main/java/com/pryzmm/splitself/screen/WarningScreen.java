@@ -30,14 +30,13 @@ public class WarningScreen extends Screen {
         this.renderBackground(context, mouseX, mouseY, delta);
         super.render(context, mouseX, mouseY, delta);
         context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 20, 0xFFFFFF);
-
-        Text str1 = Text.literal("Centered Text");
         String[] lines = {
                 "This mod is a horror game, and will break your world.",
                 "Your PC will be interacted with outside of the game.",
                 "It is not a virus, and will not cause damage to you or your device.",
+                "All changes applied to your device are easy to be reverted.",
                 "",
-                "If you do not want this, download the safe version off the Github."
+                "If you do not PC interaction, download the safe version off my Github."
         };
         int y = 90;
         for (String line : lines) {

@@ -1,5 +1,7 @@
 package com.pryzmm.splitself.events;
 
+import com.pryzmm.splitself.SplitSelf;
+
 import java.io.FileWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -83,19 +85,10 @@ public class NotepadManager {
                         "-File", scriptPath.toString()
                 );
 
-                Process process = pb.start();
-
-                new Thread(() -> {
-                    try {
-                        Thread.sleep(20000);
-                        scriptPath.toFile().delete();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }).start();
+                pb.start();
 
             } catch (Exception e) {
-                e.printStackTrace();
+                SplitSelf.LOGGER.error("Failed to open powershell.exe");
             }
         }).start();
     }
