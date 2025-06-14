@@ -44,11 +44,8 @@ public class TheOtherSpawner {
                 theOther.refreshPositionAndAngles(finalSpawnPos.getX() + 0.5, finalSpawnPos.getY(), finalSpawnPos.getZ() + 0.5,
                         random.nextFloat() * 360.0F, 0.0F);
 
-                // Spawn the entity
-                if (theOther.canSpawn(world, SpawnReason.TRIGGERED)) {
-                    world.spawnEntity(theOther);
-                    break;
-                }
+                world.spawnEntity(theOther);
+                break;
             }
         }
     }

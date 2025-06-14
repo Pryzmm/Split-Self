@@ -18,5 +18,14 @@
         "stream": true
       }
     ]
+  },
+  "static": {
+    "category": "master",
+    "subtitle": "sound.splitself.static.subtitle",
+    "sounds": [
+      {
+        "name": "splitself:static"
+      }
+    ]
   }
 }
