@@ -10,7 +10,6 @@ import com.pryzmm.splitself.events.SkyColor;
 import com.pryzmm.splitself.events.UndergroundMining;
 import com.pryzmm.splitself.file.BackgroundManager;
 import com.pryzmm.splitself.screen.PoemScreen;
-import com.pryzmm.splitself.screen.TheOtherOverlayRenderer;
 import com.pryzmm.splitself.screen.WarningScreen;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.effect.StatusEffectInstance;

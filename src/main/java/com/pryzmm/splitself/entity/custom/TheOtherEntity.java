@@ -4,6 +4,7 @@ package com.pryzmm.splitself.entity.custom;
 import com.pryzmm.splitself.events.ScreenOverlay;
 import net.minecraft.entity.AnimationState;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.LookAtEntityGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
@@ -63,7 +64,7 @@ public class TheOtherEntity extends HostileEntity {
             List<PlayerEntity> nearbyPlayers = this.getWorld().getEntitiesByClass(
                     PlayerEntity.class,
                     this.getBoundingBox().expand(10.0), // 5 block radius
-                    player -> player.isAlive()
+                    LivingEntity::isAlive
             );
 
             for (PlayerEntity player : nearbyPlayers) {

@@ -4,7 +4,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.pryzmm.splitself.SplitSelf;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
@@ -69,8 +68,6 @@ public class TheOtherOverlayRenderer {
     }
 
     public static void renderOverlayContent(DrawContext drawContext, int screenWidth, int screenHeight) {
-        MinecraftClient client = MinecraftClient.getInstance();
-
         // Update shake position every 50ms for the overlay image
         long currentTime = System.currentTimeMillis();
         if (currentTime - lastShakeUpdate >= 10) {
