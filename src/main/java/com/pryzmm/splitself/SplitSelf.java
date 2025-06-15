@@ -29,6 +29,8 @@ public class SplitSelf implements ModInitializer {
 	public static final SoundEvent REDSKY_SOUND_EVENT = SoundEvent.of(REDSKY_SOUND_ID);
 	public static final Identifier STATIC_SOUND_ID = Identifier.of(MOD_ID, "static");
 	public static final SoundEvent STATIC_SOUND_EVENT = SoundEvent.of(STATIC_SOUND_ID);
+	public static final Identifier SCREECH_SOUND_ID = Identifier.of(MOD_ID, "screech");
+	public static final SoundEvent SCREECH_SOUND_EVENT = SoundEvent.of(SCREECH_SOUND_ID);
 
 	@Override
 	public void onInitialize() {
@@ -40,6 +42,7 @@ public class SplitSelf implements ModInitializer {
 
 		Registry.register(Registries.SOUND_EVENT, REDSKY_SOUND_ID, REDSKY_SOUND_EVENT);
 		Registry.register(Registries.SOUND_EVENT, STATIC_SOUND_ID, STATIC_SOUND_EVENT);
+		Registry.register(Registries.SOUND_EVENT, SCREECH_SOUND_ID, SCREECH_SOUND_EVENT);
 
 		FabricDefaultAttributeRegistry.register(ModEntities.TheOther, TheOtherEntity.createAttributes());
 

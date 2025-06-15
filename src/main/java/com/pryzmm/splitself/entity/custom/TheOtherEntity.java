@@ -1,6 +1,7 @@
 // TheOtherEntity.java
 package com.pryzmm.splitself.entity.custom;
 
+import com.pryzmm.splitself.events.ScreenOverlay;
 import net.minecraft.entity.AnimationState;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.goal.LookAtEntityGoal;
@@ -12,6 +13,8 @@ import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
+
+import java.util.List;
 
 public class TheOtherEntity extends HostileEntity {
 
@@ -52,6 +55,23 @@ public class TheOtherEntity extends HostileEntity {
                 this.playerUpdateTimer = PLAYER_UPDATE_INTERVAL;
             } else {
                 --this.playerUpdateTimer;
+            }
+        }
+
+        if (!this.getWorld().isClient) { // Server-side only
+            // Find nearby players within a certain distance
+            List<PlayerEntity> nearbyPlayers = this.getWorld().getEntitiesByClass(
+                    PlayerEntity.class,
+                    this.getBoundingBox().expand(10.0), // 5 block radius
+                    player -> player.isAlive()
+            );
+
+            for (PlayerEntity player : nearbyPlayers) {
+                double distance = this.distanceTo(player);
+                if (distance < 10.0) { // If closer than 3 blocks
+                    ScreenOverlay.executeWhiteScreen(player);
+                    this.discard();
+                }
             }
         }
     }

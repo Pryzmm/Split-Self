@@ -10,6 +10,7 @@ import com.pryzmm.splitself.events.SkyColor;
 import com.pryzmm.splitself.events.UndergroundMining;
 import com.pryzmm.splitself.file.BackgroundManager;
 import com.pryzmm.splitself.screen.PoemScreen;
+import com.pryzmm.splitself.screen.TheOtherOverlayRenderer;
 import com.pryzmm.splitself.screen.WarningScreen;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -68,7 +69,9 @@ public class SplitSelfCommands {
                                     } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("notepad")) {
                                         NotepadManager.execute();
                                     } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("screenoverlay")) {
-                                        ScreenOverlay.execute(context.getSource().getPlayer());
+                                        ScreenOverlay.executeBlackScreen(context.getSource().getPlayer());
+                                    } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("whitescreenoverlay")) {
+                                        ScreenOverlay.executeWhiteScreen(context.getSource().getPlayer());
                                     } else {
                                         context.getSource().sendFeedback(() -> Text.literal("<" + context.getSource().getName() + "> No."), false);
                                     }

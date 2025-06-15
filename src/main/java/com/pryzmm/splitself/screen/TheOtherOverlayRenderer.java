@@ -9,17 +9,15 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 
-public class ScreenOverlayRenderer {
+public class TheOtherOverlayRenderer {
     public static boolean overlayVisible = false;
     public static long lastShakeUpdate = 0;
-    public static long lastShakeUpdate2 = 0;
     static int shakeX;
     static int shakeY;
-    static int shakeX2;
-    static int shakeY2;
 
     // Define your image texture - replace "splitself" with your mod id
-    public static final Identifier OVERLAY_IMAGE = Identifier.of(SplitSelf.MOD_ID, "textures/screen/overlay.png");
+    public static final Identifier OVERLAY_IMAGE = Identifier.of(SplitSelf.MOD_ID, "textures/screen/overlay_white.png");
+    public static final Identifier OVERLAY_PLAYER_IMAGE = Identifier.of(SplitSelf.MOD_ID, "textures/screen/player.png");
 
     public static void toggleOverlay() {
         overlayVisible = !overlayVisible;
@@ -72,52 +70,55 @@ public class ScreenOverlayRenderer {
 
     public static void renderOverlayContent(DrawContext drawContext, int screenWidth, int screenHeight) {
         MinecraftClient client = MinecraftClient.getInstance();
-        TextRenderer textRenderer = client.textRenderer;
 
-        // Render the image first (before text so text appears on top)
-        renderImageOverlay(drawContext, screenWidth, screenHeight);
-
-        // Example: Center some text on the overlay
-        String overlayText = "You did this to me";
-        int textWidth = textRenderer.getWidth(overlayText);
-        int textX = ((screenWidth - textWidth) / 2) + 100;
-        int textY = (screenHeight / 2) + 100;
-
+        // Update shake position every 50ms for the overlay image
         long currentTime = System.currentTimeMillis();
-        if (currentTime - lastShakeUpdate >= 50) {
+        if (currentTime - lastShakeUpdate >= 10) {
             shakeX = -(int) (Math.random() * 200);
             shakeY = -(int) (Math.random() * 200);
+            lastShakeUpdate = currentTime;
         }
 
-        // Draw text with shadow - using white color with full opacity
-        drawContext.drawTextWithShadow(textRenderer, overlayText, textX+shakeX, textY+shakeY, 0xFFFFFF);
+        // Render the main overlay image with shake and color effect
+        renderOverlayImage(drawContext, screenWidth + 200, screenHeight + 200, OVERLAY_IMAGE, shakeX, shakeY, true);
+
+        // Render the player image centered without shake and without color effect
+        renderCenteredPlayerImage(drawContext, screenWidth, screenHeight, OVERLAY_PLAYER_IMAGE, 102, 153);
     }
 
-    public static void renderImageOverlay(DrawContext drawContext, int screenWidth, int screenHeight) {
-        try {
-            // Test with a simple centered image first
-            renderCenteredImage(drawContext, screenWidth, screenHeight);
-        } catch (Exception e) {
-            // If image fails to load, we'll see this in the console
-            System.err.println("Failed to render overlay image: " + e.getMessage());
-        }
-    }
-
-    public static void renderCenteredImage(DrawContext drawContext, int screenWidth, int screenHeight) {
+    public static void renderOverlayImage(DrawContext drawContext, int imageWidth, int imageHeight, Identifier image, int offsetX, int offsetY, boolean randomColor) {
+        // Enable blending for transparency
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
-        RenderSystem.setShaderColor((float) Math.random(), (float) Math.random(), (float) Math.random(), 1.0f);
-        long currentTime2 = System.currentTimeMillis();
-        if (currentTime2 - lastShakeUpdate2 >= 10) {
-            shakeX2 = -(int) (Math.random() * 20);
-            shakeY2 = -(int) (Math.random() * 20);
-            lastShakeUpdate2 = currentTime2;
+
+        if (randomColor) {
+            RenderSystem.setShaderColor((float) (Math.random()/5 + 0.8), (float) (Math.random()/5 + 0.8), (float) (Math.random()/5 + 0.8), 1.0f);
+        } else {
+            RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
         }
 
-        // Draw with current shake offset
-        drawContext.drawTexture(OVERLAY_IMAGE, shakeX2, shakeY2, 0, 0,
-                screenWidth + 20, screenHeight + 20,
-                screenWidth, screenHeight);
+        // Draw with shake offset
+        drawContext.drawTexture(image, offsetX, offsetY, 0, 0, imageWidth, imageHeight, imageWidth, imageHeight);
+
+        // Reset shader color
+        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+        RenderSystem.disableBlend();
+    }
+
+    public static void renderCenteredPlayerImage(DrawContext drawContext, int screenWidth, int screenHeight, Identifier image, int imageWidth, int imageHeight) {
+        // Enable blending for transparency
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+
+        // Keep normal white color (no random color)
+        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+
+        // Calculate centered position
+        int centerX = (screenWidth - imageWidth) / 2;
+        int centerY = (screenHeight - imageHeight) / 2;
+
+        // Draw centered without shake
+        drawContext.drawTexture(image, centerX, centerY, 0, 0, imageWidth, imageHeight, imageWidth, imageHeight);
 
         RenderSystem.disableBlend();
     }

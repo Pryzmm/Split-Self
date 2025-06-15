@@ -9,7 +9,6 @@ public class UndergroundMining {
     public static void Execute(Entity Player, World World) {
         new Thread(() -> {
             for (float i = 0.1f; i < 1.1f; i += 0.1f) {
-                // Direct client-side sound playing
                 World.playSound(
                         Player.getX(),
                         Player.getY(),

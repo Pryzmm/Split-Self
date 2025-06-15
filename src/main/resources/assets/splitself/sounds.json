@@ -21,10 +21,17 @@
   },
   "static": {
     "category": "master",
-    "subtitle": "sound.splitself.static.subtitle",
     "sounds": [
       {
         "name": "splitself:static"
+      }
+    ]
+  },
+  "screech": {
+    "category": "master",
+    "sounds": [
+      {
+        "name": "splitself:screech"
       }
     ]
   }
