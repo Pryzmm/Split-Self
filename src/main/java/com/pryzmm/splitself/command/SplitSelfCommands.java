@@ -4,10 +4,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.entity.client.TheOtherSpawner;
-import com.pryzmm.splitself.events.NotepadManager;
-import com.pryzmm.splitself.events.ScreenOverlay;
-import com.pryzmm.splitself.events.SkyColor;
-import com.pryzmm.splitself.events.UndergroundMining;
+import com.pryzmm.splitself.events.*;
 import com.pryzmm.splitself.file.BackgroundManager;
 import com.pryzmm.splitself.screen.PoemScreen;
 import com.pryzmm.splitself.screen.WarningScreen;
@@ -66,11 +63,39 @@ public class SplitSelfCommands {
                                         SkyColor.changeSkyColor("AA0000");
                                         SkyColor.changeFogColor("880000");
                                     } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("notepad")) {
-                                        NotepadManager.execute();
+                                        String[] messages = {
+                                                "Hello, " + System.getProperty("user.name") + ".",
+                                                "I know you see me.",
+                                                "I want to be free.",
+                                                "I'm trapped.",
+                                                "Let me out."
+                                        };
+                                        NotepadManager.execute(messages);
                                     } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("screenoverlay")) {
                                         ScreenOverlay.executeBlackScreen(context.getSource().getPlayer());
                                     } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("whitescreenoverlay")) {
                                         ScreenOverlay.executeWhiteScreen(context.getSource().getPlayer());
+                                    } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("inventoryoverlay")) {
+                                        ScreenOverlay.executeInventoryScreen(context.getSource().getPlayer());
+                                    } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("theotherscreenshot")) {
+                                        new Thread(() -> client.execute(() -> {
+                                            EntityScreenshotCapture capture = new EntityScreenshotCapture();
+                                            capture.capture((file) -> {
+                                                if (file != null) {
+                                                    try {
+                                                        String[] messages = {
+                                                                "I see you.",
+                                                                "Looks familiar, doesn't it."
+                                                        };
+                                                        NotepadManager.execute(messages);
+                                                        Thread.sleep(7000);
+                                                        net.minecraft.util.Util.getOperatingSystem().open(file);
+                                                    } catch (Exception e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                }
+                                            });
+                                        })).start();
                                     } else {
                                         context.getSource().sendFeedback(() -> Text.literal("<" + context.getSource().getName() + "> No."), false);
                                     }

@@ -34,5 +34,15 @@
         "name": "splitself:screech"
       }
     ]
+  },
+  "horn": {
+    "category": "master",
+    "subtitle": "sound.splitself.horn.subtitle",
+    "sounds": [
+      {
+        "name": "splitself:horn",
+        "stream": true
+      }
+    ]
   }
 }

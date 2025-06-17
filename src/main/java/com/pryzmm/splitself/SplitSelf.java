@@ -9,8 +9,6 @@ import com.pryzmm.splitself.sound.ModSounds;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
@@ -31,6 +29,8 @@ public class SplitSelf implements ModInitializer {
 	public static final SoundEvent STATIC_SOUND_EVENT = SoundEvent.of(STATIC_SOUND_ID);
 	public static final Identifier SCREECH_SOUND_ID = Identifier.of(MOD_ID, "screech");
 	public static final SoundEvent SCREECH_SOUND_EVENT = SoundEvent.of(SCREECH_SOUND_ID);
+	public static final Identifier HORN_SOUND_ID = Identifier.of(MOD_ID, "horn");
+	public static final SoundEvent HORN_SOUND_EVENT = SoundEvent.of(HORN_SOUND_ID);
 
 	@Override
 	public void onInitialize() {
@@ -39,10 +39,6 @@ public class SplitSelf implements ModInitializer {
 		ModSounds.registerSounds();
 		ModItems.registerModItems();
 		ModItemGroups.registerItemGroups();
-
-		Registry.register(Registries.SOUND_EVENT, REDSKY_SOUND_ID, REDSKY_SOUND_EVENT);
-		Registry.register(Registries.SOUND_EVENT, STATIC_SOUND_ID, STATIC_SOUND_EVENT);
-		Registry.register(Registries.SOUND_EVENT, SCREECH_SOUND_ID, SCREECH_SOUND_EVENT);
 
 		FabricDefaultAttributeRegistry.register(ModEntities.TheOther, TheOtherEntity.createAttributes());
 

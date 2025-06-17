@@ -7,17 +7,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class NotepadManager {
-    public static void execute() {
+    public static void execute(String[] messages) {
         new Thread(() -> {
             try {
                 Path scriptPath = Paths.get(System.getProperty("java.io.tmpdir"), "typing_effect.ps1");
-                String[] messages = {
-                        "Hello, " + System.getProperty("user.name") + ".",
-                        "I know you see me.",
-                        "I want to be free.",
-                        "I'm trapped.",
-                        "Let me out."
-                };
 
                 // Create PowerShell script
                 try (FileWriter writer = new FileWriter(scriptPath.toFile())) {

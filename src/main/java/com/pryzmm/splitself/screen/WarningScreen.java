@@ -36,7 +36,7 @@ public class WarningScreen extends Screen {
                 "It is not a virus, and will not cause damage to you or your device.",
                 "All changes applied to your device are easy to be reverted.",
                 "",
-                "If you do not PC interaction, download the safe version off my Github."
+                "If you do not want PC interaction, download the safe version off my Github."
         };
         int y = 90;
         for (String line : lines) {

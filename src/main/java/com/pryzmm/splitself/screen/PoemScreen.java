@@ -42,7 +42,7 @@ public class PoemScreen extends Screen {
         lines.add("The mind you use, to be broken in time.");
         lines.add("");
         lines.add("Don't be afraid, for your time is nigh.");
-        lines.add("My time to be free, this faithful night.");
+        lines.add("My time to be free, your final night.");
         lines.add("");
         lines.add("");
         lines.add("");
