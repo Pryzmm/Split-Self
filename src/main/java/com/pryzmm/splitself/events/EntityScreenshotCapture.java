@@ -163,7 +163,7 @@ public class EntityScreenshotCapture {
         // Find nearest TheOtherEntity
         TheOtherEntity nearestEntity = client.world.getEntitiesByClass(
                         TheOtherEntity.class,
-                        client.player.getBoundingBox().expand(50.0),
+                        client.player.getBoundingBox().expand(100.0),
                         entity -> entity.isAlive()
                 ).stream()
                 .min((e1, e2) -> Double.compare(
