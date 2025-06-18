@@ -10,6 +10,8 @@ import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.damage.DamageSources;
+import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -37,7 +39,8 @@ public class TheOtherEntity extends HostileEntity {
                 .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 0)
                 .add(EntityAttributes.GENERIC_JUMP_STRENGTH, 0)
                 .add(EntityAttributes.GENERIC_MAX_HEALTH, 1024)
-                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0);
+                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0)
+                .add(EntityAttributes.GENERIC_GRAVITY, 0);
     }
 
     public PlayerEntity getNearestPlayer() {
@@ -79,6 +82,9 @@ public class TheOtherEntity extends HostileEntity {
 
     @Override
     public boolean damage(DamageSource source, float amount) {
+        if (source.isOf(DamageTypes.GENERIC_KILL)) {
+            return super.damage(source, amount);
+        }
         return false;
     }
 

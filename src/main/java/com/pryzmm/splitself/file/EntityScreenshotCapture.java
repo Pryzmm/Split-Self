@@ -1,16 +1,14 @@
-package com.pryzmm.splitself.events;
+package com.pryzmm.splitself.file;
 
 import com.pryzmm.splitself.SplitSelf;
-import com.pryzmm.splitself.SplitSelfClient;
 import com.pryzmm.splitself.entity.custom.TheOtherEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.Framebuffer;
 import net.minecraft.client.gl.SimpleFramebuffer;
 import net.minecraft.client.render.Camera;
-import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.ScreenshotRecorder;
 import net.minecraft.entity.Entity;
-import net.minecraft.text.Text;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.Vec3d;
 import org.lwjgl.opengl.GL11;
 
@@ -164,7 +162,7 @@ public class EntityScreenshotCapture {
         TheOtherEntity nearestEntity = client.world.getEntitiesByClass(
                         TheOtherEntity.class,
                         client.player.getBoundingBox().expand(100.0),
-                        entity -> entity.isAlive()
+                        LivingEntity::isAlive
                 ).stream()
                 .min((e1, e2) -> Double.compare(
                         client.player.squaredDistanceTo(e1),

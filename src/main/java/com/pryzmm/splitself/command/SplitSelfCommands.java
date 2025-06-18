@@ -6,6 +6,7 @@ import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.entity.client.TheOtherSpawner;
 import com.pryzmm.splitself.events.*;
 import com.pryzmm.splitself.file.BackgroundManager;
+import com.pryzmm.splitself.file.EntityScreenshotCapture;
 import com.pryzmm.splitself.screen.PoemScreen;
 import com.pryzmm.splitself.screen.WarningScreen;
 import net.minecraft.client.MinecraftClient;
@@ -96,6 +97,8 @@ public class SplitSelfCommands {
                                                 }
                                             });
                                         })).start();
+                                    } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("destroychunk")) {
+                                        ChunkDestroyer.execute(context.getSource().getPlayer());
                                     } else {
                                         context.getSource().sendFeedback(() -> Text.literal("<" + context.getSource().getName() + "> No."), false);
                                     }
