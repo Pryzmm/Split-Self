@@ -13,3 +13,5 @@ Download the [Fabric Installer](https://fabricmc.net/use/installer/) and the [Fa
 Add Split Self and Fabric API to your mods folder.
 
 Launch Minecraft, and watch as you lose control.
+
+### Thank you to everyone who supported me while making this! (You know who you are <3)
