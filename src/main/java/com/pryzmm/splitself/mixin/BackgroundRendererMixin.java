@@ -11,10 +11,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(BackgroundRenderer.class)
 public class BackgroundRendererMixin {
 
-    // Target applyFogColor as well
     @Inject(method = "applyFogColor", at = @At("HEAD"))
     private static void setFogSkyColorInApply(CallbackInfo ci) {
         float[] rgb = SkyColor.getFogRGBComponents();
-        RenderSystem.setShaderFogColor(rgb[0], rgb[1], rgb[2]);
+        if (rgb != null) { // Check if not null before using
+            RenderSystem.setShaderFogColor(rgb[0], rgb[1], rgb[2]);
+        }
+        // If null, the original fog color logic will continue
     }
 }

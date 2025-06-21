@@ -3,6 +3,7 @@ package com.pryzmm.splitself;
 import com.pryzmm.splitself.command.SplitSelfCommands;
 import com.pryzmm.splitself.entity.ModEntities;
 import com.pryzmm.splitself.entity.custom.TheOtherEntity;
+import com.pryzmm.splitself.events.StructureManager;
 import com.pryzmm.splitself.item.ModItemGroups;
 import com.pryzmm.splitself.item.ModItems;
 import com.pryzmm.splitself.sound.ModSounds;
@@ -18,9 +19,6 @@ import java.util.Random;
 public class SplitSelf implements ModInitializer {
 	public static final String MOD_ID = "splitself";
 
-	// This logger is used to write text to the console and the log file.
-	// It is considered best practice to use your mod id as the logger's name.
-	// That way, it's clear which mod wrote info, warnings, and errors.
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
 	public static final Identifier REDSKY_SOUND_ID = Identifier.of(MOD_ID, "redsky");
@@ -31,6 +29,8 @@ public class SplitSelf implements ModInitializer {
 	public static final SoundEvent SCREECH_SOUND_EVENT = SoundEvent.of(SCREECH_SOUND_ID);
 	public static final Identifier HORN_SOUND_ID = Identifier.of(MOD_ID, "horn");
 	public static final SoundEvent HORN_SOUND_EVENT = SoundEvent.of(HORN_SOUND_ID);
+	public static final Identifier STATICSCREAM_SOUND_ID = Identifier.of(MOD_ID, "staticscream");
+	public static final SoundEvent STATICSCREAM_SOUND_EVENT = SoundEvent.of(STATICSCREAM_SOUND_ID);
 
 	@Override
 	public void onInitialize() {

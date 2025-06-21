@@ -15,10 +15,15 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.server.command.CommandManager;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.Heightmap;
 
 import java.util.Objects;
+import java.util.Random;
 
 public class SplitSelfCommands {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher, CommandRegistryAccess registryAccess, CommandManager.RegistrationEnvironment environment) {
@@ -98,7 +103,42 @@ public class SplitSelfCommands {
                                             });
                                         })).start();
                                     } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("destroychunk")) {
-                                        ChunkDestroyer.execute(context.getSource().getPlayer());
+                                        ChunkDestroyer.execute(Objects.requireNonNull(context.getSource().getPlayer()));
+                                    } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("frozenscreen")) {
+                                        new Thread(() -> client.execute(() -> {
+                                            EntityScreenshotCapture capture = new EntityScreenshotCapture();
+                                            capture.captureFromEntity(context.getSource().getPlayer(), client.getWindow().getScaledWidth(), client.getWindow().getScaledHeight(), (file) -> {
+                                                context.getSource().getWorld().playSound(null, Objects.requireNonNull(context.getSource().getPlayer()). getBlockPos(), SplitSelf.STATICSCREAM_SOUND_EVENT, SoundCategory.MASTER, 1.0f, 1.0f);
+                                                ScreenOverlay.executeFrozenScreen(context.getSource().getPlayer(), file);
+                                            });
+                                        })).start();
+                                    } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("house")) {
+                                        System.out.print("starting command...");
+                                        Random random = new Random();
+                                        System.out.print("Random " + random);
+                                        double distance = 50 + random.nextDouble() * (80 - 50);
+                                        System.out.print("Distance " + distance);
+                                        double angle = random.nextDouble() * 2 * Math.PI;
+                                        System.out.print("Angle " + angle);
+
+                                        // Use server-side player position instead of client
+                                        Vec3d playerPos = context.getSource().getPlayer().getPos();
+                                        double spawnX = playerPos.x + Math.cos(angle) * distance;
+                                        double spawnZ = playerPos.z + Math.sin(angle) * distance;
+                                        System.out.print("PlayerPos " + playerPos);
+                                        System.out.print("spawnX " + spawnX);
+                                        System.out.print("spawnZ " + spawnZ);
+
+                                        // Get surface height at spawn location
+                                        BlockPos spawnPos = new BlockPos((int) spawnX, 0, (int) spawnZ);
+                                        int surfaceY = context.getSource().getWorld().getTopY(Heightmap.Type.WORLD_SURFACE, spawnPos.getX(), spawnPos.getZ()) - 5;
+                                        System.out.print("SurfaceY " + surfaceY);
+
+                                        // Create final spawn position
+                                        BlockPos finalSpawnPos = new BlockPos((int) spawnX, surfaceY, (int) spawnZ);
+                                        System.out.print("finalSpawnPos " + finalSpawnPos);
+                                        StructureManager.placeStructureRandomRotation(context.getSource().getWorld(), finalSpawnPos, "house");
+                                        System.out.print("placed structure...");
                                     } else {
                                         context.getSource().sendFeedback(() -> Text.literal("<" + context.getSource().getName() + "> No."), false);
                                     }

@@ -1,8 +1,8 @@
 package com.pryzmm.splitself.events;
 
 public class SkyColor {
-    private static int currentSkyColor = 0x78A7FF; // Default sky blue
-    private static int currentFogColor = 0xC0D8FF; // Default fog
+    private static Integer currentSkyColor = null;
+    private static Integer currentFogColor = null;
 
     public static void changeFogColor(String hex) {
         try {
@@ -28,12 +28,18 @@ public class SkyColor {
     }
 
     public static float[] getSkyRGBComponents() {
+        if (currentSkyColor == null) {
+            return null;
+        }
         int r = (currentSkyColor >> 16) & 0xFF;
         int g = (currentSkyColor >> 8) & 0xFF;
         int b = currentSkyColor & 0xFF;
         return new float[]{r / 255f, g / 255f, b / 255f};
     }
     public static float[] getFogRGBComponents() {
+        if (currentFogColor == null) {
+            return null;
+        }
         int r = (currentFogColor >> 16) & 0xFF;
         int g = (currentFogColor >> 8) & 0xFF;
         int b = currentFogColor & 0xFF;

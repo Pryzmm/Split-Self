@@ -16,21 +16,29 @@ public class WorldRendererMixin {
     // Inject at the very beginning of renderSky to set the fog color
     @Inject(method = "renderSky", at = @At("HEAD"))
     private void setFogSkyColorAtStart(CallbackInfo ci) {
-        float[] rgb = SkyColor.getFogRGBComponents();
-        RenderSystem.setShaderFogColor(rgb[0], rgb[1], rgb[2]);
+        float[] rgb = SkyColor.getFogRGBComponents(); // or getSkyRGBComponents()
+        if (rgb != null) { // Add this null check
+            RenderSystem.setShaderFogColor(rgb[0], rgb[1], rgb[2]);
+        }
     }
+
 
     // Also inject right before the method ends to make sure it sticks
     @Inject(method = "renderSky", at = @At("TAIL"))
     private void setFogSkyColorAtEnd(CallbackInfo ci) {
-        float[] rgb = SkyColor.getFogRGBComponents();
-        RenderSystem.setShaderFogColor(rgb[0], rgb[1], rgb[2]);
+        float[] rgb = SkyColor.getFogRGBComponents(); // or getSkyRGBComponents()
+        if (rgb != null) { // Add this null check
+            RenderSystem.setShaderFogColor(rgb[0], rgb[1], rgb[2]);
+        }
     }
 
     @ModifyVariable(method = "renderSky", at = @At("STORE"), ordinal = 0)
     private Vec3d modifySkyColor(Vec3d original) {
         float[] rgb = SkyColor.getSkyRGBComponents();
-        return new Vec3d(rgb[0], rgb[1], rgb[2]);
+        if (rgb != null) {
+            return new Vec3d(rgb[0], rgb[1], rgb[2]);
+        }
+        return original;
     }
 }
 

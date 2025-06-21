@@ -27,6 +27,14 @@
       }
     ]
   },
+  "staticscream": {
+    "category": "master",
+    "sounds": [
+      {
+        "name": "splitself:staticscream"
+      }
+    ]
+  },
   "screech": {
     "category": "master",
     "sounds": [

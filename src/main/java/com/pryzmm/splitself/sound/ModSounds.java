@@ -15,6 +15,7 @@ public class ModSounds {
     public static final SoundEvent STATIC = registerSoundEvent("static");
     public static final SoundEvent SCREECH = registerSoundEvent("screech");
     public static final SoundEvent HORN = registerSoundEvent("horn");
+    public static final SoundEvent STATICSCREAM = registerSoundEvent("staticscream");
 
     public static final RegistryKey<JukeboxSong> IN_MY_LIFE_KEY =
             RegistryKey.of(RegistryKeys.JUKEBOX_SONG, Identifier.of(SplitSelf.MOD_ID, "in_my_life"));

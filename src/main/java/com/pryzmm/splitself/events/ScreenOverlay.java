@@ -1,5 +1,6 @@
 package com.pryzmm.splitself.events;
 
+import com.pryzmm.splitself.screen.FrozenOverlayRenderer;
 import com.pryzmm.splitself.screen.InventoryOverlayRenderer;
 import com.pryzmm.splitself.screen.ScreenOverlayRenderer;
 import com.pryzmm.splitself.screen.TheOtherOverlayRenderer;
@@ -7,6 +8,8 @@ import com.pryzmm.splitself.sound.ModSounds;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundCategory;
+
+import java.io.File;
 
 public class ScreenOverlay {
     public static void executeBlackScreen(PlayerEntity Player) {
@@ -46,6 +49,18 @@ public class ScreenOverlay {
                 throw new RuntimeException(e);
             }
             InventoryOverlayRenderer.toggleOverlay();
+        }).start();
+    }
+
+    public static void executeFrozenScreen(PlayerEntity Player, File image) {
+        new Thread(() -> {
+            FrozenOverlayRenderer.toggleOverlay(image);
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            FrozenOverlayRenderer.toggleOverlay(image);
         }).start();
     }
 }
