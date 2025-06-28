@@ -52,5 +52,21 @@
         "stream": true
       }
     ]
+  },
+  "amstatic": {
+    "category": "master",
+    "sounds": [
+      {
+        "name": "splitself:amstatic"
+      }
+    ]
+  },
+  "hum": {
+    "category": "master",
+    "sounds": [
+      {
+        "name": "splitself:hum"
+      }
+    ]
   }
 }

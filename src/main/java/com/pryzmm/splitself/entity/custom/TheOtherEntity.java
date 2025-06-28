@@ -12,6 +12,8 @@ import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageSources;
 import net.minecraft.entity.damage.DamageTypes;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -74,6 +76,7 @@ public class TheOtherEntity extends HostileEntity {
                 double distance = this.distanceTo(player);
                 if (distance < 10.0) { // If closer than 3 blocks
                     ScreenOverlay.executeWhiteScreen(player);
+                    player.addStatusEffect(new StatusEffectInstance(StatusEffects.WITHER, 100, 1, false, false, false));
                     this.discard();
                 }
             }

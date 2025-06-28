@@ -17,9 +17,6 @@
 		"main": [
 			"com.pryzmm.splitself.SplitSelf"
 		],
-		"fabric-datagen": [
-			"com.pryzmm.splitself.SplitSelfDataGenerator"
-		],
 		"client": [
 			"com.pryzmm.splitself.SplitSelfClient"
 		]

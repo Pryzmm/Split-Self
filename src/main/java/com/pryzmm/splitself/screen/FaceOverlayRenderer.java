@@ -1,3 +1,6 @@
+// i know theres like 5 different renderers, ill fix it in a future update trust </3
+// i'm too lazy rn
+
 package com.pryzmm.splitself.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -15,59 +18,99 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
-public class FrozenOverlayRenderer {
+public class FaceOverlayRenderer {
     public static boolean overlayVisible = false;
     private static final Map<String, Identifier> loadedTextures = new HashMap<>();
 
-    public static void toggleOverlay(File image) {
+    private static final Identifier FACE_IMAGE_TEXTURE = Identifier.of("splitself", "textures/misc/face.png");
+
+    public static void toggleOverlay(File image, Float red, Float green, Float blue, Float alpha, int imageWidth, int imageHeight) {
         overlayVisible = !overlayVisible;
         HudRenderCallback.EVENT.register((drawContext, tickDelta) -> {
             if (overlayVisible) {
-                renderTopLayerOverlay(drawContext, image);
+                renderTopLayerOverlay(drawContext, image, red, green, blue, alpha, imageWidth, imageHeight);
             }
         });
     }
 
-    public static void renderTopLayerOverlay(DrawContext drawContext, File image) {
+    public static void renderTopLayerOverlay(DrawContext drawContext, File image, Float red, Float green, Float blue, Float alpha, int faceImageWidth, int faceImageHeight) {
         MinecraftClient client = MinecraftClient.getInstance();
         int screenWidth = client.getWindow().getScaledWidth();
         int screenHeight = client.getWindow().getScaledHeight();
+
+        // Push a new matrix to ensure we're rendering at the top level
         MatrixStack matrices = drawContext.getMatrices();
         matrices.push();
+
+        // Translate to ensure we're at the front-most z-level
         matrices.translate(0, 0, 1000);
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
-        RenderSystem.disableDepthTest();
-        RenderSystem.polygonOffset(-1.0f, -1.0f);
-        RenderSystem.enablePolygonOffset();
-        drawContext.fill(0, 0, screenWidth, screenHeight, 0x80000000);
 
-        renderOverlayContent(drawContext, screenWidth, screenHeight, image);
-
-        RenderSystem.disablePolygonOffset();
-        RenderSystem.enableDepthTest();
-        RenderSystem.disableBlend();
-        matrices.pop();
-    }
-
-    public static void renderOverlayContent(DrawContext drawContext, int imageWidth, int imageHeight, File image) {
         // Enable blending for transparency
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
 
-        RenderSystem.setShaderColor(1.0f, (float) (Math.random()/5), (float) (Math.random()/5), 1.0f);
+        // Disable depth testing to ensure it renders over everything
+        RenderSystem.disableDepthTest();
+
+        // Set a high z-offset to render above everything
+        RenderSystem.polygonOffset(-1.0f, -1.0f);
+        RenderSystem.enablePolygonOffset();
+
+        // IMPORTANT: Comment out or remove the black fill to see the image
+        // drawContext.fill(0, 0, screenWidth, screenHeight, 0xFF000000);
+
+        // Instead, use a semi-transparent fill if you want a background
+        drawContext.fill(0, 0, screenWidth, screenHeight, 0x80000000);
+
+        // Calculate center position for the face image
+        int centerX = (screenWidth - faceImageWidth) / 2;
+        int centerY = (screenHeight - faceImageHeight) / 2;
+
+        // Add overlay content (this includes the image)
+        renderOverlayContent(drawContext, screenWidth, screenHeight, image, "File", red, green, blue, alpha);
+
+        // Render the face image centered
+        renderOverlayContent(drawContext, centerX, centerY, faceImageWidth, faceImageHeight, FACE_IMAGE_TEXTURE, "Identifier", 1.0f, 1.0f, 1.0f, 1.0f);
+
+        // Restore render states
+        RenderSystem.disablePolygonOffset();
+        RenderSystem.enableDepthTest();
+        RenderSystem.disableBlend();
+
+        matrices.pop();
+    }
+
+    // Updated method signature to include position parameters
+    public static void renderOverlayContent(DrawContext drawContext, int x, int y, int imageWidth, int imageHeight, Object image, String variableInstance, Float red, Float green, Float blue, Float alpha) {
+        // Enable blending for transparency
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+
+        RenderSystem.setShaderColor(red, green, blue, alpha);
 
         // Get or load the texture identifier
-        Identifier textureId = getOrLoadTexture(image);
+        Identifier textureId;
+        if (Objects.equals(variableInstance, "File")) {
+            textureId = getOrLoadTexture((File) image);
+        } else if (Objects.equals(variableInstance, "Identifier")) {
+            textureId = (Identifier) image;
+        } else {
+            textureId = null;
+        }
         if (textureId != null) {
-            // Draw with shake offset
-            drawContext.drawTexture(textureId, 0, 0, 0, 0, imageWidth, imageHeight, imageWidth, imageHeight);
+            drawContext.drawTexture(textureId, x, y, 0, 0, imageWidth, imageHeight, imageWidth, imageHeight);
         }
 
         // Reset shader color
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
         RenderSystem.disableBlend();
+    }
+
+    // Overloaded method for backward compatibility
+    public static void renderOverlayContent(DrawContext drawContext, int imageWidth, int imageHeight, Object image, String variableInstance, Float red, Float green, Float blue, Float alpha) {
+        renderOverlayContent(drawContext, 0, 0, imageWidth, imageHeight, image, variableInstance, red, green, blue, alpha);
     }
 
     public static Identifier getOrLoadTexture(File file) {

@@ -114,7 +114,6 @@ public class TheOtherOverlayRenderer {
         int centerX = (screenWidth - imageWidth) / 2;
         int centerY = (screenHeight - imageHeight) / 2;
 
-        // Draw centered without shake
         drawContext.drawTexture(image, centerX, centerY, 0, 0, imageWidth, imageHeight, imageWidth, imageHeight);
 
         RenderSystem.disableBlend();

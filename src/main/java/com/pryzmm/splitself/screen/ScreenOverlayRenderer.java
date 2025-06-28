@@ -94,16 +94,6 @@ public class ScreenOverlayRenderer {
     }
 
     public static void renderImageOverlay(DrawContext drawContext, int screenWidth, int screenHeight) {
-        try {
-            // Test with a simple centered image first
-            renderCenteredImage(drawContext, screenWidth, screenHeight);
-        } catch (Exception e) {
-            // If image fails to load, we'll see this in the console
-            System.err.println("Failed to render overlay image: " + e.getMessage());
-        }
-    }
-
-    public static void renderCenteredImage(DrawContext drawContext, int screenWidth, int screenHeight) {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.setShaderColor((float) Math.random(), (float) Math.random(), (float) Math.random(), 1.0f);

@@ -12,10 +12,13 @@ import net.minecraft.util.Identifier;
 public class ModSounds {
 
     public static final SoundEvent IN_MY_LIFE = registerSoundEvent("in_my_life");
+    public static final SoundEvent REDSKY = registerSoundEvent("redsky");
     public static final SoundEvent STATIC = registerSoundEvent("static");
     public static final SoundEvent SCREECH = registerSoundEvent("screech");
     public static final SoundEvent HORN = registerSoundEvent("horn");
     public static final SoundEvent STATICSCREAM = registerSoundEvent("staticscream");
+    public static final SoundEvent AMSTATIC = registerSoundEvent("amstatic");
+    public static final SoundEvent HUM = registerSoundEvent("hum");
 
     public static final RegistryKey<JukeboxSong> IN_MY_LIFE_KEY =
             RegistryKey.of(RegistryKeys.JUKEBOX_SONG, Identifier.of(SplitSelf.MOD_ID, "in_my_life"));
