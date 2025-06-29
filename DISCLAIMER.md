@@ -14,7 +14,7 @@ With all that being said, here are the events that interact with your computer i
 - When clicking 'Continue' on the warning screen, a 'begin.txt' file will be created on your desktop
 - The 'DoYouSeeMe' event will change your background wallpaper to a distorted pre-made screenshot
 - The 'Notepad' event will open a PowerShell notepad to talk to you outside of the game
-- The 'TheOtheScreenshot' event will do the same as the 'Notepad' event, but also open a newly created image with your preferred image tool
+- The 'TheOtherScreenshot' event will do the same as the 'Notepad' event, but also open a newly created image with your preferred image tool
 - The 'Command' event will open the system's command prompt, but it doesn't execute anything and is meant to merely scare the player
 - For some events, the mod will sometimes read the user's system name out to them
   - For some Youtubers, the mod will instead call them by their public name, or a variant of their name
