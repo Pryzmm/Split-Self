@@ -44,7 +44,7 @@ public class EventManager {
     }
 
     private static final int TICK_INTERVAL = 20; // Check every second (20 ticks)
-    private static final double EVENT_CHANCE = 0.001; // 0.1% chance per check
+    private static final double EVENT_CHANCE = 0.01; // 1% chance per check
     private static int EVENT_COOLDOWN = 0;
 
     public static void onWorldTick(ServerWorld world) {
@@ -78,7 +78,7 @@ public class EventManager {
             throw new RuntimeException(e);
         }
 
-        EVENT_COOLDOWN = 120;
+        EVENT_COOLDOWN = 200;
 
         MinecraftClient client = MinecraftClient.getInstance();
         if (player == null) {
