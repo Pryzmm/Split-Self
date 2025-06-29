@@ -28,7 +28,8 @@ public class SkyImageRenderer {
     private static final Vector3f IMAGE_RELATIVE_POS = new Vector3f(10, 50, -100);
 
     public static void register() {
-        WorldRenderEvents.AFTER_TRANSLUCENT.register(SkyImageRenderer::renderSkyImage);
+        // Use LAST instead of AFTER_TRANSLUCENT to render on top of everything
+        WorldRenderEvents.LAST.register(SkyImageRenderer::renderSkyImage);
     }
 
     public static void toggleTexture() {
@@ -45,15 +46,16 @@ public class SkyImageRenderer {
         // Create simple matrix stack
         MatrixStack matrices = getMatrixStack();
 
-        // Set up rendering with proper depth testing
+        // Set up rendering to always render on top (skybox effect)
         RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
-        RenderSystem.enableDepthTest(); // Enable depth testing
-        RenderSystem.depthFunc(515); // GL_LESS - render only if closer than existing pixels
-        RenderSystem.depthMask(false); // Don't write to depth buffer (so it doesn't block other objects)
+        RenderSystem.blendFunc(770, 771); // GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA
+
+        // Disable depth testing to render through everything
+        RenderSystem.disableDepthTest();
+
         RenderSystem.setShader(GameRenderer::getPositionTexProgram);
         RenderSystem.setShaderTexture(0, FACE_IMAGE_TEXTURE);
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1f);
+        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
 
         // Get matrix
         Matrix4f matrix = matrices.peek().getPositionMatrix();
@@ -77,13 +79,13 @@ public class SkyImageRenderer {
                 new Thread(() -> client.execute(() -> {
                     PlayerEntity Player = context.world().getPlayerByUuid(client.player.getUuid());
                     EntityScreenshotCapture capture = new EntityScreenshotCapture();
-                    capture.captureFromEntity(Player, client.getWindow().getScaledWidth(), client.getWindow().getScaledHeight(), (file) -> ScreenOverlay.executeFaceScreen(file, Player));
+                    capture.captureFromEntity(Player, client.getWindow().getScaledWidth(), client.getWindow().getScaledHeight(), (file) -> ScreenOverlay.executeFaceScreen(file, Player, Player));
                 })).start();
             }
         }
 
-        // Cleanup - restore depth mask
-        RenderSystem.depthMask(true);
+        // Cleanup - restore render state
+        RenderSystem.enableDepthTest();
         RenderSystem.disableBlend();
 
         matrices.pop();
@@ -117,7 +119,7 @@ public class SkyImageRenderer {
         // Convert to angle in degrees
         double angleInDegrees = Math.toDegrees(Math.acos(Math.max(-1.0, Math.min(1.0, dotProduct))));
 
-        // Consider "looking at" if within 30 degrees
+        // Consider "looking at" if within 4 degrees
         return angleInDegrees < 4.0;
     }
 }

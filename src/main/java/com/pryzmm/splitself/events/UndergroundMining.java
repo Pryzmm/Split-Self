@@ -1,32 +1,42 @@
 package com.pryzmm.splitself.events;
 
-import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.world.World;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 public class UndergroundMining {
-    public static void Execute(Entity Player, World World) {
-        new Thread(() -> {
-            for (float i = 0.1f; i < 1.1f; i += 0.1f) {
-                World.playSound(
-                        Player.getX(),
-                        Player.getY(),
-                        Player.getZ(),
-                        SoundEvents.BLOCK_STONE_BREAK,
-                        SoundCategory.BLOCKS,
-                        i,
-                        1f,
-                        false
-                );
+    public static void Execute(PlayerEntity player, ServerWorld world) {
+        playMiningSound(player, world, 0);
+    }
 
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    break;
-                }
-            }
-        }).start();
+    private static void playMiningSound(PlayerEntity player, ServerWorld world, int step) {
+        if (step >= 10) return;
+
+        float volume = (step + 1) * 0.1f;
+
+        world.playSound(
+                null,
+                player.getBlockPos(),
+                SoundEvents.BLOCK_STONE_BREAK,
+                SoundCategory.BLOCKS,
+                volume,
+                1.0f
+        );
+
+        // Schedule next sound using CompletableFuture
+        CompletableFuture.delayedExecutor(1, TimeUnit.SECONDS)
+                .execute(() -> {
+                    // Execute on server thread
+                    world.getServer().execute(() -> {
+                        // Check if player is still valid
+                        if (!player.isRemoved()) {
+                            playMiningSound(player, world, step + 1);
+                        }
+                    });
+                });
     }
 }

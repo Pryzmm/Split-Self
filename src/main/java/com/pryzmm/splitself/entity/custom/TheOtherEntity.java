@@ -10,7 +10,6 @@ import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.damage.DamageSources;
 import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
@@ -25,7 +24,6 @@ public class TheOtherEntity extends HostileEntity {
 
     public final AnimationState idleAnimationState = new AnimationState();
 
-    // Cache the nearest player and update periodically
     private PlayerEntity cachedNearestPlayer = null;
     private int playerUpdateTimer = 0;
     private static final int PLAYER_UPDATE_INTERVAL = 20; // Update every 20 ticks (1 second)
@@ -54,8 +52,6 @@ public class TheOtherEntity extends HostileEntity {
 
         if (this.getWorld().isClient()) {
             this.idleAnimationState.startIfNotRunning(this.age);
-
-            // Update nearest player periodically
             if (this.playerUpdateTimer <= 0) {
                 this.cachedNearestPlayer = this.getWorld().getClosestPlayer(this, -1.0);
                 this.playerUpdateTimer = PLAYER_UPDATE_INTERVAL;
@@ -65,7 +61,6 @@ public class TheOtherEntity extends HostileEntity {
         }
 
         if (!this.getWorld().isClient) { // Server-side only
-            // Find nearby players within a certain distance
             List<PlayerEntity> nearbyPlayers = this.getWorld().getEntitiesByClass(
                     PlayerEntity.class,
                     this.getBoundingBox().expand(10.0), // 5 block radius

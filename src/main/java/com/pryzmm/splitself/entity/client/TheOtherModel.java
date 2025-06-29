@@ -24,12 +24,9 @@ public class TheOtherModel<T extends TheOtherEntity> extends SinglePartEntityMod
         this.Head = this.TheOther.getChild("Head");
     }
 
-    // For classic model
     public static TexturedModelData getTexturedModelData() {
         return createModelData(false);
     }
-
-    // For slim model - this method is crucial!
     public static TexturedModelData getSlimTexturedModelData() {
         return createModelData(true);
     }
@@ -44,13 +41,11 @@ public class TheOtherModel<T extends TheOtherEntity> extends SinglePartEntityMod
                 .uv(16, 32).cuboid(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, new Dilation(0.25F)), ModelTransform.pivot(0.0F, 0.0F, 0.0F));
 
         if (slim) {
-            // Slim arms (3px wide)
             ModelPartData RightArm = TheOther.addChild("RightArm", ModelPartBuilder.create().uv(40, 16).cuboid(-2.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, new Dilation(0.0F))
                     .uv(40, 32).cuboid(-2.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, new Dilation(0.25F)), ModelTransform.pivot(-5.0F, 2.0F, 0.0F));
             ModelPartData LeftArm = TheOther.addChild("LeftArm", ModelPartBuilder.create().uv(32, 48).cuboid(-1.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, new Dilation(0.0F))
                     .uv(48, 48).cuboid(-1.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, new Dilation(0.25F)), ModelTransform.pivot(5.0F, 2.0F, 0.0F));
         } else {
-            // Classic arms (4px wide)
             ModelPartData RightArm = TheOther.addChild("RightArm", ModelPartBuilder.create().uv(40, 16).cuboid(-3.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, new Dilation(0.0F))
                     .uv(40, 32).cuboid(-3.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, new Dilation(0.25F)), ModelTransform.pivot(-5.0F, 2.0F, 0.0F));
             ModelPartData LeftArm = TheOther.addChild("LeftArm", ModelPartBuilder.create().uv(32, 48).cuboid(-1.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, new Dilation(0.0F))

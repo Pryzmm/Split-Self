@@ -40,9 +40,7 @@ public class ChunkDestroyer {
                         throw new RuntimeException(e);
                     }
                 }
-                System.out.println(y);
             }
-            System.out.print("ended");
         }).start();
     }
 }

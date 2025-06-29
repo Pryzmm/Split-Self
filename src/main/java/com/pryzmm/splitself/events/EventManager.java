@@ -1,5 +1,6 @@
 package com.pryzmm.splitself.events;
 
+import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.entity.client.TheOtherSpawner;
 import com.pryzmm.splitself.file.BackgroundManager;
 import com.pryzmm.splitself.file.EntityScreenshotCapture;
@@ -58,11 +59,11 @@ public class EventManager {
         }
 
         if (world.getRandom().nextDouble() < EVENT_CHANCE) {
-            triggerRandomEvent(world, null);
+            triggerRandomEvent(world, null, null);
         }
     }
 
-    public static void triggerRandomEvent(ServerWorld world, Events ForceEvent) {
+    public static void triggerRandomEvent(ServerWorld world, PlayerEntity player, Events ForceEvent) {
         // Get all online players
         List<ServerPlayerEntity> players = world.getPlayers();
         if (players.isEmpty()) return;
@@ -80,7 +81,10 @@ public class EventManager {
         EVENT_COOLDOWN = 120;
 
         MinecraftClient client = MinecraftClient.getInstance();
-        PlayerEntity player = (PlayerEntity) client.player;
+        if (player == null) {
+            player = (PlayerEntity) client.player;
+        }
+        PlayerEntity Player = player;
         switch (eventType) {
             case POEMSCREEN:
                 client.execute(() -> client.setScreen(new PoemScreen()));
@@ -96,7 +100,7 @@ public class EventManager {
                 break;
             case REDSKY:
                 world.playSound(null, Objects.requireNonNull(player). getBlockPos(), ModSounds.REDSKY, SoundCategory.MASTER, 1.0f, 1.0f);
-                player.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, 430, 1, false, false, false));
+                player.addStatusEffect(new StatusEffectInstance(StatusEffects.DARKNESS, 430, 1, false, false, false));
                 SkyColor.changeSkyColor("AA0000");
                 SkyColor.changeFogColor("880000");
                 break;
@@ -145,8 +149,8 @@ public class EventManager {
             case FROZENSCREEN:
                 new Thread(() -> client.execute(() -> {
                     EntityScreenshotCapture capture = new EntityScreenshotCapture();
-                    capture.captureFromEntity(player, client.getWindow().getScaledWidth(), client.getWindow().getScaledHeight(), (file) -> {
-                        world.playSound(null, Objects.requireNonNull(player).getBlockPos(), ModSounds.STATICSCREAM, SoundCategory.MASTER, 1.0f, 1.0f);
+                    capture.captureFromEntity(Player, client.getWindow().getScaledWidth(), client.getWindow().getScaledHeight(), (file) -> {
+                        world.playSound(null, Objects.requireNonNull(Player).getBlockPos(), ModSounds.STATICSCREAM, SoundCategory.MASTER, 1.0f, 1.0f);
                         ScreenOverlay.executeFrozenScreen(file);
                     });
                 })).start();
@@ -179,13 +183,15 @@ public class EventManager {
             case COMMAND:
                 if (net.minecraft.util.Util.getOperatingSystem().toString().toLowerCase().contains("win")) {
                     net.minecraft.util.Util.getOperatingSystem().open("C:/Windows/System32/conhost.exe");
+                } else {
+                    SplitSelf.LOGGER.warn("Could not open cmd prompt, OS:" + net.minecraft.util.Util.getOperatingSystem().toString().toLowerCase());
                 }
                 break;
             case FACESCREEN:
-                new Thread(() -> client.execute(() -> {
+                new Thread(() -> {
                     EntityScreenshotCapture capture = new EntityScreenshotCapture();
-                    capture.captureFromEntity(player, client.getWindow().getScaledWidth(), client.getWindow().getScaledHeight(), (file) -> ScreenOverlay.executeFaceScreen(file, player));
-                })).start();
+                    capture.captureFromEntity(Player, client.getWindow().getScaledWidth(), client.getWindow().getScaledHeight(), (file) -> ScreenOverlay.executeFaceScreen(file, Player, null));
+                }).start();
                 break;
         }
     }

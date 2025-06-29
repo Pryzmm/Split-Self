@@ -2,7 +2,6 @@ package com.pryzmm.splitself.entity.client;
 
 import com.pryzmm.splitself.entity.ModEntities;
 import com.pryzmm.splitself.entity.custom.TheOtherEntity;
-import net.minecraft.entity.SpawnReason;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -14,7 +13,7 @@ import net.minecraft.entity.player.PlayerEntity;
 public class TheOtherSpawner {
     private static final int MIN_DISTANCE = 30; // Minimum distance from player
     private static final int MAX_DISTANCE = 80; // Maximum distance (horizon range)
-    private static final int SPAWN_ATTEMPTS = 10; // Number of attempts to find valid spawn location
+    private static final int SPAWN_ATTEMPTS = 200; // Number of attempts to find valid spawn location
 
     public static void trySpawnTheOther(ServerWorld world, PlayerEntity player) {
         Random random = world.getRandom();
