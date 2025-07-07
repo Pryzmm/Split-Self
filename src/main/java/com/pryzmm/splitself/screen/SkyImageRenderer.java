@@ -28,8 +28,8 @@ public class SkyImageRenderer {
     private static final Vector3f IMAGE_RELATIVE_POS = new Vector3f(10, 50, -100);
 
     public static void register() {
-        // Use LAST instead of AFTER_TRANSLUCENT to render on top of everything
-        WorldRenderEvents.LAST.register(SkyImageRenderer::renderSkyImage);
+        // Use AFTER_TRANSLUCENT instead of LAST to render with proper depth testing
+        WorldRenderEvents.AFTER_TRANSLUCENT.register(SkyImageRenderer::renderSkyImage);
     }
 
     public static void toggleTexture() {
@@ -46,12 +46,12 @@ public class SkyImageRenderer {
         // Create simple matrix stack
         MatrixStack matrices = getMatrixStack();
 
-        // Set up rendering to always render on top (skybox effect)
+        // Set up rendering with proper depth testing
         RenderSystem.enableBlend();
         RenderSystem.blendFunc(770, 771); // GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA
 
-        // Disable depth testing to render through everything
-        RenderSystem.disableDepthTest();
+        // Keep depth testing enabled so blocks can occlude the image
+        // RenderSystem.disableDepthTest(); // REMOVED - this was causing pass-through
 
         RenderSystem.setShader(GameRenderer::getPositionTexProgram);
         RenderSystem.setShaderTexture(0, FACE_IMAGE_TEXTURE);
@@ -85,7 +85,7 @@ public class SkyImageRenderer {
         }
 
         // Cleanup - restore render state
-        RenderSystem.enableDepthTest();
+        // RenderSystem.enableDepthTest(); // Not needed since we never disabled it
         RenderSystem.disableBlend();
 
         matrices.pop();

@@ -48,14 +48,8 @@ public class SplitSelf implements ModInitializer {
 				joinTracker.markAsJoined(player.getUuid());
 
 				MinecraftClient client = MinecraftClient.getInstance();
-				System.out.println("Welcome to the world for the first time, " + player.getName().getString() + "!");
 				client.execute(() -> client.setScreen(new WarningScreen()));
 			}
-		});
-
-		ServerWorldEvents.LOAD.register((server, world) -> {
-			// Called when a world loads
-			System.out.println("World loaded: " + world.getRegistryKey().getValue());
 		});
 
 		LOGGER.info("Hello, " + System.getProperty("user.name"));

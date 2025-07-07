@@ -7,6 +7,7 @@ import com.pryzmm.splitself.file.EntityScreenshotCapture;
 import com.pryzmm.splitself.screen.PoemScreen;
 import com.pryzmm.splitself.screen.SkyImageRenderer;
 import com.pryzmm.splitself.sound.ModSounds;
+import com.pryzmm.splitself.world.FirstJoinTracker;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
@@ -40,14 +41,20 @@ public class EventManager {
         BILLY,
         FACE,
         COMMAND,
-        FACESCREEN
+        INVERT
     }
 
     private static final int TICK_INTERVAL = 20; // Check every second (20 ticks)
     private static final double EVENT_CHANCE = 0.01; // 1% chance per check
     private static int EVENT_COOLDOWN = 0;
 
+    private static FirstJoinTracker tracker;
+
     public static void onWorldTick(ServerWorld world) {
+
+        if (tracker == null) {
+             tracker = FirstJoinTracker.getServerState(world.getServer());
+        }
 
         if (EVENT_COOLDOWN > 0) {
             EVENT_COOLDOWN--;
@@ -64,11 +71,14 @@ public class EventManager {
     }
 
     public static void triggerRandomEvent(ServerWorld world, PlayerEntity player, Events ForceEvent) {
-        // Get all online players
         List<ServerPlayerEntity> players = world.getPlayers();
         if (players.isEmpty()) return;
 
-        // Choose a random event type
+        if (player != null && !tracker.getPlayerReadWarning(player.getUuid())) {
+            System.out.println("Tried executing an event, but " + player + " did not read the warning!");
+            return;
+        }
+
         Events eventType;
         if (ForceEvent == null) {
             eventType = Events.values()[world.getRandom().nextInt(Events.values().length)];
@@ -105,8 +115,15 @@ public class EventManager {
                 SkyColor.changeFogColor("880000");
                 break;
             case NOTEPAD:
+                String user;
+                if (tracker.getPlayerPII(player.getUuid())) {
+                    user = System.getProperty("user.name");
+                } else {
+                    user = "[REDACTED]";
+                }
+
                 String[] notepadMessages = {
-                        "Hello, " + System.getProperty("user.name") + ".",
+                        "Hello, " + user + ".",
                         "I know you see me.",
                         "I want to be free.",
                         "I'm trapped.",
@@ -187,11 +204,8 @@ public class EventManager {
                     SplitSelf.LOGGER.warn("Could not open cmd prompt, OS:" + net.minecraft.util.Util.getOperatingSystem().toString().toLowerCase());
                 }
                 break;
-            case FACESCREEN:
-                new Thread(() -> {
-                    EntityScreenshotCapture capture = new EntityScreenshotCapture();
-                    capture.captureFromEntity(Player, client.getWindow().getScaledWidth(), client.getWindow().getScaledHeight(), (file) -> ScreenOverlay.executeFaceScreen(file, Player, null));
-                }).start();
+            case INVERT:
+                client.options.getInvertYMouse().setValue(true);
                 break;
         }
     }

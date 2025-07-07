@@ -1,5 +1,6 @@
 package com.pryzmm.splitself.screen;
 
+import com.pryzmm.splitself.world.FirstJoinTracker;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -12,6 +13,7 @@ public class PoemScreen extends Screen {
     public PoemScreen() {
         super(Text.literal(""));
     }
+    private static FirstJoinTracker tracker;
 
     @Override
     protected void init() {
@@ -25,6 +27,11 @@ public class PoemScreen extends Screen {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+
+        if (tracker == null) {
+            tracker = FirstJoinTracker.getServerState(client.getServer());
+        }
+
         assert client != null;
         String UserName = client.getName();
         this.renderBackground(context, mouseX, mouseY, delta);
@@ -51,9 +58,10 @@ public class PoemScreen extends Screen {
             else if (UserName.equalsIgnoreCase("skipthetutorial")) {lines.add("I make the choices now, Aiden.");}
             else if (UserName.equalsIgnoreCase("failboat")) {lines.add("I make the choices now, Daniel Michaud.");}
             else if (UserName.equalsIgnoreCase("jaym0ji")) {lines.add("I make the choices now, James.");}
-            else if (UserName.equalsIgnoreCase("vivilly")) {lines.add("I make the choices now, VIV.");}
+            else if (UserName.equalsIgnoreCase("xvivilly")) {lines.add("I make the choices now, VIV.");}
             else if (UserName.equalsIgnoreCase("rekrap2")) {lines.add("I make the choices now, Parker Jerry Marriott.");}
             else if (UserName.equalsIgnoreCase("dream")) {lines.add("I make the choices now, Clay.");} // I ran out of ideas lol
+            else if (!tracker.getPlayerPII(client.player.getUuid())) {lines.add("I make the choices now, [REDACTED].");}
             else {lines.add("I make the choices now, " + System.getProperty("user.name") + ".");}
         } catch(Exception e) {
             lines.add("I make the choices now, " + System.getProperty("user.name") + ".");

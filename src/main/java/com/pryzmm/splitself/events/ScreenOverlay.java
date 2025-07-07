@@ -11,7 +11,7 @@ import java.io.File;
 public class ScreenOverlay {
     public static void executeBlackScreen(PlayerEntity Player) {
         new Thread(() -> {
-            Player.getWorld().playSound(Player, Player.getBlockPos(), ModSounds.STATIC, SoundCategory.MASTER, 1.0f, 1.0f);
+            Player.getWorld().playSound(null, Player.getBlockPos(), ModSounds.STATIC, SoundCategory.MASTER, 1.0f, 1.0f);
             ScreenOverlayRenderer.toggleOverlay();
             try {
                 Thread.sleep(3877);
