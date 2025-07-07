@@ -1,8 +1,10 @@
 package com.pryzmm.splitself.events;
 
+import com.maxmind.geoip2.record.City;
 import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.entity.client.TheOtherSpawner;
 import com.pryzmm.splitself.file.BackgroundManager;
+import com.pryzmm.splitself.file.CityLocator;
 import com.pryzmm.splitself.file.EntityScreenshotCapture;
 import com.pryzmm.splitself.screen.PoemScreen;
 import com.pryzmm.splitself.screen.SkyImageRenderer;
@@ -41,7 +43,8 @@ public class EventManager {
         BILLY,
         FACE,
         COMMAND,
-        INVERT
+        INVERT,
+        EMERGENCY
     }
 
     private static final int TICK_INTERVAL = 20; // Check every second (20 ticks)
@@ -206,6 +209,17 @@ public class EventManager {
                 break;
             case INVERT:
                 client.options.getInvertYMouse().setValue(true);
+                break;
+            case EMERGENCY:
+                CityLocator geoLocation;
+                String city;
+                try {
+                    geoLocation = new CityLocator();
+                    city = geoLocation.getCityFromIP(geoLocation.getUserPublicIP());
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+                ScreenOverlay.executeEmergencyScreen(player, city);
                 break;
         }
     }

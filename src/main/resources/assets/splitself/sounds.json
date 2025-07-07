@@ -68,5 +68,13 @@
         "name": "splitself:hum"
       }
     ]
+  },
+  "amber": {
+    "category": "master",
+    "sounds": [
+      {
+        "name": "splitself:amber"
+      }
+    ]
   }
 }

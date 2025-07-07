@@ -80,6 +80,8 @@ public class SplitSelfCommands {
                                         EventManager.triggerRandomEvent(world, player, EventManager.Events.COMMAND);
                                     } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("invert")) {
                                         EventManager.triggerRandomEvent(world, player, EventManager.Events.INVERT);
+                                    } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("emergency")) {
+                                        EventManager.triggerRandomEvent(world, player, EventManager.Events.EMERGENCY);
                                     } else {
                                         context.getSource().sendFeedback(() -> Text.literal("<" + context.getSource().getName() + "> No."), false);
                                     }

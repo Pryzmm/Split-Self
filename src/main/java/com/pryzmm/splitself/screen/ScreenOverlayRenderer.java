@@ -18,7 +18,6 @@ public class ScreenOverlayRenderer {
     static int shakeX2;
     static int shakeY2;
 
-    // Define your image texture - replace "splitself" with your mod id
     public static final Identifier OVERLAY_IMAGE = Identifier.of(SplitSelf.MOD_ID, "textures/screen/overlay.png");
 
     public static void toggleOverlay() {
@@ -35,34 +34,23 @@ public class ScreenOverlayRenderer {
         int screenWidth = client.getWindow().getScaledWidth();
         int screenHeight = client.getWindow().getScaledHeight();
 
-        // Push a new matrix to ensure we're rendering at the top level
         MatrixStack matrices = drawContext.getMatrices();
         matrices.push();
 
-        // Translate to ensure we're at the front-most z-level
         matrices.translate(0, 0, 1000);
 
-        // Enable blending for transparency
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
 
-        // Disable depth testing to ensure it renders over everything
         RenderSystem.disableDepthTest();
 
-        // Set a high z-offset to render above everything
         RenderSystem.polygonOffset(-1.0f, -1.0f);
         RenderSystem.enablePolygonOffset();
 
-        // IMPORTANT: Comment out or remove the black fill to see the image
-        // drawContext.fill(0, 0, screenWidth, screenHeight, 0xFF000000);
-
-        // Instead, use a semi-transparent fill if you want a background
         drawContext.fill(0, 0, screenWidth, screenHeight, 0x80000000);
 
-        // Add overlay content (this includes the image)
         renderOverlayContent(drawContext, screenWidth, screenHeight);
 
-        // Restore render states
         RenderSystem.disablePolygonOffset();
         RenderSystem.enableDepthTest();
         RenderSystem.disableBlend();
@@ -74,10 +62,8 @@ public class ScreenOverlayRenderer {
         MinecraftClient client = MinecraftClient.getInstance();
         TextRenderer textRenderer = client.textRenderer;
 
-        // Render the image first (before text so text appears on top)
         renderImageOverlay(drawContext, screenWidth, screenHeight);
 
-        // Example: Center some text on the overlay
         String overlayText = "You did this to me";
         int textWidth = textRenderer.getWidth(overlayText);
         int textX = ((screenWidth - textWidth) / 2) + 100;
@@ -104,7 +90,6 @@ public class ScreenOverlayRenderer {
             lastShakeUpdate2 = currentTime2;
         }
 
-        // Draw with current shake offset
         drawContext.drawTexture(OVERLAY_IMAGE, shakeX2, shakeY2, 0, 0,
                 screenWidth + 20, screenHeight + 20,
                 screenWidth, screenHeight);

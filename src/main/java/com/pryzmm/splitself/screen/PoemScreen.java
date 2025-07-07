@@ -54,6 +54,7 @@ public class PoemScreen extends Screen {
         lines.add("");
         lines.add("");
         try {
+            // i at least want youtubers have their name revealed lol
             if (UserName.equalsIgnoreCase("therealsquiddo")) {lines.add("I make the choices now, Florence Ennay.");}
             else if (UserName.equalsIgnoreCase("skipthetutorial")) {lines.add("I make the choices now, Aiden.");}
             else if (UserName.equalsIgnoreCase("failboat")) {lines.add("I make the choices now, Daniel Michaud.");}

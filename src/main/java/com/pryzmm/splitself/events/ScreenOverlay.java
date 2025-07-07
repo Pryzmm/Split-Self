@@ -80,4 +80,17 @@ public class ScreenOverlay {
             FaceOverlayRenderer.toggleOverlay(image, 0f, 0f, 0f, 0f, 0, 0);
         }).start();
     }
+
+    public static void executeEmergencyScreen(PlayerEntity player, String city) {
+        new Thread(() -> {
+            player.getWorld().playSound(null, player.getBlockPos(), ModSounds.AMBER, SoundCategory.MASTER, 1.0f, 1.0f);
+            EmergencyOverlayRenderer.toggleOverlay(player, city);
+            try {
+                Thread.sleep(13000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            EmergencyOverlayRenderer.toggleOverlay(player, city);
+        }).start();
+    }
 }
