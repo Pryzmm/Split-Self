@@ -3,8 +3,8 @@
 
 This mod can interact with your PC in multiple ways; this goes further into detail as to the changes made on your device. None of the changes or actions made to your device will damage it in any way. Every version of this mod will not do anything not mentioned outside of this list.
 
-[!IMPORTANT]
-As of the current update, some PC interaction events may not activate, or the mod may not run, due to different Operating Systems (OS). Please create an issue if you experience something abnormal because of this.
+> [!IMPORTANT]
+> As of the current update, some PC interaction events may not activate, or the mod may not run, due to different Operating Systems (OS). Please create an issue if you experience something abnormal because of this.
 
 > [!NOTE]
 > In the next update, PII Toggle will be a toggleable feature in the warning/information screen. This will hide any Personally Identifiable Information shown by the mod.
