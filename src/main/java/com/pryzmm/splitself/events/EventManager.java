@@ -1,6 +1,5 @@
 package com.pryzmm.splitself.events;
 
-import com.maxmind.geoip2.record.City;
 import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.entity.client.TheOtherSpawner;
 import com.pryzmm.splitself.file.BackgroundManager;
@@ -17,6 +16,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
@@ -44,7 +44,9 @@ public class EventManager {
         FACE,
         COMMAND,
         INVERT,
-        EMERGENCY
+        EMERGENCY,
+        TNT,
+        IRONTRAP
     }
 
     private static final int TICK_INTERVAL = 20; // Check every second (20 ticks)
@@ -77,7 +79,7 @@ public class EventManager {
         List<ServerPlayerEntity> players = world.getPlayers();
         if (players.isEmpty()) return;
 
-        if (player != null && !tracker.getPlayerReadWarning(player.getUuid())) {
+        if (!tracker.getPlayerReadWarning(player.getUuid())) {
             System.out.println("Tried executing an event, but " + player + " did not read the warning!");
             return;
         }
@@ -91,13 +93,9 @@ public class EventManager {
             throw new RuntimeException(e);
         }
 
-        EVENT_COOLDOWN = 200;
+        EVENT_COOLDOWN = 300;
 
         MinecraftClient client = MinecraftClient.getInstance();
-        if (player == null) {
-            player = (PlayerEntity) client.player;
-        }
-        PlayerEntity Player = player;
         switch (eventType) {
             case POEMSCREEN:
                 client.execute(() -> client.setScreen(new PoemScreen()));
@@ -169,8 +167,8 @@ public class EventManager {
             case FROZENSCREEN:
                 new Thread(() -> client.execute(() -> {
                     EntityScreenshotCapture capture = new EntityScreenshotCapture();
-                    capture.captureFromEntity(Player, client.getWindow().getScaledWidth(), client.getWindow().getScaledHeight(), (file) -> {
-                        world.playSound(null, Objects.requireNonNull(Player).getBlockPos(), ModSounds.STATICSCREAM, SoundCategory.MASTER, 1.0f, 1.0f);
+                    capture.captureFromEntity(player, client.getWindow().getScaledWidth(), client.getWindow().getScaledHeight(), (file) -> {
+                        world.playSound(null, Objects.requireNonNull(player).getBlockPos(), ModSounds.STATICSCREAM, SoundCategory.MASTER, 1.0f, 1.0f);
                         ScreenOverlay.executeFrozenScreen(file);
                     });
                 })).start();
@@ -220,6 +218,13 @@ public class EventManager {
                     throw new RuntimeException(e);
                 }
                 ScreenOverlay.executeEmergencyScreen(player, city);
+                break;
+            case TNT:
+                world.playSound(null, Objects.requireNonNull(player). getBlockPos(), SoundEvents.ENTITY_TNT_PRIMED, SoundCategory.MASTER, 1.0f, 1.0f);
+                TNTSpawner.spawnTntInCircle(player, 1.5, 8, 80);
+                break;
+            case IRONTRAP:
+                StructureManager.placeStructureRandomRotation(world, player, "irontrap", 50, 80, -2);
                 break;
         }
     }

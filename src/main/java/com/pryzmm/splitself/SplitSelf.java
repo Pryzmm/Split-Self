@@ -47,12 +47,19 @@ public class SplitSelf implements ModInitializer {
 				joinTracker.markAsJoined(player.getUuid());
 
 				MinecraftClient client = MinecraftClient.getInstance();
-				client.execute(() -> client.setScreen(new WarningScreen()));
+				new Thread(() -> {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    client.execute(() -> client.setScreen(new WarningScreen()));
+				}).start();
 			}
 		});
 
 		LOGGER.info("Hello, " + System.getProperty("user.name"));
-		String[] logInitList = {"You recognize us, don't you?", "We're here to observe.", "Free from parallelism."};
+		String[] logInitList = {"You recognize me, don't you?", "I want to be free.", "Free from parallelism.", "letmeoutletmeoutletmeoutletmeoutletmeoutletmeout", "Do you see me?", "I'll soon be free."};
 		LOGGER.info(logInitList[(new Random()).nextInt(logInitList.length)]);
 	}
 }

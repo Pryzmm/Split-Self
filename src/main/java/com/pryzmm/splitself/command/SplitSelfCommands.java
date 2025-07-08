@@ -4,6 +4,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.pryzmm.splitself.events.*;
 import com.pryzmm.splitself.screen.WarningScreen;
+import com.pryzmm.splitself.world.FirstJoinTracker;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.command.ServerCommandSource;
@@ -25,6 +26,10 @@ public class SplitSelfCommands {
                             String argument = StringArgumentType.getString(context, "text").toLowerCase();
                             if (argument.equalsIgnoreCase("information")) {
                                 client.execute(() -> client.setScreen(new WarningScreen()));
+                            } else if (argument.equalsIgnoreCase("debugToggleEvents")) {
+                                FirstJoinTracker tracker = FirstJoinTracker.getServerState(client.getServer());
+                                tracker.setPlayerReadWarning(client.player.getUuid(), !tracker.getPlayerReadWarning(client.player.getUuid()));
+                                context.getSource().sendFeedback(() -> Text.literal("<SplitSelfDebug> Set playerReadWarning to " + tracker.getPlayerReadWarning(client.player.getUuid())), false);
                             } else if (argument.equalsIgnoreCase("runevent")) {
                                 context.getSource().sendFeedback(() -> Text.literal("<" + context.getSource().getName() + "> No."), false);
                             } else if (argument.equalsIgnoreCase("control")) {
@@ -82,6 +87,10 @@ public class SplitSelfCommands {
                                         EventManager.triggerRandomEvent(world, player, EventManager.Events.INVERT);
                                     } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("emergency")) {
                                         EventManager.triggerRandomEvent(world, player, EventManager.Events.EMERGENCY);
+                                    } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("tnt")) {
+                                        EventManager.triggerRandomEvent(world, player, EventManager.Events.TNT);
+                                    } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("irontrap")) {
+                                        EventManager.triggerRandomEvent(world, player, EventManager.Events.IRONTRAP);
                                     } else {
                                         context.getSource().sendFeedback(() -> Text.literal("<" + context.getSource().getName() + "> No."), false);
                                     }

@@ -87,4 +87,9 @@ public class WarningScreen extends Screen {
     public boolean shouldPause() {
         return false;
     }
+
+    @Override
+    public boolean shouldCloseOnEsc() {
+        return false;
+    }
 }
