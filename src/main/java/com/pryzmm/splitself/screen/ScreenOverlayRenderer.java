@@ -75,7 +75,6 @@ public class ScreenOverlayRenderer {
             shakeY = -(int) (Math.random() * 200);
         }
 
-        // Draw text with shadow - using white color with full opacity
         drawContext.drawTextWithShadow(textRenderer, overlayText, textX+shakeX, textY+shakeY, 0xFFFFFF);
     }
 

@@ -13,21 +13,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(WorldRenderer.class)
 public class WorldRendererMixin {
 
-    // Inject at the very beginning of renderSky to set the fog color
     @Inject(method = "renderSky", at = @At("HEAD"))
     private void setFogSkyColorAtStart(CallbackInfo ci) {
-        float[] rgb = SkyColor.getFogRGBComponents(); // or getSkyRGBComponents()
-        if (rgb != null) { // Add this null check
+        float[] rgb = SkyColor.getFogRGBComponents();
+        if (rgb != null) {
             RenderSystem.setShaderFogColor(rgb[0], rgb[1], rgb[2]);
         }
     }
 
-
-    // Also inject right before the method ends to make sure it sticks
     @Inject(method = "renderSky", at = @At("TAIL"))
     private void setFogSkyColorAtEnd(CallbackInfo ci) {
-        float[] rgb = SkyColor.getFogRGBComponents(); // or getSkyRGBComponents()
-        if (rgb != null) { // Add this null check
+        float[] rgb = SkyColor.getFogRGBComponents();
+        if (rgb != null) {
             RenderSystem.setShaderFogColor(rgb[0], rgb[1], rgb[2]);
         }
     }

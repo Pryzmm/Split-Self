@@ -52,20 +52,16 @@ public class FrozenOverlayRenderer {
     }
 
     public static void renderOverlayContent(DrawContext drawContext, int imageWidth, int imageHeight, File image) {
-        // Enable blending for transparency
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
 
         RenderSystem.setShaderColor(1.0f, (float) (Math.random()/5), (float) (Math.random()/5), 1.0f);
 
-        // Get or load the texture identifier
         Identifier textureId = getOrLoadTexture(image);
         if (textureId != null) {
-            // Draw with shake offset
             drawContext.drawTexture(textureId, 0, 0, 0, 0, imageWidth, imageHeight, imageWidth, imageHeight);
         }
 
-        // Reset shader color
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
         RenderSystem.disableBlend();
     }
@@ -73,39 +69,30 @@ public class FrozenOverlayRenderer {
     public static Identifier getOrLoadTexture(File file) {
         String filePath = file.getAbsolutePath();
 
-        // Check if we've already loaded this texture
         if (loadedTextures.containsKey(filePath)) {
             return loadedTextures.get(filePath);
         }
 
         try {
-            // Load the image file
             FileInputStream fileInputStream = new FileInputStream(file);
             NativeImage nativeImage = NativeImage.read(fileInputStream);
             fileInputStream.close();
 
-            // Create a texture from the image
             NativeImageBackedTexture texture = new NativeImageBackedTexture(nativeImage);
 
-            // Generate a safe identifier
             String filename = file.getName();
             String nameWithoutExtension = filename.replaceAll("\\.[^.]*$", "");
             String cleanName = nameWithoutExtension.toLowerCase()
                     .replaceAll("[^a-z0-9._-]", "_");
-
-            // Ensure it doesn't start with invalid characters
             if (!cleanName.matches("^[a-z0-9_].*")) {
                 cleanName = "dynamic_" + cleanName;
             }
 
-            // Create unique identifier to avoid conflicts
             String uniqueName = "dynamic/" + cleanName + "_" + System.currentTimeMillis();
             Identifier textureId = Identifier.of(SplitSelf.MOD_ID, uniqueName);
 
-            // Register the texture with Minecraft's texture manager
             MinecraftClient.getInstance().getTextureManager().registerTexture(textureId, texture);
 
-            // Cache the identifier
             loadedTextures.put(filePath, textureId);
 
             return textureId;

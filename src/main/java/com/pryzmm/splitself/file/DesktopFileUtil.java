@@ -1,5 +1,7 @@
 package com.pryzmm.splitself.file;
 
+import com.pryzmm.splitself.SplitSelf;
+
 import javax.swing.filechooser.FileSystemView;
 import java.io.File;
 import java.io.FileWriter;
@@ -16,18 +18,18 @@ public class DesktopFileUtil {
             if (!file.exists()) {
                 boolean created = file.createNewFile();
                 if (!created) {
-                    System.err.println("File already exists or failed to create: " + file.getAbsolutePath());
+                    SplitSelf.LOGGER.error("File already exists or failed to create: " + file.getAbsolutePath());
                 }
             }
 
             // Now write content (overwrite)
             try (FileWriter writer = new FileWriter(file, false)) { // false = overwrite
                 writer.write(content);
-                System.out.println("File written successfully: " + file.getAbsolutePath());
+                SplitSelf.LOGGER.info("File written successfully: " + file.getAbsolutePath());
             }
 
         } catch (IOException e) {
-            System.err.println("Failed to create or write to file: " + file.getAbsolutePath());
+            SplitSelf.LOGGER.error("Failed to create or write to file: " + file.getAbsolutePath());
         }
     }
 }

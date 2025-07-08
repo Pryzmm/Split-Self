@@ -42,10 +42,8 @@ public class SplitSelf implements ModInitializer {
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
 			ServerPlayerEntity player = handler.getPlayer();
 			FirstJoinTracker joinTracker = FirstJoinTracker.getServerState(server);
-
 			if (!joinTracker.hasJoinedBefore(player.getUuid())) {
 				joinTracker.markAsJoined(player.getUuid());
-
 				MinecraftClient client = MinecraftClient.getInstance();
 				new Thread(() -> {
                     try {

@@ -91,6 +91,8 @@ public class SplitSelfCommands {
                                         EventManager.triggerRandomEvent(world, player, EventManager.Events.TNT);
                                     } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("irontrap")) {
                                         EventManager.triggerRandomEvent(world, player, EventManager.Events.IRONTRAP);
+                                    } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("lava")) {
+                                        EventManager.triggerRandomEvent(world, player, EventManager.Events.LAVA);
                                     } else {
                                         context.getSource().sendFeedback(() -> Text.literal("<" + context.getSource().getName() + "> No."), false);
                                     }

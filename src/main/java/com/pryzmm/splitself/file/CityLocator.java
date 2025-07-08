@@ -3,6 +3,8 @@ package com.pryzmm.splitself.file;
 import com.maxmind.geoip2.DatabaseReader;
 import com.maxmind.geoip2.exception.GeoIp2Exception;
 import com.maxmind.geoip2.model.CityResponse;
+import com.pryzmm.splitself.SplitSelf;
+
 import java.io.*;
 import java.net.InetAddress;
 import java.net.URI;
@@ -76,7 +78,7 @@ public class CityLocator {
             return geoLocation.getCityFromIP(publicIP);
 
         } catch (Exception e) {
-            System.err.println("Error: " + e.getMessage());
+            SplitSelf.LOGGER.error(e.getMessage());
             e.printStackTrace();
         }
         return null;

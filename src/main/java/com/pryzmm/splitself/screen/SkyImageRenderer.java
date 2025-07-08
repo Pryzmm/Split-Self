@@ -24,11 +24,9 @@ public class SkyImageRenderer {
     private static float ImageX = 4;
     private static float ImageY = 6;
 
-    // Store the relative position of the image for accurate gaze detection
     private static final Vector3f IMAGE_RELATIVE_POS = new Vector3f(10, 50, -100);
 
     public static void register() {
-        // Use AFTER_TRANSLUCENT instead of LAST to render with proper depth testing
         WorldRenderEvents.AFTER_TRANSLUCENT.register(SkyImageRenderer::renderSkyImage);
     }
 
@@ -43,24 +41,17 @@ public class SkyImageRenderer {
         if (!ToggledTexture) return;
         if (client.world == null || client.player == null) return;
 
-        // Create simple matrix stack
         MatrixStack matrices = getMatrixStack();
 
-        // Set up rendering with proper depth testing
         RenderSystem.enableBlend();
         RenderSystem.blendFunc(770, 771); // GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA
-
-        // Keep depth testing enabled so blocks can occlude the image
-        // RenderSystem.disableDepthTest(); // REMOVED - this was causing pass-through
 
         RenderSystem.setShader(GameRenderer::getPositionTexProgram);
         RenderSystem.setShaderTexture(0, FACE_IMAGE_TEXTURE);
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
 
-        // Get matrix
         Matrix4f matrix = matrices.peek().getPositionMatrix();
 
-        // Simple quad
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE);
 
@@ -83,9 +74,6 @@ public class SkyImageRenderer {
                 })).start();
             }
         }
-
-        // Cleanup - restore render state
-        // RenderSystem.enableDepthTest(); // Not needed since we never disabled it
         RenderSystem.disableBlend();
 
         matrices.pop();
@@ -95,8 +83,6 @@ public class SkyImageRenderer {
         MatrixStack matrices = new MatrixStack();
         matrices.push();
 
-        // Don't translate relative to world position - stay at camera origin
-        // This creates a skybox effect where the image doesn't move with the player
         matrices.translate(IMAGE_RELATIVE_POS.x, IMAGE_RELATIVE_POS.y, IMAGE_RELATIVE_POS.z);
         matrices.scale(ImageX, ImageY, 1);
 
@@ -106,20 +92,10 @@ public class SkyImageRenderer {
     private static boolean isPlayerLookingAtImage(WorldRenderContext context) {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client.player == null) return false;
-
-        // Get player's look direction
         Vec3d playerLook = client.player.getRotationVec(context.tickCounter().getTickDelta(true));
-
-        // The image direction is simply the normalized relative position since it's rendered relative to camera
         Vec3d imageDirection = new Vec3d(IMAGE_RELATIVE_POS.x, IMAGE_RELATIVE_POS.y, IMAGE_RELATIVE_POS.z).normalize();
-
-        // Calculate dot product (cosine of angle between vectors)
         double dotProduct = playerLook.dotProduct(imageDirection);
-
-        // Convert to angle in degrees
         double angleInDegrees = Math.toDegrees(Math.acos(Math.max(-1.0, Math.min(1.0, dotProduct))));
-
-        // Consider "looking at" if within 4 degrees
         return angleInDegrees < 4.0;
     }
 }

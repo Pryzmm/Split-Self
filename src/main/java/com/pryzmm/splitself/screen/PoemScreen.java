@@ -72,7 +72,7 @@ public class PoemScreen extends Screen {
             Text lineText = Text.literal(line);
             int x = (this.width - this.textRenderer.getWidth(lineText)) / 2;
             context.drawTextWithShadow(this.textRenderer, lineText, x, y, 0xFFFFFF);
-            y += 12; // Increase Y for next line (12 pixels between lines)
+            y += 12;
 
         }
     }

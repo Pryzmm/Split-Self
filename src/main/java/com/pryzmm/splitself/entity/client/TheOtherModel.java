@@ -1,4 +1,3 @@
-// TheOtherModel.java
 package com.pryzmm.splitself.entity.client;
 
 import com.pryzmm.splitself.SplitSelf;

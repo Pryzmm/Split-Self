@@ -9,6 +9,7 @@ import com.pryzmm.splitself.screen.PoemScreen;
 import com.pryzmm.splitself.screen.SkyImageRenderer;
 import com.pryzmm.splitself.sound.ModSounds;
 import com.pryzmm.splitself.world.FirstJoinTracker;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
@@ -19,7 +20,9 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.math.BlockPos;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
@@ -46,11 +49,12 @@ public class EventManager {
         INVERT,
         EMERGENCY,
         TNT,
-        IRONTRAP
+        IRONTRAP,
+        LAVA
     }
 
-    private static final int TICK_INTERVAL = 20; // Check every second (20 ticks)
-    private static final double EVENT_CHANCE = 0.01; // 1% chance per check
+    private static final int TICK_INTERVAL = 20;
+    private static final double EVENT_CHANCE = 0.01;
     private static int EVENT_COOLDOWN = 0;
 
     private static FirstJoinTracker tracker;
@@ -71,7 +75,7 @@ public class EventManager {
         }
 
         if (world.getRandom().nextDouble() < EVENT_CHANCE) {
-            triggerRandomEvent(world, null, null);
+            triggerRandomEvent(world, world.getRandomAlivePlayer(), null);
         }
     }
 
@@ -79,9 +83,11 @@ public class EventManager {
         List<ServerPlayerEntity> players = world.getPlayers();
         if (players.isEmpty()) return;
 
-        if (!tracker.getPlayerReadWarning(player.getUuid())) {
-            System.out.println("Tried executing an event, but " + player + " did not read the warning!");
-            return;
+        if (player != null) {
+            if (!tracker.getPlayerReadWarning(player.getUuid())) {
+                SplitSelf.LOGGER.warn("Tried executing an event, but " + player + " did not read the warning!");
+                return;
+            }
         }
 
         Events eventType;
@@ -198,11 +204,43 @@ public class EventManager {
             case FACE:
                 SkyImageRenderer.toggleTexture();
                 break;
-            case COMMAND:
-                if (net.minecraft.util.Util.getOperatingSystem().toString().toLowerCase().contains("win")) {
-                    net.minecraft.util.Util.getOperatingSystem().open("C:/Windows/System32/conhost.exe");
+            case COMMAND: // Thanks, Evelyn <3
+                String os = net.minecraft.util.Util.getOperatingSystem().toString().toLowerCase();
+                if (os.contains("win")) {
+                    try{
+                        new ProcessBuilder("cmd", "/c", "start").start();
+                    } catch (IOException e) {
+                        SplitSelf.LOGGER.warn("Cannot open CMD.");
+                        break;
+                    }
+                } else if (os.contains("mac")) {
+                    try {
+                        new ProcessBuilder("open", "-a", "terminal").start();
+                    } catch (IOException e) {
+                        SplitSelf.LOGGER.warn("Cannot open terminal.");
+                        break;
+                    }
+                } else if (os.contains("nux") || os.contains("nix")){
+                    String[] terminals = {
+                            "x-terminal-emulator", "gnome-terminal", "konsole",
+                            "xfce4-terminal",  "xterm", "lxterminal", "mate-terminal",
+                            "alacritty", "tilix"
+                    };
+                    boolean opened = false;
+                    for (String term : terminals) {
+                        try {
+                            new ProcessBuilder(term).start();
+                            opened = true;
+                            break;
+                        } catch (IOException ignored) {
+                        }
+                    }
+
+                    if (!opened) {
+                        SplitSelf.LOGGER.warn("Could not find a terminal emulator for linux.");
+                    }
                 } else {
-                    SplitSelf.LOGGER.warn("Could not open cmd prompt, OS:" + net.minecraft.util.Util.getOperatingSystem().toString().toLowerCase());
+                    SplitSelf.LOGGER.warn("Unsupported OS for term: {}", os);
                 }
                 break;
             case INVERT:
@@ -225,6 +263,10 @@ public class EventManager {
                 break;
             case IRONTRAP:
                 StructureManager.placeStructureRandomRotation(world, player, "irontrap", 50, 80, -2);
+                break;
+            case LAVA:
+                BlockPos pos = new BlockPos((int) player.getPos().x, 250, (int) player.getPos().z);
+                player.getWorld().setBlockState(pos, Blocks.LAVA.getDefaultState());
                 break;
         }
     }

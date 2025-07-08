@@ -22,7 +22,6 @@ import java.util.Random;
 
 public class StructureManager {
 
-    // Load structure with random rotation
     public static void placeStructureRandomRotation(ServerWorld world, PlayerEntity Player, String structureName, Integer MinimumRange, Integer MaximumRange, Integer YOffset) {
         try {
 
@@ -52,12 +51,11 @@ public class StructureManager {
             loadAndPlaceFromResource(world, finalSpawnPos, structureName, rotation);
 
         } catch (Exception e) {
-            System.out.println("Error placing structure with rotation: " + e.getMessage());
+            SplitSelf.LOGGER.info("Error placing structure with rotation: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    // Helper method to place a template
     private static boolean placeTemplate(ServerWorld world, BlockPos pos, StructureTemplate template, BlockRotation rotation) {
         StructurePlacementData placementData = new StructurePlacementData()
                 .setRotation(rotation)
@@ -70,7 +68,6 @@ public class StructureManager {
         return result;
     }
 
-    // Load structure directly from resource file
     private static boolean loadAndPlaceFromResource(ServerWorld world, BlockPos pos, String structureName, BlockRotation rotation) {
         try {
             String resourcePath = "/data/" + SplitSelf.MOD_ID + "/structures/" + structureName + ".nbt";
@@ -80,15 +77,12 @@ public class StructureManager {
                 return false;
             }
 
-            // Read NBT data
             NbtCompound nbtCompound = NbtIo.readCompressed(inputStream, NbtSizeTracker.ofUnlimitedBytes());
             inputStream.close();
 
-            // Create structure template from NBT
             StructureTemplate template = new StructureTemplate();
             template.readNbt(world.getRegistryManager().getWrapperOrThrow(RegistryKeys.BLOCK), nbtCompound);
 
-            // Place the structure
             return placeTemplate(world, pos, template, rotation);
 
         } catch (Exception e) {

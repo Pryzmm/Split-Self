@@ -1,4 +1,3 @@
-// TheOtherEntity.java
 package com.pryzmm.splitself.entity.custom;
 
 import com.pryzmm.splitself.events.ScreenOverlay;

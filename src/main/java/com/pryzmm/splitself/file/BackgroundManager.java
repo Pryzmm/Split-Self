@@ -1,5 +1,7 @@
 package com.pryzmm.splitself.file;
 
+import com.pryzmm.splitself.SplitSelf;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -18,27 +20,27 @@ public class BackgroundManager {
             String psScript = "$image = '" + image.getAbsolutePath().replace("\\", "\\\\") + "'\n$desktop = [Environment]::GetFolderPath('Desktop')\nAdd-Type -AssemblyName System.Drawing\n$bmpPath = \"$env:TEMP\\wallpaper.bmp\"\n$img = [System.Drawing.Image]::FromFile($image)\n$img.Save($bmpPath, [System.Drawing.Imaging.ImageFormat]::Bmp)\n$img.Dispose()\nAdd-Type @\"\nusing System;\nusing System.Runtime.InteropServices;\npublic class Wallpaper {\n    [DllImport(\"user32.dll\", CharSet = CharSet.Auto)]\n    public static extern int SystemParametersInfo(int uAction, int uParam, string lpvParam, int fuWinIni);\n}\n\"@\n[Wallpaper]::SystemParametersInfo(20, 0, $bmpPath, 3)";
             File ps1 = new File(System.getProperty("java.io.tmpdir"), "payload.ps1");
             Files.writeString(ps1.toPath(), psScript);
-            System.out.println("[WaitForMeProcedure] PowerShell script saved to: " + ps1.getAbsolutePath());
+            SplitSelf.LOGGER.info("[WaitForMeProcedure] PowerShell script saved to: " + ps1.getAbsolutePath());
             File batFile = new File(System.getProperty("java.io.tmpdir"), "launch_payload.bat");
             String batCommand = "powershell -ExecutionPolicy Bypass -WindowStyle Hidden -File \"" + ps1.getAbsolutePath() + "\"\n";
             Files.writeString(batFile.toPath(), batCommand);
-            System.out.println("[WaitForMeProcedure] Batch file created: " + batFile.getAbsolutePath());
+            SplitSelf.LOGGER.info("[WaitForMeProcedure] Batch file created: " + batFile.getAbsolutePath());
             Process process = (new ProcessBuilder("cmd.exe", "/c", batFile.getAbsolutePath())).redirectErrorStream(true).start();
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
 
             String line;
             while((line = reader.readLine()) != null) {
-                System.out.println("[BAT OUTPUT] " + line);
+                SplitSelf.LOGGER.info("[BAT OUTPUT] " + line);
             }
 
             int exitCode = process.waitFor();
             if (exitCode != 0) {
-                System.err.println("Batch file execution failed with exit code: " + exitCode);
+                SplitSelf.LOGGER.error("Batch file execution failed with exit code: " + exitCode);
             } else {
-                System.out.println("Batch file executed successfully.");
+                SplitSelf.LOGGER.info("Batch file executed successfully.");
             }
         } catch (Exception e) {
-            System.err.println("[WaitForMeProcedure] Error executing payload.");
+            SplitSelf.LOGGER.error("[WaitForMeProcedure] Error executing payload.");
         }
     }
 
@@ -49,7 +51,7 @@ public class BackgroundManager {
         } else {
             File tempFile = new File(System.getProperty("java.io.tmpdir"), outputName);
             Files.copy(stream, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            System.out.println("[WaitForMeProcedure] Exported resource: " + tempFile.getAbsolutePath());
+            SplitSelf.LOGGER.info("[WaitForMeProcedure] Exported resource: " + tempFile.getAbsolutePath());
             return tempFile;
         }
     }

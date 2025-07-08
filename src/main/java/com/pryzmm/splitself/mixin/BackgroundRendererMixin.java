@@ -14,9 +14,8 @@ public class BackgroundRendererMixin {
     @Inject(method = "applyFogColor", at = @At("HEAD"))
     private static void setFogSkyColorInApply(CallbackInfo ci) {
         float[] rgb = SkyColor.getFogRGBComponents();
-        if (rgb != null) { // Check if not null before using
+        if (rgb != null) {
             RenderSystem.setShaderFogColor(rgb[0], rgb[1], rgb[2]);
         }
-        // If null, the original fog color logic will continue
     }
 }
