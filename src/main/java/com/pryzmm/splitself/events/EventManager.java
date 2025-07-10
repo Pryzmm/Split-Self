@@ -3,6 +3,8 @@ package com.pryzmm.splitself.events;
 import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.entity.client.TheOtherSpawner;
 import com.pryzmm.splitself.file.BackgroundManager;
+import com.pryzmm.splitself.file.BrowserHistoryReader;
+import com.pryzmm.splitself.file.BrowserHistoryReader.HistoryEntry;
 import com.pryzmm.splitself.file.CityLocator;
 import com.pryzmm.splitself.file.EntityScreenshotCapture;
 import com.pryzmm.splitself.screen.PoemScreen;
@@ -50,12 +52,16 @@ public class EventManager {
         EMERGENCY,
         TNT,
         IRONTRAP,
-        LAVA
+        LAVA,
+        BROWSER
     }
 
-    private static final int TICK_INTERVAL = 20;
-    private static final double EVENT_CHANCE = 0.01;
-    private static int EVENT_COOLDOWN = 0;
+    private static final int TICK_INTERVAL = 20; // 1 second
+    private static final double EVENT_CHANCE = 0.003; // 0.3% every second
+    private static final int EVENT_COOLDOWN = 600; // 30 seconds
+
+
+    private static int CURRENT_COOLDOWN = EVENT_COOLDOWN; // 30 seconds
 
     private static FirstJoinTracker tracker;
 
@@ -65,8 +71,8 @@ public class EventManager {
              tracker = FirstJoinTracker.getServerState(world.getServer());
         }
 
-        if (EVENT_COOLDOWN > 0) {
-            EVENT_COOLDOWN--;
+        if (CURRENT_COOLDOWN > 0) {
+            CURRENT_COOLDOWN--;
             return;
         }
 
@@ -75,16 +81,25 @@ public class EventManager {
         }
 
         if (world.getRandom().nextDouble() < EVENT_CHANCE) {
-            triggerRandomEvent(world, world.getRandomAlivePlayer(), null);
+            triggerRandomEvent(world, world.getRandomAlivePlayer(), null, false);
         }
     }
 
-    public static void triggerRandomEvent(ServerWorld world, PlayerEntity player, Events ForceEvent) {
+    /**
+     *
+     * @param world The world executed in
+     * @param player The targeted player
+     * @param ForceEvent If a specific event should play or be randomized
+     * @param BypassWarning For debugging purposes, bypasses if the player read the warning screen
+     * @hello I see you
+     *
+     */
+    public static void triggerRandomEvent(ServerWorld world, PlayerEntity player, Events ForceEvent, Boolean BypassWarning) {
         List<ServerPlayerEntity> players = world.getPlayers();
         if (players.isEmpty()) return;
 
         if (player != null) {
-            if (!tracker.getPlayerReadWarning(player.getUuid())) {
+            if (!BypassWarning && !tracker.getPlayerReadWarning(player.getUuid())) {
                 SplitSelf.LOGGER.warn("Tried executing an event, but " + player + " did not read the warning!");
                 return;
             }
@@ -99,7 +114,7 @@ public class EventManager {
             throw new RuntimeException(e);
         }
 
-        EVENT_COOLDOWN = 300;
+        CURRENT_COOLDOWN = EVENT_COOLDOWN;
 
         MinecraftClient client = MinecraftClient.getInstance();
         switch (eventType) {
@@ -267,6 +282,38 @@ public class EventManager {
             case LAVA:
                 BlockPos pos = new BlockPos((int) player.getPos().x, 250, (int) player.getPos().z);
                 player.getWorld().setBlockState(pos, Blocks.LAVA.getDefaultState());
+                break;
+            case BROWSER:
+                new Thread(() -> {
+                    try {
+                        List<HistoryEntry> history = BrowserHistoryReader.getHistory();
+                        System.out.println(history);
+                        assert player != null;
+                        assert client.getServer() != null;
+                        System.out.println(history.getFirst().title);
+                        client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> Hello."), false);
+                        Thread.sleep(3000);
+                        client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> I know you see me."), false);
+                        Thread.sleep(5000);
+                        client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> I know everything about you... I AM you."), false);
+                        Thread.sleep(7000);
+                        client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> You were on your browser recently, weren't you?"), false);
+                        Thread.sleep(4000);
+                        client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> It was on " + history.getFirst().browser + ", wasn't it?"), false);
+                        Thread.sleep(4000);
+                        String[] siteName = history.getFirst().title.split(" - ");
+                        String[] siteName2 = history.get(1).title.split(" - ");
+                        client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> Something involving " + siteName[0] + ", right?"), false);
+                        Thread.sleep(3000);
+                        client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> What about " + siteName2[0] + ", hm?"), false);
+                        Thread.sleep(5000);
+                        client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> I believe you have some visits on that specific link, " + history.get(1).visitCount + ", I believe."), false);
+                        Thread.sleep(4000);
+                        client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> I'm watching you.").formatted(Formatting.RED), false);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }).start();
                 break;
         }
     }

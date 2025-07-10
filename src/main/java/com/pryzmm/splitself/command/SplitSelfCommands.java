@@ -50,49 +50,51 @@ public class SplitSelfCommands {
                                     ServerWorld world = (ServerWorld) context.getSource().getWorld();
                                     PlayerEntity player = (PlayerEntity) context.getSource().getPlayer();
                                     if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("poemscreen")) {
-                                        EventManager.triggerRandomEvent(world, player, EventManager.Events.POEMSCREEN);
+                                        EventManager.triggerRandomEvent(world, player, EventManager.Events.POEMSCREEN, true);
                                     } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("spawntheother")) {
-                                        EventManager.triggerRandomEvent(world, player, EventManager.Events.SPAWNTHEOTHER);
+                                        EventManager.triggerRandomEvent(world, player, EventManager.Events.SPAWNTHEOTHER, true);
                                     } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("doyouseeme")) {
-                                        EventManager.triggerRandomEvent(world, player, EventManager.Events.DOYOUSEEME);
+                                        EventManager.triggerRandomEvent(world, player, EventManager.Events.DOYOUSEEME, true);
                                     } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("undergroundmining")) {
-                                        EventManager.triggerRandomEvent(world, player, EventManager.Events.UNDERGROUNDMINING);
+                                        EventManager.triggerRandomEvent(world, player, EventManager.Events.UNDERGROUNDMINING, true);
                                     } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("redsky")) {
-                                        EventManager.triggerRandomEvent(world, player, EventManager.Events.REDSKY);
+                                        EventManager.triggerRandomEvent(world, player, EventManager.Events.REDSKY, true);
                                     } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("notepad")) {
-                                        EventManager.triggerRandomEvent(world, player, EventManager.Events.NOTEPAD);
+                                        EventManager.triggerRandomEvent(world, player, EventManager.Events.NOTEPAD, true);
                                     } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("screenoverlay")) {
-                                        EventManager.triggerRandomEvent(world, player, EventManager.Events.SCREENOVERLAY);
+                                        EventManager.triggerRandomEvent(world, player, EventManager.Events.SCREENOVERLAY, true);
                                     } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("whitescreenoverlay")) {
-                                        EventManager.triggerRandomEvent(world, player, EventManager.Events.WHITESCREENOVERLAY);
+                                        EventManager.triggerRandomEvent(world, player, EventManager.Events.WHITESCREENOVERLAY, true);
                                     } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("inventoryoverlay")) {
-                                        EventManager.triggerRandomEvent(world, player, EventManager.Events.INVENTORYOVERLAY);
+                                        EventManager.triggerRandomEvent(world, player, EventManager.Events.INVENTORYOVERLAY, true);
                                     } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("theotherscreenshot")) {
-                                        EventManager.triggerRandomEvent(world, player, EventManager.Events.THEOTHERSCREENSHOT);
+                                        EventManager.triggerRandomEvent(world, player, EventManager.Events.THEOTHERSCREENSHOT, true);
                                     } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("destroychunk")) {
-                                        EventManager.triggerRandomEvent(world, player, EventManager.Events.DESTROYCHUNK);
+                                        EventManager.triggerRandomEvent(world, player, EventManager.Events.DESTROYCHUNK, true);
                                     } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("frozenscreen")) {
-                                        EventManager.triggerRandomEvent(world, player, EventManager.Events.FROZENSCREEN);
+                                        EventManager.triggerRandomEvent(world, player, EventManager.Events.FROZENSCREEN, true);
                                     } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("house")) {
-                                        EventManager.triggerRandomEvent(world, player, EventManager.Events.HOUSE);
+                                        EventManager.triggerRandomEvent(world, player, EventManager.Events.HOUSE, true);
                                     } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("bedrockpillar")) {
-                                        EventManager.triggerRandomEvent(world, player, EventManager.Events.BEDROCKPILLAR);
+                                        EventManager.triggerRandomEvent(world, player, EventManager.Events.BEDROCKPILLAR, true);
                                     } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("billy")) {
-                                        EventManager.triggerRandomEvent(world, player, EventManager.Events.BILLY);
+                                        EventManager.triggerRandomEvent(world, player, EventManager.Events.BILLY, true);
                                     } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("face")) {
-                                        EventManager.triggerRandomEvent(world, player, EventManager.Events.FACE);
+                                        EventManager.triggerRandomEvent(world, player, EventManager.Events.FACE, true);
                                     } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("command")) {
-                                        EventManager.triggerRandomEvent(world, player, EventManager.Events.COMMAND);
+                                        EventManager.triggerRandomEvent(world, player, EventManager.Events.COMMAND, true);
                                     } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("invert")) {
-                                        EventManager.triggerRandomEvent(world, player, EventManager.Events.INVERT);
+                                        EventManager.triggerRandomEvent(world, player, EventManager.Events.INVERT, true);
                                     } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("emergency")) {
-                                        EventManager.triggerRandomEvent(world, player, EventManager.Events.EMERGENCY);
+                                        EventManager.triggerRandomEvent(world, player, EventManager.Events.EMERGENCY, true);
                                     } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("tnt")) {
-                                        EventManager.triggerRandomEvent(world, player, EventManager.Events.TNT);
+                                        EventManager.triggerRandomEvent(world, player, EventManager.Events.TNT, true);
                                     } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("irontrap")) {
-                                        EventManager.triggerRandomEvent(world, player, EventManager.Events.IRONTRAP);
+                                        EventManager.triggerRandomEvent(world, player, EventManager.Events.IRONTRAP, true);
                                     } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("lava")) {
-                                        EventManager.triggerRandomEvent(world, player, EventManager.Events.LAVA);
+                                        EventManager.triggerRandomEvent(world, player, EventManager.Events.LAVA, true);
+                                    } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("browser")) {
+                                        EventManager.triggerRandomEvent(world, player, EventManager.Events.BROWSER, true);
                                     } else {
                                         context.getSource().sendFeedback(() -> Text.literal("<" + context.getSource().getName() + "> No."), false);
                                     }
