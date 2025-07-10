@@ -66,7 +66,7 @@ public class WarningScreen extends Screen {
                 Text.literal("This mod is a horror game, and will break your world."),
                 Text.literal("Your PC will be interacted with outside of the game."),
                 Text.literal("All changes applied to your device are easy to be reverted."),
-                Text.literal("If you do not want PC interaction, download the safe version off my Github.").formatted(Formatting.YELLOW),
+                Text.literal("No 'safe' version exists for this version.").formatted(Formatting.YELLOW),
                 Text.literal(""),
                 Text.literal("Personally Identifiable Information about you may be shown at any given time.").formatted(Formatting.RED),
                 Text.literal("This can be changed any time with '/SplitSelf Information'").formatted(Formatting.GRAY),
