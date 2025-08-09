@@ -7,7 +7,7 @@ This mod can interact with your PC in multiple ways; this goes further into deta
 > As of the current update, some PC interaction events may not activate, or the mod may not run, due to different Operating Systems (OS). Please create an issue if you experience something abnormal because of this.
 
 > [!NOTE]
-> In the next update, PII Toggle will be a toggleable feature in the warning/information screen. This will hide any Personally Identifiable Information shown by the mod.
+> Personally Identifiable Information (PII) can and will be shown to you through this mod. If you wish for this information to be hidden, you can toggle it off by the warning screen shown when you first join a world. You can also do `/splitself information` to show the warning screen again, and toggle it off from there. PII is toggled OFF by default.
 
 You are highly encouraged to play without reading this, as it may ruin the experience. But if you worry that damage may be done, well, it is open source after all. :D
 
@@ -21,3 +21,5 @@ With all that being said, here are the events that interact with your computer i
 - The 'Command' event will open the system's command prompt, but it doesn't execute anything and is meant to merely scare the player
 - For some events, the mod will sometimes read the user's system name out to them
   - For some Youtubers, the mod will instead call them by their public name, or a variant of their name
+- The 'Browser' event reveals personal browser history across Firefox, Google, and Opera GX
+- The 'Emergency' event will reveal your city via GeoIP. VPNs will counteract this.
