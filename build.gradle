@@ -12,8 +12,8 @@ base {
 
 repositories {
 	maven {
-		name = "FzzyMaven"
-		url = "https://maven.fzzyhmstrs.me/"
+		name 'Xander Maven'
+		url 'https://maven.isxander.dev/releases'
 	}
 
 	maven {
@@ -41,7 +41,7 @@ dependencies {
 	include 'com.maxmind.db:maxmind-db:3.0.0'
 
 	modImplementation "com.terraformersmc:modmenu:${project.mod_menu_version}"
-	modImplementation "me.fzzyhmstrs:fzzy_config:${project.fzzyConfigVersion}"
+	modImplementation "dev.isxander:yet-another-config-lib:${project.yaclConfigVersion}"
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"

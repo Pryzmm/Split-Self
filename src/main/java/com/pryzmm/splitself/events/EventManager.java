@@ -1,6 +1,7 @@
 package com.pryzmm.splitself.events;
 
 import com.pryzmm.splitself.SplitSelf;
+import com.pryzmm.splitself.config.SplitSelfConfig;
 import com.pryzmm.splitself.entity.client.TheOtherSpawner;
 import com.pryzmm.splitself.file.BackgroundManager;
 import com.pryzmm.splitself.file.BrowserHistoryReader;
@@ -61,24 +62,31 @@ public class EventManager {
         KICK
     }
 
-    private static final int TICK_INTERVAL = SplitSelf.CONFIG.eventTickInterval.get();
-    private static final double EVENT_CHANCE = SplitSelf.CONFIG.eventChance.get();
-    private static final int EVENT_COOLDOWN = SplitSelf.CONFIG.eventCooldown.get();
-    private static final int START_AFTER = SplitSelf.CONFIG.startEventsAfter.get();
-    private static final boolean EVENTS_ENABLED = SplitSelf.CONFIG.eventsEnabled.get();
-
-    private static int CURRENT_COOLDOWN = EVENT_COOLDOWN;
-
+    private static int CURRENT_COOLDOWN = 0;
     private static FirstJoinTracker tracker;
 
     public static void onTick(MinecraftServer server) {
-        if (!EVENTS_ENABLED) {return;}
+        SplitSelfConfig config = SplitSelfConfig.getInstance();
+        int TICK_INTERVAL = config.getEventTickInterval();
+        double EVENT_CHANCE = config.getEventChance();
+        int EVENT_COOLDOWN = config.getEventCooldown();
+        int START_AFTER = config.getStartEventsAfter();
+        boolean EVENTS_ENABLED = config.isEventsEnabled();
+
+        if (!EVENTS_ENABLED) {
+            return;
+        }
+
         Random random = new Random();
         ServerPlayerEntity player;
         try {
             player = server.getPlayerManager().getPlayerList().get(random.nextInt(server.getPlayerManager().getPlayerList().toArray().length));
-        } catch (Exception e) {return;}
+        } catch (Exception e) {
+            return;
+        }
+
         ServerWorld world = player.getServerWorld();
+
         if (world.getTime() == START_AFTER) {
             for (ServerPlayerEntity serverPlayer : server.getPlayerManager().getPlayerList()) {
                 serverPlayer.sendMessageToClient(Text.literal(serverPlayer.getName().getString() + " left the confines of this world"), false);
@@ -87,22 +95,29 @@ public class EventManager {
             if (tracker == null) {
                 tracker = FirstJoinTracker.getServerState(world.getServer());
             }
+
             if (CURRENT_COOLDOWN > 0) {
                 CURRENT_COOLDOWN--;
                 return;
             }
+
             if (world.getTime() % TICK_INTERVAL != 0) {
                 return;
             }
+
             if (world.getRandom().nextDouble() < EVENT_CHANCE) {
                 triggerRandomEvent(world, world.getRandomAlivePlayer(), null, false);
+                CURRENT_COOLDOWN = SplitSelfConfig.getInstance().getEventCooldown();
             }
         }
     }
 
+    public static int getCurrentCooldown() {
+        return CURRENT_COOLDOWN;
+    }
+
     public static String getName(ClientPlayerEntity player) {
         try {
-            // i at least want youtubers have their name revealed lol
             if (player.getName().getString().equalsIgnoreCase("therealsquiddo")) {return("Florence Ennay");}
             else if (player.getName().getString().equalsIgnoreCase("skipthetutorial")) {return("Aiden");}
             else if (player.getName().getString().equalsIgnoreCase("failboat")) {return("Daniel Michaud");}
@@ -146,8 +161,6 @@ public class EventManager {
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
         }
-
-        CURRENT_COOLDOWN = EVENT_COOLDOWN;
 
         MinecraftClient client = MinecraftClient.getInstance();
         switch (eventType) {

@@ -1,6 +1,7 @@
 package com.pryzmm.splitself;
 
 import com.pryzmm.splitself.command.SplitSelfCommands;
+import com.pryzmm.splitself.config.SplitSelfConfig;
 import com.pryzmm.splitself.entity.ModEntities;
 import com.pryzmm.splitself.entity.custom.TheOtherEntity;
 import com.pryzmm.splitself.events.EventManager;
@@ -9,13 +10,12 @@ import com.pryzmm.splitself.item.ModItems;
 import com.pryzmm.splitself.screen.WarningScreen;
 import com.pryzmm.splitself.sound.ModSounds;
 import com.pryzmm.splitself.world.FirstJoinTracker;
-import kotlin.jvm.functions.Function0;
-import me.fzzyhmstrs.fzzy_config.api.ConfigApi;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.slf4j.Logger;
@@ -25,16 +25,17 @@ import java.util.Random;
 public class SplitSelf implements ModInitializer {
 	public static final String MOD_ID = "splitself";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
-	public static SplitSelfConfig CONFIG;
 
 	@Override
 	public void onInitialize() {
 
-		try {
-			CONFIG = ConfigApi.registerAndLoadConfig((Function0<? extends SplitSelfConfig>) SplitSelfConfig::new);
-		} catch (Exception e) {
-			LOGGER.error("Config registration failed!", e);
-		}
+		// Initialize configuration - this will automatically load YACL config if available
+		SplitSelfConfig.reload(); // Force a fresh load
+		SplitSelfConfig config = SplitSelfConfig.getInstance();
+
+		LOGGER.info("Configuration loaded. Values: eventsEnabled={}, eventTickInterval={}, eventChance={}, eventCooldown={}, startEventsAfter={}",
+				config.isEventsEnabled(), config.getEventTickInterval(), config.getEventChance(),
+				config.getEventCooldown(), config.getStartEventsAfter());
 
 		ModEntities.registerModEntities();
 		ModSounds.registerSounds();
@@ -62,6 +63,7 @@ public class SplitSelf implements ModInitializer {
 					client.execute(() -> client.setScreen(new WarningScreen()));
 				}).start();
 			}
+			System.out.println("Events:" + SplitSelfConfig.getInstance().isEventsEnabled());
 		});
 
 		LOGGER.info("Hello, " + System.getProperty("user.name"));

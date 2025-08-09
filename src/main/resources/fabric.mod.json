@@ -21,6 +21,9 @@
 		],
 		"client": [
 			"com.pryzmm.splitself.SplitSelfClient"
+		],
+		"modmenu": [
+			"com.pryzmm.splitself.config.ModMenuApiImpl"
 		]
 	},
 	"mixins": [
@@ -31,9 +34,6 @@
 		"minecraft": "~1.21.1",
 		"java": ">=21",
 		"fabric-api": "*"
-	},
-	"suggests": {
-		"another-mod": "*"
 	},
 	"custom": {
 		"fzzy_config": [
