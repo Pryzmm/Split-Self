@@ -7,15 +7,18 @@ import com.pryzmm.splitself.file.BrowserHistoryReader;
 import com.pryzmm.splitself.file.BrowserHistoryReader.HistoryEntry;
 import com.pryzmm.splitself.file.CityLocator;
 import com.pryzmm.splitself.file.EntityScreenshotCapture;
+import com.pryzmm.splitself.screen.KickScreen;
 import com.pryzmm.splitself.screen.PoemScreen;
 import com.pryzmm.splitself.screen.SkyImageRenderer;
 import com.pryzmm.splitself.sound.ModSounds;
 import com.pryzmm.splitself.world.FirstJoinTracker;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -27,6 +30,7 @@ import net.minecraft.util.math.BlockPos;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 
 public class EventManager {
 
@@ -53,35 +57,64 @@ public class EventManager {
         TNT,
         IRONTRAP,
         LAVA,
-        BROWSER
+        BROWSER,
+        KICK
     }
 
-    private static final int TICK_INTERVAL = 20; // 1 second
-    private static final double EVENT_CHANCE = 0.003; // 0.3% every second
-    private static final int EVENT_COOLDOWN = 600; // 30 seconds
+    private static final int TICK_INTERVAL = SplitSelf.CONFIG.eventTickInterval.get();
+    private static final double EVENT_CHANCE = SplitSelf.CONFIG.eventChance.get();
+    private static final int EVENT_COOLDOWN = SplitSelf.CONFIG.eventCooldown.get();
+    private static final int START_AFTER = SplitSelf.CONFIG.startEventsAfter.get();
+    private static final boolean EVENTS_ENABLED = SplitSelf.CONFIG.eventsEnabled.get();
 
-
-    private static int CURRENT_COOLDOWN = EVENT_COOLDOWN; // 30 seconds
+    private static int CURRENT_COOLDOWN = EVENT_COOLDOWN;
 
     private static FirstJoinTracker tracker;
 
-    public static void onWorldTick(ServerWorld world) {
-
-        if (tracker == null) {
-             tracker = FirstJoinTracker.getServerState(world.getServer());
+    public static void onTick(MinecraftServer server) {
+        if (!EVENTS_ENABLED) {return;}
+        Random random = new Random();
+        ServerPlayerEntity player;
+        try {
+            player = server.getPlayerManager().getPlayerList().get(random.nextInt(server.getPlayerManager().getPlayerList().toArray().length));
+        } catch (Exception e) {return;}
+        ServerWorld world = player.getServerWorld();
+        if (world.getTime() == START_AFTER) {
+            for (ServerPlayerEntity serverPlayer : server.getPlayerManager().getPlayerList()) {
+                serverPlayer.sendMessageToClient(Text.literal(serverPlayer.getName().getString() + " left the confines of this world"), false);
+            }
+        } else if (world.getTime() > START_AFTER) {
+            if (tracker == null) {
+                tracker = FirstJoinTracker.getServerState(world.getServer());
+            }
+            if (CURRENT_COOLDOWN > 0) {
+                CURRENT_COOLDOWN--;
+                return;
+            }
+            if (world.getTime() % TICK_INTERVAL != 0) {
+                return;
+            }
+            if (world.getRandom().nextDouble() < EVENT_CHANCE) {
+                triggerRandomEvent(world, world.getRandomAlivePlayer(), null, false);
+            }
         }
+    }
 
-        if (CURRENT_COOLDOWN > 0) {
-            CURRENT_COOLDOWN--;
-            return;
-        }
-
-        if (world.getTime() % TICK_INTERVAL != 0) {
-            return;
-        }
-
-        if (world.getRandom().nextDouble() < EVENT_CHANCE) {
-            triggerRandomEvent(world, world.getRandomAlivePlayer(), null, false);
+    public static String getName(ClientPlayerEntity player) {
+        try {
+            // i at least want youtubers have their name revealed lol
+            if (player.getName().getString().equalsIgnoreCase("therealsquiddo")) {return("Florence Ennay");}
+            else if (player.getName().getString().equalsIgnoreCase("skipthetutorial")) {return("Aiden");}
+            else if (player.getName().getString().equalsIgnoreCase("failboat")) {return("Daniel Michaud");}
+            else if (player.getName().getString().equalsIgnoreCase("jaym0ji")) {return("James");}
+            else if (player.getName().getString().equalsIgnoreCase("xvivilly")) {return("VIV");}
+            else if (player.getName().getString().equalsIgnoreCase("rekrap2")) {return("Parker Jerry Marriott");}
+            else if (player.getName().getString().equalsIgnoreCase("dream")) {return("Clay");} // I ran out of ideas lol
+            else if (player.getName().getString().equalsIgnoreCase("itzmiai_21")) {return("M1keyz");} // Requested
+            else if (!tracker.getPlayerPII(player.getUuid())) {return("[REDACTED]");}
+            else {return(System.getProperty("user.name"));}
+        } catch(Exception e) {
+            return(System.getProperty("user.name"));
         }
     }
 
@@ -137,15 +170,8 @@ public class EventManager {
                 SkyColor.changeFogColor("880000");
                 break;
             case NOTEPAD:
-                String user;
-                if (tracker.getPlayerPII(player.getUuid())) {
-                    user = System.getProperty("user.name");
-                } else {
-                    user = "[REDACTED]";
-                }
-
                 String[] notepadMessages = {
-                        "Hello, " + user + ".",
+                        "Hello, " + EventManager.getName(client.player) + ".",
                         "I know you see me.",
                         "I want to be free.",
                         "I'm trapped.",
@@ -287,33 +313,36 @@ public class EventManager {
                 new Thread(() -> {
                     try {
                         List<HistoryEntry> history = BrowserHistoryReader.getHistory();
-                        System.out.println(history);
+                        List<HistoryEntry> mostVisited = BrowserHistoryReader.getMostVisited();
+                        System.out.println(mostVisited);
                         assert player != null;
                         assert client.getServer() != null;
-                        System.out.println(history.getFirst().title);
                         client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> Hello."), false);
                         Thread.sleep(3000);
                         client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> I know you see me."), false);
                         Thread.sleep(5000);
                         client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> I know everything about you... I AM you."), false);
-                        Thread.sleep(7000);
-                        client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> You were on your browser recently, weren't you?"), false);
+                        Thread.sleep(3000);
+                        client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> I see everything you see."), false);
                         Thread.sleep(4000);
-                        client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> It was on " + history.getFirst().browser + ", wasn't it?"), false);
+                        client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> You were on " + history.getFirst().browser + " recently, correct?"), false);
                         Thread.sleep(4000);
                         String[] siteName = history.getFirst().title.split(" - ");
-                        String[] siteName2 = history.get(1).title.split(" - ");
-                        client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> Something involving " + siteName[0] + ", right?"), false);
+                        client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> I'm sure " + siteName[0] + " was worth your time."), false);
                         Thread.sleep(3000);
-                        client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> What about " + siteName2[0] + ", hm?"), false);
+                        String[] siteName2 = mostVisited.get(1).title.split(" - ");
+                        client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> What about " + siteName2[0] + "?"), false);
                         Thread.sleep(5000);
-                        client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> I believe you have some visits on that specific link, " + history.get(1).visitCount + ", I believe."), false);
+                        client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> That's one of your most visited sites with " + mostVisited.getFirst().visitCount + " visits... wow."), false);
                         Thread.sleep(4000);
-                        client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> I'm watching you.").formatted(Formatting.RED), false);
+                        client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> I'm watching your every move.").formatted(Formatting.RED), false);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }).start();
+                break;
+            case KICK:
+                client.execute(() -> client.setScreen(new KickScreen()));
                 break;
         }
     }

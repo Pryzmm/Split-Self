@@ -95,6 +95,8 @@ public class SplitSelfCommands {
                                         EventManager.triggerRandomEvent(world, player, EventManager.Events.LAVA, true);
                                     } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("browser")) {
                                         EventManager.triggerRandomEvent(world, player, EventManager.Events.BROWSER, true);
+                                    } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("kick")) {
+                                        EventManager.triggerRandomEvent(world, player, EventManager.Events.KICK, true);
                                     } else {
                                         context.getSource().sendFeedback(() -> Text.literal("<" + context.getSource().getName() + "> No."), false);
                                     }

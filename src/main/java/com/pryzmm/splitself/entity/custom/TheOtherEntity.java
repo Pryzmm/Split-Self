@@ -25,7 +25,7 @@ public class TheOtherEntity extends HostileEntity {
 
     private PlayerEntity cachedNearestPlayer = null;
     private int playerUpdateTimer = 0;
-    private static final int PLAYER_UPDATE_INTERVAL = 20; // Update every 20 ticks (1 second)
+    private static final int PLAYER_UPDATE_INTERVAL = 20;
 
     @Override
     protected void initGoals() {
@@ -59,16 +59,16 @@ public class TheOtherEntity extends HostileEntity {
             }
         }
 
-        if (!this.getWorld().isClient) { // Server-side only
+        if (!this.getWorld().isClient) {
             List<PlayerEntity> nearbyPlayers = this.getWorld().getEntitiesByClass(
                     PlayerEntity.class,
-                    this.getBoundingBox().expand(10.0), // 5 block radius
+                    this.getBoundingBox().expand(10.0),
                     LivingEntity::isAlive
             );
 
             for (PlayerEntity player : nearbyPlayers) {
                 double distance = this.distanceTo(player);
-                if (distance < 10.0) { // If closer than 3 blocks
+                if (distance < 10.0) {
                     ScreenOverlay.executeWhiteScreen(player);
                     player.addStatusEffect(new StatusEffectInstance(StatusEffects.WITHER, 100, 1, false, false, false));
                     this.discard();

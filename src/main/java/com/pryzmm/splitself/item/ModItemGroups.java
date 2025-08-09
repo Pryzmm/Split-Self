@@ -15,6 +15,7 @@ public class ModItemGroups {
                     .displayName(Text.translatable("itemgroup.splitself.splitself_items"))
                     .entries((displayContext, entries) -> {
                         entries.add(ModItems.IN_MY_LIFE_MUSIC_DISC);
+                        entries.add(ModItems.DIET_COKE);
                     })
                     .build());
 

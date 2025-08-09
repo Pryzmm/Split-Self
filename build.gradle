@@ -11,11 +11,15 @@ base {
 }
 
 repositories {
-	// Add repositories to retrieve artifacts from in here.
-	// You should only use this when depending on other mods because
-	// Loom adds the essential maven repositories to download Minecraft and libraries from autom./gradlew cleanatically.
-	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
-	// for more information about repositories.
+	maven {
+		name = "FzzyMaven"
+		url = "https://maven.fzzyhmstrs.me/"
+	}
+
+	maven {
+		name = "Terraformers"
+		url = "https://maven.terraformersmc.com/"
+	}
 }
 
 fabricApi {
@@ -36,9 +40,11 @@ dependencies {
 	implementation 'com.maxmind.db:maxmind-db:3.0.0'
 	include 'com.maxmind.db:maxmind-db:3.0.0'
 
+	modImplementation "com.terraformersmc:modmenu:${project.mod_menu_version}"
+	modImplementation "me.fzzyhmstrs:fzzy_config:${project.fzzyConfigVersion}"
+
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-	
 }
 
 processResources {

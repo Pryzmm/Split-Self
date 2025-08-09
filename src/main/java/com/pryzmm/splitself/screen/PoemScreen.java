@@ -1,5 +1,6 @@
 package com.pryzmm.splitself.screen;
 
+import com.pryzmm.splitself.events.EventManager;
 import com.pryzmm.splitself.world.FirstJoinTracker;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -53,20 +54,7 @@ public class PoemScreen extends Screen {
         lines.add("");
         lines.add("");
         lines.add("");
-        try {
-            // i at least want youtubers have their name revealed lol
-            if (UserName.equalsIgnoreCase("therealsquiddo")) {lines.add("I make the choices now, Florence Ennay.");}
-            else if (UserName.equalsIgnoreCase("skipthetutorial")) {lines.add("I make the choices now, Aiden.");}
-            else if (UserName.equalsIgnoreCase("failboat")) {lines.add("I make the choices now, Daniel Michaud.");}
-            else if (UserName.equalsIgnoreCase("jaym0ji")) {lines.add("I make the choices now, James.");}
-            else if (UserName.equalsIgnoreCase("xvivilly")) {lines.add("I make the choices now, VIV.");}
-            else if (UserName.equalsIgnoreCase("rekrap2")) {lines.add("I make the choices now, Parker Jerry Marriott.");}
-            else if (UserName.equalsIgnoreCase("dream")) {lines.add("I make the choices now, Clay.");} // I ran out of ideas lol
-            else if (!tracker.getPlayerPII(client.player.getUuid())) {lines.add("I make the choices now, [REDACTED].");}
-            else {lines.add("I make the choices now, " + System.getProperty("user.name") + ".");}
-        } catch(Exception e) {
-            lines.add("I make the choices now, " + System.getProperty("user.name") + ".");
-        }
+        lines.add(EventManager.getName(client.player));
         int y = 10;
         for (String line : lines) {
             Text lineText = Text.literal(line);
