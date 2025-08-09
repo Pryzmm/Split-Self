@@ -6,7 +6,7 @@ This mod will interact with your device, **OUTSIDE OF THE GAME!** Your PC will n
 ## Installation
 Download one of the two mods from the [latest release page](https://github.com/Pryzmm/Split-Self/releases).
   - The unsafe version interacts with your device outside of the game.
-  - The safe version doesn't, but it's less fun that way! :(
+  - ~~The safe version doesn't, but it's less fun that way! :(~~ *Safe version currently unavailable until Full Release*
 
 Download the [Fabric Installer](https://fabricmc.net/use/installer/) and the [Fabric API mod](https://modrinth.com/mod/fabric-api).
 
