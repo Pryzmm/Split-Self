@@ -67,7 +67,6 @@ public class BackgroundManager {
                return; // We probably shouldn't run this? I'm not exactly sure what to do in this case.
             }
             userBackground = tempUserBackground; // Move it to a more permanent location.
-            tempUserBackground = null; // Toss it out.
         }
 
         try {
