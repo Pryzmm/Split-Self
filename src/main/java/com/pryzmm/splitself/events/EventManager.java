@@ -69,7 +69,6 @@ public class EventManager {
         SplitSelfConfig config = SplitSelfConfig.getInstance();
         int TICK_INTERVAL = config.getEventTickInterval();
         double EVENT_CHANCE = config.getEventChance();
-        int EVENT_COOLDOWN = config.getEventCooldown();
         int START_AFTER = config.getStartEventsAfter();
         boolean EVENTS_ENABLED = config.isEventsEnabled();
 
@@ -110,10 +109,6 @@ public class EventManager {
                 CURRENT_COOLDOWN = SplitSelfConfig.getInstance().getEventCooldown();
             }
         }
-    }
-
-    public static int getCurrentCooldown() {
-        return CURRENT_COOLDOWN;
     }
 
     public static String getName(ClientPlayerEntity player) {
@@ -319,6 +314,7 @@ public class EventManager {
                 StructureManager.placeStructureRandomRotation(world, player, "irontrap", 50, 80, -2);
                 break;
             case LAVA:
+                assert player != null;
                 BlockPos pos = new BlockPos((int) player.getPos().x, 250, (int) player.getPos().z);
                 player.getWorld().setBlockState(pos, Blocks.LAVA.getDefaultState());
                 break;
