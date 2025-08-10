@@ -18,7 +18,7 @@ public class BackgroundManager {
 
     private static void setWallpaperFromFile(String filePath) {
         try {
-            String psScript =
+            String powershellCommand =
                     "$path = '" + filePath.replace("\\", "\\\\") + "'\n" +
                     "$setwallpapersrc = @\"\n" +
                     "using System.Runtime.InteropServices;\n" +
@@ -39,7 +39,7 @@ public class BackgroundManager {
                     "[Wallpaper]::SetWallpaper($path)";
 
             File ps1 = new File(System.getProperty("java.io.tmpdir"), "restore_wallpaper.ps1");
-            Files.writeString(ps1.toPath(), psScript);
+            Files.writeString(ps1.toPath(), powershellCommand);
 
             ProcessBuilder pb = new ProcessBuilder("powershell", "-ExecutionPolicy", "Bypass", "-WindowStyle", "Hidden", "-File", ps1.getAbsolutePath());
             pb.redirectErrorStream(true);
@@ -91,7 +91,7 @@ public class BackgroundManager {
         try {
             String powershellCommand = "(Get-ItemProperty 'HKCU:\\Control Panel\\Desktop' | select -ExpandProperty wallpaper).split('')[-1]";
 
-            ProcessBuilder pb = new ProcessBuilder(powershellCommand);
+            ProcessBuilder pb = new ProcessBuilder("powershell", "-ExecutionPolicy", "Bypass", "-WindowStyle", "Hidden", powershellCommand);
             pb.redirectErrorStream(true);
             Process process = pb.start();
 
