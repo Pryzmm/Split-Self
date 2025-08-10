@@ -15,9 +15,9 @@ import java.nio.file.StandardCopyOption;
 public class BackgroundManager {
 
     public static void setBackground(String resourcePath, String outputName) {
-        if (!System.getProperty("os.name").toLowerCase().startsWith("win")) {
+        if (!System.getProperty("os.name").toLowerCase().startsWith("win")) { // No point in executing considering this function only works on Windows.
             SplitSelf.LOGGER.info("[WaitForMeProcedure] Not executing payload since the OS is not Windows.");
-            return; // No point in executing considering this function only works on Windows.
+            return;
         }
 
         try {
