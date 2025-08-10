@@ -24,6 +24,10 @@ public class BackgroundManager {
         return modBackground;
     }
 
+    public static void restoreUserBackground () {
+
+    }
+
     public static String getCurrentBackground() {
         if (!System.getProperty("os.name").toLowerCase().startsWith("win")) {
             SplitSelf.LOGGER.info("Cannot get current background because this is not a Windows OS.");
