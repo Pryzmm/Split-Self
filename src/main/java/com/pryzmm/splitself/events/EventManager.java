@@ -228,7 +228,7 @@ public class EventManager {
                 new Thread(() -> client.execute(() -> {
                     EntityScreenshotCapture capture = new EntityScreenshotCapture();
                     capture.captureFromEntity(player, client.getWindow().getScaledWidth(), client.getWindow().getScaledHeight(), (file) -> {
-                        world.playSound(null, Objects.requireNonNull(player).getBlockPos(), ModSounds.STATICSCREAM, SoundCategory.MASTER, 1.0f, 1.0f);
+                        world.playSound(null, Objects.requireNonNull(player).getBlockPos(), ModSounds.STATICSCREAM, SoundCategory.MASTER, 0.6f, 1.0f);
                         ScreenOverlay.executeFrozenScreen(file);
                     });
                 })).start();
