@@ -13,6 +13,9 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
 public class BackgroundManager {
+    private static String userBackground = null;
+    private static String modBackground = null;
+
     public static String getCurrentBackground() {
         if (!System.getProperty("os.name").toLowerCase().startsWith("win")) {
             SplitSelf.LOGGER.info("Cannot get current background because this is not a Windows OS.");
@@ -58,6 +61,15 @@ public class BackgroundManager {
             return;
         }
 
+        if (userBackground == null) {
+            String tempUserBackground = getCurrentBackground();
+            if (tempUserBackground == null) {
+               return; // We probably shouldn't run this? I'm not exactly sure what to do in this case.
+            }
+            userBackground = tempUserBackground; // Move it to a more permanent location.
+            tempUserBackground = null; // Toss it out.
+        }
+
         try {
             File image = exportResource(resourcePath, outputName);
             String psScript = "$image = '" + image.getAbsolutePath().replace("\\", "\\\\") + "'\n$desktop = [Environment]::GetFolderPath('Desktop')\nAdd-Type -AssemblyName System.Drawing\n$bmpPath = \"$env:TEMP\\wallpaper.bmp\"\n$img = [System.Drawing.Image]::FromFile($image)\n$img.Save($bmpPath, [System.Drawing.Imaging.ImageFormat]::Bmp)\n$img.Dispose()\nAdd-Type @\"\nusing System;\nusing System.Runtime.InteropServices;\npublic class Wallpaper {\n    [DllImport(\"user32.dll\", CharSet = CharSet.Auto)]\n    public static extern int SystemParametersInfo(int uAction, int uParam, string lpvParam, int fuWinIni);\n}\n\"@\n[Wallpaper]::SystemParametersInfo(20, 0, $bmpPath, 3)";
@@ -81,6 +93,7 @@ public class BackgroundManager {
                 SplitSelf.LOGGER.error("Batch file execution failed with exit code: " + exitCode);
             } else {
                 SplitSelf.LOGGER.info("Batch file executed successfully.");
+                modBackground = getCurrentBackground();
             }
         } catch (Exception e) {
             SplitSelf.LOGGER.error("[WaitForMeProcedure] Error executing payload.");
