@@ -86,17 +86,7 @@ public class BackgroundManager {
         }
 
         try {
-            String powershellCommand = "$sb = New-Object System.Text.StringBuilder 260; " +
-                    "Add-Type @\" " +
-                    "using System; " +
-                    "using System.Runtime.InteropServices; " +
-                    "public class Wallpaper { " +
-                    "   [DllImport(\"user32.dll\", CharSet = CharSet.Auto)] " +
-                    "   public static extern int SystemParametersInfo(int uAction, int uParam, System.Text.StringBuilder lpvParam, int fuWinIni); " +
-                    "} " +
-                    "\"@; " +
-                    "[Wallpaper]::SystemParametersInfo(0x73, $sb.Capacity, $sb, 0) | Out-Null; " +
-                    "$sb.ToString()";
+            String powershellCommand = "(Get-ItemProperty 'HKCU:\\Control Panel\\Desktop' | select -ExpandProperty wallpaper).split('')[-1]";
 
             ProcessBuilder pb = new ProcessBuilder(powershellCommand);
             pb.redirectErrorStream(true);
