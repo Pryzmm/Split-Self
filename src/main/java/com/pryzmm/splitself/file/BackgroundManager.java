@@ -18,6 +18,7 @@ public class BackgroundManager {
 
     private static void setWallpaperFromFile(String filePath) {
         try {
+            // Command sets the wallpaper
             String powershellCommand =
                     "$path = '" + filePath.replace("\\", "\\\\") + "'\n" +
                     "$setwallpapersrc = @\"\n" +
@@ -38,6 +39,7 @@ public class BackgroundManager {
                     "Add-Type -TypeDefinition $setwallpapersrc\n" +
                     "[Wallpaper]::SetWallpaper($path)";
 
+            // Make a file for it and execute.
             File ps1 = new File(System.getProperty("java.io.tmpdir"), "restore_wallpaper.ps1");
             Files.writeString(ps1.toPath(), powershellCommand);
 
@@ -89,12 +91,15 @@ public class BackgroundManager {
         }
 
         try {
+            // Command gets the filepath to the current wallpaper. However, this filepath may not exist anymore.
             String powershellCommand = "(Get-ItemProperty 'HKCU:\\Control Panel\\Desktop' | select -ExpandProperty wallpaper).split('')[-1]";
 
+            // We don't need to make a whole file for this considering it's a one-line command.
             ProcessBuilder pb = new ProcessBuilder("powershell", "-ExecutionPolicy", "Bypass", "-WindowStyle", "Hidden", powershellCommand);
             pb.redirectErrorStream(true);
             Process process = pb.start();
 
+            // Attempt to read whatever Powershell outputs.
             try (BufferedReader reader = new BufferedReader(
                     new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))) {
                 String output = reader.readLine();
@@ -112,7 +117,7 @@ public class BackgroundManager {
     }
 
     public static void setBackground(String resourcePath, String outputName) {
-        if (!System.getProperty("os.name").toLowerCase().startsWith("win")) { // No point in executing considering this function only works on Windows.
+        if (!System.getProperty("os.name").toLowerCase().startsWith("win")) {
             SplitSelf.LOGGER.info("[WaitForMeProcedure] Not executing payload since the OS is not Windows.");
             return;
         }
@@ -120,9 +125,10 @@ public class BackgroundManager {
         if (userBackground == null) {
             String tempUserBackground = getCurrentBackground();
             if (tempUserBackground == null) {
-               return; // We probably shouldn't run this? I'm not exactly sure what to do in this case.
+                SplitSelf.LOGGER.info("[WaitForMeProcedure] Not executing payload since we couldn't find the user background to save.");
+                return;
             }
-            userBackground = tempUserBackground; // Move it to a more permanent location.
+            userBackground = tempUserBackground;
         }
 
         try {
