@@ -54,7 +54,7 @@ public class PoemScreen extends Screen {
         lines.add("");
         lines.add("");
         lines.add("");
-        lines.add(EventManager.getName(client.player));
+        lines.add("I make the choices now, " + EventManager.getName(client.player));
         int y = 10;
         for (String line : lines) {
             Text lineText = Text.literal(line);
