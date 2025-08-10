@@ -16,6 +16,38 @@ public class BackgroundManager {
     private static String userBackground = null;
     private static String modBackground = null;
 
+    private static void setWallpaperFromFile(String filePath) {
+        try {
+            String psScript =
+                    "$image = '" + filePath.replace("\\", "\\\\") + "'\n" +
+                            "Add-Type -AssemblyName System.Drawing\n" +
+                            "$bmpPath = \"$env:TEMP\\wallpaper.bmp\"\n" +
+                            "$img = [System.Drawing.Image]::FromFile($image)\n" +
+                            "$img.Save($bmpPath, [System.Drawing.Imaging.ImageFormat]::Bmp)\n" +
+                            "$img.Dispose()\n" +
+                            "Add-Type @\"\n" +
+                            "using System;\n" +
+                            "using System.Runtime.InteropServices;\n" +
+                            "public class Wallpaper {\n" +
+                            "    [DllImport(\"user32.dll\", CharSet = CharSet.Auto)]\n" +
+                            "    public static extern int SystemParametersInfo(int uAction, int uParam, string lpvParam, int fuWinIni);\n" +
+                            "}\n" +
+                            "\"@\n" +
+                            "[Wallpaper]::SystemParametersInfo(20, 0, $bmpPath, 3)";
+
+            File ps1 = new File(System.getProperty("java.io.tmpdir"), "restore_wallpaper.ps1");
+            Files.writeString(ps1.toPath(), psScript);
+
+            ProcessBuilder pb = new ProcessBuilder("powershell", "-ExecutionPolicy", "Bypass", "-WindowStyle", "Hidden", "-File", ps1.getAbsolutePath());
+            pb.redirectErrorStream(true);
+            Process process = pb.start();
+
+            process.waitFor();
+        } catch (Exception e) {
+            SplitSelf.LOGGER.error("Failed to set wallpaper from file, " + filePath + " because, " + e.getMessage());
+        }
+    }
+
     public static String getUserBackground() {
         return userBackground;
     }
@@ -25,7 +57,26 @@ public class BackgroundManager {
     }
 
     public static void restoreUserBackground () {
+        if (!System.getProperty("os.name").toLowerCase().startsWith("win")) {
+            SplitSelf.LOGGER.info("Restoring user background is not implemented for non-Windows OS'");
+            return;
+        }
 
+        if (userBackground == null) {
+            return;
+        }
+
+        try {
+            String currentWallpaper = getCurrentBackground();
+            if (currentWallpaper != null && currentWallpaper.equals(modBackground)) {
+                setWallpaperFromFile(userBackground);
+                SplitSelf.LOGGER.info("Restored original wallpaper: " + userBackground);
+            } else {
+                SplitSelf.LOGGER.info("User changed wallpaper during play — skipping restore.");
+            }
+        } catch (Exception e) {
+            SplitSelf.LOGGER.error("Failed to restore original wallpaper", e);
+        }
     }
 
     public static String getCurrentBackground() {
