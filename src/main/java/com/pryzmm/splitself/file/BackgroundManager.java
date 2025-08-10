@@ -19,21 +19,24 @@ public class BackgroundManager {
     private static void setWallpaperFromFile(String filePath) {
         try {
             String psScript =
-                    "$image = '" + filePath.replace("\\", "\\\\") + "'\n" +
-                            "Add-Type -AssemblyName System.Drawing\n" +
-                            "$bmpPath = \"$env:TEMP\\wallpaper.bmp\"\n" +
-                            "$img = [System.Drawing.Image]::FromFile($image)\n" +
-                            "$img.Save($bmpPath, [System.Drawing.Imaging.ImageFormat]::Bmp)\n" +
-                            "$img.Dispose()\n" +
-                            "Add-Type @\"\n" +
-                            "using System;\n" +
-                            "using System.Runtime.InteropServices;\n" +
-                            "public class Wallpaper {\n" +
-                            "    [DllImport(\"user32.dll\", CharSet = CharSet.Auto)]\n" +
-                            "    public static extern int SystemParametersInfo(int uAction, int uParam, string lpvParam, int fuWinIni);\n" +
-                            "}\n" +
-                            "\"@\n" +
-                            "[Wallpaper]::SystemParametersInfo(20, 0, $bmpPath, 3)";
+                    "$path = '" + filePath.replace("\\", "\\\\") + "'\n" +
+                    "$setwallpapersrc = @\"\n" +
+                    "using System.Runtime.InteropServices;\n" +
+                    "public class Wallpaper \n" +
+                    "{\n" +
+                    "public const int SetDesktopWallpaper = 20;\n" +
+                    "public const int UpdateIniFile = 0x01;\n" +
+                    "public const int SendWinIniChange = 0x02;\n" +
+                    "[DllImport(\"user32.dll\", SetLastError = true, CharSet = CharSet.Auto)]\n" +
+                    "private static extern int SystemParametersInfo(int uAction, int uParam, string lpvParam, int fuWinIni);\n" +
+                    "public static void SetWallpaper(string path)\n" +
+                    "{\n" +
+                    "SystemParametersInfo(SetDesktopWallpaper, 0, path, UpdateIniFile | SendWinIniChange);\n" +
+                    "}\n" +
+                    "}\n" +
+                    "\"@\n" +
+                    "Add-Type -TypeDefinition $setwallpapersrc\n" +
+                    "[Wallpaper]::SetWallpaper($path)";
 
             File ps1 = new File(System.getProperty("java.io.tmpdir"), "restore_wallpaper.ps1");
             Files.writeString(ps1.toPath(), psScript);
