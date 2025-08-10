@@ -5,12 +5,14 @@ import com.pryzmm.splitself.config.SplitSelfConfig;
 import com.pryzmm.splitself.entity.ModEntities;
 import com.pryzmm.splitself.entity.custom.TheOtherEntity;
 import com.pryzmm.splitself.events.EventManager;
+import com.pryzmm.splitself.file.BackgroundManager;
 import com.pryzmm.splitself.item.ModItemGroups;
 import com.pryzmm.splitself.item.ModItems;
 import com.pryzmm.splitself.screen.WarningScreen;
 import com.pryzmm.splitself.sound.ModSounds;
 import com.pryzmm.splitself.world.FirstJoinTracker;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
@@ -20,6 +22,8 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Objects;
 import java.util.Random;
 
 public class SplitSelf implements ModInitializer {
@@ -47,6 +51,13 @@ public class SplitSelf implements ModInitializer {
 		FabricDefaultAttributeRegistry.register(ModEntities.TheOther, TheOtherEntity.createAttributes());
 
 		CommandRegistrationCallback.EVENT.register(SplitSelfCommands::register);
+
+        ClientLifecycleEvents.CLIENT_STOPPING.register(minecraftClient -> {
+            if (BackgroundManager.getUserBackground() != null &&
+                    Objects.equals(BackgroundManager.getCurrentBackground(), BackgroundManager.getModBackground())) {
+                BackgroundManager.restoreUserBackground();
+            }
+        });
 
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
 			ServerPlayerEntity player = handler.getPlayer();
