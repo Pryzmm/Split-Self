@@ -13,6 +13,44 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
 public class BackgroundManager {
+    public static String getCurrentBackground() {
+        if (!System.getProperty("os.name").toLowerCase().startsWith("win")) {
+            SplitSelf.LOGGER.info("Cannot get current background because this is not a Windows OS.");
+            return null;
+        }
+
+        try {
+            String powershellCommand = "$sb = New-Object System.Text.StringBuilder 260; " +
+                    "Add-Type @\" " +
+                    "using System; " +
+                    "using System.Runtime.InteropServices; " +
+                    "public class Wallpaper { " +
+                    "   [DllImport(\"user32.dll\", CharSet = CharSet.Auto)] " +
+                    "   public static extern int SystemParametersInfo(int uAction, int uParam, System.Text.StringBuilder lpvParam, int fuWinIni); " +
+                    "} " +
+                    "\"@; " +
+                    "[Wallpaper]::SystemParametersInfo(0x73, $sb.Capacity, $sb, 0) | Out-Null; " +
+                    "$sb.ToString()";
+
+            ProcessBuilder pb = new ProcessBuilder(powershellCommand);
+            pb.redirectErrorStream(true);
+            Process process = pb.start();
+
+            try (BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))) {
+                String output = reader.readLine();
+                process.waitFor();
+                if (output != null && !output.isBlank()) {
+                    return output.trim();
+                }
+            }
+
+        } catch (Exception e) {
+            SplitSelf.LOGGER.error("Failed to get current background, " + e.getMessage());
+        }
+
+        return null;
+    }
 
     public static void setBackground(String resourcePath, String outputName) {
         if (!System.getProperty("os.name").toLowerCase().startsWith("win")) { // No point in executing considering this function only works on Windows.
