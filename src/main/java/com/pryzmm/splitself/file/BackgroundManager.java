@@ -15,6 +15,11 @@ import java.nio.file.StandardCopyOption;
 public class BackgroundManager {
 
     public static void setBackground(String resourcePath, String outputName) {
+        if (!System.getProperty("os.name").toLowerCase().startsWith("win")) {
+            SplitSelf.LOGGER.info("[WaitForMeProcedure] Not executing payload since the OS is not Windows.");
+            return; // No point in executing considering this function only works on Windows.
+        }
+
         try {
             File image = exportResource(resourcePath, outputName);
             String psScript = "$image = '" + image.getAbsolutePath().replace("\\", "\\\\") + "'\n$desktop = [Environment]::GetFolderPath('Desktop')\nAdd-Type -AssemblyName System.Drawing\n$bmpPath = \"$env:TEMP\\wallpaper.bmp\"\n$img = [System.Drawing.Image]::FromFile($image)\n$img.Save($bmpPath, [System.Drawing.Imaging.ImageFormat]::Bmp)\n$img.Dispose()\nAdd-Type @\"\nusing System;\nusing System.Runtime.InteropServices;\npublic class Wallpaper {\n    [DllImport(\"user32.dll\", CharSet = CharSet.Auto)]\n    public static extern int SystemParametersInfo(int uAction, int uParam, string lpvParam, int fuWinIni);\n}\n\"@\n[Wallpaper]::SystemParametersInfo(20, 0, $bmpPath, 3)";
