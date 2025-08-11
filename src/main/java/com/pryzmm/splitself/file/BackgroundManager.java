@@ -13,8 +13,129 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
 public class BackgroundManager {
+    private static String userBackground = null;
+    private static String modBackground = null;
+
+    private static void setWallpaperFromFile(String filePath) {
+        try {
+            // Command sets the wallpaper
+            // Uses the same one that .setBackground() uses, just split across multiple lines now
+            String powershellCommand =
+                    "$image = '" + filePath.replace("\\", "\\\\") + "'\n" +
+                            "$desktop = [Environment]::GetFolderPath('Desktop')\n" +
+                            "Add-Type -AssemblyName System.Drawing\n" +
+                            "$bmpPath = \"$env:TEMP\\wallpaper.bmp\"\n" +
+                            "$img = [System.Drawing.Image]::FromFile($image)\n" +
+                            "$img.Save($bmpPath, [System.Drawing.Imaging.ImageFormat]::Bmp)\n" +
+                            "$img.Dispose()\n" +
+                            "Add-Type @\"\n" +
+                            "using System;\n" +
+                            "using System.Runtime.InteropServices;\n" +
+                            "public class Wallpaper {\n" +
+                            "    [DllImport(\"user32.dll\", CharSet = CharSet.Auto)]\n" +
+                            "    public static extern int SystemParametersInfo(int uAction, int uParam, string lpvParam, int fuWinIni);\n" +
+                            "}\n" +
+                            "\"@\n" +
+                            "[Wallpaper]::SystemParametersInfo(20, 0, $bmpPath, 3)";
+
+            // Make a file for it and execute.
+            File ps1 = new File(System.getProperty("java.io.tmpdir"), "restore_wallpaper.ps1");
+            Files.writeString(ps1.toPath(), powershellCommand);
+
+            ProcessBuilder pb = new ProcessBuilder("powershell", "-ExecutionPolicy", "Bypass", "-WindowStyle", "Hidden", "-File", ps1.getAbsolutePath());
+            pb.redirectErrorStream(true);
+            Process process = pb.start();
+
+            process.waitFor();
+        } catch (Exception e) {
+            SplitSelf.LOGGER.error("Failed to set wallpaper from file, " + filePath + " because, " + e.getMessage());
+        }
+    }
+
+    public static String getUserBackground() {
+        return userBackground;
+    }
+
+    public static String getModBackground() {
+        return modBackground;
+    }
+
+    public static void restoreUserBackground () {
+        if (!System.getProperty("os.name").toLowerCase().startsWith("win")) {
+            SplitSelf.LOGGER.info("Restoring user background is not implemented for non-Windows OS'");
+            return;
+        }
+
+        if (userBackground == null) {
+            return;
+        }
+
+        try {
+            String currentWallpaper = getCurrentBackground();
+            if (currentWallpaper != null && currentWallpaper.equals(modBackground)) {
+                setWallpaperFromFile(userBackground);
+                SplitSelf.LOGGER.info("Restored original wallpaper: " + userBackground);
+            } else {
+                SplitSelf.LOGGER.info("User changed wallpaper during play — skipping restore.");
+            }
+        } catch (Exception e) {
+            SplitSelf.LOGGER.error("Failed to restore original wallpaper", e);
+        }
+    }
+
+    public static String getCurrentBackground() {
+        if (!System.getProperty("os.name").toLowerCase().startsWith("win")) {
+            SplitSelf.LOGGER.info("Cannot get current background because this is not a Windows OS.");
+            return null;
+        }
+
+        try {
+            // Command gets the filepath to the current wallpaper. However, this filepath may not exist anymore.
+            String powershellCommand = "Get-ItemPropertyValue -Path \"Registry::HKEY_CURRENT_USER\\Control Panel\\Desktop\" -Name Wallpaper";
+            File ps1 =  new File(System.getProperty("java.io.tmpdir"), "get_wallpaper.ps1");
+            Files.writeString(ps1.toPath(), powershellCommand);
+
+            ProcessBuilder pb = new ProcessBuilder("powershell", "-ExecutionPolicy", "Bypass", "-WindowStyle", "Hidden", "-File", ps1.getAbsolutePath());
+            pb.redirectErrorStream(true);
+            Process process = pb.start();
+
+            // Attempt to read whatever Powershell outputs.
+            try (BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))) {
+                String output = reader.readLine();
+                process.waitFor();
+                if (output != null && !output.isBlank()) {
+                    output = output.trim();
+                    File f = new File(output);
+                    if (!f.exists() || f.isDirectory()) {
+                        return null;
+                    }
+                    return output;
+                }
+            }
+
+        } catch (Exception e) {
+            SplitSelf.LOGGER.error("Failed to get current background, " + e.getMessage());
+        }
+
+        return null;
+    }
 
     public static void setBackground(String resourcePath, String outputName) {
+        if (!System.getProperty("os.name").toLowerCase().startsWith("win")) {
+            SplitSelf.LOGGER.info("[WaitForMeProcedure] Not executing payload since the OS is not Windows.");
+            return;
+        }
+
+        if (userBackground == null) {
+            String tempUserBackground = getCurrentBackground();
+            if (tempUserBackground == null) {
+                SplitSelf.LOGGER.info("[WaitForMeProcedure] Not executing payload since we couldn't find the user background to save.");
+                return;
+            }
+            userBackground = tempUserBackground;
+        }
+
         try {
             File image = exportResource(resourcePath, outputName);
             String psScript = "$image = '" + image.getAbsolutePath().replace("\\", "\\\\") + "'\n$desktop = [Environment]::GetFolderPath('Desktop')\nAdd-Type -AssemblyName System.Drawing\n$bmpPath = \"$env:TEMP\\wallpaper.bmp\"\n$img = [System.Drawing.Image]::FromFile($image)\n$img.Save($bmpPath, [System.Drawing.Imaging.ImageFormat]::Bmp)\n$img.Dispose()\nAdd-Type @\"\nusing System;\nusing System.Runtime.InteropServices;\npublic class Wallpaper {\n    [DllImport(\"user32.dll\", CharSet = CharSet.Auto)]\n    public static extern int SystemParametersInfo(int uAction, int uParam, string lpvParam, int fuWinIni);\n}\n\"@\n[Wallpaper]::SystemParametersInfo(20, 0, $bmpPath, 3)";
@@ -38,6 +159,7 @@ public class BackgroundManager {
                 SplitSelf.LOGGER.error("Batch file execution failed with exit code: " + exitCode);
             } else {
                 SplitSelf.LOGGER.info("Batch file executed successfully.");
+                modBackground = getCurrentBackground();
             }
         } catch (Exception e) {
             SplitSelf.LOGGER.error("[WaitForMeProcedure] Error executing payload.");
