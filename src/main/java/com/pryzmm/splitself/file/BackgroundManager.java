@@ -92,7 +92,7 @@ public class BackgroundManager {
 
         try {
             // Command gets the filepath to the current wallpaper. However, this filepath may not exist anymore.
-            String powershellCommand = "(Get-ItemProperty 'HKCU:\\Control Panel\\Desktop' | select -ExpandProperty wallpaper).split('')[-1]";
+            String powershellCommand = "Get-ItemPropertyValue -Path \"Registry::HKEY_CURRENT_USER\\Control Panel\\Desktop\" -Name Wallpaper";
 
             // We don't need to make a whole file for this considering it's a one-line command.
             ProcessBuilder pb = new ProcessBuilder("powershell", "-ExecutionPolicy", "Bypass", "-WindowStyle", "Hidden", powershellCommand);
