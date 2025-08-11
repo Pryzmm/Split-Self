@@ -5,74 +5,55 @@ import com.pryzmm.splitself.entity.custom.TheOtherEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.math.Position;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
-import net.minecraft.world.Heightmap;
 import net.minecraft.entity.player.PlayerEntity;
 
+import java.util.List;
+
 public class TheOtherSpawner {
-    private static final int MIN_DISTANCE = 30; // Minimum distance from player
-    private static final int MAX_DISTANCE = 80; // Maximum distance (horizon range)
-    private static final int SPAWN_ATTEMPTS = 200; // Number of attempts to find valid spawn location
+
+    public static Position[] spawnPositions = null;
 
     public static void trySpawnTheOther(ServerWorld world, PlayerEntity player) {
-        Random random = world.getRandom();
 
-        for (int attempt = 0; attempt < SPAWN_ATTEMPTS; attempt++) {
-            // Generate random angle around the player
-            double angle = random.nextDouble() * 2 * Math.PI;
-
-            // Generate random distance within range
-            double distance = MIN_DISTANCE + random.nextDouble() * (MAX_DISTANCE - MIN_DISTANCE);
-
-            // Calculate spawn position
-            Vec3d playerPos = player.getPos();
-            double spawnX = playerPos.x + Math.cos(angle) * distance;
-            double spawnZ = playerPos.z + Math.sin(angle) * distance;
-
-            // Get surface height at spawn location
-            BlockPos spawnPos = new BlockPos((int) spawnX, 0, (int) spawnZ);
-            int surfaceY = world.getTopY(Heightmap.Type.WORLD_SURFACE, spawnPos.getX(), spawnPos.getZ());
-
-            // Create final spawn position
-            BlockPos finalSpawnPos = new BlockPos((int) spawnX, surfaceY, (int) spawnZ);
-
-            // Check if the spawn location is valid
-            if (isValidSpawnLocation(world, finalSpawnPos)) {
+        for (int attempt = 0; attempt < 100; attempt++) {
+            java.util.Random randomPos = new java.util.Random();
+            Position prevPlayerPos = spawnPositions[randomPos.nextInt(spawnPositions.length)];
+            Random random = world.getRandom();
+            double spawnX = prevPlayerPos.getX();
+            double spawnY = prevPlayerPos.getY();
+            double spawnZ = prevPlayerPos.getZ();
+            BlockPos spawnPos = new BlockPos((int) spawnX, (int) spawnY, (int) spawnZ);
+            if (isValidSpawnLocation(world, spawnPos, player)) {
+                List<? extends TheOtherEntity> entities = world.getEntitiesByType(ModEntities.TheOther, entity -> true);
+                for (TheOtherEntity entity : entities) {
+                    entity.discard();
+                }
                 TheOtherEntity theOther = new TheOtherEntity(ModEntities.TheOther, world);
-                theOther.refreshPositionAndAngles(finalSpawnPos.getX() + 0.5, finalSpawnPos.getY(), finalSpawnPos.getZ() + 0.5,
-                        random.nextFloat() * 360.0F, 0.0F);
-
+                theOther.refreshPositionAndAngles(spawnPos.getX() + 0.5, spawnPos.getY(), spawnPos.getZ() + 0.5, random.nextFloat() * 360.0F, 0.0F);
                 world.spawnEntity(theOther);
                 break;
             }
         }
     }
 
-    private static boolean isValidSpawnLocation(ServerWorld world, BlockPos pos) {
-        // Check if position is loaded
+    private static boolean isValidSpawnLocation(ServerWorld world, BlockPos pos, PlayerEntity player) {
         ChunkPos chunkPos = new ChunkPos(pos);
         if (!world.isChunkLoaded(chunkPos.x, chunkPos.z)) {
             return false;
         }
 
-        // Check if there's enough space (2 blocks high)
         if (!world.getBlockState(pos).isAir() || !world.getBlockState(pos.up()).isAir()) {
             return false;
         }
 
-        // Check if the block below is solid
-        if (!world.getBlockState(pos.down()).isSolidBlock(world, pos.down())) {
+        if (Math.sqrt(player.squaredDistanceTo(new Vec3d(pos.getX(), pos.getY(), pos.getZ()))) <= 30) {
+            System.out.println("player too close! " + Math.sqrt(player.squaredDistanceTo(new Vec3d(pos.getX(), pos.getY(), pos.getZ()))));
             return false;
         }
-
-        // Ensure it's not too close to any player
-        for (PlayerEntity worldPlayer : world.getPlayers()) {
-            double distance = worldPlayer.squaredDistanceTo(pos.getX(), pos.getY(), pos.getZ());
-            if (distance < MIN_DISTANCE * MIN_DISTANCE) {
-                return false;
-            }
-        }
+        System.out.println("player far enough! " + Math.sqrt(player.squaredDistanceTo(new Vec3d(pos.getX(), pos.getY(), pos.getZ()))));
 
         return true;
     }

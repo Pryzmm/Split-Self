@@ -49,7 +49,9 @@ public class SplitSelfCommands {
                                     String secondArg = StringArgumentType.getString(context, "event").toLowerCase();
                                     ServerWorld world = (ServerWorld) context.getSource().getWorld();
                                     PlayerEntity player = (PlayerEntity) context.getSource().getPlayer();
-                                    if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("poemscreen")) {
+                                    if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("random")) {
+                                        EventManager.triggerRandomEvent(world, player, null, true);
+                                    } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("poemscreen")) {
                                         EventManager.triggerRandomEvent(world, player, EventManager.Events.POEMSCREEN, true);
                                     } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("spawntheother")) {
                                         EventManager.triggerRandomEvent(world, player, EventManager.Events.SPAWNTHEOTHER, true);

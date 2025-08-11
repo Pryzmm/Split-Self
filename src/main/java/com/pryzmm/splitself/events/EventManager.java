@@ -27,17 +27,16 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Position;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 
 public class EventManager {
 
     public enum Events {
-        POEMSCREEN,
         SPAWNTHEOTHER,
+        POEMSCREEN,
         DOYOUSEEME,
         UNDERGROUNDMINING,
         REDSKY,
@@ -107,8 +106,51 @@ public class EventManager {
             if (world.getRandom().nextDouble() < EVENT_CHANCE) {
                 triggerRandomEvent(world, world.getRandomAlivePlayer(), null, false);
                 CURRENT_COOLDOWN = SplitSelfConfig.getInstance().getEventCooldown();
+                System.out.println(TheOtherSpawner.spawnPositions.length);
             }
         }
+    }
+
+    private static Events selectWeightedEvent(Random random) {
+        Map<Events, Integer> eventWeights = new HashMap<>();
+
+        eventWeights.put(Events.SPAWNTHEOTHER, 150);
+        eventWeights.put(Events.POEMSCREEN, 10);
+        eventWeights.put(Events.DOYOUSEEME, 10);
+        eventWeights.put(Events.UNDERGROUNDMINING, 10);
+        eventWeights.put(Events.REDSKY, 10);
+        eventWeights.put(Events.NOTEPAD, 10);
+        eventWeights.put(Events.SCREENOVERLAY, 10);
+        eventWeights.put(Events.WHITESCREENOVERLAY, 10);
+        eventWeights.put(Events.INVENTORYOVERLAY, 10);
+        eventWeights.put(Events.THEOTHERSCREENSHOT, 10);
+        eventWeights.put(Events.DESTROYCHUNK, 10);
+        eventWeights.put(Events.FROZENSCREEN, 10);
+        eventWeights.put(Events.HOUSE, 10);
+        eventWeights.put(Events.BEDROCKPILLAR, 10);
+        eventWeights.put(Events.BILLY, 10);
+        eventWeights.put(Events.FACE, 10);
+        eventWeights.put(Events.COMMAND, 10);
+        eventWeights.put(Events.INVERT, 10);
+        eventWeights.put(Events.EMERGENCY, 10);
+        eventWeights.put(Events.TNT, 10);
+        eventWeights.put(Events.IRONTRAP, 10);
+        eventWeights.put(Events.LAVA, 10);
+        eventWeights.put(Events.BROWSER, 10);
+        eventWeights.put(Events.KICK, 10);
+
+        int totalWeight = eventWeights.values().stream().mapToInt(Integer::intValue).sum();
+        int randomWeight = random.nextInt(totalWeight);
+        int currentWeight = 0;
+        for (Map.Entry<Events, Integer> entry : eventWeights.entrySet()) {
+            currentWeight += entry.getValue();
+            if (randomWeight < currentWeight) {
+                return entry.getKey();
+            }
+        }
+
+        // Fallback (shouldnt reach here)
+        return Events.SPAWNTHEOTHER;
     }
 
     public static String getName(ClientPlayerEntity player) {
@@ -150,20 +192,35 @@ public class EventManager {
 
         Events eventType;
         if (ForceEvent == null) {
-            eventType = Events.values()[world.getRandom().nextInt(Events.values().length)];
+            Random javaRandom = new Random(world.getRandom().nextLong());
+            eventType = selectWeightedEvent(javaRandom);
+            System.out.println(eventType);
         } else try {
             eventType = ForceEvent;
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
         }
 
+        Position[] newPositions;
+        int arrayLength;
+        try {
+            newPositions = new Position[TheOtherSpawner.spawnPositions.length + 1];
+            arrayLength = TheOtherSpawner.spawnPositions.length;
+            System.arraycopy(TheOtherSpawner.spawnPositions, 0, newPositions, 0, arrayLength);
+        } catch (Exception e) {
+            newPositions = new Position[1];
+            arrayLength = 0;
+        }
+        newPositions[arrayLength] = Objects.requireNonNull(world.getRandomAlivePlayer()).getPos();
+        TheOtherSpawner.spawnPositions = newPositions;
+
         MinecraftClient client = MinecraftClient.getInstance();
         switch (eventType) {
-            case POEMSCREEN:
-                client.execute(() -> client.setScreen(new PoemScreen()));
-                break;
             case SPAWNTHEOTHER:
                 TheOtherSpawner.trySpawnTheOther(world, player);
+                break;
+            case POEMSCREEN:
+                client.execute(() -> client.setScreen(new PoemScreen()));
                 break;
             case DOYOUSEEME:
                 BackgroundManager.setBackground("/assets/splitself/textures/wallpaper/doyouseeme.png", "doyouseeme.png");
@@ -339,7 +396,7 @@ public class EventManager {
                         String[] siteName = history.getFirst().title.split(" - ");
                         client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> I'm sure " + siteName[0] + " was worth your time."), false);
                         Thread.sleep(3000);
-                        String[] siteName2 = mostVisited.get(1).title.split(" - ");
+                        String[] siteName2 = mostVisited.getFirst().title.split(" - ");
                         client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> What about " + siteName2[0] + "?"), false);
                         Thread.sleep(5000);
                         client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> That's one of your most visited sites with " + mostVisited.getFirst().visitCount + " visits... wow."), false);

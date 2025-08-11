@@ -31,9 +31,9 @@ public class BrowserHistoryReader {
     public List<HistoryEntry> getRecentHistory(int limit) {
         List<HistoryEntry> history = new ArrayList<>();
 
-        history.addAll(readChromeHistory(limit));
-        history.addAll(readFirefoxHistory(limit));
-        history.addAll(readOperaGXHistory(limit));
+        history.addAll(readChromeHistory(limit, "last_visit_time"));
+        history.addAll(readFirefoxHistory(limit, "last_visit_time"));
+        history.addAll(readOperaGXHistory(limit, "last_visit_time"));
 
         history.sort((a, b) -> Long.compare(b.visitTime, a.visitTime));
 
@@ -44,25 +44,17 @@ public class BrowserHistoryReader {
         List<HistoryEntry> history = new ArrayList<>();
 
         // Debug: Let's see what we're getting from each browser
-        List<HistoryEntry> chromeEntries = readChromeHistory(1000); // Get more entries for debugging
-        List<HistoryEntry> firefoxEntries = readFirefoxHistory(1000);
-        List<HistoryEntry> operaEntries = readOperaGXHistory(1000);
-
-        System.out.println("Debug - Chrome entries: " + chromeEntries.size());
-        System.out.println("Debug - Firefox entries: " + firefoxEntries.size());
-        System.out.println("Debug - Opera entries: " + operaEntries.size());
+        List<HistoryEntry> chromeEntries = readChromeHistory(100, "visit_count"); // Get more entries for debugging
+        List<HistoryEntry> firefoxEntries = readFirefoxHistory(100, "visit_count");
+        List<HistoryEntry> operaEntries = readOperaGXHistory(100, "visit_count");
 
         history.addAll(chromeEntries);
         history.addAll(firefoxEntries);
         history.addAll(operaEntries);
 
-        // Debug: Print some visit counts before sorting
-        System.out.println("Debug - Total entries before sorting: " + history.size());
         if (!history.isEmpty()) {
-            System.out.println("Debug - Sample visit counts:");
             for (int i = 0; i < Math.min(5, history.size()); i++) {
                 HistoryEntry entry = history.get(i);
-                System.out.println("  " + entry.browser + ": " + entry.title + " (visits: " + entry.visitCount + ")");
             }
         }
 
@@ -79,19 +71,19 @@ public class BrowserHistoryReader {
         return history.subList(0, Math.min(limit, history.size()));
     }
 
-    private List<HistoryEntry> readChromeHistory(int limit) {
+    private List<HistoryEntry> readChromeHistory(int limit, String sort) {
         String historyPath = getChromeHistoryPath();
         System.out.println("Debug - Chrome history path: " + historyPath);
-        return new ArrayList<>(readChromiumBasedHistory(historyPath, limit, "Chrome"));
+        return new ArrayList<>(readChromiumBasedHistory(historyPath, limit, "Chrome", sort));
     }
 
-    private List<HistoryEntry> readOperaGXHistory(int limit) {
+    private List<HistoryEntry> readOperaGXHistory(int limit, String sort) {
         String historyPath = getOperaGXHistoryPath();
         System.out.println("Debug - Opera GX history path: " + historyPath);
-        return new ArrayList<>(readChromiumBasedHistory(historyPath, limit, "OperaGX"));
+        return new ArrayList<>(readChromiumBasedHistory(historyPath, limit, "OperaGX", sort));
     }
 
-    private List<HistoryEntry> readFirefoxHistory(int limit) {
+    private List<HistoryEntry> readFirefoxHistory(int limit, String sort) {
         List<HistoryEntry> entries = new ArrayList<>();
         String historyPath = getFirefoxHistoryPath();
         System.out.println("Debug - Firefox history path: " + historyPath);
@@ -112,10 +104,9 @@ public class BrowserHistoryReader {
 
         try {
             Connection conn = DriverManager.getConnection(connectionUrl);
-            // Modified query to get higher visit counts and better data
             String query = "SELECT url, title, visit_count, last_visit_date FROM moz_places " +
                     "WHERE last_visit_date IS NOT NULL AND visit_count > 0 " +
-                    "ORDER BY visit_count DESC LIMIT ?";
+                    "ORDER BY " + sort + " DESC LIMIT ?";
 
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setInt(1, limit);
@@ -123,16 +114,19 @@ public class BrowserHistoryReader {
 
             while (rs.next()) {
                 String title = rs.getString("title");
+                title = replaceTitle(title);
                 long firefoxTime = rs.getLong("last_visit_date");
                 long compatibleTime = firefoxTime + 11644473600000000L;
 
                 if (title == null || title.trim().isEmpty()) {
                     continue;
+                } else if (title.contains("GX Corner") || title.contains("New Tab")) { // Removing startup pages from the list
+                    continue;
                 }
 
                 entries.add(new HistoryEntry(
                         rs.getString("url"),
-                        rs.getString("title"),
+                        title,
                         compatibleTime,
                         rs.getInt("visit_count"),
                         "Firefox"
@@ -152,7 +146,7 @@ public class BrowserHistoryReader {
         return entries;
     }
 
-    private List<HistoryEntry> readChromiumBasedHistory(String historyPath, int limit, String browserName) {
+    private List<HistoryEntry> readChromiumBasedHistory(String historyPath, int limit, String browserName, String sort) {
         List<HistoryEntry> entries = new ArrayList<>();
 
         File historyFile = new File(historyPath);
@@ -169,16 +163,18 @@ public class BrowserHistoryReader {
             // Modified query to prioritize by visit count instead of time for most visited
             String query = "SELECT url, title, visit_count, last_visit_time FROM urls " +
                     "WHERE last_visit_time > 0 AND visit_count > 0 " +
-                    "ORDER BY visit_count DESC LIMIT ?";
+                    "ORDER BY " + sort + " DESC LIMIT ?";
 
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setInt(1, limit);
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
+                String title = rs.getString("title");
+                title = replaceTitle(title);
                 entries.add(new HistoryEntry(
                         rs.getString("url"),
-                        rs.getString("title"),
+                        title,
                         rs.getLong("last_visit_time"),
                         rs.getInt("visit_count"),
                         browserName
@@ -290,5 +286,14 @@ public class BrowserHistoryReader {
     public static List<HistoryEntry> getMostVisited() {
         BrowserHistoryReader reader = new BrowserHistoryReader();
         return reader.getMostVisited(10);
+    }
+
+    private String replaceTitle(String title) {
+        title = title.toLowerCase().contains("inbox (") ? "Email" : title;
+        title = title.toLowerCase().contains("amazon") ? "Amazon" : title;
+        title = title.toLowerCase().contains("youtube") ? "YouTube" : title;
+        title = title.toLowerCase().contains("split self") ? "this Minecraft mod on Modrinth" : title;
+        title = title.toLowerCase().contains("split-self") ? "this Minecraft mod on Github" : title;
+        return title;
     }
 }

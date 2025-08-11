@@ -1,7 +1,6 @@
 package com.pryzmm.splitself.config;
 
 import com.pryzmm.splitself.SplitSelf;
-import com.pryzmm.splitself.events.EventManager;
 import net.fabricmc.loader.api.FabricLoader;
 
 public class SplitSelfConfig {
@@ -15,7 +14,6 @@ public class SplitSelfConfig {
     public int eventCooldown = 600;
     public int startEventsAfter = 3000;
 
-    // YACL integration (optional)
     private boolean yaclAvailable;
     private Object yaclHandler;
     private Object yaclInstance;
@@ -74,64 +72,45 @@ public class SplitSelfConfig {
 
     private void initializeYACL() throws Exception {
         Class<?> yaclConfigClass = Class.forName("com.pryzmm.splitself.config.SplitSelfYACLConfig");
-
-        // Get the HANDLER field
         yaclHandler = yaclConfigClass.getField("HANDLER").get(null);
-
-        // Load the config from file
         yaclHandler.getClass().getMethod("load").invoke(yaclHandler);
-
-        // Get the config instance
         yaclInstance = yaclHandler.getClass().getMethod("instance").invoke(yaclHandler);
-
         SplitSelf.LOGGER.info("YACL config initialized successfully");
     }
 
     private void loadFromYACL() throws Exception {
         if (yaclInstance == null) return;
-
         Class<?> configClass = yaclInstance.getClass();
-
-        // Read values directly from the config instance fields
         eventsEnabled = configClass.getField("eventsEnabled").getBoolean(yaclInstance);
         eventTickInterval = configClass.getField("eventTickInterval").getInt(yaclInstance);
         eventChance = configClass.getField("eventChance").getDouble(yaclInstance);
         eventCooldown = configClass.getField("eventCooldown").getInt(yaclInstance);
         startEventsAfter = configClass.getField("startEventsAfter").getInt(yaclInstance);
-
         SplitSelf.LOGGER.info("Loaded values from YACL config");
     }
 
     private void saveToYACL() {
         if (!yaclAvailable || yaclInstance == null || yaclHandler == null) return;
-
         try {
             Class<?> configClass = yaclInstance.getClass();
-
-            // Write values directly to the config instance fields
             configClass.getField("eventsEnabled").setBoolean(yaclInstance, eventsEnabled);
             configClass.getField("eventTickInterval").setInt(yaclInstance, eventTickInterval);
             configClass.getField("eventChance").setDouble(yaclInstance, eventChance);
             configClass.getField("eventCooldown").setInt(yaclInstance, eventCooldown);
             configClass.getField("startEventsAfter").setInt(yaclInstance, startEventsAfter);
-
-            // Save to file
             yaclHandler.getClass().getMethod("save").invoke(yaclHandler);
-
             SplitSelf.LOGGER.info("Saved values to YACL config");
         } catch (Exception e) {
             SplitSelf.LOGGER.error("Error saving YACL config: {}", e.getMessage(), e);
         }
     }
 
-    // Getters
     public boolean isEventsEnabled() { return eventsEnabled; }
     public int getEventTickInterval() { return eventTickInterval; }
     public double getEventChance() { return eventChance; }
     public int getEventCooldown() { return eventCooldown; }
     public int getStartEventsAfter() { return startEventsAfter; }
 
-    // Setters (will update YACL config if available)
     public void setEventsEnabled(boolean eventsEnabled) {
         this.eventsEnabled = eventsEnabled;
         saveToYACL();
