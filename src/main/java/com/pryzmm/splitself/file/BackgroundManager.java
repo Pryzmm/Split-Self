@@ -104,10 +104,9 @@ public class BackgroundManager {
                 String output = reader.readLine();
                 process.waitFor();
                 if (output != null && !output.isBlank()) {
-                    // Y'know, I probably should've done this before.
                     output = output.trim();
                     File f = new File(output);
-                    if (!f.exists() || f.isDirectory()) { // Now accurately checks if the file exists before returning this.
+                    if (!f.exists() || f.isDirectory()) {
                         return null;
                     }
                     return output;
