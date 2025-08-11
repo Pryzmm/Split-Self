@@ -64,6 +64,9 @@ public class EventManager {
     private static int CURRENT_COOLDOWN = 0;
     private static FirstJoinTracker tracker;
 
+    public static SplitSelfConfig config = SplitSelfConfig.getInstance();
+    public static int GUARANTEED_EVENT = config.getGuaranteedEvent();
+
     public static void onTick(MinecraftServer server) {
         SplitSelfConfig config = SplitSelfConfig.getInstance();
         int TICK_INTERVAL = config.getEventTickInterval();
@@ -94,6 +97,8 @@ public class EventManager {
                 tracker = FirstJoinTracker.getServerState(world.getServer());
             }
 
+            if (GUARANTEED_EVENT > 0) {GUARANTEED_EVENT--;}
+
             if (CURRENT_COOLDOWN > 0) {
                 CURRENT_COOLDOWN--;
                 return;
@@ -103,10 +108,10 @@ public class EventManager {
                 return;
             }
 
-            if (world.getRandom().nextDouble() < EVENT_CHANCE) {
+            if (world.getRandom().nextDouble() < EVENT_CHANCE || GUARANTEED_EVENT == 0) {
                 triggerRandomEvent(world, world.getRandomAlivePlayer(), null, false);
                 CURRENT_COOLDOWN = SplitSelfConfig.getInstance().getEventCooldown();
-                System.out.println(TheOtherSpawner.spawnPositions.length);
+                GUARANTEED_EVENT = SplitSelfConfig.getInstance().getGuaranteedEvent();
             }
         }
     }
