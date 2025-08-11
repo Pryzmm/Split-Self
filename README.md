@@ -1,17 +1,36 @@
 # Split Self | Minecraft Horror Mod
 
-## DISCLAIMER
-This mod will interact with your device, **OUTSIDE OF THE GAME!** Your PC will not be damaged in any way, and any changes made to your device are easily able to be reverted. If you feel unsafe using this, or if the mod is not supported on your device, you may download the safe version, which is found along every Github release.
+## ⚠️ DISCLAIMER
 
-## Installation
-Download one of the two mods from the [latest release page](https://github.com/Pryzmm/Split-Self/releases).
-  - The unsafe version interacts with your device outside of the game.
-  - ~~The safe version doesn't, but it's less fun that way! :(~~ *Safe version currently unavailable until Full Release*
+This mod will interact with your device **outside of the game**. Rest assured, your PC will not be damaged, and any changes made are easily reversible. If you feel unsafe using this mod, or if it's not supported on your device, you may download the **safe version** from every GitHub release.
 
-Download the [Fabric Installer](https://fabricmc.net/use/installer/) and the [Fabric API mod](https://modrinth.com/mod/fabric-api).
+---
 
-Add Split Self and Fabric API to your mods folder.
+## 🔗 Official Download Sources
 
-Launch Minecraft, and watch as you lose control.
+To ensure the safety and authenticity of the Split Self mod, please download it only from the following official sources:
+
+- [Modrinth](https://modrinth.com/mod/split-self)
+- [GitHub](https://github.com/Pryzmm/Split-Self)
+
+Downloading the mod from any other source may compromise your device's security.
+
+---
+
+## 🛠️ Installation Guide
+
+1. **Download the Mod**: Obtain the Split Self mod from the [latest release page](https://github.com/Pryzmm/Split-Self/releases).
+   - The **unsafe version** interacts with your device outside of the game.
+   - The **safe version** doesn't, but it's less immersive. *(Safe version currently unavailable until Full Release)*
+
+2. **Install Fabric**: Download the [Fabric Installer](https://fabricmc.net/use/installer/) for Minecraft 1.21.1.
+
+3. **Install Fabric API**: Download the [Fabric API mod](https://modrinth.com/mod/fabric-api).
+
+4. **Add to Mods Folder**: Place both the Split Self mod and Fabric API into your Minecraft `mods` folder.
+
+5. **Launch Minecraft**: Start the game and experience the horror as you lose control.
+
+---
 
 ### Thank you to everyone who supported me while making this! (You know who you are <3)
