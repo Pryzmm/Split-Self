@@ -38,6 +38,9 @@ public class SplitSelfYACLConfig {
     @SerialEntry
     public int startEventsAfter = 3000;
 
+    @SerialEntry
+    public int guaranteedEvent = 15600;
+
     public static Screen createScreen(Screen parent) {
         return YetAnotherConfigLib.createBuilder()
                 .title(Text.translatable("config.splitself.title"))
@@ -72,6 +75,12 @@ public class SplitSelfYACLConfig {
                                         .controller(opt -> IntegerSliderControllerBuilder.create(opt).range(0, 10000).step(50))
                                         .build())
                                 .option(Option.<Integer>createBuilder()
+                                        .name(Text.translatable("config.splitself.guaranteed_event"))
+                                        .description(OptionDescription.of(Text.translatable("config.splitself.guaranteed_event.description")))
+                                        .binding(15600, () -> HANDLER.instance().guaranteedEvent, newVal -> HANDLER.instance().guaranteedEvent = newVal)
+                                        .controller(opt -> IntegerSliderControllerBuilder.create(opt).range(0, 24000).step(100))
+                                        .build())
+                                .option(Option.<Integer>createBuilder()
                                         .name(Text.translatable("config.splitself.start_events_after"))
                                         .description(OptionDescription.of(Text.translatable("config.splitself.start_events_after.description")))
                                         .binding(3000, () -> HANDLER.instance().startEventsAfter, newVal -> HANDLER.instance().startEventsAfter = newVal)
@@ -102,11 +111,13 @@ public class SplitSelfYACLConfig {
     public int getEventTickInterval() { return eventTickInterval; }
     public double getEventChance() { return eventChance; }
     public int getEventCooldown() { return eventCooldown; }
+    public int getGuaranteedEvent() { return guaranteedEvent; }
     public int getStartEventsAfter() { return startEventsAfter; }
 
     public void setEventsEnabled(boolean eventsEnabled) { this.eventsEnabled = eventsEnabled; }
     public void setEventTickInterval(int eventTickInterval) { this.eventTickInterval = eventTickInterval; }
     public void setEventChance(double eventChance) { this.eventChance = eventChance; }
     public void setEventCooldown(int eventCooldown) { this.eventCooldown = eventCooldown; }
+    public void setGuaranteedEvent(int guaranteedEvent) { this.guaranteedEvent = guaranteedEvent; }
     public void setStartEventsAfter(int startEventsAfter) { this.startEventsAfter = startEventsAfter; }
 }
