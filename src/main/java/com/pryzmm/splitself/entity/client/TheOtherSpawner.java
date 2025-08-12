@@ -3,6 +3,8 @@ package com.pryzmm.splitself.entity.client;
 import com.pryzmm.splitself.entity.ModEntities;
 import com.pryzmm.splitself.entity.custom.TheOtherEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Position;
@@ -34,6 +36,9 @@ public class TheOtherSpawner {
                 TheOtherEntity theOther = new TheOtherEntity(ModEntities.TheOther, world);
                 theOther.refreshPositionAndAngles(spawnPos.getX() + 0.5, spawnPos.getY(), spawnPos.getZ() + 0.5, random.nextFloat() * 360.0F, 0.0F);
                 world.spawnEntity(theOther);
+                System.out.println(player);
+                System.out.println(theOther.getBlockPos());
+                world.playSound(null, theOther.getBlockPos(), SoundEvents.BLOCK_BELL_RESONATE, SoundCategory.MASTER, 1000.0f, 1.0f);
                 break;
             }
         }
