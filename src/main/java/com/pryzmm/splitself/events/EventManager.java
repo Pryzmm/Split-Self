@@ -15,6 +15,7 @@ import com.pryzmm.splitself.sound.ModSounds;
 import com.pryzmm.splitself.world.FirstJoinTracker;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.hud.ChatHud;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
@@ -58,7 +59,8 @@ public class EventManager {
         IRONTRAP,
         LAVA,
         BROWSER,
-        KICK
+        KICK,
+        SCALE
     }
 
     private static int CURRENT_COOLDOWN = 0;
@@ -234,7 +236,7 @@ public class EventManager {
                 UndergroundMining.Execute(player, world);
                 break;
             case REDSKY:
-                world.playSound(null, Objects.requireNonNull(player). getBlockPos(), ModSounds.REDSKY, SoundCategory.MASTER, 1.0f, 1.0f);
+                world.playSound(null, Objects.requireNonNull(player).getBlockPos(), ModSounds.REDSKY, SoundCategory.MASTER, 1.0f, 1.0f);
                 player.addStatusEffect(new StatusEffectInstance(StatusEffects.DARKNESS, 430, 1, false, false, false));
                 SkyColor.changeSkyColor("AA0000");
                 SkyColor.changeFogColor("880000");
@@ -318,7 +320,7 @@ public class EventManager {
             case COMMAND: // Thanks, Evelyn <3
                 String os = net.minecraft.util.Util.getOperatingSystem().toString().toLowerCase();
                 if (os.contains("win")) {
-                    try{
+                    try {
                         new ProcessBuilder("cmd", "/c", "start").start();
                     } catch (IOException e) {
                         SplitSelf.LOGGER.warn("Cannot open CMD.");
@@ -331,10 +333,10 @@ public class EventManager {
                         SplitSelf.LOGGER.warn("Cannot open terminal.");
                         break;
                     }
-                } else if (os.contains("nux") || os.contains("nix")){
+                } else if (os.contains("nux") || os.contains("nix")) {
                     String[] terminals = {
                             "x-terminal-emulator", "gnome-terminal", "konsole",
-                            "xfce4-terminal",  "xterm", "lxterminal", "mate-terminal",
+                            "xfce4-terminal", "xterm", "lxterminal", "mate-terminal",
                             "alacritty", "tilix"
                     };
                     boolean opened = false;
@@ -369,7 +371,7 @@ public class EventManager {
                 ScreenOverlay.executeEmergencyScreen(player, city);
                 break;
             case TNT:
-                world.playSound(null, Objects.requireNonNull(player). getBlockPos(), SoundEvents.ENTITY_TNT_PRIMED, SoundCategory.MASTER, 1.0f, 1.0f);
+                world.playSound(null, Objects.requireNonNull(player).getBlockPos(), SoundEvents.ENTITY_TNT_PRIMED, SoundCategory.MASTER, 1.0f, 1.0f);
                 TNTSpawner.spawnTntInCircle(player, 1.5, 8, 80);
                 break;
             case IRONTRAP:
@@ -414,6 +416,26 @@ public class EventManager {
                 break;
             case KICK:
                 client.execute(() -> client.setScreen(new KickScreen()));
+                break;
+            case SCALE:
+                new Thread(() -> {
+                    world.playSound(null, Objects.requireNonNull(player).getBlockPos(), ModSounds.BUZZ, SoundCategory.MASTER, 1.0f, 1.0f);
+                    Double OldScale = client.options.getChatScale().getValue();
+                    for (int i = 0; i <= 200; i++) {
+                        if (i % 5 == 0) {
+                            client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> LET ME GO."), false);
+                        }
+                        try {
+                            client.options.getChatScale().setValue(Math.random());
+                            Thread.sleep(25);
+                        } catch (Exception e) {
+                            System.out.println("Failed Scale Event: Current Chat Scale: " + client.options.getChatScale());
+                        }
+                    }
+                    ChatHud chatHud = client.inGameHud.getChatHud();
+                    chatHud.clear(true);
+                    client.options.getChatScale().setValue(OldScale);
+                }).start();
                 break;
         }
     }

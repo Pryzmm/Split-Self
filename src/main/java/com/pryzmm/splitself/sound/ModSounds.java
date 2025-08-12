@@ -20,6 +20,7 @@ public class ModSounds {
     public static final SoundEvent AMSTATIC = registerSoundEvent("amstatic");
     public static final SoundEvent HUM = registerSoundEvent("hum");
     public static final SoundEvent AMBER = registerSoundEvent("amber");
+    public static final SoundEvent BUZZ = registerSoundEvent("buzz");
 
     public static final RegistryKey<JukeboxSong> IN_MY_LIFE_KEY =
             RegistryKey.of(RegistryKeys.JUKEBOX_SONG, Identifier.of(SplitSelf.MOD_ID, "in_my_life"));

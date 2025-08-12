@@ -76,5 +76,13 @@
         "name": "splitself:amber"
       }
     ]
+  },
+  "buzz": {
+    "category": "master",
+    "sounds": [
+      {
+        "name": "splitself:buzz"
+      }
+    ]
   }
 }

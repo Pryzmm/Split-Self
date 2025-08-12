@@ -49,12 +49,6 @@ public class TheOtherSpawner {
             return false;
         }
 
-        if (Math.sqrt(player.squaredDistanceTo(new Vec3d(pos.getX(), pos.getY(), pos.getZ()))) <= 30) {
-            System.out.println("player too close! " + Math.sqrt(player.squaredDistanceTo(new Vec3d(pos.getX(), pos.getY(), pos.getZ()))));
-            return false;
-        }
-        System.out.println("player far enough! " + Math.sqrt(player.squaredDistanceTo(new Vec3d(pos.getX(), pos.getY(), pos.getZ()))));
-
-        return true;
+        return !(Math.sqrt(player.squaredDistanceTo(new Vec3d(pos.getX(), pos.getY(), pos.getZ()))) <= 30);
     }
 }
