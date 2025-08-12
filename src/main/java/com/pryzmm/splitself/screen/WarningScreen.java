@@ -75,7 +75,7 @@ public class WarningScreen extends Screen {
                         .append(piiStatus)
         };
 
-        int y = 90;
+        int y = 70;
         for (Text line : lines) {
             int x = (this.width - this.textRenderer.getWidth(line)) / 2;
             context.drawTextWithShadow(this.textRenderer, line, x, y, 0xFFFFFF);
