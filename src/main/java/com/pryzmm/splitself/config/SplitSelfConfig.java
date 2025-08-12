@@ -1,7 +1,6 @@
 package com.pryzmm.splitself.config;
 
 import com.pryzmm.splitself.SplitSelf;
-import com.pryzmm.splitself.events.EventManager;
 import net.fabricmc.loader.api.FabricLoader;
 
 public class SplitSelfConfig {
@@ -76,13 +75,8 @@ public class SplitSelfConfig {
     private void initializeYACL() throws Exception {
         Class<?> yaclConfigClass = Class.forName("com.pryzmm.splitself.config.SplitSelfYACLConfig");
 
-        // Get the HANDLER field
         yaclHandler = yaclConfigClass.getField("HANDLER").get(null);
-
-        // Load the config from file
         yaclHandler.getClass().getMethod("load").invoke(yaclHandler);
-
-        // Get the config instance
         yaclInstance = yaclHandler.getClass().getMethod("instance").invoke(yaclHandler);
 
         SplitSelf.LOGGER.info("YACL config initialized successfully");
@@ -93,7 +87,6 @@ public class SplitSelfConfig {
 
         Class<?> configClass = yaclInstance.getClass();
 
-        // Read values directly from the config instance fields
         eventsEnabled = configClass.getField("eventsEnabled").getBoolean(yaclInstance);
         eventTickInterval = configClass.getField("eventTickInterval").getInt(yaclInstance);
         eventChance = configClass.getField("eventChance").getDouble(yaclInstance);
@@ -110,14 +103,12 @@ public class SplitSelfConfig {
         try {
             Class<?> configClass = yaclInstance.getClass();
 
-            // Write values directly to the config instance fields
             configClass.getField("eventsEnabled").setBoolean(yaclInstance, eventsEnabled);
             configClass.getField("eventTickInterval").setInt(yaclInstance, eventTickInterval);
             configClass.getField("eventChance").setDouble(yaclInstance, eventChance);
             configClass.getField("eventCooldown").setInt(yaclInstance, eventCooldown);
             configClass.getField("startEventsAfter").setInt(yaclInstance, startEventsAfter);
 
-            // Save to file
             yaclHandler.getClass().getMethod("save").invoke(yaclHandler);
 
             SplitSelf.LOGGER.info("Saved values to YACL config");
@@ -134,7 +125,6 @@ public class SplitSelfConfig {
     public int getGuaranteedEvent() { return guaranteedEvent; }
     public int getStartEventsAfter() { return startEventsAfter; }
 
-    // Setters (will update YACL config if available)
     public void setEventsEnabled(boolean eventsEnabled) {
         this.eventsEnabled = eventsEnabled;
         saveToYACL();

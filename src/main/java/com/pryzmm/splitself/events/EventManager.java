@@ -60,7 +60,9 @@ public class EventManager {
         LAVA,
         BROWSER,
         KICK,
-        SCALE
+        SIGN,
+        SCALE,
+        CAMERA
     }
 
     private static int CURRENT_COOLDOWN = 0;
@@ -345,8 +347,7 @@ public class EventManager {
                             new ProcessBuilder(term).start();
                             opened = true;
                             break;
-                        } catch (IOException ignored) {
-                        }
+                        } catch (IOException ignored) {}
                     }
 
                     if (!opened) {
@@ -435,6 +436,17 @@ public class EventManager {
                     ChatHud chatHud = client.inGameHud.getChatHud();
                     chatHud.clear(true);
                     client.options.getChatScale().setValue(OldScale);
+                }).start();
+                break;
+            case CAMERA:
+                new Thread(() -> {
+                    for (int i = 0; i <= 400; i++) {
+                        try {
+                            client.player.setYaw(client.player.getYaw() + (int) ((Math.random() * 6) - 3));
+                            client.player.setPitch(client.player.getPitch() + (int) ((Math.random() * 6) - 3));
+                            Thread.sleep(25);
+                        } catch (Exception ignored) {}
+                    }
                 }).start();
                 break;
         }
