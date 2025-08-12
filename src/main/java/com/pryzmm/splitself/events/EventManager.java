@@ -33,7 +33,10 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Position;
+
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 
@@ -67,7 +70,8 @@ public class EventManager {
         SIGN,
         SCALE,
         CAMERA,
-        FREEDOM
+        FREEDOM,
+        MINE
     }
 
     private static int CURRENT_COOLDOWN = 0;
@@ -156,6 +160,7 @@ public class EventManager {
         eventWeights.put(Events.SCALE, 10);
         eventWeights.put(Events.CAMERA, 10);
         eventWeights.put(Events.FREEDOM, 5);
+        eventWeights.put(Events.MINE, 10);
 
         int totalWeight = eventWeights.values().stream().mapToInt(Integer::intValue).sum();
         int randomWeight = random.nextInt(totalWeight);
@@ -304,11 +309,11 @@ public class EventManager {
                 })).start();
                 break;
             case HOUSE:
-                StructureManager.placeStructureRandomRotation(world, player, "house", 50, 80, -5);
+                StructureManager.placeStructureRandomRotation(world, player, "house", 50, 80, -5, false);
                 break;
             case BEDROCKPILLAR:
                 for (int i = 0; i <= 30; i++) {
-                    StructureManager.placeStructureRandomRotation(world, player, "bedrockpillar", 50, 80, 0);
+                    StructureManager.placeStructureRandomRotation(world, player, "bedrockpillar", 50, 80, 0, false);
                 }
                 break;
             case BILLY:
@@ -385,7 +390,7 @@ public class EventManager {
                 TNTSpawner.spawnTntInCircle(player, 1.5, 8, 80);
                 break;
             case IRONTRAP:
-                StructureManager.placeStructureRandomRotation(world, player, "irontrap", 50, 80, -2);
+                StructureManager.placeStructureRandomRotation(world, player, "irontrap", 50, 80, -2, false);
                 break;
             case LAVA:
                 assert player != null;
@@ -539,6 +544,24 @@ public class EventManager {
                         e.printStackTrace();
                     }
                 }).start();
+                break;
+            case MINE:
+                BlockPos structurePos = StructureManager.placeStructureRandomRotation(world, player, "stripmine", 0, 20, -80, true);
+                BlockPos signPos = new BlockPos(structurePos.getX() + 5, structurePos.getY() + 5, structurePos.getZ() + 7);
+                BlockEntity mineBlockEntity = world.getBlockEntity(signPos);
+                if (mineBlockEntity instanceof SignBlockEntity signBlockEntity) {
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yy");
+                    String formattedDate = LocalDate.now().minusMonths(6).minusDays(17).format(formatter);
+                    SignText newSignText = signBlockEntity.getText(true)
+                            .withMessage(2, Text.literal("- " + getName(client.player)))
+                            .withMessage(3, Text.literal(formattedDate));
+                    signBlockEntity.setText(newSignText, true);
+                    signBlockEntity.markDirty();
+                    world.updateListeners(player.getBlockPos(), mineBlockEntity.getCachedState(), mineBlockEntity.getCachedState(), Block.NOTIFY_ALL);
+                } else {
+                    System.out.println("Got block: " + world.getBlockState(signPos));
+                    System.out.println("Got block at pos: " + signPos.getX() + ", " + signPos.getY() + ", " + signPos.getZ());
+                }
                 break;
         }
     }

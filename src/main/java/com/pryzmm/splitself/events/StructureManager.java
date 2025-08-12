@@ -22,7 +22,7 @@ import java.util.Random;
 
 public class StructureManager {
 
-    public static void placeStructureRandomRotation(ServerWorld world, PlayerEntity Player, String structureName, Integer MinimumRange, Integer MaximumRange, Integer YOffset) {
+    public static BlockPos placeStructureRandomRotation(ServerWorld world, PlayerEntity Player, String structureName, Integer MinimumRange, Integer MaximumRange, Integer YOffset, boolean DisableRotation) {
         try {
 
             Random random = new Random();
@@ -35,7 +35,8 @@ public class StructureManager {
             int surfaceY = Player.getWorld().getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, spawnPos.getX(), spawnPos.getZ()) + YOffset;
             BlockPos finalSpawnPos = new BlockPos((int) spawnX, surfaceY, (int) spawnZ);
 
-            BlockRotation rotation = BlockRotation.values()[world.getRandom().nextInt(4)];
+            BlockRotation rotation;
+            if (!DisableRotation) {rotation = BlockRotation.values()[world.getRandom().nextInt(4)];} else {rotation = BlockRotation.NONE;}
 
             // First try the normal template manager approach
             var templateManager = world.getStructureTemplateManager();
@@ -44,37 +45,37 @@ public class StructureManager {
 
             if (template.isPresent()) {
                 placeTemplate(world, finalSpawnPos, template.get(), rotation);
-                return;
+                return finalSpawnPos;
             }
 
             // If template manager fails, load directly from resources
             loadAndPlaceFromResource(world, finalSpawnPos, structureName, rotation);
+            return finalSpawnPos;
 
         } catch (Exception e) {
             SplitSelf.LOGGER.info("Error placing structure with rotation: " + e.getMessage());
             e.printStackTrace();
         }
+        return null;
     }
 
-    private static boolean placeTemplate(ServerWorld world, BlockPos pos, StructureTemplate template, BlockRotation rotation) {
+    private static void placeTemplate(ServerWorld world, BlockPos pos, StructureTemplate template, BlockRotation rotation) {
         StructurePlacementData placementData = new StructurePlacementData()
                 .setRotation(rotation)
                 .setMirror(BlockMirror.NONE)
                 .setIgnoreEntities(false)
-                .addProcessor(BlockIgnoreStructureProcessor.IGNORE_STRUCTURE_BLOCKS)
-                .addProcessor(BlockIgnoreStructureProcessor.IGNORE_AIR);
+                .addProcessor(BlockIgnoreStructureProcessor.IGNORE_AIR_AND_STRUCTURE_BLOCKS);
 
-        boolean result = template.place(world, pos, pos, placementData, world.getRandom(), 2);
-        return result;
+        template.place(world, pos, pos, placementData, world.getRandom(), 2);
     }
 
-    private static boolean loadAndPlaceFromResource(ServerWorld world, BlockPos pos, String structureName, BlockRotation rotation) {
+    private static void loadAndPlaceFromResource(ServerWorld world, BlockPos pos, String structureName, BlockRotation rotation) {
         try {
             String resourcePath = "/data/" + SplitSelf.MOD_ID + "/structures/" + structureName + ".nbt";
             InputStream inputStream = StructureManager.class.getResourceAsStream(resourcePath);
 
             if (inputStream == null) {
-                return false;
+                return;
             }
 
             NbtCompound nbtCompound = NbtIo.readCompressed(inputStream, NbtSizeTracker.ofUnlimitedBytes());
@@ -83,11 +84,10 @@ public class StructureManager {
             StructureTemplate template = new StructureTemplate();
             template.readNbt(world.getRegistryManager().getWrapperOrThrow(RegistryKeys.BLOCK), nbtCompound);
 
-            return placeTemplate(world, pos, template, rotation);
+            placeTemplate(world, pos, template, rotation);
 
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
         }
     }
 }
