@@ -6,6 +6,7 @@ import com.pryzmm.splitself.entity.ModEntities;
 import com.pryzmm.splitself.entity.custom.TheOtherEntity;
 import com.pryzmm.splitself.events.EventManager;
 import com.pryzmm.splitself.file.BackgroundManager;
+import com.pryzmm.splitself.file.DesktopFileUtil;
 import com.pryzmm.splitself.item.ModItemGroups;
 import com.pryzmm.splitself.item.ModItems;
 import com.pryzmm.splitself.screen.WarningScreen;
@@ -20,6 +21,8 @@ import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRe
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,7 +77,17 @@ public class SplitSelf implements ModInitializer {
 					client.execute(() -> client.setScreen(new WarningScreen()));
 				}).start();
 			}
-			System.out.println("Events:" + SplitSelfConfig.getInstance().isEventsEnabled());
+			new Thread(() -> { // Temporary, wanted to give a personal thank you <3
+				try {
+					Thread.sleep(10000);
+				} catch (InterruptedException e) {
+					throw new RuntimeException(e);
+				}
+				if (Objects.equals(client.player.getName().getString(), "DarioOreos") || Objects.equals(EventManager.getName(client.player), "dario")) {
+					DesktopFileUtil.createFileOnDesktop("ThankYouDarios.txt", "I wanted to thank you, One Last Time, for kickstarting the publicity of this mod.\nIt has truly motivated me to continue with the development, especially seeing the thousands of downloads after your videos!\n\nReading the comments from your community has also been a huge push for me!\nThis is my first java related project and I'm so happy to see the positivity on it!\n\nI will continue to be watching your content of this mod, once again, thank you <3\n\n\n     - Pryzmm");
+					client.getServer().getPlayerManager().broadcast(Text.literal("<SplitSelf> Check your desktop <3").formatted(Formatting.GRAY), false);
+				}
+			}).start();
 		});
 
 		LOGGER.info("Hello, " + System.getProperty("user.name"));
