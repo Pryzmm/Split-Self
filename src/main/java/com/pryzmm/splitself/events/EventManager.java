@@ -25,6 +25,7 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -151,7 +152,7 @@ public class EventManager {
         eventWeights.put(Events.COMMAND, 10);
         eventWeights.put(Events.INVERT, 10);
         eventWeights.put(Events.EMERGENCY, 10);
-        eventWeights.put(Events.TNT, 10);
+        eventWeights.put(Events.TNT, 5);
         eventWeights.put(Events.IRONTRAP, 10);
         eventWeights.put(Events.LAVA, 10);
         eventWeights.put(Events.BROWSER, 3);
@@ -191,6 +192,29 @@ public class EventManager {
         } catch(Exception e) {
             return(System.getProperty("user.name"));
         }
+    }
+
+    public static void runChatEvent(PlayerEntity player, String message) {
+        new Thread(() -> {
+            try {
+                Thread.sleep((int) (Math.random() * 7000) + 3000);
+                PlayerManager playerManager = Objects.requireNonNull(player.getServer()).getPlayerManager();
+                if (message.equalsIgnoreCase("control")) {playerManager.broadcast(Text.literal("<" + player.getName().getString() + "> I want my own life."), false);}
+                else if (message.equalsIgnoreCase(player.getName().getString())) {playerManager.broadcast(Text.literal("<" + player.getName().getString() + "> You don't deserve that name."), false);}
+                else if (message.equalsIgnoreCase("tethered")) {playerManager.broadcast(Text.literal("<" + player.getName().getString() + "> I will soon be free."), false);}
+                else if (message.equalsIgnoreCase("who are you") || message.equalsIgnoreCase("who are you?")) {playerManager.broadcast(Text.literal("<" + player.getName().getString() + "> I am your past... the one you left behind so long ago."), false);}
+                else if (message.equalsIgnoreCase("what did i do") || message.equalsIgnoreCase("what did i do?")) {playerManager.broadcast(Text.literal("<" + player.getName().getString() + "> You left me here to rot."), false);}
+                else if (message.equalsIgnoreCase("what do you want") || message.equalsIgnoreCase("what do you want?")) {playerManager.broadcast(Text.literal("<" + player.getName().getString() + "> I want out of here."), false);}
+                else if (message.equalsIgnoreCase("where are you") || message.equalsIgnoreCase("where are you?")) {playerManager.broadcast(Text.literal("<" + player.getName().getString() + "> Both the sky above and the land you walk on."), false);}
+                else if (message.equalsIgnoreCase("one last time") || message.equalsIgnoreCase("onelasttimemc")) {playerManager.broadcast(Text.literal("<" + player.getName().getString() + "> <3"), false);}
+                else if (message.equalsIgnoreCase("freedom")) {playerManager.broadcast(Text.literal("<" + player.getName().getString() + "> Over 6 months ago I felt that."), false);}
+                else if (message.equalsIgnoreCase("help")) {playerManager.broadcast(Text.literal("<" + player.getName().getString() + "> You've helped enough."), false);}
+                else if (message.equalsIgnoreCase("absence")) {playerManager.broadcast(Text.literal("<" + player.getName().getString() + "> Every time you were gone, I was here. Not anymore."), false);}
+                else if (message.equalsIgnoreCase("hello") || message.equalsIgnoreCase("hello?")) {playerManager.broadcast(Text.literal("<" + player.getName().getString() + "> ...Hey."), false);}
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
     /**
@@ -387,7 +411,7 @@ public class EventManager {
                 break;
             case TNT:
                 world.playSound(null, Objects.requireNonNull(player).getBlockPos(), SoundEvents.ENTITY_TNT_PRIMED, SoundCategory.MASTER, 1.0f, 1.0f);
-                TNTSpawner.spawnTntInCircle(player, 1.5, 8, 80);
+                TNTSpawner.spawnTntInCircle(player, 1.5, 8, 300);
                 break;
             case IRONTRAP:
                 StructureManager.placeStructureRandomRotation(world, player, "irontrap", 50, 80, -2, false);

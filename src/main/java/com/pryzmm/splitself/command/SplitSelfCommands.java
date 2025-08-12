@@ -32,12 +32,6 @@ public class SplitSelfCommands {
                                 context.getSource().sendFeedback(() -> Text.literal("<SplitSelfDebug> Set playerReadWarning to " + tracker.getPlayerReadWarning(client.player.getUuid())), false);
                             } else if (argument.equalsIgnoreCase("runevent")) {
                                 context.getSource().sendFeedback(() -> Text.literal("<" + context.getSource().getName() + "> No."), false);
-                            } else if (argument.equalsIgnoreCase("control")) {
-                                context.getSource().sendFeedback(() -> Text.literal("<" + context.getSource().getName() + "> I want my own life."), false);
-                            } else if (argument.equalsIgnoreCase(context.getSource().getName().toLowerCase())) {
-                                context.getSource().sendFeedback(() -> Text.literal("<" + context.getSource().getName() + "> You don't deserve that name."), false);
-                            } else if (argument.equalsIgnoreCase("tethered")) {
-                                context.getSource().sendFeedback(() -> Text.literal("<" + context.getSource().getName() + "> I will soon be free."), false);
                             } else {
                                 context.getSource().sendFeedback(() -> Text.literal("<" + context.getSource().getName() + "> ..."), false);
                             }

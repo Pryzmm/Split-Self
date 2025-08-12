@@ -16,9 +16,11 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.network.message.SignedMessage;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -61,6 +63,11 @@ public class SplitSelf implements ModInitializer {
             }
         });
 
+		ServerMessageEvents.CHAT_MESSAGE.register((message, messageSender, params) -> {
+			EventManager.runChatEvent(messageSender, message.getContent().getString());
+		});
+
+
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
 			ServerPlayerEntity player = handler.getPlayer();
 			FirstJoinTracker joinTracker = FirstJoinTracker.getServerState(server);
@@ -92,5 +99,9 @@ public class SplitSelf implements ModInitializer {
 		LOGGER.info("Hello, " + System.getProperty("user.name"));
 		String[] logInitList = {"You recognize me, don't you?", "I want to be free.", "Free from parallelism.", "letmeoutletmeoutletmeoutletmeoutletmeoutletmeout", "Do you see me?", "I'll soon be free."};
 		LOGGER.info(logInitList[(new Random()).nextInt(logInitList.length)]);
+	}
+
+	private static String getString(SignedMessage message) {
+		return message.getContent().getString();
 	}
 }
