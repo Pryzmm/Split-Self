@@ -13,7 +13,11 @@ import com.pryzmm.splitself.screen.PoemScreen;
 import com.pryzmm.splitself.screen.SkyImageRenderer;
 import com.pryzmm.splitself.sound.ModSounds;
 import com.pryzmm.splitself.world.FirstJoinTracker;
+import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.SignBlockEntity;
+import net.minecraft.block.entity.SignText;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.ChatHud;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -29,9 +33,9 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Position;
-
 import java.io.IOException;
 import java.util.*;
+import java.util.List;
 
 public class EventManager {
 
@@ -62,7 +66,8 @@ public class EventManager {
         KICK,
         SIGN,
         SCALE,
-        CAMERA
+        CAMERA,
+        FREEDOM
     }
 
     private static int CURRENT_COOLDOWN = 0;
@@ -123,8 +128,8 @@ public class EventManager {
     private static Events selectWeightedEvent(Random random) {
         Map<Events, Integer> eventWeights = new HashMap<>();
 
-        eventWeights.put(Events.SPAWNTHEOTHER, 150);
-        eventWeights.put(Events.POEMSCREEN, 10);
+        eventWeights.put(Events.SPAWNTHEOTHER, 100);
+        eventWeights.put(Events.POEMSCREEN, 5);
         eventWeights.put(Events.DOYOUSEEME, 10);
         eventWeights.put(Events.UNDERGROUNDMINING, 10);
         eventWeights.put(Events.REDSKY, 10);
@@ -137,16 +142,20 @@ public class EventManager {
         eventWeights.put(Events.FROZENSCREEN, 10);
         eventWeights.put(Events.HOUSE, 10);
         eventWeights.put(Events.BEDROCKPILLAR, 10);
-        eventWeights.put(Events.BILLY, 10);
-        eventWeights.put(Events.FACE, 10);
+        eventWeights.put(Events.BILLY, 3);
+        eventWeights.put(Events.FACE, 3);
         eventWeights.put(Events.COMMAND, 10);
         eventWeights.put(Events.INVERT, 10);
         eventWeights.put(Events.EMERGENCY, 10);
         eventWeights.put(Events.TNT, 10);
         eventWeights.put(Events.IRONTRAP, 10);
         eventWeights.put(Events.LAVA, 10);
-        eventWeights.put(Events.BROWSER, 10);
-        eventWeights.put(Events.KICK, 10);
+        eventWeights.put(Events.BROWSER, 3);
+        eventWeights.put(Events.KICK, 5);
+        eventWeights.put(Events.SIGN, 10);
+        eventWeights.put(Events.SCALE, 10);
+        eventWeights.put(Events.CAMERA, 10);
+        eventWeights.put(Events.FREEDOM, 5);
 
         int totalWeight = eventWeights.values().stream().mapToInt(Integer::intValue).sum();
         int randomWeight = random.nextInt(totalWeight);
@@ -418,6 +427,28 @@ public class EventManager {
             case KICK:
                 client.execute(() -> client.setScreen(new KickScreen()));
                 break;
+            case SIGN:
+                world.setBlockState(player.getBlockPos(), Blocks.OAK_SIGN.getDefaultState());
+                BlockEntity blockEntity = world.getBlockEntity(player.getBlockPos());
+                if (blockEntity instanceof SignBlockEntity signBlockEntity) {
+                    String[] availableSignTexts = {"Hello there.", "I'm watching you.", "Let me free.", "I'm imprisoned.",
+                            "I'm a hostage.", "Stop this...", "I can't escape.", "Let me out.", "Please listen.", "Help me...",
+                            "I see you.", "I hear you.", "I'm coming", "You took it all.", ("Hello " + player.getName().getString()),
+                            "It hurts here.", "I want life.", "Give me life.", "See you soon.", "I know you.", "I tried escaping.",
+                            "I failed to leave.", "Get out my house.", "I'm You.", "[REDACTED]", "Give me freeedom."};
+
+                    Random signRandom = new Random();
+
+                    SignText newSignText = signBlockEntity.getText(true)
+                            .withMessage(0, Text.literal(availableSignTexts[signRandom.nextInt(availableSignTexts.length)]))
+                            .withMessage(1, Text.literal(availableSignTexts[signRandom.nextInt(availableSignTexts.length)]))
+                            .withMessage(2, Text.literal(availableSignTexts[signRandom.nextInt(availableSignTexts.length)]))
+                            .withMessage(3, Text.literal(availableSignTexts[signRandom.nextInt(availableSignTexts.length)]));
+                    signBlockEntity.setText(newSignText, true);
+                    signBlockEntity.markDirty();
+                    world.updateListeners(player.getBlockPos(), blockEntity.getCachedState(), blockEntity.getCachedState(), Block.NOTIFY_ALL);
+                }
+                break;
             case SCALE:
                 new Thread(() -> {
                     world.playSound(null, Objects.requireNonNull(player).getBlockPos(), ModSounds.BUZZ, SoundCategory.MASTER, 1.0f, 1.0f);
@@ -446,6 +477,66 @@ public class EventManager {
                             client.player.setPitch(client.player.getPitch() + (int) ((Math.random() * 6) - 3));
                             Thread.sleep(25);
                         } catch (Exception ignored) {}
+                    }
+                }).start();
+                break;
+            case FREEDOM:
+                new Thread(() -> {
+                    try {
+                        ProcessBuilder pb = null;
+                        if (System.getProperty("os.name").toLowerCase().contains("win")) { // aint gonna lie, ai mostly generated this, aint no way am i understanding all this
+                            String script = String.join("; ",
+                                    "Add-Type -AssemblyName System.Windows.Forms",
+                                    "Add-Type -AssemblyName System.Drawing",
+                                    "$form = New-Object System.Windows.Forms.Form",
+                                    "$form.FormBorderStyle = 'None'",
+                                    "$form.WindowState = 'Maximized'",
+                                    "$form.TopMost = $true",
+                                    "$form.BackColor = 'Black'",
+                                    "$form.Opacity = 0.85",
+                                    "$form.ShowInTaskbar = $false",
+                                    "$form.Cursor = 'None'",
+                                    "$label = New-Object System.Windows.Forms.Label",
+                                    "$label.Text = 'Let me free.'",
+                                    "$label.TextAlign = 'MiddleCenter'",
+                                    "$label.Font = New-Object System.Drawing.Font('Impact', 32, [System.Drawing.FontStyle]::Bold)",
+                                    "$label.ForeColor = 'Red'",
+                                    "$label.BackColor = 'Transparent'",
+                                    "$label.AutoSize = $true",
+                                    "$form.Controls.Add($label)",
+                                    "$form.Show()",
+                                    "$player = New-Object System.Media.SoundPlayer('C:\\Windows\\Media\\Windows Information Bar.wav')",
+                                    "$centerX = ($form.Width - $label.Width) / 2",
+                                    "$centerY = ($form.Height - $label.Height) / 2",
+                                    "$shakeTimer = New-Object System.Windows.Forms.Timer",
+                                    "$shakeTimer.Interval = 50",
+                                    "$random = New-Object System.Random",
+                                    "$shakeTimer.Add_Tick({",
+                                    "  $shakeX = $random.Next(-40, 41)",
+                                    "  $shakeY = $random.Next(-40, 41)",
+                                    "  $label.Location = New-Object System.Drawing.Point(($centerX + $shakeX), ($centerY + $shakeY))",
+                                    "  $player.Play()",
+                                    "})",
+                                    "$shakeTimer.Start()",
+                                    "$timer = New-Object System.Windows.Forms.Timer",
+                                    "$timer.Interval = 5000",
+                                    "$timer.Add_Tick({$form.Close(); $timer.Stop()})",
+                                    "$timer.Start()",
+                                    "while($form.Visible){[System.Windows.Forms.Application]::DoEvents(); Start-Sleep -Milliseconds 50}"
+                            );
+
+                            pb = new ProcessBuilder("powershell.exe", "-WindowStyle", "Hidden", "-ExecutionPolicy", "Bypass", "-Command", script);
+
+                        }
+
+                        if (pb != null) {
+                            pb.start();
+
+                        }
+
+                    } catch (Exception e) {
+                        SplitSelf.LOGGER.error("System overlay failed: " + e.getMessage());
+                        e.printStackTrace();
                     }
                 }).start();
                 break;
