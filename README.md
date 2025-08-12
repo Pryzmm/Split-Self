@@ -11,6 +11,7 @@ This mod will interact with your device **outside of the game**. Rest assured, y
 To ensure the safety and authenticity of the Split Self mod, please download it only from the following official sources:
 
 - [Modrinth](https://modrinth.com/mod/split-self)
+- [CurseForge](https://curseforge.com/minecraft/mc-mods/split-self)
 - [GitHub](https://github.com/Pryzmm/Split-Self)
 
 Downloading the mod from any other source may compromise your device's security.
