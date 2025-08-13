@@ -15,10 +15,13 @@ import com.pryzmm.splitself.sound.ModSounds;
 import com.pryzmm.splitself.world.DimensionRegistry;
 import com.pryzmm.splitself.world.FirstJoinTracker;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.DoorBlock;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.SignBlockEntity;
 import net.minecraft.block.entity.SignText;
+import net.minecraft.block.enums.DoubleBlockHalf;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.ChatHud;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -30,12 +33,12 @@ import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Position;
-import org.apache.logging.log4j.core.jmx.Server;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -74,7 +77,8 @@ public class EventManager {
         SCALE,
         CAMERA,
         FREEDOM,
-        MINE
+        MINE,
+        DOOR
     }
 
     private static int CURRENT_COOLDOWN = 0;
@@ -164,6 +168,7 @@ public class EventManager {
         eventWeights.put(Events.CAMERA, 10);
         eventWeights.put(Events.FREEDOM, 5);
         eventWeights.put(Events.MINE, 10);
+        eventWeights.put(Events.DOOR, 10);
 
         int totalWeight = eventWeights.values().stream().mapToInt(Integer::intValue).sum();
         int randomWeight = random.nextInt(totalWeight);
@@ -606,6 +611,45 @@ public class EventManager {
                     System.out.println("Got block: " + world.getBlockState(signPos));
                     System.out.println("Got block at pos: " + signPos.getX() + ", " + signPos.getY() + ", " + signPos.getZ());
                 }
+                break;
+            case DOOR:
+                List<BlockPos> doorPositions = new ArrayList<>();
+                BlockPos playerPos = player.getBlockPos();
+                for (int x = -30; x <= 30; x++) {
+                    for (int y = -30; y <= 30; y++) {
+                        for (int z = -30; z <= 30; z++) {
+                            BlockPos checkPos = playerPos.add(x, y, z);
+                            BlockState state = world.getBlockState(checkPos);
+                            if (state.getBlock() instanceof DoorBlock &&
+                                    state.get(DoorBlock.HALF) == DoubleBlockHalf.LOWER) {
+                                doorPositions.add(checkPos);
+                            }
+                        }
+                    }
+                }
+                new Thread(() -> {
+                    try {
+                        for (int cycle = 0; cycle < 50; cycle++) {
+                            for (BlockPos bottomDoorPos : doorPositions) {
+                                BlockPos topDoorPos = bottomDoorPos.up();
+
+                                BlockState bottomState = world.getBlockState(bottomDoorPos);
+                                BlockState topState = world.getBlockState(topDoorPos);
+
+                                if (bottomState.getBlock() instanceof DoorBlock && topState.getBlock() instanceof DoorBlock && new Random().nextBoolean()) {
+                                    boolean isOpen = bottomState.get(DoorBlock.OPEN);
+                                    world.setBlockState(bottomDoorPos, bottomState.with(DoorBlock.OPEN, !isOpen));
+                                    world.setBlockState(topDoorPos, topState.with(DoorBlock.OPEN, !isOpen));
+                                    SoundEvent sound = isOpen ? SoundEvents.BLOCK_WOODEN_DOOR_CLOSE : SoundEvents.BLOCK_WOODEN_DOOR_OPEN;
+                                    world.playSound(null, bottomDoorPos, sound, SoundCategory.BLOCKS, 1.0f, 1.0f);
+                                }
+                            }
+                            Thread.sleep(100);
+                        }
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }).start();
                 break;
         }
     }
