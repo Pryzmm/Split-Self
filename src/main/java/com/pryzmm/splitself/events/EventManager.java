@@ -147,7 +147,6 @@ public class EventManager {
         Map<String, Integer> configWeights = config.getEventWeights();
         Map<Events, Integer> eventWeights = new HashMap<>();
 
-        // Convert string keys to Events enum and get weights from config
         for (Events event : Events.values()) {
             Integer weight = configWeights.get(event.name());
             if (weight != null && weight > 0) {
@@ -155,7 +154,6 @@ public class EventManager {
             }
         }
 
-        // If no valid weights found, fall back to defaults
         if (eventWeights.isEmpty()) {
             eventWeights.put(Events.SPAWNTHEOTHER, 10);
         }
@@ -196,7 +194,7 @@ public class EventManager {
         new Thread(() -> {
             try {
                 player.teleport(player.getServer().getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY), 2.3, 1.5625, 9.7, null, -135, 40);
-                Thread.sleep((int) (Math.random() * 30000) + 20000);
+                Thread.sleep(20000);
                 player.getServer().getOverworld().setTimeOfDay(0);
                 ServerPlayerEntity serverPlayer = (ServerPlayerEntity) player;
                 if (player.getWorld() == player.getServer().getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY)) {
