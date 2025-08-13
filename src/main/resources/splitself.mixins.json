@@ -4,7 +4,8 @@
   "compatibilityLevel": "JAVA_21",
   "client": [
     "BackgroundRendererMixin",
-    "WorldRendererMixin"
+    "WorldRendererMixin",
+    "WindowMixin"
   ],
   "injectors": {
     "defaultRequire": 1

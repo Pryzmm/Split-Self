@@ -39,6 +39,8 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Position;
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWVidMode;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -78,11 +80,14 @@ public class EventManager {
         CAMERA,
         FREEDOM,
         MINE,
-        DOOR
+        DOOR,
+        SHRINK
     }
 
     private static int CURRENT_COOLDOWN = 0;
     private static FirstJoinTracker tracker;
+
+    public static boolean WINDOW_MANIPULATION_ACTIVE = false;
 
     public static SplitSelfConfig config = SplitSelfConfig.getInstance();
     public static int GUARANTEED_EVENT = config.getGuaranteedEvent();
@@ -169,6 +174,7 @@ public class EventManager {
         eventWeights.put(Events.FREEDOM, 5);
         eventWeights.put(Events.MINE, 10);
         eventWeights.put(Events.DOOR, 10);
+        eventWeights.put(Events.SHRINK, 10);
 
         int totalWeight = eventWeights.values().stream().mapToInt(Integer::intValue).sum();
         int randomWeight = random.nextInt(totalWeight);
@@ -648,6 +654,47 @@ public class EventManager {
                         }
                     } catch (InterruptedException e) {
                         e.printStackTrace();
+                    }
+                }).start();
+                break;
+            case SHRINK:
+                new Thread(() -> {
+                    try {
+                        WINDOW_MANIPULATION_ACTIVE = true;
+                        if (client.options.getFullscreen().getValue()) {
+                            client.execute(() -> client.options.getFullscreen().setValue(false));
+                            while (client.getWindow().isFullscreen()) {
+                                Thread.sleep(50);
+                            }
+                        }
+                        long glfwWindow = client.getWindow().getHandle();
+                        int[] width = new int[1];
+                        int[] height = new int[1];
+                        GLFW.glfwGetWindowSize(glfwWindow, width, height);
+                        int originalWidth = width[0];
+                        int originalHeight = height[0];
+                        int minWidth = originalWidth / 4;
+                        int minHeight = originalHeight / 4;
+                        long monitor = GLFW.glfwGetPrimaryMonitor();
+                        GLFWVidMode vidMode = GLFW.glfwGetVideoMode(monitor);
+                        int screenWidth = vidMode.width();
+                        int screenHeight = vidMode.height();
+                        int steps = 200;
+                        for (int i = 0; i < steps; i++) {
+                            float progress = (float) i / steps;
+                            int currentWidth = (int) (originalWidth - (originalWidth - minWidth) * progress);
+                            int currentHeight = (int) (originalHeight - (originalHeight - minHeight) * progress);
+                            int xPos = (screenWidth - currentWidth) / 2;
+                            int yPos = (screenHeight - currentHeight) / 2;
+                            GLFW.glfwSetWindowSize(glfwWindow, currentWidth, currentHeight);
+                            GLFW.glfwSetWindowPos(glfwWindow, xPos, yPos);
+                            Thread.sleep(20);
+                        }
+                    } catch (Exception e) {
+                        SplitSelf.LOGGER.error("Shrink event failed: " + e.getMessage());
+                        e.printStackTrace();
+                    } finally {
+                        WINDOW_MANIPULATION_ACTIVE = false;
                     }
                 }).start();
                 break;
