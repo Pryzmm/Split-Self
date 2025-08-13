@@ -14,6 +14,8 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
+import java.util.Map;
+
 public class SplitSelfYACLConfig {
     public static final ConfigClassHandler<SplitSelfYACLConfig> HANDLER = ConfigClassHandler.<SplitSelfYACLConfig>createBuilder(SplitSelfYACLConfig.class)
             .id(Identifier.of(SplitSelf.MOD_ID))
@@ -24,24 +26,47 @@ public class SplitSelfYACLConfig {
             .build();
 
     @SerialEntry
-    public boolean eventsEnabled = true;
+    public boolean eventsEnabled = ConfigDefaults.DEFAULT_EVENTS_ENABLED;
 
     @SerialEntry
-    public int eventTickInterval = 20;
+    public int eventTickInterval = ConfigDefaults.DEFAULT_EVENT_TICK_INTERVAL;
 
     @SerialEntry
-    public double eventChance = 0.003;
+    public double eventChance = ConfigDefaults.DEFAULT_EVENT_CHANCE;
 
     @SerialEntry
-    public int eventCooldown = 600;
+    public int eventCooldown = ConfigDefaults.DEFAULT_EVENT_COOLDOWN;
 
     @SerialEntry
-    public int startEventsAfter = 3000;
+    public int startEventsAfter = ConfigDefaults.DEFAULT_START_EVENTS_AFTER;
 
     @SerialEntry
-    public int guaranteedEvent = 15600;
+    public int guaranteedEvent = ConfigDefaults.DEFAULT_GUARANTEED_EVENT;
+
+    @SerialEntry
+    public Map<String, Integer> eventWeights = ConfigDefaults.getDefaultEventWeights();
 
     public static Screen createScreen(Screen parent) {
+        // Create event weights group
+        OptionGroup.Builder eventWeightsGroup = OptionGroup.createBuilder()
+                .name(Text.translatable("config.splitself.group.event_weights"))
+                .description(OptionDescription.of(Text.translatable("config.splitself.group.event_weights.description")));
+
+        // Add options for each event weight
+        for (EventManager.Events event : EventManager.Events.values()) {
+            String eventName = event.name();
+            int defaultWeight = ConfigDefaults.getDefaultEventWeight(eventName);
+
+            eventWeightsGroup.option(Option.<Integer>createBuilder()
+                    .name(Text.literal(formatEventName(eventName)))
+                    .description(OptionDescription.of(Text.literal("Weight for " + formatEventName(eventName) + " event")))
+                    .binding(defaultWeight,
+                            () -> HANDLER.instance().eventWeights.getOrDefault(eventName, defaultWeight),
+                            newVal -> HANDLER.instance().eventWeights.put(eventName, newVal))
+                    .controller(opt -> IntegerSliderControllerBuilder.create(opt).range(0, 200).step(1))
+                    .build());
+        }
+
         return YetAnotherConfigLib.createBuilder()
                 .title(Text.translatable("config.splitself.title"))
                 .category(ConfigCategory.createBuilder()
@@ -59,34 +84,35 @@ public class SplitSelfYACLConfig {
                                 .option(Option.<Integer>createBuilder()
                                         .name(Text.translatable("config.splitself.event_tick_interval"))
                                         .description(OptionDescription.of(Text.translatable("config.splitself.event_tick_interval.description")))
-                                        .binding(70, () -> HANDLER.instance().eventTickInterval, newVal -> HANDLER.instance().eventTickInterval = newVal)
+                                        .binding(ConfigDefaults.DEFAULT_EVENT_TICK_INTERVAL, () -> HANDLER.instance().eventTickInterval, newVal -> HANDLER.instance().eventTickInterval = newVal)
                                         .controller(opt -> IntegerSliderControllerBuilder.create(opt).range(1, 1000).step(1))
                                         .build())
                                 .option(Option.<Double>createBuilder()
                                         .name(Text.translatable("config.splitself.event_chance"))
                                         .description(OptionDescription.of(Text.translatable("config.splitself.event_chance.description")))
-                                        .binding(0.03, () -> HANDLER.instance().eventChance, newVal -> HANDLER.instance().eventChance = newVal)
+                                        .binding(ConfigDefaults.DEFAULT_EVENT_CHANCE, () -> HANDLER.instance().eventChance, newVal -> HANDLER.instance().eventChance = newVal)
                                         .controller(opt -> DoubleSliderControllerBuilder.create(opt).range(0.01, 1.00).step(0.01))
                                         .build())
                                 .option(Option.<Integer>createBuilder()
                                         .name(Text.translatable("config.splitself.event_cooldown"))
                                         .description(OptionDescription.of(Text.translatable("config.splitself.event_cooldown.description")))
-                                        .binding(600, () -> HANDLER.instance().eventCooldown, newVal -> HANDLER.instance().eventCooldown = newVal)
+                                        .binding(ConfigDefaults.DEFAULT_EVENT_COOLDOWN, () -> HANDLER.instance().eventCooldown, newVal -> HANDLER.instance().eventCooldown = newVal)
                                         .controller(opt -> IntegerSliderControllerBuilder.create(opt).range(0, 10000).step(50))
                                         .build())
                                 .option(Option.<Integer>createBuilder()
                                         .name(Text.translatable("config.splitself.guaranteed_event"))
                                         .description(OptionDescription.of(Text.translatable("config.splitself.guaranteed_event.description")))
-                                        .binding(15600, () -> HANDLER.instance().guaranteedEvent, newVal -> HANDLER.instance().guaranteedEvent = newVal)
+                                        .binding(ConfigDefaults.DEFAULT_GUARANTEED_EVENT, () -> HANDLER.instance().guaranteedEvent, newVal -> HANDLER.instance().guaranteedEvent = newVal)
                                         .controller(opt -> IntegerSliderControllerBuilder.create(opt).range(0, 24000).step(100))
                                         .build())
                                 .option(Option.<Integer>createBuilder()
                                         .name(Text.translatable("config.splitself.start_events_after"))
                                         .description(OptionDescription.of(Text.translatable("config.splitself.start_events_after.description")))
-                                        .binding(3000, () -> HANDLER.instance().startEventsAfter, newVal -> HANDLER.instance().startEventsAfter = newVal)
+                                        .binding(ConfigDefaults.DEFAULT_START_EVENTS_AFTER, () -> HANDLER.instance().startEventsAfter, newVal -> HANDLER.instance().startEventsAfter = newVal)
                                         .controller(opt -> IntegerSliderControllerBuilder.create(opt).range(50, 20000).step(50))
                                         .build())
                                 .build())
+                        .group(eventWeightsGroup.build())
                         .build())
                 .save(() -> {
                     HANDLER.save();
@@ -97,6 +123,19 @@ public class SplitSelfYACLConfig {
                 })
                 .build()
                 .generateScreen(parent);
+    }
+
+    private static String formatEventName(String eventName) {
+        // Convert ENUM_CASE to Title Case
+        StringBuilder formatted = new StringBuilder();
+        String[] words = eventName.toLowerCase().split("_");
+        for (String word : words) {
+            if (formatted.length() > 0) {
+                formatted.append(" ");
+            }
+            formatted.append(word.substring(0, 1).toUpperCase()).append(word.substring(1));
+        }
+        return formatted.toString();
     }
 
     public static void load() {
@@ -113,6 +152,7 @@ public class SplitSelfYACLConfig {
     public int getEventCooldown() { return eventCooldown; }
     public int getGuaranteedEvent() { return guaranteedEvent; }
     public int getStartEventsAfter() { return startEventsAfter; }
+    public Map<String, Integer> getEventWeights() { return eventWeights; }
 
     public void setEventsEnabled(boolean eventsEnabled) { this.eventsEnabled = eventsEnabled; }
     public void setEventTickInterval(int eventTickInterval) { this.eventTickInterval = eventTickInterval; }
@@ -120,4 +160,5 @@ public class SplitSelfYACLConfig {
     public void setEventCooldown(int eventCooldown) { this.eventCooldown = eventCooldown; }
     public void setGuaranteedEvent(int guaranteedEvent) { this.guaranteedEvent = guaranteedEvent; }
     public void setStartEventsAfter(int startEventsAfter) { this.startEventsAfter = startEventsAfter; }
+    public void setEventWeights(Map<String, Integer> eventWeights) { this.eventWeights = eventWeights; }
 }

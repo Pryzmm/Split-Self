@@ -1,19 +1,26 @@
 package com.pryzmm.splitself.config;
 
 import com.pryzmm.splitself.SplitSelf;
+import com.pryzmm.splitself.events.EventManager;
 import net.fabricmc.loader.api.FabricLoader;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class SplitSelfConfig {
     private static SplitSelfConfig INSTANCE;
     private static boolean initializing = false;
 
-    // Default values
-    public boolean eventsEnabled = true;
-    public int eventTickInterval = 20;
-    public double eventChance = 0.003;
-    public int eventCooldown = 600;
-    public int startEventsAfter = 3000;
-    public int guaranteedEvent = 15600;
+    // Default values from ConfigDefaults
+    public boolean eventsEnabled = ConfigDefaults.DEFAULT_EVENTS_ENABLED;
+    public int eventTickInterval = ConfigDefaults.DEFAULT_EVENT_TICK_INTERVAL;
+    public double eventChance = ConfigDefaults.DEFAULT_EVENT_CHANCE;
+    public int eventCooldown = ConfigDefaults.DEFAULT_EVENT_COOLDOWN;
+    public int startEventsAfter = ConfigDefaults.DEFAULT_START_EVENTS_AFTER;
+    public int guaranteedEvent = ConfigDefaults.DEFAULT_GUARANTEED_EVENT;
+
+    // Event weights from ConfigDefaults
+    public Map<String, Integer> eventWeights = ConfigDefaults.getDefaultEventWeights();
 
     // YACL integration (optional)
     private boolean yaclAvailable;
@@ -94,6 +101,13 @@ public class SplitSelfConfig {
         guaranteedEvent = configClass.getField("guaranteedEvent").getInt(yaclInstance);
         startEventsAfter = configClass.getField("startEventsAfter").getInt(yaclInstance);
 
+        // Load event weights
+        @SuppressWarnings("unchecked")
+        Map<String, Integer> yaclEventWeights = (Map<String, Integer>) configClass.getField("eventWeights").get(yaclInstance);
+        if (yaclEventWeights != null && !yaclEventWeights.isEmpty()) {
+            this.eventWeights = new HashMap<>(yaclEventWeights);
+        }
+
         SplitSelf.LOGGER.info("Loaded values from YACL config");
     }
 
@@ -108,6 +122,7 @@ public class SplitSelfConfig {
             configClass.getField("eventChance").setDouble(yaclInstance, eventChance);
             configClass.getField("eventCooldown").setInt(yaclInstance, eventCooldown);
             configClass.getField("startEventsAfter").setInt(yaclInstance, startEventsAfter);
+            configClass.getField("eventWeights").set(yaclInstance, eventWeights);
 
             yaclHandler.getClass().getMethod("save").invoke(yaclHandler);
 
@@ -124,6 +139,12 @@ public class SplitSelfConfig {
     public int getEventCooldown() { return eventCooldown; }
     public int getGuaranteedEvent() { return guaranteedEvent; }
     public int getStartEventsAfter() { return startEventsAfter; }
+    public Map<String, Integer> getEventWeights() { return new HashMap<>(eventWeights); }
+
+    // Get weight for specific event
+    public int getEventWeight(EventManager.Events event) {
+        return eventWeights.getOrDefault(event.name(), ConfigDefaults.getDefaultEventWeight(event));
+    }
 
     public void setEventsEnabled(boolean eventsEnabled) {
         this.eventsEnabled = eventsEnabled;
@@ -152,6 +173,16 @@ public class SplitSelfConfig {
 
     public void setGuaranteedEvent(int guaranteedEvent) {
         this.guaranteedEvent = guaranteedEvent;
+        saveToYACL();
+    }
+
+    public void setEventWeight(String eventName, int weight) {
+        eventWeights.put(eventName, weight);
+        saveToYACL();
+    }
+
+    public void setEventWeights(Map<String, Integer> eventWeights) {
+        this.eventWeights = new HashMap<>(eventWeights);
         saveToYACL();
     }
 

@@ -92,5 +92,13 @@
         "name": "splitself:rumble"
       }
     ]
+  },
+  "rumble2": {
+    "category": "master",
+    "sounds": [
+      {
+        "name": "splitself:rumble2"
+      }
+    ]
   }
 }

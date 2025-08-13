@@ -25,6 +25,7 @@ import net.minecraft.block.enums.DoubleBlockHalf;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.ChatHud;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.sound.Sound;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
@@ -142,43 +143,27 @@ public class EventManager {
     }
 
     private static Events selectWeightedEvent(Random random) {
+        SplitSelfConfig config = SplitSelfConfig.getInstance();
+        Map<String, Integer> configWeights = config.getEventWeights();
         Map<Events, Integer> eventWeights = new HashMap<>();
 
-        eventWeights.put(Events.SPAWNTHEOTHER, 100);
-        eventWeights.put(Events.POEMSCREEN, 5);
-        eventWeights.put(Events.DOYOUSEEME, 10);
-        eventWeights.put(Events.UNDERGROUNDMINING, 10);
-        eventWeights.put(Events.REDSKY, 10);
-        eventWeights.put(Events.NOTEPAD, 10);
-        eventWeights.put(Events.SCREENOVERLAY, 10);
-        eventWeights.put(Events.WHITESCREENOVERLAY, 10);
-        eventWeights.put(Events.INVENTORYOVERLAY, 10);
-        eventWeights.put(Events.THEOTHERSCREENSHOT, 10);
-        eventWeights.put(Events.DESTROYCHUNK, 10);
-        eventWeights.put(Events.FROZENSCREEN, 10);
-        eventWeights.put(Events.HOUSE, 10);
-        eventWeights.put(Events.BEDROCKPILLAR, 10);
-        eventWeights.put(Events.BILLY, 3);
-        eventWeights.put(Events.FACE, 3);
-        eventWeights.put(Events.COMMAND, 10);
-        eventWeights.put(Events.INVERT, 10);
-        eventWeights.put(Events.EMERGENCY, 10);
-        eventWeights.put(Events.TNT, 5);
-        eventWeights.put(Events.IRONTRAP, 10);
-        eventWeights.put(Events.LAVA, 10);
-        eventWeights.put(Events.BROWSER, 3);
-        eventWeights.put(Events.KICK, 5);
-        eventWeights.put(Events.SIGN, 10);
-        eventWeights.put(Events.SCALE, 10);
-        eventWeights.put(Events.CAMERA, 10);
-        eventWeights.put(Events.FREEDOM, 5);
-        eventWeights.put(Events.MINE, 10);
-        eventWeights.put(Events.DOOR, 10);
-        eventWeights.put(Events.SHRINK, 10);
+        // Convert string keys to Events enum and get weights from config
+        for (Events event : Events.values()) {
+            Integer weight = configWeights.get(event.name());
+            if (weight != null && weight > 0) {
+                eventWeights.put(event, weight);
+            }
+        }
+
+        // If no valid weights found, fall back to defaults
+        if (eventWeights.isEmpty()) {
+            eventWeights.put(Events.SPAWNTHEOTHER, 10);
+        }
 
         int totalWeight = eventWeights.values().stream().mapToInt(Integer::intValue).sum();
         int randomWeight = random.nextInt(totalWeight);
         int currentWeight = 0;
+
         for (Map.Entry<Events, Integer> entry : eventWeights.entrySet()) {
             currentWeight += entry.getValue();
             if (randomWeight < currentWeight) {
@@ -186,7 +171,7 @@ public class EventManager {
             }
         }
 
-        // Fallback (shouldnt reach here)
+        // Fallback (shouldn't reach here)
         return Events.SPAWNTHEOTHER;
     }
 
@@ -278,6 +263,8 @@ public class EventManager {
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
         }
+
+        System.out.println("Running Event: " + eventType);
 
         Position[] newPositions;
         int arrayLength;
@@ -660,6 +647,8 @@ public class EventManager {
             case SHRINK:
                 new Thread(() -> {
                     try {
+                        world.playSound(null, Objects.requireNonNull(player).getBlockPos(), ModSounds.RUMBLE2, SoundCategory.MASTER, 1.0f, 1.0f);
+                        client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> Let me in your computer."), false);
                         WINDOW_MANIPULATION_ACTIVE = true;
                         if (client.options.getFullscreen().getValue()) {
                             client.execute(() -> client.options.getFullscreen().setValue(false));
@@ -673,8 +662,8 @@ public class EventManager {
                         GLFW.glfwGetWindowSize(glfwWindow, width, height);
                         int originalWidth = width[0];
                         int originalHeight = height[0];
-                        int minWidth = originalWidth / 4;
-                        int minHeight = originalHeight / 4;
+                        int minWidth = originalWidth / 2;
+                        int minHeight = originalHeight / 2;
                         long monitor = GLFW.glfwGetPrimaryMonitor();
                         GLFWVidMode vidMode = GLFW.glfwGetVideoMode(monitor);
                         int screenWidth = vidMode.width();
@@ -690,6 +679,21 @@ public class EventManager {
                             GLFW.glfwSetWindowPos(glfwWindow, xPos, yPos);
                             Thread.sleep(20);
                         }
+                        Random shakeRandom = new Random();
+                        int shakeIntensity = 7;
+                        int shakeSteps = 200;
+
+                        for (int i = 0; i < shakeSteps; i++) {
+                            int[] currentPosX = new int[1];
+                            int[] currentPosY = new int[1];
+                            GLFW.glfwGetWindowPos(glfwWindow, currentPosX, currentPosY);
+
+                            int shakeX = currentPosX[0] + shakeRandom.nextInt(shakeIntensity * 2) - shakeIntensity;
+                            int shakeY = currentPosY[0] + shakeRandom.nextInt(shakeIntensity * 2) - shakeIntensity;
+                            GLFW.glfwSetWindowPos(glfwWindow, shakeX, shakeY);
+                            Thread.sleep(20);
+                        }
+                        client.getSoundManager().stopSounds(ModSounds.RUMBLE2.getId(), SoundCategory.MASTER);
                     } catch (Exception e) {
                         SplitSelf.LOGGER.error("Shrink event failed: " + e.getMessage());
                         e.printStackTrace();

@@ -30,8 +30,6 @@ public class SplitSelfCommands {
                                 FirstJoinTracker tracker = FirstJoinTracker.getServerState(client.getServer());
                                 tracker.setPlayerReadWarning(client.player.getUuid(), !tracker.getPlayerReadWarning(client.player.getUuid()));
                                 context.getSource().sendFeedback(() -> Text.literal("<SplitSelfDebug> Set playerReadWarning to " + tracker.getPlayerReadWarning(client.player.getUuid())), false);
-                            } else if (argument.equalsIgnoreCase("runevent")) {
-                                context.getSource().sendFeedback(() -> Text.literal("<" + context.getSource().getName() + "> No."), false);
                             } else {
                                 context.getSource().sendFeedback(() -> Text.literal("<" + context.getSource().getName() + "> ..."), false);
                             }
@@ -45,7 +43,7 @@ public class SplitSelfCommands {
                                     PlayerEntity player = (PlayerEntity) context.getSource().getPlayer();
                                     if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("random")) {
                                         EventManager.triggerRandomEvent(world, player, null, true);
-                                    } try {
+                                    } else try {
                                         EventManager.Events event = EventManager.Events.valueOf(secondArg.toUpperCase());
                                         EventManager.triggerRandomEvent(world, player, event, true);
                                     } catch (IllegalArgumentException e) {

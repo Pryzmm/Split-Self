@@ -14,6 +14,8 @@
   "config.splitself.title": "Split Self Configuration",
   "config.splitself.category.events": "Event Settings",
   "config.splitself.category.events.tooltip": "Configure event behavior and timing",
+  "config.splitself.group.event_weights": "Event Weights",
+  "config.splitself.group.event_weights.description": "The weight options for events (i.e. the higher the weight, the more common that event is to happen over others)",
   "config.splitself.group.general": "General Settings",
   "config.splitself.group.general.description": "Main configuration options for Split Self events",
 
@@ -30,5 +32,8 @@
   "config.splitself.event_cooldown.description": "How long the cooldown is before another event can happen",
 
   "config.splitself.start_events_after": "Event Start Delay",
-  "config.splitself.start_events_after.description": "How long until events can start happening in ticks"
+  "config.splitself.start_events_after.description": "How long until events can start happening in ticks",
+
+  "config.splitself.guaranteed_event": "Guaranteed Event After",
+  "config.splitself.guaranteed_event.description": "How long until an event is guaranteed to happen after an amount of inactivity"
 }
