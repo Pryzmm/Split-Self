@@ -84,5 +84,13 @@
         "name": "splitself:buzz"
       }
     ]
+  },
+  "rumble": {
+    "category": "ambient",
+    "sounds": [
+      {
+        "name": "splitself:rumble"
+      }
+    ]
   }
 }

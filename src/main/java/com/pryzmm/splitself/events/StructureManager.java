@@ -22,6 +22,45 @@ import java.util.Random;
 
 public class StructureManager {
 
+    public static BlockPos placeStructureRandomRotation(ServerWorld world, BlockPos pos, String structureName, Integer MinimumRange, Integer MaximumRange, boolean DisableRotation) {
+        try {
+
+            Random random = new Random();
+            double distance = MinimumRange + random.nextDouble() * (MaximumRange - MinimumRange);
+            double angle = random.nextDouble() * 2 * Math.PI;
+            double spawnX = pos.getX() + Math.cos(angle) * distance;
+            double spawnY = pos.getY() + Math.cos(angle) * distance;
+            double spawnZ = pos.getZ() + Math.sin(angle) * distance;
+            BlockPos spawnPos = new BlockPos((int) spawnX, (int) spawnY, (int) spawnZ);
+
+            BlockRotation rotation;
+            if (!DisableRotation) {
+                rotation = BlockRotation.values()[world.getRandom().nextInt(4)];
+            } else {
+                rotation = BlockRotation.NONE;
+            }
+
+            // First try the normal template manager approach
+            var templateManager = world.getStructureTemplateManager();
+            Identifier structureId = Identifier.of(SplitSelf.MOD_ID, structureName);
+            var template = templateManager.getTemplate(structureId);
+
+            if (template.isPresent()) {
+                placeTemplate(world, spawnPos, template.get(), rotation);
+                return spawnPos;
+            }
+
+            // If template manager fails, load directly from resources
+            loadAndPlaceFromResource(world, spawnPos, structureName, rotation);
+            return spawnPos;
+
+        } catch (Exception e) {
+            SplitSelf.LOGGER.info("Error placing structure with rotation: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public static BlockPos placeStructureRandomRotation(ServerWorld world, PlayerEntity Player, String structureName, Integer MinimumRange, Integer MaximumRange, Integer YOffset, boolean DisableRotation) {
         try {
 
@@ -36,7 +75,11 @@ public class StructureManager {
             BlockPos finalSpawnPos = new BlockPos((int) spawnX, surfaceY, (int) spawnZ);
 
             BlockRotation rotation;
-            if (!DisableRotation) {rotation = BlockRotation.values()[world.getRandom().nextInt(4)];} else {rotation = BlockRotation.NONE;}
+            if (!DisableRotation) {
+                rotation = BlockRotation.values()[world.getRandom().nextInt(4)];
+            } else {
+                rotation = BlockRotation.NONE;
+            }
 
             // First try the normal template manager approach
             var templateManager = world.getStructureTemplateManager();

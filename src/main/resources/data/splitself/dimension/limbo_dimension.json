@@ -1,0 +1,11 @@
+{
+  "type": "splitself:limbo_dimension",
+  "generator": {
+    "type": "minecraft:flat",
+    "settings": {
+      "layers": [],
+      "structure_overrides": [],
+      "biome": "splitself:limbo_biome"
+    }
+  }
+}

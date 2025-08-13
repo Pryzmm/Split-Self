@@ -12,6 +12,7 @@ import com.pryzmm.splitself.screen.KickScreen;
 import com.pryzmm.splitself.screen.PoemScreen;
 import com.pryzmm.splitself.screen.SkyImageRenderer;
 import com.pryzmm.splitself.sound.ModSounds;
+import com.pryzmm.splitself.world.DimensionRegistry;
 import com.pryzmm.splitself.world.FirstJoinTracker;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -34,6 +35,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Position;
+import org.apache.logging.log4j.core.jmx.Server;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -194,6 +196,22 @@ public class EventManager {
         }
     }
 
+    public static void runSleepEvent(PlayerEntity player) {
+        new Thread(() -> {
+            try {
+                player.teleport(player.getServer().getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY), 2.3, 1.5625, 9.7, null, -135, 40);
+                Thread.sleep((int) (Math.random() * 30000) + 20000);
+                player.getServer().getOverworld().setTimeOfDay(0);
+                ServerPlayerEntity serverPlayer = (ServerPlayerEntity) player;
+                if (player.getWorld() == player.getServer().getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY)) {
+                    player.teleport(player.getServer().getWorld(serverPlayer.getSpawnPointDimension()), serverPlayer.getSpawnPointPosition().getX(), serverPlayer.getSpawnPointPosition().getY() + 0.5625, serverPlayer.getSpawnPointPosition().getZ(), null, 0, 0);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
     public static void runChatEvent(PlayerEntity player, String message) {
         new Thread(() -> {
             try {
@@ -229,6 +247,8 @@ public class EventManager {
     public static void triggerRandomEvent(ServerWorld world, PlayerEntity player, Events ForceEvent, Boolean BypassWarning) {
         List<ServerPlayerEntity> players = world.getPlayers();
         if (players.isEmpty()) return;
+
+        if (player.getWorld() == player.getServer().getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY)) {return;} // no events in limbo dimension
 
         if (player != null) {
             if (!BypassWarning && !tracker.getPlayerReadWarning(player.getUuid())) {

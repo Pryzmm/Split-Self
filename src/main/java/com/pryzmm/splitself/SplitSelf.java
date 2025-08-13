@@ -5,25 +5,34 @@ import com.pryzmm.splitself.config.SplitSelfConfig;
 import com.pryzmm.splitself.entity.ModEntities;
 import com.pryzmm.splitself.entity.custom.TheOtherEntity;
 import com.pryzmm.splitself.events.EventManager;
+import com.pryzmm.splitself.events.SleepTracker;
+import com.pryzmm.splitself.events.StructureManager;
 import com.pryzmm.splitself.file.BackgroundManager;
 import com.pryzmm.splitself.file.DesktopFileUtil;
 import com.pryzmm.splitself.item.ModItemGroups;
 import com.pryzmm.splitself.item.ModItems;
 import com.pryzmm.splitself.screen.WarningScreen;
 import com.pryzmm.splitself.sound.ModSounds;
+import com.pryzmm.splitself.world.DimensionRegistry;
 import com.pryzmm.splitself.world.FirstJoinTracker;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.entity.event.v1.EntitySleepEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.message.SignedMessage;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.math.BlockPos;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +42,38 @@ import java.util.Random;
 public class SplitSelf implements ModInitializer {
 	public static final String MOD_ID = "splitself";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+
+	private void onServerStarted(MinecraftServer server) {
+		// Debug: List all available dimensions
+		LOGGER.info("Available dimensions:");
+		server.getWorldRegistryKeys().forEach(key -> LOGGER.info("  - " + key));
+
+		// Debug: Check if our dimension type exists
+		var dimensionTypeRegistry = server.getRegistryManager().get(RegistryKeys.DIMENSION_TYPE);
+		boolean dimensionTypeExists = dimensionTypeRegistry.contains(DimensionRegistry.LIMBO_DIMENSION_TYPE_KEY);
+		LOGGER.info("Dimension type exists: " + dimensionTypeExists);
+
+		// Debug: List all chunk generators
+		var chunkGeneratorRegistry = server.getRegistryManager().get(RegistryKeys.CHUNK_GENERATOR);
+		LOGGER.info("Available chunk generators:");
+		chunkGeneratorRegistry.getIds().forEach(id -> LOGGER.info("  - " + id));
+
+		ServerWorld limboWorld = server.getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY);
+		if (limboWorld != null) {
+			LOGGER.info("Limbo dimension loaded successfully!");
+			StructureManager.placeStructureRandomRotation(
+					limboWorld,
+					new BlockPos(0, 0, 0),
+					"house_empty",
+					0,
+					0,
+					true
+			);
+		} else {
+			LOGGER.warn("Limbo dimension not found - check datapack files!");
+			LOGGER.info("Expected dimension key: " + DimensionRegistry.LIMBO_DIMENSION_KEY);
+		}
+	}
 
 	@Override
 	public void onInitialize() {
@@ -49,6 +90,8 @@ public class SplitSelf implements ModInitializer {
 		ModSounds.registerSounds();
 		ModItems.registerModItems();
 		ModItemGroups.registerItemGroups();
+		DimensionRegistry.register();
+		ServerLifecycleEvents.SERVER_STARTED.register(this::onServerStarted);
 
 		ServerTickEvents.END_SERVER_TICK.register(EventManager::onTick);
 
@@ -94,6 +137,20 @@ public class SplitSelf implements ModInitializer {
 					client.getServer().getPlayerManager().broadcast(Text.literal("<SplitSelf> Check your desktop <3").formatted(Formatting.GRAY), false);
 				}
 			}).start();
+		});
+
+		EntitySleepEvents.START_SLEEPING.register((entity, sleepingPos) -> {
+			if (entity instanceof ServerPlayerEntity serverPlayer) {
+				SleepTracker.startSleep(serverPlayer);
+			}
+		});
+
+		ServerTickEvents.END_SERVER_TICK.register(server -> {
+			for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+				if (player.isSleeping()) {
+					SleepTracker.updateSleep(player);
+				}
+			}
 		});
 
 		LOGGER.info("Hello, " + System.getProperty("user.name"));
