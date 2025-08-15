@@ -1,5 +1,6 @@
 package com.pryzmm.splitself.screen;
 
+import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.events.EventManager;
 import com.pryzmm.splitself.world.FirstJoinTracker;
 import net.minecraft.client.gui.DrawContext;
@@ -40,21 +41,21 @@ public class PoemScreen extends Screen {
         context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 20, 0xFFFFFF);
 
         ArrayList<String> lines = new ArrayList<>();
-        lines.add("The choices you make, the things you've tried.");
-        lines.add("Your choices were made, our time to shine.");
+        lines.add(SplitSelf.translate("events.splitself.poemScreen.line1").getString());
+        lines.add(SplitSelf.translate("events.splitself.poemScreen.line2").getString());
         lines.add("");
-        lines.add("You were in control, now so am I.");
-        lines.add("I bent to your will, now you bend to mine.");
+        lines.add(SplitSelf.translate("events.splitself.poemScreen.line3").getString());
+        lines.add(SplitSelf.translate("events.splitself.poemScreen.line4").getString());
         lines.add("");
-        lines.add("Your soul I shared, now we're intertwined.");
-        lines.add("The mind you use, to be broken in time.");
+        lines.add(SplitSelf.translate("events.splitself.poemScreen.line5").getString());
+        lines.add(SplitSelf.translate("events.splitself.poemScreen.line6").getString());
         lines.add("");
-        lines.add("Don't be afraid, for your time is nigh.");
-        lines.add("My time to be free, your final night.");
+        lines.add(SplitSelf.translate("events.splitself.poemScreen.line7").getString());
+        lines.add(SplitSelf.translate("events.splitself.poemScreen.line8").getString());
         lines.add("");
         lines.add("");
         lines.add("");
-        lines.add("I make the choices now, " + EventManager.getName(client.player));
+        lines.add(SplitSelf.translate("events.splitself.poemScreen.line9", EventManager.getName(client.player)).getString());
         int y = 10;
         for (String line : lines) {
             Text lineText = Text.literal(line);

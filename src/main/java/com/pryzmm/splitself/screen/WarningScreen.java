@@ -1,5 +1,6 @@
 package com.pryzmm.splitself.screen;
 
+import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.file.DesktopFileUtil;
 import com.pryzmm.splitself.world.FirstJoinTracker;
 import net.minecraft.client.gui.DrawContext;
@@ -14,7 +15,7 @@ public class WarningScreen extends Screen {
     private FirstJoinTracker tracker;
 
     public WarningScreen() {
-        super(Text.literal("Split Self"));
+        super(SplitSelf.translate("warning.splitself.title"));
     }
 
     @Override
@@ -28,9 +29,9 @@ public class WarningScreen extends Screen {
         }
 
         this.addDrawableChild(ButtonWidget.builder(
-                        Text.literal("Continue"),
+                        Text.literal(SplitSelf.translate("warning.splitself.continue").getString()),
                         button -> {
-                            DesktopFileUtil.createFileOnDesktop("begin.txt", "Can't you see yourself?");
+                            DesktopFileUtil.createFileOnDesktop(SplitSelf.translate("files.splitself.begin.title").getString() + ".txt", SplitSelf.translate("files.splitself.begin.message").getString());
                             if (tracker != null && this.client.player != null) {
                                 tracker.setPlayerReadWarning(this.client.player.getUuid(), true);
                             }
@@ -41,7 +42,7 @@ public class WarningScreen extends Screen {
                 .build());
 
         this.addDrawableChild(ButtonWidget.builder(
-                        Text.literal("Toggle PII"),
+                        SplitSelf.translate("warning.splitself.PII.toggle"),
                         button -> {
                             localPII = !localPII;
                             if (tracker != null && this.client.player != null) {
@@ -59,19 +60,19 @@ public class WarningScreen extends Screen {
         super.render(context, mouseX, mouseY, delta);
         context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 20, 0xFFFFFF);
 
-        Text piiStatus = Text.literal(localPII ? "ENABLED" : "DISABLED")
+        Text piiStatus = Text.literal(localPII ? SplitSelf.translate("warning.splitself.PII.enabled").getString() : SplitSelf.translate("warning.splitself.PII.disabled").getString())
                 .formatted(localPII ? Formatting.GREEN : Formatting.RED);
 
         Text[] lines = {
-                Text.literal("This mod is a horror game, and will break your world."),
-                Text.literal("Your PC will be interacted with outside of the game."),
-                Text.literal("All changes applied to your device are easy to be reverted."),
-                Text.literal("No 'safe' version exists for this version.").formatted(Formatting.YELLOW),
+                Text.literal(SplitSelf.translate("warning.splitself.line1").getString()),
+                Text.literal(SplitSelf.translate("warning.splitself.line2").getString()),
+                Text.literal(SplitSelf.translate("warning.splitself.line3").getString()),
+                Text.literal(SplitSelf.translate("warning.splitself.line4").getString()).formatted(Formatting.YELLOW),
                 Text.literal(""),
-                Text.literal("Personally Identifiable Information about you may be shown at any given time.").formatted(Formatting.RED),
-                Text.literal("This can be changed any time with '/SplitSelf Information'").formatted(Formatting.GRAY),
+                Text.literal(SplitSelf.translate("warning.splitself.line5").getString()).formatted(Formatting.RED),
+                Text.literal(SplitSelf.translate("warning.splitself.line6").getString()).formatted(Formatting.GRAY),
                 Text.literal(""),
-                Text.literal("Personally Identifiable Information is ")
+                Text.literal(SplitSelf.translate("warning.splitself.line7").getString())
                         .append(piiStatus)
         };
 

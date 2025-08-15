@@ -24,15 +24,15 @@ public class ModItems {
                     .jukeboxPlayable(ModSounds.IN_MY_LIFE_KEY))
     );
 
-    public static final FoodComponent DIET_COKE_COMPONENT = new FoodComponent.Builder()
+    public static final FoodComponent CIET_DOKE_COMPONENT = new FoodComponent.Builder()
             .alwaysEdible()
             .nutrition(10)
             .build();
 
-    public static final Item DIET_COKE = registerItem(
-            "diet_coke",
+    public static final Item CIET_DOKE = registerItem(
+            "ciet_doke",
             new Item(new Item.Settings()
-                    .food(DIET_COKE_COMPONENT))
+                    .food(CIET_DOKE_COMPONENT))
     );
 
     private static Item registerItem(String name, Item item) { 
@@ -44,7 +44,7 @@ public class ModItems {
             entries.add(IN_MY_LIFE_MUSIC_DISC);
         });
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.FOOD_AND_DRINK).register(entries -> {
-            entries.add(DIET_COKE);
+            entries.add(CIET_DOKE);
         });
     }
 }

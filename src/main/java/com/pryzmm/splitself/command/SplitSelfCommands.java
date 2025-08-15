@@ -2,6 +2,7 @@ package com.pryzmm.splitself.command;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
+import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.events.*;
 import com.pryzmm.splitself.screen.WarningScreen;
 import com.pryzmm.splitself.world.FirstJoinTracker;
@@ -18,7 +19,7 @@ public class SplitSelfCommands {
         MinecraftClient client = MinecraftClient.getInstance();
         dispatcher.register(CommandManager.literal("splitself")
                 .executes(context -> {
-                    context.getSource().sendFeedback(() -> Text.literal("<" + context.getSource().getName() + "> You don't know yourself."), false);
+                    context.getSource().sendFeedback(() -> Text.literal("<" + context.getSource().getName() + "> " + SplitSelf.translate("command.splitself.empty_command").getString()), false);
                     return 1;
                 })
                 .then(CommandManager.argument("text", StringArgumentType.word())
@@ -29,9 +30,9 @@ public class SplitSelfCommands {
                             } else if (argument.equalsIgnoreCase("debugToggleEvents")) {
                                 FirstJoinTracker tracker = FirstJoinTracker.getServerState(client.getServer());
                                 tracker.setPlayerReadWarning(client.player.getUuid(), !tracker.getPlayerReadWarning(client.player.getUuid()));
-                                context.getSource().sendFeedback(() -> Text.literal("<SplitSelfDebug> Set playerReadWarning to " + tracker.getPlayerReadWarning(client.player.getUuid())), false);
+                                context.getSource().sendFeedback(() -> Text.literal(SplitSelf.translate("command.splitself.debug_toggle_warning", tracker.getPlayerReadWarning(client.player.getUuid())).getString()), false);
                             } else {
-                                context.getSource().sendFeedback(() -> Text.literal("<" + context.getSource().getName() + "> ..."), false);
+                                context.getSource().sendFeedback(() -> Text.literal("<" + context.getSource().getName() + "> " + SplitSelf.translate("command.splitself.invalid_value").getString()), false);
                             }
                             return 1;
                         })
@@ -47,7 +48,7 @@ public class SplitSelfCommands {
                                         EventManager.Events event = EventManager.Events.valueOf(secondArg.toUpperCase());
                                         EventManager.triggerRandomEvent(world, player, event, true);
                                     } catch (IllegalArgumentException e) {
-                                        context.getSource().sendFeedback(() -> Text.literal("<" + context.getSource().getName() + "> No."), false);
+                                        context.getSource().sendFeedback(() -> Text.literal("<" + context.getSource().getName() + "> " + SplitSelf.translate("command.splitself.invalid_value").getString()), false);
                                     }
                                     return 1;
                                 })

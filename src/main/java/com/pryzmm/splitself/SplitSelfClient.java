@@ -33,7 +33,7 @@ public class SplitSelfClient implements ClientModInitializer {
         ClientPlayConnectionEvents.JOIN.register((clientPlayNetworkHandler, packetSender, minecraftClient) -> {
             MinecraftClient client = MinecraftClient.getInstance();
             if (ClientDetector.isFeatherClient()) {
-                client.getServer().getPlayerManager().broadcast(Text.literal("<SplitSelf> Warning: Some of this mods features may not be fully functional running on Feather Client. Please switch to the Modrinth App, CurseForge, or the normal Minecraft Launcher.").formatted(Formatting.RED), false);
+                client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("misc.splitself.featherClient").getString()).formatted(Formatting.RED), false);
             }
         });
 
@@ -49,9 +49,9 @@ public class SplitSelfClient implements ClientModInitializer {
             if (screen instanceof TitleScreen titleScreen) {
                 ButtonWidget multiplayerButton = findButtonByText(titleScreen, "menu.multiplayer");
                 multiplayerButton.active = false;
-                multiplayerButton.setTooltip(Tooltip.of(Text.literal("Come back to me... don't retreat to our friends... you coward.")));
+                multiplayerButton.setTooltip(Tooltip.of(SplitSelf.translate("misc.splitself.multiplayer")));
                 ButtonWidget realmsButton = findButtonByText(titleScreen, "menu.online");
-                realmsButton.setTooltip(Tooltip.of(Text.literal("Who even plays Realms?")));
+                realmsButton.setTooltip(Tooltip.of(SplitSelf.translate("misc.splitself.realms")));
                 realmsButton.active = false;
             }
         });

@@ -1,6 +1,7 @@
 package com.pryzmm.splitself.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.pryzmm.splitself.SplitSelf;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
@@ -45,9 +46,7 @@ public class InventoryOverlayRenderer {
     public static void renderOverlayContent(DrawContext drawContext) {
         MinecraftClient client = MinecraftClient.getInstance();
         TextRenderer textRenderer = client.textRenderer;
-
-        String overlayText = "Hello";
-
+        String overlayText = String.valueOf(SplitSelf.translate("events.splitself.inventoryOverlay.message"));
         drawContext.drawTextWithShadow(textRenderer, overlayText, 50, 50, 0xFFFFFF);
     }
 }

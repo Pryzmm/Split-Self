@@ -1,13 +1,14 @@
 package com.pryzmm.splitself.events;
 
 import com.pryzmm.splitself.SplitSelf;
+import net.minecraft.text.Text;
 
 import java.io.FileWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class NotepadManager {
-    public static void execute(String[] messages) {
+    public static void execute(Text[] messages) {
         new Thread(() -> {
             try {
                 Path scriptPath = Paths.get(System.getProperty("java.io.tmpdir"), "typing_effect.ps1");
@@ -35,7 +36,9 @@ public class NotepadManager {
 
                     writer.write("$messages = @(\n");
                     for (int i = 0; i < messages.length; i++) {
-                        writer.write("    '" + messages[i].replace("'", "''") + "'");
+                        // Convert Text to string using getString()
+                        String messageString = messages[i].getString();
+                        writer.write("    '" + messageString.replace("'", "''") + "'");
                         if (i < messages.length - 1) writer.write(",");
                         writer.write("\n");
                     }

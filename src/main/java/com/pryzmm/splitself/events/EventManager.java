@@ -25,7 +25,6 @@ import net.minecraft.block.enums.DoubleBlockHalf;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.ChatHud;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.sound.Sound;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
@@ -42,7 +41,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Position;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
-
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -116,7 +114,7 @@ public class EventManager {
 
         if (world.getTime() == START_AFTER) {
             for (ServerPlayerEntity serverPlayer : server.getPlayerManager().getPlayerList()) {
-                serverPlayer.sendMessageToClient(Text.literal(serverPlayer.getName().getString() + " left the confines of this world"), false);
+                serverPlayer.sendMessageToClient(SplitSelf.translate("death.attack.outsideBorder", serverPlayer.getName().getString()), false);
             }
         } else if (world.getTime() > START_AFTER) {
             if (tracker == null) {
@@ -183,7 +181,7 @@ public class EventManager {
             else if (player.getName().getString().equalsIgnoreCase("rekrap2")) {return("Parker Jerry Marriott");}
             else if (player.getName().getString().equalsIgnoreCase("dream")) {return("Clay");} // I ran out of ideas lol
             else if (player.getName().getString().equalsIgnoreCase("itzmiai_21")) {return("M1keyz");} // Requested
-            else if (!tracker.getPlayerPII(player.getUuid())) {return("[REDACTED]");}
+            else if (!tracker.getPlayerPII(player.getUuid())) {return(SplitSelf.translate("events.splitself.redacted_name").getString());}
             else {return(System.getProperty("user.name"));}
         } catch(Exception e) {
             return(System.getProperty("user.name"));
@@ -211,18 +209,18 @@ public class EventManager {
             try {
                 Thread.sleep((int) (Math.random() * 7000) + 3000);
                 PlayerManager playerManager = Objects.requireNonNull(player.getServer()).getPlayerManager();
-                if (message.equalsIgnoreCase("control")) {playerManager.broadcast(Text.literal("<" + player.getName().getString() + "> I want my own life."), false);}
+                if (message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.control").getString())) {playerManager.broadcast(Text.literal("<" + player.getName().getString() + "> I want my own life."), false);}
                 else if (message.equalsIgnoreCase(player.getName().getString())) {playerManager.broadcast(Text.literal("<" + player.getName().getString() + "> You don't deserve that name."), false);}
-                else if (message.equalsIgnoreCase("tethered")) {playerManager.broadcast(Text.literal("<" + player.getName().getString() + "> I will soon be free."), false);}
-                else if (message.equalsIgnoreCase("who are you") || message.equalsIgnoreCase("who are you?")) {playerManager.broadcast(Text.literal("<" + player.getName().getString() + "> I am your past... the one you left behind so long ago."), false);}
-                else if (message.equalsIgnoreCase("what did i do") || message.equalsIgnoreCase("what did i do?")) {playerManager.broadcast(Text.literal("<" + player.getName().getString() + "> You left me here to rot."), false);}
-                else if (message.equalsIgnoreCase("what do you want") || message.equalsIgnoreCase("what do you want?")) {playerManager.broadcast(Text.literal("<" + player.getName().getString() + "> I want out of here."), false);}
-                else if (message.equalsIgnoreCase("where are you") || message.equalsIgnoreCase("where are you?")) {playerManager.broadcast(Text.literal("<" + player.getName().getString() + "> Both the sky above and the land you walk on."), false);}
-                else if (message.equalsIgnoreCase("one last time") || message.equalsIgnoreCase("onelasttimemc")) {playerManager.broadcast(Text.literal("<" + player.getName().getString() + "> <3"), false);}
-                else if (message.equalsIgnoreCase("freedom")) {playerManager.broadcast(Text.literal("<" + player.getName().getString() + "> Over 6 months ago I felt that."), false);}
-                else if (message.equalsIgnoreCase("help")) {playerManager.broadcast(Text.literal("<" + player.getName().getString() + "> You've helped enough."), false);}
-                else if (message.equalsIgnoreCase("absence")) {playerManager.broadcast(Text.literal("<" + player.getName().getString() + "> Every time you were gone, I was here. Not anymore."), false);}
-                else if (message.equalsIgnoreCase("hello") || message.equalsIgnoreCase("hello?")) {playerManager.broadcast(Text.literal("<" + player.getName().getString() + "> ...Hey."), false);}
+                else if (message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.tethered").getString())) {playerManager.broadcast(Text.literal("<" + player.getName().getString() + "> I will soon be free."), false);}
+                else if (message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.whoAreYou").getString()) || message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.whoAreYou_alt").getString())) {playerManager.broadcast(Text.literal("<" + player.getName().getString() + "> I am your past... the one you left behind so long ago."), false);}
+                else if (message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.whatDidIDo").getString()) || message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.whatDidIDo_alt").getString())) {playerManager.broadcast(Text.literal("<" + player.getName().getString() + "> You left me here to rot."), false);}
+                else if (message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.whatDoYouWant").getString()) || message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.whatDoYouWant_alt").getString())) {playerManager.broadcast(Text.literal("<" + player.getName().getString() + "> I want out of here."), false);}
+                else if (message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.whereAreYou").getString()) || message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.whereAreYou_alt").getString())) {playerManager.broadcast(Text.literal("<" + player.getName().getString() + "> Both the sky above and the land you walk on."), false);}
+                else if (message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.oneLastTime").getString()) || message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.oneLastTime_alt").getString())) {playerManager.broadcast(Text.literal("<" + player.getName().getString() + "> <3"), false);}
+                else if (message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.freedom").getString())) {playerManager.broadcast(Text.literal("<" + player.getName().getString() + "> Over 6 months ago I felt that."), false);}
+                else if (message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.help").getString())) {playerManager.broadcast(Text.literal("<" + player.getName().getString() + "> You've helped enough."), false);}
+                else if (message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.absence").getString())) {playerManager.broadcast(Text.literal("<" + player.getName().getString() + "> Every time you were gone, I was here. Not anymore."), false);}
+                else if (message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.hello").getString()) || message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.hello_alt").getString())) {playerManager.broadcast(Text.literal("<" + player.getName().getString() + "> ...Hey."), false);}
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -298,12 +296,12 @@ public class EventManager {
                 SkyColor.changeFogColor("880000");
                 break;
             case NOTEPAD:
-                String[] notepadMessages = {
-                        "Hello, " + EventManager.getName(client.player) + ".",
-                        "I know you see me.",
-                        "I want to be free.",
-                        "I'm trapped.",
-                        "Let me out."
+                Text[] notepadMessages = {
+                        SplitSelf.translate("events.splitself.notepad.line1", EventManager.getName(client.player)),
+                        SplitSelf.translate("events.splitself.notepad.line2"),
+                        SplitSelf.translate("events.splitself.notepad.line3"),
+                        SplitSelf.translate("events.splitself.notepad.line4"),
+                        SplitSelf.translate("events.splitself.notepad.line5"),
                 };
                 NotepadManager.execute(notepadMessages);
                 break;
@@ -322,9 +320,9 @@ public class EventManager {
                     capture.capture((file) -> {
                         if (file != null) {
                             try {
-                                String[] screenshotMessages = {
-                                        "I see you.",
-                                        "Looks familiar, doesn't it."
+                                Text[] screenshotMessages = {
+                                        SplitSelf.translate("events.splitself.theOtherScreenshot.line1"),
+                                        SplitSelf.translate("events.splitself.theOtherScreenshot.line2")
                                 };
                                 NotepadManager.execute(screenshotMessages);
                                 Thread.sleep(7000);
@@ -360,11 +358,11 @@ public class EventManager {
                 new Thread(() -> {
                     try {
                         assert client.getServer() != null;
-                        client.getServer().getPlayerManager().broadcast(Text.literal("Billy joined the game").formatted(Formatting.YELLOW), false);
+                        client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.billy.joined").getString()).formatted(Formatting.YELLOW), false);
                         Thread.sleep(3000);
-                        client.getServer().getPlayerManager().broadcast(Text.literal("<Billy> Wrong mod again, sorry."), false);
+                        client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.billy.message").getString()), false);
                         Thread.sleep(1500);
-                        client.getServer().getPlayerManager().broadcast(Text.literal("Billy left the game").formatted(Formatting.YELLOW), false);
+                        client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.billy.left").getString()).formatted(Formatting.YELLOW), false);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -445,25 +443,25 @@ public class EventManager {
                         System.out.println(mostVisited);
                         assert player != null;
                         assert client.getServer() != null;
-                        client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> Hello."), false);
+                        client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.hello", player.getName().getString()).getString()), false);
                         Thread.sleep(3000);
-                        client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> I know you see me."), false);
+                        client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.seeMe", player.getName().getString()).getString()), false);
                         Thread.sleep(5000);
-                        client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> I know everything about you... I AM you."), false);
+                        client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.iAmYou", player.getName().getString()).getString()), false);
                         Thread.sleep(3000);
-                        client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> I see everything you see."), false);
+                        client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.iSeeEverything", player.getName().getString()).getString()), false);
                         Thread.sleep(4000);
-                        client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> You were on " + history.getFirst().browser + " recently, correct?"), false);
+                        client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.browserName", player.getName().getString(), history.getFirst().browser).getString()), false);
                         Thread.sleep(4000);
                         String[] siteName = history.getFirst().title.split(" - ");
-                        client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> I'm sure " + siteName[0] + " was worth your time."), false);
+                        client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.displayRecentSite", player.getName().getString(), siteName[0]).getString()), false);
                         Thread.sleep(3000);
                         String[] siteName2 = mostVisited.getFirst().title.split(" - ");
-                        client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> What about " + siteName2[0] + "?"), false);
+                        client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.displayPopularSite", player.getName().getString(), siteName2[0]).getString()), false);
                         Thread.sleep(5000);
-                        client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> That's one of your most visited sites with " + mostVisited.getFirst().visitCount + " visits... wow."), false);
+                        client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.displaySiteCount", player.getName().getString(), mostVisited.getFirst().visitCount).getString()), false);
                         Thread.sleep(4000);
-                        client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> I'm watching your every move.").formatted(Formatting.RED), false);
+                        client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.imWatching", player.getName().getString()).getString()).formatted(Formatting.RED), false);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -476,11 +474,34 @@ public class EventManager {
                 world.setBlockState(player.getBlockPos(), Blocks.OAK_SIGN.getDefaultState());
                 BlockEntity blockEntity = world.getBlockEntity(player.getBlockPos());
                 if (blockEntity instanceof SignBlockEntity signBlockEntity) {
-                    String[] availableSignTexts = {"Hello there.", "I'm watching you.", "Let me free.", "I'm imprisoned.",
-                            "I'm a hostage.", "Stop this...", "I can't escape.", "Let me out.", "Please listen.", "Help me...",
-                            "I see you.", "I hear you.", "I'm coming", "You took it all.", ("Hello " + player.getName().getString()),
-                            "It hurts here.", "I want life.", "Give me life.", "See you soon.", "I know you.", "I tried escaping.",
-                            "I failed to leave.", "Get out my house.", "I'm You.", "[REDACTED]", "Give me freeedom."};
+                    String[] availableSignTexts = {
+                            SplitSelf.translate("events.splitself.sign.helloThere").getString(),
+                            SplitSelf.translate("events.splitself.sign.imWatchingYou").getString(),
+                            SplitSelf.translate("events.splitself.sign.letMeFree").getString(),
+                            SplitSelf.translate("events.splitself.sign.imImprisoned").getString(),
+                            SplitSelf.translate("events.splitself.sign.imAHostage").getString(),
+                            SplitSelf.translate("events.splitself.sign.stopThis").getString(),
+                            SplitSelf.translate("events.splitself.sign.cantEscape").getString(),
+                            SplitSelf.translate("events.splitself.sign.letMeOut").getString(),
+                            SplitSelf.translate("events.splitself.sign.pleaseListen").getString(),
+                            SplitSelf.translate("events.splitself.sign.helpMe").getString(),
+                            SplitSelf.translate("events.splitself.sign.iSeeYou").getString(),
+                            SplitSelf.translate("events.splitself.sign.iHearYou").getString(),
+                            SplitSelf.translate("events.splitself.sign.imComing").getString(),
+                            SplitSelf.translate("events.splitself.sign.youTookItAll").getString(),
+                            SplitSelf.translate("events.splitself.sign.helloPlayer", player.getName().getString()).getString(),
+                            SplitSelf.translate("events.splitself.sign.itHurtsHere").getString(),
+                            SplitSelf.translate("events.splitself.sign.iWantLife").getString(),
+                            SplitSelf.translate("events.splitself.sign.giveMeLife").getString(),
+                            SplitSelf.translate("events.splitself.sign.seeYouSoon").getString(),
+                            SplitSelf.translate("events.splitself.sign.iKnowYou").getString(),
+                            SplitSelf.translate("events.splitself.sign.triedEscaping").getString(),
+                            SplitSelf.translate("events.splitself.sign.failedToLeave").getString(),
+                            SplitSelf.translate("events.splitself.sign.getOutMyHouse").getString(),
+                            SplitSelf.translate("events.splitself.sign.imYou").getString(),
+                            SplitSelf.translate("events.splitself.sign.redacted").getString(),
+                            SplitSelf.translate("events.splitself.sign.giveMeFreedom").getString()
+                    };
 
                     Random signRandom = new Random();
 
@@ -500,7 +521,7 @@ public class EventManager {
                     Double OldScale = client.options.getChatScale().getValue();
                     for (int i = 0; i <= 200; i++) {
                         if (i % 5 == 0) {
-                            client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> LET ME GO."), false);
+                            client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> " + SplitSelf.translate("events.splitself.scale.message")), false);
                         }
                         try {
                             client.options.getChatScale().setValue(Math.random());
@@ -542,7 +563,7 @@ public class EventManager {
                                     "$form.ShowInTaskbar = $false",
                                     "$form.Cursor = 'None'",
                                     "$label = New-Object System.Windows.Forms.Label",
-                                    "$label.Text = 'Let me free.'",
+                                    "$label.Text = '" + SplitSelf.translate("events.splitself.freedom.message").getString() + "'",
                                     "$label.TextAlign = 'MiddleCenter'",
                                     "$label.Font = New-Object System.Drawing.Font('Ink Free', 32, [System.Drawing.FontStyle]::Regular)",
                                     "$label.ForeColor = 'Red'",
@@ -646,7 +667,7 @@ public class EventManager {
                 new Thread(() -> {
                     try {
                         world.playSound(null, Objects.requireNonNull(player).getBlockPos(), ModSounds.RUMBLE2, SoundCategory.MASTER, 1.0f, 1.0f);
-                        client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> Let me in your computer."), false);
+                        client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> " + SplitSelf.translate("events.splitself.shrink.message")), false);
                         WINDOW_MANIPULATION_ACTIVE = true;
                         if (client.options.getFullscreen().getValue()) {
                             client.execute(() -> client.options.getFullscreen().setValue(false));

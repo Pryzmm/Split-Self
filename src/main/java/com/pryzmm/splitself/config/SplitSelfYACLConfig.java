@@ -50,7 +50,7 @@ public class SplitSelfYACLConfig {
         // Create event weights group
         OptionGroup.Builder eventWeightsGroup = OptionGroup.createBuilder()
                 .name(Text.translatable("config.splitself.group.event_weights"))
-                .description(OptionDescription.of(Text.translatable("config.splitself.group.event_weights.description")));
+                .description(OptionDescription.of(SplitSelf.translate("config.splitself.group.event_weights.description")));
 
         // Add options for each event weight
         for (EventManager.Events event : EventManager.Events.values()) {
@@ -59,7 +59,7 @@ public class SplitSelfYACLConfig {
 
             eventWeightsGroup.option(Option.<Integer>createBuilder()
                     .name(Text.literal(formatEventName(eventName)))
-                    .description(OptionDescription.of(Text.literal("Weight for " + formatEventName(eventName) + " event")))
+                    .description(OptionDescription.of(SplitSelf.translate("config.splitself.weight_value_title", formatEventName(eventName))))
                     .binding(defaultWeight,
                             () -> HANDLER.instance().eventWeights.getOrDefault(eventName, defaultWeight),
                             newVal -> HANDLER.instance().eventWeights.put(eventName, newVal))
@@ -68,46 +68,46 @@ public class SplitSelfYACLConfig {
         }
 
         return YetAnotherConfigLib.createBuilder()
-                .title(Text.translatable("config.splitself.title"))
+                .title(SplitSelf.translate("config.splitself.title"))
                 .category(ConfigCategory.createBuilder()
-                        .name(Text.translatable("config.splitself.category.events"))
-                        .tooltip(Text.translatable("config.splitself.category.events.tooltip"))
+                        .name(SplitSelf.translate("config.splitself.category.events"))
+                        .tooltip(SplitSelf.translate("config.splitself.category.events.tooltip"))
                         .group(OptionGroup.createBuilder()
                                 .name(Text.translatable("config.splitself.group.general"))
-                                .description(OptionDescription.of(Text.translatable("config.splitself.group.general.description")))
+                                .description(OptionDescription.of(SplitSelf.translate("config.splitself.group.general.description")))
                                 .option(Option.<Boolean>createBuilder()
-                                        .name(Text.translatable("config.splitself.events_enabled"))
-                                        .description(OptionDescription.of(Text.translatable("config.splitself.events_enabled.description")))
+                                        .name(SplitSelf.translate("config.splitself.events_enabled"))
+                                        .description(OptionDescription.of(SplitSelf.translate("config.splitself.events_enabled.description")))
                                         .binding(true, () -> HANDLER.instance().eventsEnabled, newVal -> HANDLER.instance().eventsEnabled = newVal)
                                         .controller(opt -> BooleanControllerBuilder.create(opt).yesNoFormatter())
                                         .build())
                                 .option(Option.<Integer>createBuilder()
-                                        .name(Text.translatable("config.splitself.event_tick_interval"))
-                                        .description(OptionDescription.of(Text.translatable("config.splitself.event_tick_interval.description")))
+                                        .name(SplitSelf.translate("config.splitself.event_tick_interval"))
+                                        .description(OptionDescription.of(SplitSelf.translate("config.splitself.event_tick_interval.description")))
                                         .binding(ConfigDefaults.DEFAULT_EVENT_TICK_INTERVAL, () -> HANDLER.instance().eventTickInterval, newVal -> HANDLER.instance().eventTickInterval = newVal)
                                         .controller(opt -> IntegerSliderControllerBuilder.create(opt).range(1, 1000).step(1))
                                         .build())
                                 .option(Option.<Double>createBuilder()
-                                        .name(Text.translatable("config.splitself.event_chance"))
-                                        .description(OptionDescription.of(Text.translatable("config.splitself.event_chance.description")))
+                                        .name(SplitSelf.translate("config.splitself.event_chance"))
+                                        .description(OptionDescription.of(SplitSelf.translate("config.splitself.event_chance.description")))
                                         .binding(ConfigDefaults.DEFAULT_EVENT_CHANCE, () -> HANDLER.instance().eventChance, newVal -> HANDLER.instance().eventChance = newVal)
                                         .controller(opt -> DoubleSliderControllerBuilder.create(opt).range(0.01, 1.00).step(0.01))
                                         .build())
                                 .option(Option.<Integer>createBuilder()
-                                        .name(Text.translatable("config.splitself.event_cooldown"))
-                                        .description(OptionDescription.of(Text.translatable("config.splitself.event_cooldown.description")))
+                                        .name(SplitSelf.translate("config.splitself.event_cooldown"))
+                                        .description(OptionDescription.of(SplitSelf.translate("config.splitself.event_cooldown.description")))
                                         .binding(ConfigDefaults.DEFAULT_EVENT_COOLDOWN, () -> HANDLER.instance().eventCooldown, newVal -> HANDLER.instance().eventCooldown = newVal)
                                         .controller(opt -> IntegerSliderControllerBuilder.create(opt).range(0, 10000).step(50))
                                         .build())
                                 .option(Option.<Integer>createBuilder()
-                                        .name(Text.translatable("config.splitself.guaranteed_event"))
-                                        .description(OptionDescription.of(Text.translatable("config.splitself.guaranteed_event.description")))
+                                        .name(SplitSelf.translate("config.splitself.guaranteed_event"))
+                                        .description(OptionDescription.of(SplitSelf.translate("config.splitself.guaranteed_event.description")))
                                         .binding(ConfigDefaults.DEFAULT_GUARANTEED_EVENT, () -> HANDLER.instance().guaranteedEvent, newVal -> HANDLER.instance().guaranteedEvent = newVal)
                                         .controller(opt -> IntegerSliderControllerBuilder.create(opt).range(0, 24000).step(100))
                                         .build())
                                 .option(Option.<Integer>createBuilder()
-                                        .name(Text.translatable("config.splitself.start_events_after"))
-                                        .description(OptionDescription.of(Text.translatable("config.splitself.start_events_after.description")))
+                                        .name(SplitSelf.translate("config.splitself.start_events_after"))
+                                        .description(OptionDescription.of(SplitSelf.translate("config.splitself.start_events_after.description")))
                                         .binding(ConfigDefaults.DEFAULT_START_EVENTS_AFTER, () -> HANDLER.instance().startEventsAfter, newVal -> HANDLER.instance().startEventsAfter = newVal)
                                         .controller(opt -> IntegerSliderControllerBuilder.create(opt).range(50, 20000).step(50))
                                         .build())
@@ -126,7 +126,6 @@ public class SplitSelfYACLConfig {
     }
 
     private static String formatEventName(String eventName) {
-        // Convert ENUM_CASE to Title Case
         StringBuilder formatted = new StringBuilder();
         String[] words = eventName.toLowerCase().split("_");
         for (String word : words) {

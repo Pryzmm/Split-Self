@@ -101,10 +101,9 @@ public class EmergencyOverlayRenderer {
         matrices.pop();
 
         if (!tracker.getPlayerPII(client.player.getUuid())) {
-            city = "[REDACTED]";
+            city = String.valueOf(SplitSelf.translate("events.splitself.redacted_name"));
         }
-
-        String smallerText = "A civil authority has issued an alert for: " + city + "; " + (DateFormat.getTimeInstance().format(new Date(System.currentTimeMillis())) + ". Effective until further notice. Sightings report of anomalous entity roaming the streets of " + city + " with malicious intent. Stay inside. Do not interact with anyone not already present. This is not a drill.");
+        String smallerText = String.valueOf(SplitSelf.translate("events.splitself.emergency.message", city, (DateFormat.getTimeInstance().format(new Date(System.currentTimeMillis()))), city));
         int smallerTextY = titleY + 100;
         int smallerTextWidth = textRenderer.getWidth(smallerText);
 
