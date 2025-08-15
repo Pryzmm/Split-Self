@@ -23,3 +23,5 @@ With all that being said, here are the events that interact with your computer i
   - For some Youtubers, the mod will instead call them by their public name, or a variant of their name
 - The 'Browser' event reveals personal browser history across Firefox, Google, and Opera GX
 - The 'Emergency' event will reveal your city via GeoIP. VPNs will counteract this.
+- The 'Freedom' event will temporarily cover your entire screen and say "Let Me Free."
+- The 'Shrink' event will take you out of fullscreen, shrink your game slowly and start shaking.
