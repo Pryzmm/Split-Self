@@ -64,7 +64,7 @@ public class ScreenOverlayRenderer {
 
         renderImageOverlay(drawContext, screenWidth, screenHeight);
 
-        String overlayText = String.valueOf(SplitSelf.translate("events.splitself.screenOverlay.message"));
+        String overlayText = SplitSelf.translate("events.splitself.screenOverlay.message").getString();
         int textWidth = textRenderer.getWidth(overlayText);
         int textX = ((screenWidth - textWidth) / 2) + 100;
         int textY = (screenHeight / 2) + 100;
