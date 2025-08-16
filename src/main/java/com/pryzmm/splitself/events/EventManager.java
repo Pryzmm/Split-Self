@@ -173,17 +173,31 @@ public class EventManager {
 
     public static String getName(ClientPlayerEntity player) {
         try {
-            if (player.getName().getString().equalsIgnoreCase("therealsquiddo")) {return("Florence Ennay");}
-            else if (player.getName().getString().equalsIgnoreCase("skipthetutorial")) {return("Aiden");}
-            else if (player.getName().getString().equalsIgnoreCase("failboat")) {return("Daniel Michaud");}
-            else if (player.getName().getString().equalsIgnoreCase("jaym0ji")) {return("James");}
-            else if (player.getName().getString().equalsIgnoreCase("xvivilly")) {return("VIV");}
-            else if (player.getName().getString().equalsIgnoreCase("rekrap2")) {return("Parker Jerry Marriott");}
-            else if (player.getName().getString().equalsIgnoreCase("dream")) {return("Clay");} // I ran out of ideas lol
-            else if (player.getName().getString().equalsIgnoreCase("itzmiai_21")) {return("M1keyz");} // Requested
-            else if (!tracker.getPlayerPII(player.getUuid())) {return(SplitSelf.translate("events.splitself.redacted_name").getString());}
-            else {return(System.getProperty("user.name"));}
+            FirstJoinTracker currentTracker = null;
+            MinecraftClient client = MinecraftClient.getInstance();
+            if (client.getServer() != null) {
+                currentTracker = FirstJoinTracker.getServerState(client.getServer());
+            } else if (tracker != null) {
+                currentTracker = tracker;
+            }
+            String playerName = player.getName().getString();
+            if (playerName.equalsIgnoreCase("therealsquiddo")) {return("Florence Ennay");}
+            else if (playerName.equalsIgnoreCase("skipthetutorial")) {return("Aiden");}
+            else if (playerName.equalsIgnoreCase("failboat")) {return("Daniel Michaud");}
+            else if (playerName.equalsIgnoreCase("jaym0ji")) {return("James");}
+            else if (playerName.equalsIgnoreCase("xvivilly")) {return("VIV");}
+            else if (playerName.equalsIgnoreCase("rekrap2")) {return("Parker Jerry Marriott");}
+            else if (playerName.equalsIgnoreCase("dream")) {return("Clay");}
+            else if (playerName.equalsIgnoreCase("itzmiai_21")) {return("M1keyz");}
+            if (currentTracker != null && !currentTracker.getPlayerPII(player.getUuid())) {
+                return(SplitSelf.translate("events.splitself.redacted_name").getString());
+            } else {
+                return(System.getProperty("user.name"));
+            }
+
         } catch(Exception e) {
+            System.err.println("Error in getName(): " + e.getMessage());
+            e.printStackTrace();
             return(System.getProperty("user.name"));
         }
     }
@@ -520,7 +534,7 @@ public class EventManager {
                     Double OldScale = client.options.getChatScale().getValue();
                     for (int i = 0; i <= 200; i++) {
                         if (i % 5 == 0) {
-                            client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> " + SplitSelf.translate("events.splitself.scale.message")), false);
+                            client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> " + SplitSelf.translate("events.splitself.scale.message").getString()), false);
                         }
                         try {
                             client.options.getChatScale().setValue(Math.random());
@@ -666,7 +680,7 @@ public class EventManager {
                 new Thread(() -> {
                     try {
                         world.playSound(null, Objects.requireNonNull(player).getBlockPos(), ModSounds.RUMBLE2, SoundCategory.MASTER, 1.0f, 1.0f);
-                        client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> " + SplitSelf.translate("events.splitself.shrink.message")), false);
+                        client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> " + SplitSelf.translate("events.splitself.shrink.message").getString()), false);
                         WINDOW_MANIPULATION_ACTIVE = true;
                         if (client.options.getFullscreen().getValue()) {
                             client.execute(() -> client.options.getFullscreen().setValue(false));
