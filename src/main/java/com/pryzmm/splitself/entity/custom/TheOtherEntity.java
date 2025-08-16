@@ -1,6 +1,7 @@
 package com.pryzmm.splitself.entity.custom;
 
 import com.pryzmm.splitself.events.ScreenOverlay;
+import com.pryzmm.splitself.world.DimensionRegistry;
 import net.minecraft.entity.AnimationState;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -59,7 +60,7 @@ public class TheOtherEntity extends HostileEntity {
             }
         }
 
-        if (!this.getWorld().isClient) {
+        if (!this.getWorld().isClient && this.getWorld() != this.getWorld().getServer().getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY)) {
             List<PlayerEntity> nearbyPlayers = this.getWorld().getEntitiesByClass(
                     PlayerEntity.class,
                     this.getBoundingBox().expand(10.0),
