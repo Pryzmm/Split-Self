@@ -101,9 +101,9 @@ public class EmergencyOverlayRenderer {
         matrices.pop();
 
         if (!tracker.getPlayerPII(client.player.getUuid())) {
-            city = String.valueOf(SplitSelf.translate("events.splitself.redacted_name"));
+            city = SplitSelf.translate("events.splitself.redacted_name").getString();
         }
-        String smallerText = String.valueOf(SplitSelf.translate("events.splitself.emergency.message", city, (DateFormat.getTimeInstance().format(new Date(System.currentTimeMillis()))), city));
+        String smallerText = SplitSelf.translate("events.splitself.emergency.message", city, (DateFormat.getTimeInstance().format(new Date(System.currentTimeMillis()))), city).getString();
         int smallerTextY = titleY + 100;
         int smallerTextWidth = textRenderer.getWidth(smallerText);
 

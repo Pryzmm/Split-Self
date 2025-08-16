@@ -46,7 +46,7 @@ public class InventoryOverlayRenderer {
     public static void renderOverlayContent(DrawContext drawContext) {
         MinecraftClient client = MinecraftClient.getInstance();
         TextRenderer textRenderer = client.textRenderer;
-        String overlayText = String.valueOf(SplitSelf.translate("events.splitself.inventoryOverlay.message"));
+        String overlayText = SplitSelf.translate("events.splitself.inventoryOverlay.message").getString();
         drawContext.drawTextWithShadow(textRenderer, overlayText, 50, 50, 0xFFFFFF);
     }
 }
