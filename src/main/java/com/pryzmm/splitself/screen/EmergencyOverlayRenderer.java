@@ -86,7 +86,7 @@ public class EmergencyOverlayRenderer {
 
         renderImageOverlay(drawContext, screenWidth, screenHeight);
 
-        String overlayText = "EMERGENCY NOTICE";
+        String overlayText = SplitSelf.translate("events.splitself.emergency.notice").getString();
         int titleY = screenHeight / 3;
 
         MatrixStack matrices = drawContext.getMatrices();
