@@ -2,7 +2,9 @@
 
 ## ⚠️ DISCLAIMER
 
-This mod will interact with your device **outside of the game**. Rest assured, your PC will not be damaged, and any changes made are easily reversible. If you feel unsafe using this mod, or if it's not supported on your device, you may download the **safe version** from every GitHub release.
+This mod will interact with your device **outside of the game**. Rest assured, your PC will not be damaged, and any changes made are easily reversible. If you feel unsafe using this mod, or if it's not supported on your device, you may download the **safe version** from every GitHub full release.
+
+You can read the full disclaimer of all device interactions [here](DISCLAIMER.md)
 
 ---
 
