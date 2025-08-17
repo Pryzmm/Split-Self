@@ -41,7 +41,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Position;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
+
+import java.awt.*;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -423,7 +427,17 @@ public class EventManager {
                 }
                 break;
             case INVERT:
-                client.options.getInvertYMouse().setValue(true);
+                new Thread(() -> {
+                    try {
+                        client.options.getInvertYMouse().setValue(true);
+                        Thread.sleep(60000);
+                        if (client.options.getInvertYMouse().getValue() == true) {
+                            client.options.getInvertYMouse().setValue(false);
+                        }
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }).start();
                 break;
             case EMERGENCY:
                 CityLocator geoLocation;
