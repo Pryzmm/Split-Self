@@ -202,7 +202,7 @@ public class EventManager {
         }
     }
 
-    public static void runSleepEvent(PlayerEntity player) {
+    public static void runSleepEvent(PlayerEntity player, Integer stage) {
         new Thread(() -> {
             try {
                 player.teleport(player.getServer().getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY), 2.3, 1.5625, 9.7, null, -135, 40);

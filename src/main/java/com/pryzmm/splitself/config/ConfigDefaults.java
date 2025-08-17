@@ -14,6 +14,7 @@ public class ConfigDefaults {
     public static final int DEFAULT_GUARANTEED_EVENT = 15600;
 
     private static final Map<String, Integer> DEFAULT_EVENT_WEIGHTS = createDefaultEventWeights();
+    private static final Map<String, Integer> DEFAULT_EVENT_STAGES = createDefaultEventStages();
 
     private static Map<String, Integer> createDefaultEventWeights() {
         Map<String, Integer> weights = new HashMap<>();
@@ -51,6 +52,42 @@ public class ConfigDefaults {
         return weights;
     }
 
+    private static Map<String, Integer> createDefaultEventStages() {
+        Map<String, Integer> stages = new HashMap<>();
+        stages.put("SPAWNTHEOTHER", 0);
+        stages.put("POEMSCREEN", 1);
+        stages.put("DOYOUSEEME", 2);
+        stages.put("UNDERGROUNDMINING", 0);
+        stages.put("REDSKY", 1);
+        stages.put("NOTEPAD", 1);
+        stages.put("SCREENOVERLAY", 1);
+        stages.put("WHITESCREENOVERLAY", 0);
+        stages.put("INVENTORYOVERLAY", 0);
+        stages.put("THEOTHERSCREENSHOT", 1);
+        stages.put("DESTROYCHUNK", 1);
+        stages.put("FROZENSCREEN", 2);
+        stages.put("HOUSE", 1);
+        stages.put("BEDROCKPILLAR", 0);
+        stages.put("BILLY", 0);
+        stages.put("FACE", 1);
+        stages.put("COMMAND", 1);
+        stages.put("INVERT", 0);
+        stages.put("EMERGENCY", 2);
+        stages.put("TNT", 0);
+        stages.put("IRONTRAP", 0);
+        stages.put("LAVA", 1);
+        stages.put("BROWSER", 1);
+        stages.put("KICK", 1);
+        stages.put("SIGN", 0);
+        stages.put("SCALE", 1);
+        stages.put("CAMERA", 0);
+        stages.put("FREEDOM", 2);
+        stages.put("MINE", 0);
+        stages.put("DOOR", 0);
+        stages.put("SHRINK", 2);
+        return stages;
+    }
+
     public static Map<String, Integer> getDefaultEventWeights() {
         return new HashMap<>(DEFAULT_EVENT_WEIGHTS);
     }
@@ -61,5 +98,17 @@ public class ConfigDefaults {
 
     public static int getDefaultEventWeight(EventManager.Events event) {
         return getDefaultEventWeight(event.name());
+    }
+
+    public static Map<String, Integer> getDefaultEventStages() {
+        return new HashMap<>(DEFAULT_EVENT_STAGES);
+    }
+
+    public static int getDefaultEventStage(String eventName) {
+        return DEFAULT_EVENT_STAGES.getOrDefault(eventName, 0);
+    }
+
+    public static int getDefaultEventStage(EventManager.Events event) {
+        return getDefaultEventStage(event.name());
     }
 }

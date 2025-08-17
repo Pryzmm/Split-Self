@@ -31,6 +31,9 @@ public class SplitSelfCommands {
                                 FirstJoinTracker tracker = FirstJoinTracker.getServerState(client.getServer());
                                 tracker.setPlayerReadWarning(client.player.getUuid(), !tracker.getPlayerReadWarning(client.player.getUuid()));
                                 context.getSource().sendFeedback(() -> Text.literal(SplitSelf.translate("command.splitself.debug_toggle_warning", tracker.getPlayerReadWarning(client.player.getUuid())).getString()), false);
+                            } else if (argument.equalsIgnoreCase("debugSleepStage")) {
+                                FirstJoinTracker tracker = FirstJoinTracker.getServerState(client.getServer());
+                                context.getSource().sendFeedback(() -> Text.literal(String.valueOf(tracker.getPlayerSleepStage(client.player.getUuid()))), false);
                             } else {
                                 context.getSource().sendFeedback(() -> Text.literal("<" + context.getSource().getName() + "> " + SplitSelf.translate("command.splitself.invalid_value").getString()), false);
                             }
@@ -40,9 +43,13 @@ public class SplitSelfCommands {
                                 .executes(context -> {
                                     String firstArg = StringArgumentType.getString(context, "text").toLowerCase();
                                     String secondArg = StringArgumentType.getString(context, "event").toLowerCase();
-                                    ServerWorld world = (ServerWorld) context.getSource().getWorld();
-                                    PlayerEntity player = (PlayerEntity) context.getSource().getPlayer();
-                                    if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("random")) {
+                                    ServerWorld world = context.getSource().getWorld();
+                                    PlayerEntity player = context.getSource().getPlayer();
+                                    if (firstArg.equalsIgnoreCase("debugSleepStage") && SplitSelf.isNumeric(secondArg)) {
+                                        FirstJoinTracker tracker = FirstJoinTracker.getServerState(world.getServer());
+                                        tracker.setPlayerSleepStage(player.getUuid(), Integer.parseInt(secondArg));
+                                        context.getSource().sendFeedback(() -> Text.literal(String.valueOf(tracker.getPlayerSleepStage(client.player.getUuid()))), false);
+                                    } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("random")) {
                                         EventManager.triggerRandomEvent(world, player, null, true);
                                     } else try {
                                         EventManager.Events event = EventManager.Events.valueOf(secondArg.toUpperCase());

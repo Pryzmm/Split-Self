@@ -134,6 +134,10 @@ public class SplitSelf implements ModInitializer {
 		LOGGER.info(logInitList[(new Random()).nextInt(logInitList.length)]);
 	}
 
+    public static boolean isNumeric(String str) {
+        return str.matches("-?\\d+(\\.\\d+)?");
+    }
+
 	private static String getString(SignedMessage message) {
 		return message.getContent().getString();
 	}

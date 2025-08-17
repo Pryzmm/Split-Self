@@ -19,8 +19,9 @@ public class SplitSelfConfig {
     public int startEventsAfter = ConfigDefaults.DEFAULT_START_EVENTS_AFTER;
     public int guaranteedEvent = ConfigDefaults.DEFAULT_GUARANTEED_EVENT;
 
-    // Event weights from ConfigDefaults
+    // Event weights and stages from ConfigDefaults
     public Map<String, Integer> eventWeights = ConfigDefaults.getDefaultEventWeights();
+    public Map<String, Integer> eventStages = ConfigDefaults.getDefaultEventStages();
 
     // YACL integration (optional)
     private boolean yaclAvailable;
@@ -108,6 +109,13 @@ public class SplitSelfConfig {
             this.eventWeights = new HashMap<>(yaclEventWeights);
         }
 
+        // Load event stages
+        @SuppressWarnings("unchecked")
+        Map<String, Integer> yaclEventStages = (Map<String, Integer>) configClass.getField("eventStages").get(yaclInstance);
+        if (yaclEventStages != null && !yaclEventStages.isEmpty()) {
+            this.eventStages = new HashMap<>(yaclEventStages);
+        }
+
         SplitSelf.LOGGER.info("Loaded values from YACL config");
     }
 
@@ -123,6 +131,7 @@ public class SplitSelfConfig {
             configClass.getField("eventCooldown").setInt(yaclInstance, eventCooldown);
             configClass.getField("startEventsAfter").setInt(yaclInstance, startEventsAfter);
             configClass.getField("eventWeights").set(yaclInstance, eventWeights);
+            configClass.getField("eventStages").set(yaclInstance, eventStages);
 
             yaclHandler.getClass().getMethod("save").invoke(yaclHandler);
 
@@ -140,10 +149,16 @@ public class SplitSelfConfig {
     public int getGuaranteedEvent() { return guaranteedEvent; }
     public int getStartEventsAfter() { return startEventsAfter; }
     public Map<String, Integer> getEventWeights() { return new HashMap<>(eventWeights); }
+    public Map<String, Integer> getEventStages() { return new HashMap<>(eventStages); }
 
     // Get weight for specific event
     public int getEventWeight(EventManager.Events event) {
         return eventWeights.getOrDefault(event.name(), ConfigDefaults.getDefaultEventWeight(event));
+    }
+
+    // Get stage for specific event
+    public int getEventStage(EventManager.Events event) {
+        return eventStages.getOrDefault(event.name(), ConfigDefaults.getDefaultEventStage(event));
     }
 
     public void setEventsEnabled(boolean eventsEnabled) {
@@ -183,6 +198,16 @@ public class SplitSelfConfig {
 
     public void setEventWeights(Map<String, Integer> eventWeights) {
         this.eventWeights = new HashMap<>(eventWeights);
+        saveToYACL();
+    }
+
+    public void setEventStage(String eventName, int stage) {
+        eventStages.put(eventName, stage);
+        saveToYACL();
+    }
+
+    public void setEventStages(Map<String, Integer> eventStages) {
+        this.eventStages = new HashMap<>(eventStages);
         saveToYACL();
     }
 

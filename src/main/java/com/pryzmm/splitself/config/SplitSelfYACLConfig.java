@@ -46,24 +46,45 @@ public class SplitSelfYACLConfig {
     @SerialEntry
     public Map<String, Integer> eventWeights = ConfigDefaults.getDefaultEventWeights();
 
+    @SerialEntry
+    public Map<String, Integer> eventStages = ConfigDefaults.getDefaultEventStages();
+
     public static Screen createScreen(Screen parent) {
         // Create event weights group
         OptionGroup.Builder eventWeightsGroup = OptionGroup.createBuilder()
                 .name(Text.translatable("config.splitself.group.event_weights"))
                 .description(OptionDescription.of(SplitSelf.translate("config.splitself.group.event_weights.description")));
 
-        // Add options for each event weight
+        // Create event stages group
+        OptionGroup.Builder eventStagesGroup = OptionGroup.createBuilder()
+                .name(Text.translatable("config.splitself.group.event_stages"))
+                .description(OptionDescription.of(SplitSelf.translate("config.splitself.group.event_stages.description")));
+
+        // Add options for each event weight and stage
         for (EventManager.Events event : EventManager.Events.values()) {
             String eventName = event.name();
+            String formattedName = formatEventName(eventName);
             int defaultWeight = ConfigDefaults.getDefaultEventWeight(eventName);
+            int defaultStage = ConfigDefaults.getDefaultEventStage(eventName);
 
+            // Add weight option
             eventWeightsGroup.option(Option.<Integer>createBuilder()
-                    .name(Text.literal(formatEventName(eventName)))
-                    .description(OptionDescription.of(SplitSelf.translate("config.splitself.weight_value_title", formatEventName(eventName))))
+                    .name(Text.literal(formattedName))
+                    .description(OptionDescription.of(SplitSelf.translate("config.splitself.weight_value_title", formattedName)))
                     .binding(defaultWeight,
                             () -> HANDLER.instance().eventWeights.getOrDefault(eventName, defaultWeight),
                             newVal -> HANDLER.instance().eventWeights.put(eventName, newVal))
                     .controller(opt -> IntegerSliderControllerBuilder.create(opt).range(0, 200).step(1))
+                    .build());
+
+            // Add stage option
+            eventStagesGroup.option(Option.<Integer>createBuilder()
+                    .name(Text.literal(formattedName))
+                    .description(OptionDescription.of(SplitSelf.translate("config.splitself.stage_value_title", formattedName)))
+                    .binding(defaultStage,
+                            () -> HANDLER.instance().eventStages.getOrDefault(eventName, defaultStage),
+                            newVal -> HANDLER.instance().eventStages.put(eventName, newVal))
+                    .controller(opt -> IntegerSliderControllerBuilder.create(opt).range(0, 2).step(1))
                     .build());
         }
 
@@ -113,6 +134,7 @@ public class SplitSelfYACLConfig {
                                         .build())
                                 .build())
                         .group(eventWeightsGroup.build())
+                        .group(eventStagesGroup.build())
                         .build())
                 .save(() -> {
                     HANDLER.save();
@@ -152,6 +174,7 @@ public class SplitSelfYACLConfig {
     public int getGuaranteedEvent() { return guaranteedEvent; }
     public int getStartEventsAfter() { return startEventsAfter; }
     public Map<String, Integer> getEventWeights() { return eventWeights; }
+    public Map<String, Integer> getEventStages() { return eventStages; }
 
     public void setEventsEnabled(boolean eventsEnabled) { this.eventsEnabled = eventsEnabled; }
     public void setEventTickInterval(int eventTickInterval) { this.eventTickInterval = eventTickInterval; }
@@ -160,4 +183,5 @@ public class SplitSelfYACLConfig {
     public void setGuaranteedEvent(int guaranteedEvent) { this.guaranteedEvent = guaranteedEvent; }
     public void setStartEventsAfter(int startEventsAfter) { this.startEventsAfter = startEventsAfter; }
     public void setEventWeights(Map<String, Integer> eventWeights) { this.eventWeights = eventWeights; }
+    public void setEventStages(Map<String, Integer> eventStages) { this.eventStages = eventStages; }
 }

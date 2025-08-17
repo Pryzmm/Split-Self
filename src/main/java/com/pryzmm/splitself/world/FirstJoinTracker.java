@@ -20,6 +20,7 @@ public class FirstJoinTracker extends PersistentState {
     private Set<UUID> joinedPlayers = new HashSet<>();
     private Map<UUID, Boolean> playerPII = new HashMap<>();
     private Map<UUID, Boolean> playerReadWarning = new HashMap<>();
+    private Map<UUID, Integer> playerSleepStage = new HashMap<>();
 
     public FirstJoinTracker() {}
 
@@ -37,6 +38,14 @@ public class FirstJoinTracker extends PersistentState {
         for (String key : piiData.getKeys()) {
             try {
                 playerPII.put(UUID.fromString(key), piiData.getBoolean(key));
+            } catch (IllegalArgumentException ignored) {
+            }
+        }
+
+        NbtCompound SleepStageData = nbt.getCompound("SleepStageData");
+        for (String key : SleepStageData.getKeys()) {
+            try {
+                playerSleepStage.put(UUID.fromString(key), SleepStageData.getInt(key));
             } catch (IllegalArgumentException ignored) {
             }
         }
@@ -71,6 +80,12 @@ public class FirstJoinTracker extends PersistentState {
         }
         nbt.put("ReadWarningData", warningData);
 
+        NbtCompound SleepStageData = new NbtCompound();
+        for (Map.Entry<UUID, Integer> entry : playerSleepStage.entrySet()) {
+            SleepStageData.putInt(entry.getKey().toString(), entry.getValue());
+        }
+        nbt.put("SleepStageData", SleepStageData);
+
         return nbt;
     }
 
@@ -89,6 +104,15 @@ public class FirstJoinTracker extends PersistentState {
 
     public void setPlayerPII(UUID playerUuid, boolean pii) {
         playerPII.put(playerUuid, pii);
+        markDirty();
+    }
+
+    public Integer getPlayerSleepStage(UUID playerUuid) {
+        return playerSleepStage.getOrDefault(playerUuid, 0);
+    }
+
+    public void setPlayerSleepStage(UUID playerUuid, Integer sleepStage) {
+        playerSleepStage.put(playerUuid, sleepStage);
         markDirty();
     }
 
