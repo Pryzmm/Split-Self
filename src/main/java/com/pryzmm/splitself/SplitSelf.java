@@ -44,23 +44,8 @@ public class SplitSelf implements ModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
 	private void onServerStarted(MinecraftServer server) {
-		// Debug: List all available dimensions
-		LOGGER.info("Available dimensions:");
-		server.getWorldRegistryKeys().forEach(key -> LOGGER.info("  - " + key));
-
-		// Debug: Check if our dimension type exists
-		var dimensionTypeRegistry = server.getRegistryManager().get(RegistryKeys.DIMENSION_TYPE);
-		boolean dimensionTypeExists = dimensionTypeRegistry.contains(DimensionRegistry.LIMBO_DIMENSION_TYPE_KEY);
-		LOGGER.info("Dimension type exists: " + dimensionTypeExists);
-
-		// Debug: List all chunk generators
-		var chunkGeneratorRegistry = server.getRegistryManager().get(RegistryKeys.CHUNK_GENERATOR);
-		LOGGER.info("Available chunk generators:");
-		chunkGeneratorRegistry.getIds().forEach(id -> LOGGER.info("  - " + id));
-
 		ServerWorld limboWorld = server.getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY);
 		if (limboWorld != null) {
-			LOGGER.info("Limbo dimension loaded successfully!");
 			StructureManager.placeStructureRandomRotation(
 					limboWorld,
 					new BlockPos(0, 0, 0),
@@ -69,9 +54,6 @@ public class SplitSelf implements ModInitializer {
 					0,
 					true
 			);
-		} else {
-			LOGGER.warn("Limbo dimension not found - check datapack files!");
-			LOGGER.info("Expected dimension key: " + DimensionRegistry.LIMBO_DIMENSION_KEY);
 		}
 	}
 
@@ -81,9 +63,7 @@ public class SplitSelf implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-
-		// Initialize configuration - this will automatically load YACL config if available
-		SplitSelfConfig.reload(); // Force a fresh load
+		SplitSelfConfig.reload();
 		SplitSelfConfig config = SplitSelfConfig.getInstance();
 
 		LOGGER.info("Configuration loaded. Values: eventsEnabled={}, eventTickInterval={}, eventChance={}, eventCooldown={}, startEventsAfter={}",
@@ -130,6 +110,9 @@ public class SplitSelf implements ModInitializer {
 					client.execute(() -> client.setScreen(new WarningScreen()));
 				}).start();
 			}
+            if (player.getWorld() == player.getServer().getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY)) {
+                player.teleport(player.getServer().getWorld(player.getSpawnPointDimension()), player.getSpawnPointPosition().getX(), player.getSpawnPointPosition().getY() + 0.5625, player.getSpawnPointPosition().getZ(), null, 0, 0);
+            }
 		});
 
 		EntitySleepEvents.START_SLEEPING.register((entity, sleepingPos) -> {
