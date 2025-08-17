@@ -97,7 +97,7 @@ public class SplitSelfYACLConfig {
                                         .name(SplitSelf.translate("config.splitself.event_cooldown"))
                                         .description(OptionDescription.of(SplitSelf.translate("config.splitself.event_cooldown.description")))
                                         .binding(ConfigDefaults.DEFAULT_EVENT_COOLDOWN, () -> HANDLER.instance().eventCooldown, newVal -> HANDLER.instance().eventCooldown = newVal)
-                                        .controller(opt -> IntegerSliderControllerBuilder.create(opt).range(0, 10000).step(50))
+                                        .controller(opt -> IntegerSliderControllerBuilder.create(opt).range(100, 10000).step(50))
                                         .build())
                                 .option(Option.<Integer>createBuilder()
                                         .name(SplitSelf.translate("config.splitself.guaranteed_event"))
