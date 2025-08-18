@@ -48,11 +48,15 @@ public class SplitSelfClient implements ClientModInitializer {
             }
             if (screen instanceof TitleScreen titleScreen) {
                 ButtonWidget multiplayerButton = findButtonByText(titleScreen, "menu.multiplayer");
-                multiplayerButton.active = false;
-                multiplayerButton.setTooltip(Tooltip.of(SplitSelf.translate("misc.splitself.multiplayer")));
+                if (multiplayerButton != null) {
+                    multiplayerButton.active = false;
+                    multiplayerButton.setTooltip(Tooltip.of(SplitSelf.translate("misc.splitself.multiplayer")));
+                }
                 ButtonWidget realmsButton = findButtonByText(titleScreen, "menu.online");
-                realmsButton.setTooltip(Tooltip.of(SplitSelf.translate("misc.splitself.realms")));
-                realmsButton.active = false;
+                if (realmsButton != null) {
+                    realmsButton.setTooltip(Tooltip.of(SplitSelf.translate("misc.splitself.realms")));
+                    realmsButton.active = false;
+                    }
             }
         });
     }

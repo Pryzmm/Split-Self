@@ -5,7 +5,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.events.*;
 import com.pryzmm.splitself.screen.WarningScreen;
-import com.pryzmm.splitself.world.FirstJoinTracker;
+import com.pryzmm.splitself.world.DataTracker;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.command.ServerCommandSource;
@@ -28,11 +28,11 @@ public class SplitSelfCommands {
                             if (argument.equalsIgnoreCase("information")) {
                                 client.execute(() -> client.setScreen(new WarningScreen()));
                             } else if (argument.equalsIgnoreCase("debugToggleEvents")) {
-                                FirstJoinTracker tracker = FirstJoinTracker.getServerState(client.getServer());
+                                DataTracker tracker = DataTracker.getServerState(client.getServer());
                                 tracker.setPlayerReadWarning(client.player.getUuid(), !tracker.getPlayerReadWarning(client.player.getUuid()));
                                 context.getSource().sendFeedback(() -> Text.literal(SplitSelf.translate("command.splitself.debug_toggle_warning", tracker.getPlayerReadWarning(client.player.getUuid())).getString()), false);
                             } else if (argument.equalsIgnoreCase("debugSleepStage")) {
-                                FirstJoinTracker tracker = FirstJoinTracker.getServerState(client.getServer());
+                                DataTracker tracker = DataTracker.getServerState(client.getServer());
                                 context.getSource().sendFeedback(() -> Text.literal(String.valueOf(tracker.getPlayerSleepStage(client.player.getUuid()))), false);
                             } else {
                                 context.getSource().sendFeedback(() -> Text.literal("<" + context.getSource().getName() + "> " + SplitSelf.translate("command.splitself.invalid_value").getString()), false);
@@ -46,7 +46,7 @@ public class SplitSelfCommands {
                                     ServerWorld world = context.getSource().getWorld();
                                     PlayerEntity player = context.getSource().getPlayer();
                                     if (firstArg.equalsIgnoreCase("debugSleepStage") && SplitSelf.isNumeric(secondArg)) {
-                                        FirstJoinTracker tracker = FirstJoinTracker.getServerState(world.getServer());
+                                        DataTracker tracker = DataTracker.getServerState(world.getServer());
                                         tracker.setPlayerSleepStage(player.getUuid(), Integer.parseInt(secondArg));
                                         context.getSource().sendFeedback(() -> Text.literal(String.valueOf(tracker.getPlayerSleepStage(client.player.getUuid()))), false);
                                     } else if (firstArg.equalsIgnoreCase("runevent") && secondArg.equalsIgnoreCase("random")) {

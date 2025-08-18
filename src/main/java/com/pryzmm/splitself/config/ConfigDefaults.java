@@ -15,6 +15,7 @@ public class ConfigDefaults {
 
     private static final Map<String, Integer> DEFAULT_EVENT_WEIGHTS = createDefaultEventWeights();
     private static final Map<String, Integer> DEFAULT_EVENT_STAGES = createDefaultEventStages();
+    private static final Map<String, Boolean> DEFAULT_ONE_TIME_EVENTS = createDefaultOneTimeEvents();
 
     private static Map<String, Integer> createDefaultEventWeights() {
         Map<String, Integer> weights = new HashMap<>();
@@ -88,27 +89,48 @@ public class ConfigDefaults {
         return stages;
     }
 
-    public static Map<String, Integer> getDefaultEventWeights() {
-        return new HashMap<>(DEFAULT_EVENT_WEIGHTS);
+    private static Map<String, Boolean> createDefaultOneTimeEvents() {
+        Map<String, Boolean> oneTimers = new HashMap<>();
+        oneTimers.put("SPAWNTHEOTHER", false);
+        oneTimers.put("POEMSCREEN", false);
+        oneTimers.put("DOYOUSEEME", false);
+        oneTimers.put("UNDERGROUNDMINING", false);
+        oneTimers.put("REDSKY", false);
+        oneTimers.put("NOTEPAD", true);
+        oneTimers.put("SCREENOVERLAY", false);
+        oneTimers.put("WHITESCREENOVERLAY", false);
+        oneTimers.put("INVENTORYOVERLAY", false);
+        oneTimers.put("THEOTHERSCREENSHOT", false);
+        oneTimers.put("DESTROYCHUNK", false);
+        oneTimers.put("FROZENSCREEN", false);
+        oneTimers.put("HOUSE", false);
+        oneTimers.put("BEDROCKPILLAR", false);
+        oneTimers.put("BILLY", true);
+        oneTimers.put("FACE", false);
+        oneTimers.put("COMMAND", false);
+        oneTimers.put("INVERT", false);
+        oneTimers.put("EMERGENCY", true);
+        oneTimers.put("TNT", false);
+        oneTimers.put("IRONTRAP", false);
+        oneTimers.put("LAVA", false);
+        oneTimers.put("BROWSER", true);
+        oneTimers.put("KICK", false);
+        oneTimers.put("SIGN", false);
+        oneTimers.put("SCALE", false);
+        oneTimers.put("CAMERA", false);
+        oneTimers.put("FREEDOM", false);
+        oneTimers.put("MINE", false);
+        oneTimers.put("DOOR", false);
+        oneTimers.put("SHRINK", false);
+        return oneTimers;
     }
 
-    public static int getDefaultEventWeight(String eventName) {
-        return DEFAULT_EVENT_WEIGHTS.getOrDefault(eventName, 10);
-    }
+    public static Map<String, Integer> getDefaultEventWeights() {return new HashMap<>(DEFAULT_EVENT_WEIGHTS);}
+    public static int getDefaultEventWeight(String eventName) {return DEFAULT_EVENT_WEIGHTS.getOrDefault(eventName, 10);}
 
-    public static int getDefaultEventWeight(EventManager.Events event) {
-        return getDefaultEventWeight(event.name());
-    }
+    public static Map<String, Integer> getDefaultEventStages() {return new HashMap<>(DEFAULT_EVENT_STAGES);}
+    public static int getDefaultEventStage(String eventName) {return DEFAULT_EVENT_STAGES.getOrDefault(eventName, 0);}
 
-    public static Map<String, Integer> getDefaultEventStages() {
-        return new HashMap<>(DEFAULT_EVENT_STAGES);
-    }
-
-    public static int getDefaultEventStage(String eventName) {
-        return DEFAULT_EVENT_STAGES.getOrDefault(eventName, 0);
-    }
-
-    public static int getDefaultEventStage(EventManager.Events event) {
-        return getDefaultEventStage(event.name());
-    }
+    public static Map<String, Boolean> getDefaultOneTimeEvents() {return new HashMap<>(DEFAULT_ONE_TIME_EVENTS);}
+    public static Boolean getDefaultOneTimeEvents(String eventName) {return DEFAULT_ONE_TIME_EVENTS.getOrDefault(eventName, false);}
 }

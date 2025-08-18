@@ -2,7 +2,7 @@ package com.pryzmm.splitself.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.pryzmm.splitself.SplitSelf;
-import com.pryzmm.splitself.world.FirstJoinTracker;
+import com.pryzmm.splitself.world.DataTracker;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
@@ -25,7 +25,7 @@ public class EmergencyOverlayRenderer {
     public static long lastShakeUpdate = 0;
     static int shakeX;
     static int shakeY;
-    static FirstJoinTracker tracker;
+    static DataTracker tracker;
 
     public static final Identifier OVERLAY_IMAGE = Identifier.of(SplitSelf.MOD_ID, "textures/screen/overlay.png");
 
@@ -37,7 +37,7 @@ public class EmergencyOverlayRenderer {
             startTime = System.currentTimeMillis();
         }
 
-        tracker = FirstJoinTracker.getServerState(player.getServer());
+        tracker = DataTracker.getServerState(player.getServer());
 
         if (!callbackRegistered) {
             HudRenderCallback.EVENT.register(EmergencyOverlayRenderer::renderHud);

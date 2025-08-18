@@ -41,6 +41,8 @@
   "config.splitself.group.event_weights.description": "The weight options for events (i.e. the higher the weight, the more common that event is to happen over others)",
   "config.splitself.group.event_stages": "Event Stages",
   "config.splitself.group.event_stages.description": "The stage options for events (i.e. the higher the stage, the event will activate at your sleep stage)",
+  "config.splitself.group.one_time_events": "One Time Events",
+  "config.splitself.group.one_time_events.description": "The one time event options (i.e. if true or highlighted, the event will only trigger once per session)",
   "config.splitself.group.general": "General Settings",
   "config.splitself.group.general.description": "Main configuration options for Split Self events",
   "config.splitself.events_enabled": "Enable Events",
@@ -57,6 +59,7 @@
   "config.splitself.guaranteed_event.description": "How long until an event is guaranteed to happen after an amount of inactivity",
   "config.splitself.weight_value_title": "Weight for %s event",
   "config.splitself.stage_value_title": "Stage until activation for %s event",
+  "config.splitself.one_time_event_value_title": "Can the %s event activate multiple times within a session?",
 
   "entity.splitself.the_other": "The Other",
 

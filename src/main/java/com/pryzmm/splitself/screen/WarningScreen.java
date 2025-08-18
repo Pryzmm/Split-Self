@@ -2,7 +2,7 @@ package com.pryzmm.splitself.screen;
 
 import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.file.DesktopFileUtil;
-import com.pryzmm.splitself.world.FirstJoinTracker;
+import com.pryzmm.splitself.world.DataTracker;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 public class WarningScreen extends Screen {
     private static final Logger log = LoggerFactory.getLogger(WarningScreen.class);
     private static boolean localPII = false;
-    private FirstJoinTracker tracker;
+    private DataTracker tracker;
 
     public WarningScreen() {
         super(SplitSelf.translate("warning.splitself.title"));
@@ -25,7 +25,7 @@ public class WarningScreen extends Screen {
     protected void init() {
         MinecraftServer server = this.client.getServer();
         if (server != null) {
-            tracker = FirstJoinTracker.getServerState(server);
+            tracker = DataTracker.getServerState(server);
             if (this.client.player != null) {
                 localPII = tracker.getPlayerPII(this.client.player.getUuid());
             }

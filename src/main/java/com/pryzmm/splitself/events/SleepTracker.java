@@ -1,8 +1,9 @@
 package com.pryzmm.splitself.events;
 
-import com.pryzmm.splitself.world.FirstJoinTracker;
+import com.pryzmm.splitself.world.DataTracker;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -10,7 +11,7 @@ import java.util.UUID;
 public class SleepTracker {
 
     private static final Map<UUID, SleepData> sleepingPlayers = new HashMap<>();
-    private static FirstJoinTracker tracker;
+    private static DataTracker tracker;
 
     public static class SleepData {
         public final long sleepStartTime;
@@ -30,14 +31,12 @@ public class SleepTracker {
     public static void updateSleep(ServerPlayerEntity player) {
         SleepData data = sleepingPlayers.get(player.getUuid());
         if (data == null) return;
-        tracker = FirstJoinTracker.getServerState(player.getServer());
+        tracker = DataTracker.getServerState(player.getServer());
         ServerWorld world = player.getServerWorld();
         long currentGameTime = world.getTime();
         long sleepDuration = currentGameTime - data.sleepStartTime;
         if (sleepDuration == 100) {
             double num = Math.random();
-            System.out.println(num);
-            System.out.println(Math.floor((num * 2) + 1));
             if (tracker.getPlayerSleepStage(player.getUuid()) == 0) {
                 tracker.setPlayerSleepStage(player.getUuid(), tracker.getPlayerSleepStage(player.getUuid()) + 1);
                 EventManager.runSleepEvent(player, 0);

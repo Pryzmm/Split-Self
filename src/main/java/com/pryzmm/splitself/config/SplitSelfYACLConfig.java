@@ -6,6 +6,7 @@ import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.api.controller.BooleanControllerBuilder;
 import dev.isxander.yacl3.api.controller.DoubleSliderControllerBuilder;
 import dev.isxander.yacl3.api.controller.IntegerSliderControllerBuilder;
+import dev.isxander.yacl3.api.controller.TickBoxControllerBuilder;
 import dev.isxander.yacl3.config.v2.api.ConfigClassHandler;
 import dev.isxander.yacl3.config.v2.api.SerialEntry;
 import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
@@ -49,16 +50,24 @@ public class SplitSelfYACLConfig {
     @SerialEntry
     public Map<String, Integer> eventStages = ConfigDefaults.getDefaultEventStages();
 
+    @SerialEntry
+    public Map<String, Boolean> oneTimeEvents = ConfigDefaults.getDefaultOneTimeEvents();
+
     public static Screen createScreen(Screen parent) {
         // Create event weights group
         OptionGroup.Builder eventWeightsGroup = OptionGroup.createBuilder()
-                .name(Text.translatable("config.splitself.group.event_weights"))
+                .name(SplitSelf.translate("config.splitself.group.event_weights"))
                 .description(OptionDescription.of(SplitSelf.translate("config.splitself.group.event_weights.description")));
 
         // Create event stages group
         OptionGroup.Builder eventStagesGroup = OptionGroup.createBuilder()
-                .name(Text.translatable("config.splitself.group.event_stages"))
+                .name(SplitSelf.translate("config.splitself.group.event_stages"))
                 .description(OptionDescription.of(SplitSelf.translate("config.splitself.group.event_stages.description")));
+
+        // Create one time events group
+        OptionGroup.Builder oneTimeEventsGroup = OptionGroup.createBuilder()
+                .name(SplitSelf.translate("config.splitself.group.one_time_events"))
+                .description(OptionDescription.of(SplitSelf.translate("config.splitself.group.one_time_events.description")));
 
         // Add options for each event weight and stage
         for (EventManager.Events event : EventManager.Events.values()) {
@@ -66,6 +75,7 @@ public class SplitSelfYACLConfig {
             String formattedName = formatEventName(eventName);
             int defaultWeight = ConfigDefaults.getDefaultEventWeight(eventName);
             int defaultStage = ConfigDefaults.getDefaultEventStage(eventName);
+            boolean defaultSOneTimeEvent = ConfigDefaults.getDefaultOneTimeEvents(eventName);
 
             // Add weight option
             eventWeightsGroup.option(Option.<Integer>createBuilder()
@@ -84,7 +94,17 @@ public class SplitSelfYACLConfig {
                     .binding(defaultStage,
                             () -> HANDLER.instance().eventStages.getOrDefault(eventName, defaultStage),
                             newVal -> HANDLER.instance().eventStages.put(eventName, newVal))
-                    .controller(opt -> IntegerSliderControllerBuilder.create(opt).range(0, 2).step(1))
+                    .controller(opt -> IntegerSliderControllerBuilder.create(opt).range(0, 3).step(1))
+                    .build());
+
+            // Add one time event option
+            oneTimeEventsGroup.option(Option.<Boolean>createBuilder()
+                    .name(Text.literal(formattedName))
+                    .description(OptionDescription.of(SplitSelf.translate("config.splitself.one_time_event_value_title", formattedName)))
+                    .binding(defaultSOneTimeEvent,
+                            () -> HANDLER.instance().oneTimeEvents.getOrDefault(eventName, defaultSOneTimeEvent),
+                            newVal -> HANDLER.instance().oneTimeEvents.put(eventName, newVal))
+                    .controller(TickBoxControllerBuilder::create)
                     .build());
         }
 
@@ -135,6 +155,7 @@ public class SplitSelfYACLConfig {
                                 .build())
                         .group(eventWeightsGroup.build())
                         .group(eventStagesGroup.build())
+                        .group(oneTimeEventsGroup.build())
                         .build())
                 .save(() -> {
                     HANDLER.save();
@@ -151,7 +172,7 @@ public class SplitSelfYACLConfig {
         StringBuilder formatted = new StringBuilder();
         String[] words = eventName.toLowerCase().split("_");
         for (String word : words) {
-            if (formatted.length() > 0) {
+            if (!formatted.isEmpty()) {
                 formatted.append(" ");
             }
             formatted.append(word.substring(0, 1).toUpperCase()).append(word.substring(1));
@@ -166,22 +187,4 @@ public class SplitSelfYACLConfig {
     public void save() {
         HANDLER.save();
     }
-
-    public boolean getEventsEnabled() { return eventsEnabled; }
-    public int getEventTickInterval() { return eventTickInterval; }
-    public double getEventChance() { return eventChance; }
-    public int getEventCooldown() { return eventCooldown; }
-    public int getGuaranteedEvent() { return guaranteedEvent; }
-    public int getStartEventsAfter() { return startEventsAfter; }
-    public Map<String, Integer> getEventWeights() { return eventWeights; }
-    public Map<String, Integer> getEventStages() { return eventStages; }
-
-    public void setEventsEnabled(boolean eventsEnabled) { this.eventsEnabled = eventsEnabled; }
-    public void setEventTickInterval(int eventTickInterval) { this.eventTickInterval = eventTickInterval; }
-    public void setEventChance(double eventChance) { this.eventChance = eventChance; }
-    public void setEventCooldown(int eventCooldown) { this.eventCooldown = eventCooldown; }
-    public void setGuaranteedEvent(int guaranteedEvent) { this.guaranteedEvent = guaranteedEvent; }
-    public void setStartEventsAfter(int startEventsAfter) { this.startEventsAfter = startEventsAfter; }
-    public void setEventWeights(Map<String, Integer> eventWeights) { this.eventWeights = eventWeights; }
-    public void setEventStages(Map<String, Integer> eventStages) { this.eventStages = eventStages; }
 }

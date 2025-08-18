@@ -16,15 +16,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-public class FirstJoinTracker extends PersistentState {
+public class DataTracker extends PersistentState {
     private Set<UUID> joinedPlayers = new HashSet<>();
     private Map<UUID, Boolean> playerPII = new HashMap<>();
     private Map<UUID, Boolean> playerReadWarning = new HashMap<>();
     private Map<UUID, Integer> playerSleepStage = new HashMap<>();
 
-    public FirstJoinTracker() {}
+    public DataTracker() {}
 
-    public FirstJoinTracker(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
+    public DataTracker(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         NbtList playerList = nbt.getList("JoinedPlayers", NbtElement.STRING_TYPE);
         for (int i = 0; i < playerList.size(); i++) {
             String uuidString = playerList.getString(i);
@@ -125,14 +125,14 @@ public class FirstJoinTracker extends PersistentState {
         markDirty();
     }
 
-    public static FirstJoinTracker getServerState(MinecraftServer server) {
+    public static DataTracker getServerState(MinecraftServer server) {
         PersistentStateManager persistentStateManager = server.getWorld(World.OVERWORLD)
                 .getPersistentStateManager();
 
         return persistentStateManager.getOrCreate(
                 new PersistentState.Type<>(
-                        FirstJoinTracker::new, // supplier for new instances
-                        FirstJoinTracker::new, // deserializer
+                        DataTracker::new, // supplier for new instances
+                        DataTracker::new, // deserializer
                         null
                 ),
                 "first_join_tracker"

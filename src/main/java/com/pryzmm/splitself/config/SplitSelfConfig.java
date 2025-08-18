@@ -22,6 +22,7 @@ public class SplitSelfConfig {
     // Event weights and stages from ConfigDefaults
     public Map<String, Integer> eventWeights = ConfigDefaults.getDefaultEventWeights();
     public Map<String, Integer> eventStages = ConfigDefaults.getDefaultEventStages();
+    public Map<String, Boolean> oneTimeEvents = ConfigDefaults.getDefaultOneTimeEvents();
 
     // YACL integration (optional)
     private boolean yaclAvailable;
@@ -47,10 +48,6 @@ public class SplitSelfConfig {
                 yaclAvailable = false;
             }
         }
-
-        SplitSelf.LOGGER.info("Config initialized - YACL Available: {}", yaclAvailable);
-        SplitSelf.LOGGER.info("Config values: eventsEnabled={}, eventTickInterval={}, eventChance={}",
-                eventsEnabled, eventTickInterval, eventChance);
     }
 
     public static SplitSelfConfig getInstance() {
@@ -66,9 +63,6 @@ public class SplitSelfConfig {
         if (INSTANCE != null && INSTANCE.yaclAvailable) {
             try {
                 INSTANCE.loadFromYACL();
-                SplitSelf.LOGGER.info("Config reloaded after YACL save");
-                SplitSelf.LOGGER.info("Updated values: eventsEnabled={}, eventTickInterval={}, eventChance={}",
-                        INSTANCE.eventsEnabled, INSTANCE.eventTickInterval, INSTANCE.eventChance);
             } catch (Exception e) {
                 SplitSelf.LOGGER.error("Error reloading config after YACL save: {}", e.getMessage(), e);
             }
@@ -116,6 +110,13 @@ public class SplitSelfConfig {
             this.eventStages = new HashMap<>(yaclEventStages);
         }
 
+        // Load one time events
+        @SuppressWarnings("unchecked")
+        Map<String, Boolean> yaclOneTimeEvents = (Map<String, Boolean>) configClass.getField("oneTimeEvents").get(yaclInstance);
+        if (yaclOneTimeEvents != null && !yaclEventStages.isEmpty()) {
+            this.oneTimeEvents = new HashMap<>(yaclOneTimeEvents);
+        }
+
         SplitSelf.LOGGER.info("Loaded values from YACL config");
     }
 
@@ -132,6 +133,7 @@ public class SplitSelfConfig {
             configClass.getField("startEventsAfter").setInt(yaclInstance, startEventsAfter);
             configClass.getField("eventWeights").set(yaclInstance, eventWeights);
             configClass.getField("eventStages").set(yaclInstance, eventStages);
+            configClass.getField("oneTimeEvents").set(yaclInstance, oneTimeEvents);
 
             yaclHandler.getClass().getMethod("save").invoke(yaclHandler);
 
@@ -150,66 +152,7 @@ public class SplitSelfConfig {
     public int getStartEventsAfter() { return startEventsAfter; }
     public Map<String, Integer> getEventWeights() { return new HashMap<>(eventWeights); }
     public Map<String, Integer> getEventStages() { return new HashMap<>(eventStages); }
-
-    // Get weight for specific event
-    public int getEventWeight(EventManager.Events event) {
-        return eventWeights.getOrDefault(event.name(), ConfigDefaults.getDefaultEventWeight(event));
-    }
-
-    // Get stage for specific event
-    public int getEventStage(EventManager.Events event) {
-        return eventStages.getOrDefault(event.name(), ConfigDefaults.getDefaultEventStage(event));
-    }
-
-    public void setEventsEnabled(boolean eventsEnabled) {
-        this.eventsEnabled = eventsEnabled;
-        saveToYACL();
-    }
-
-    public void setEventTickInterval(int eventTickInterval) {
-        this.eventTickInterval = eventTickInterval;
-        saveToYACL();
-    }
-
-    public void setEventChance(double eventChance) {
-        this.eventChance = eventChance;
-        saveToYACL();
-    }
-
-    public void setEventCooldown(int eventCooldown) {
-        this.eventCooldown = eventCooldown;
-        saveToYACL();
-    }
-
-    public void setStartEventsAfter(int startEventsAfter) {
-        this.startEventsAfter = startEventsAfter;
-        saveToYACL();
-    }
-
-    public void setGuaranteedEvent(int guaranteedEvent) {
-        this.guaranteedEvent = guaranteedEvent;
-        saveToYACL();
-    }
-
-    public void setEventWeight(String eventName, int weight) {
-        eventWeights.put(eventName, weight);
-        saveToYACL();
-    }
-
-    public void setEventWeights(Map<String, Integer> eventWeights) {
-        this.eventWeights = new HashMap<>(eventWeights);
-        saveToYACL();
-    }
-
-    public void setEventStage(String eventName, int stage) {
-        eventStages.put(eventName, stage);
-        saveToYACL();
-    }
-
-    public void setEventStages(Map<String, Integer> eventStages) {
-        this.eventStages = new HashMap<>(eventStages);
-        saveToYACL();
-    }
+    public Map<String, Boolean> getOneTimeEvents() { return new HashMap<>(oneTimeEvents); }
 
     public boolean isYACLAvailable() {
         return yaclAvailable;

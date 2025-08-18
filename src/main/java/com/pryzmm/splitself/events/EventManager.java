@@ -12,8 +12,8 @@ import com.pryzmm.splitself.screen.KickScreen;
 import com.pryzmm.splitself.screen.PoemScreen;
 import com.pryzmm.splitself.screen.SkyImageRenderer;
 import com.pryzmm.splitself.sound.ModSounds;
+import com.pryzmm.splitself.world.DataTracker;
 import com.pryzmm.splitself.world.DimensionRegistry;
-import com.pryzmm.splitself.world.FirstJoinTracker;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -39,13 +39,12 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Position;
+import net.minecraft.world.GameMode;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
 
-import java.awt.*;
-import java.io.BufferedReader;
+import javax.xml.crypto.Data;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -87,8 +86,10 @@ public class EventManager {
         SHRINK
     }
 
+    public static Map<Events, Boolean> oneTimeEvents = new HashMap<>();
+
     private static int CURRENT_COOLDOWN = 0;
-    private static FirstJoinTracker tracker;
+    private static DataTracker tracker;
 
     public static boolean WINDOW_MANIPULATION_ACTIVE = false;
 
@@ -122,7 +123,7 @@ public class EventManager {
             }
         } else if (world.getTime() > START_AFTER) {
             if (tracker == null) {
-                tracker = FirstJoinTracker.getServerState(world.getServer());
+                tracker = DataTracker.getServerState(world.getServer());
             }
 
             if (GUARANTEED_EVENT > 0) {GUARANTEED_EVENT--;}
@@ -144,14 +145,23 @@ public class EventManager {
         }
     }
 
-    private static Events selectWeightedEvent(Random random) {
+    private static Events selectWeightedEvent(Random random, PlayerEntity player) {
         SplitSelfConfig config = SplitSelfConfig.getInstance();
+        DataTracker dataTracker = DataTracker.getServerState(player.getServer());
         Map<String, Integer> configWeights = config.getEventWeights();
+        Map<String, Integer> configStages = config.getEventStages();
+        Map<String, Boolean> configOneTimeEvents = config.getOneTimeEvents();
         Map<Events, Integer> eventWeights = new HashMap<>();
 
         for (Events event : Events.values()) {
             Integer weight = configWeights.get(event.name());
-            if (weight != null && weight > 0) {
+            Integer stage = configStages.get(event.name());
+            if (
+                    weight != null
+                    && weight > 0
+                    && stage <= dataTracker.getPlayerSleepStage(player.getUuid())
+                    && !oneTimeEvents.containsKey(event)
+            ) {
                 eventWeights.put(event, weight);
             }
         }
@@ -164,11 +174,20 @@ public class EventManager {
         int randomWeight = random.nextInt(totalWeight);
         int currentWeight = 0;
 
+        System.out.println(configOneTimeEvents.entrySet());
+        System.out.println(configOneTimeEvents.get("UNDERGROUNDMINING"));
+
         for (Map.Entry<Events, Integer> entry : eventWeights.entrySet()) {
+            System.out.println(entry.getKey() + " " + entry.getValue());
+            System.out.println(configOneTimeEvents.get(entry.getKey().toString()));
             currentWeight += entry.getValue();
-            if (randomWeight < currentWeight) {
-                return entry.getKey();
+            if (configOneTimeEvents.get(entry.getKey().toString()) && !oneTimeEvents.containsKey(entry.getKey())) {
+                System.out.println("contained entry.getKey() = " + entry.getKey());
+                oneTimeEvents.put(entry.getKey(), true);
+            } else {
+                System.out.println("did not contain entry.getKey() = " + entry.getKey());
             }
+            if (randomWeight < currentWeight) return entry.getKey();
         }
 
         // Fallback (shouldn't reach here)
@@ -177,10 +196,10 @@ public class EventManager {
 
     public static String getName(ClientPlayerEntity player) {
         try {
-            FirstJoinTracker currentTracker = null;
+            DataTracker currentTracker = null;
             MinecraftClient client = MinecraftClient.getInstance();
             if (client.getServer() != null) {
-                currentTracker = FirstJoinTracker.getServerState(client.getServer());
+                currentTracker = DataTracker.getServerState(client.getServer());
             } else if (tracker != null) {
                 currentTracker = tracker;
             }
@@ -202,20 +221,21 @@ public class EventManager {
         } catch(Exception e) {
             System.err.println("Error in getName(): " + e.getMessage());
             e.printStackTrace();
-            return(System.getProperty("user.name"));
+            return(SplitSelf.translate("events.splitself.redacted_name").getString());
         }
     }
 
-    public static void runSleepEvent(PlayerEntity player, Integer stage) {
+    public static void runSleepEvent(ServerPlayerEntity player, Integer stage) {
         new Thread(() -> {
             try {
+                player.changeGameMode(GameMode.ADVENTURE);
                 player.teleport(player.getServer().getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY), 2.3, 1.5625, 9.7, null, -135, 40);
                 Thread.sleep(20000);
                 player.getServer().getOverworld().setTimeOfDay(0);
-                ServerPlayerEntity serverPlayer = (ServerPlayerEntity) player;
                 if (player.getWorld() == player.getServer().getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY)) {
-                    player.teleport(player.getServer().getWorld(serverPlayer.getSpawnPointDimension()), serverPlayer.getSpawnPointPosition().getX(), serverPlayer.getSpawnPointPosition().getY() + 0.5625, serverPlayer.getSpawnPointPosition().getZ(), null, 0, 0);
+                    player.teleport(player.getServer().getWorld(player.getSpawnPointDimension()), player.getSpawnPointPosition().getX(), player.getSpawnPointPosition().getY() + 0.5625, player.getSpawnPointPosition().getZ(), null, 0, 0);
                 }
+                player.changeGameMode(GameMode.SURVIVAL);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -269,7 +289,7 @@ public class EventManager {
         Events eventType;
         if (ForceEvent == null) {
             Random javaRandom = new Random(world.getRandom().nextLong());
-            eventType = selectWeightedEvent(javaRandom);
+            eventType = selectWeightedEvent(javaRandom, player);
             System.out.println(eventType);
         } else try {
             eventType = ForceEvent;
