@@ -8,13 +8,12 @@ import com.pryzmm.splitself.events.EventManager;
 import com.pryzmm.splitself.events.SleepTracker;
 import com.pryzmm.splitself.events.StructureManager;
 import com.pryzmm.splitself.file.BackgroundManager;
-import com.pryzmm.splitself.file.DesktopFileUtil;
 import com.pryzmm.splitself.item.ModItemGroups;
 import com.pryzmm.splitself.item.ModItems;
 import com.pryzmm.splitself.screen.WarningScreen;
 import com.pryzmm.splitself.sound.ModSounds;
+import com.pryzmm.splitself.world.DataTracker;
 import com.pryzmm.splitself.world.DimensionRegistry;
-import com.pryzmm.splitself.world.FirstJoinTracker;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -26,12 +25,10 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.message.SignedMessage;
-import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,7 +94,7 @@ public class SplitSelf implements ModInitializer {
 
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
 			ServerPlayerEntity player = handler.getPlayer();
-			FirstJoinTracker joinTracker = FirstJoinTracker.getServerState(server);
+			DataTracker joinTracker = DataTracker.getServerState(server);
 			MinecraftClient client = MinecraftClient.getInstance();
 			if (!joinTracker.hasJoinedBefore(player.getUuid())) {
 				joinTracker.markAsJoined(player.getUuid());
