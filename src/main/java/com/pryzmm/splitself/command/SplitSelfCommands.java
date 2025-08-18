@@ -27,6 +27,12 @@ public class SplitSelfCommands {
                             String argument = StringArgumentType.getString(context, "text").toLowerCase();
                             if (argument.equalsIgnoreCase("information")) {
                                 client.execute(() -> client.setScreen(new WarningScreen()));
+                            } else if (argument.equalsIgnoreCase("debugFullscreen")) {
+                                if (client.options.getFullscreen().getValue()) {
+                                    context.getSource().sendFeedback(() -> Text.literal("In fullscreen"), false);
+                                } else {
+                                    context.getSource().sendFeedback(() -> Text.literal("NOT in fullscreen"), false);
+                                }
                             } else if (argument.equalsIgnoreCase("debugToggleEvents")) {
                                 DataTracker tracker = DataTracker.getServerState(client.getServer());
                                 tracker.setPlayerReadWarning(client.player.getUuid(), !tracker.getPlayerReadWarning(client.player.getUuid()));

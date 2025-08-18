@@ -2,7 +2,9 @@ package com.pryzmm.splitself.events;
 
 import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.config.SplitSelfConfig;
+import com.pryzmm.splitself.entity.ModEntities;
 import com.pryzmm.splitself.entity.client.TheOtherSpawner;
+import com.pryzmm.splitself.entity.custom.TheOtherEntity;
 import com.pryzmm.splitself.file.BackgroundManager;
 import com.pryzmm.splitself.file.BrowserHistoryReader;
 import com.pryzmm.splitself.file.BrowserHistoryReader.HistoryEntry;
@@ -25,12 +27,14 @@ import net.minecraft.block.enums.DoubleBlockHalf;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.ChatHud;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerEntityManager;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
@@ -228,9 +232,21 @@ public class EventManager {
     public static void runSleepEvent(ServerPlayerEntity player, Integer stage) {
         new Thread(() -> {
             try {
+                ServerWorld limboWorld = player.getServer().getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY);
                 player.changeGameMode(GameMode.ADVENTURE);
-                player.teleport(player.getServer().getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY), 2.3, 1.5625, 9.7, null, -135, 40);
-                Thread.sleep(20000);
+                for (Entity entity : limboWorld.iterateEntities()) {
+                    System.out.println(entity);
+                }
+                if (stage == 0) {
+                    player.teleport(limboWorld, 2.3, 1.5625, 9.7, null, -135, 40);
+                    Thread.sleep(20000);
+                } else if (stage == 1) {
+                    TheOtherEntity theOther = new TheOtherEntity(ModEntities.TheOther, limboWorld);
+                    theOther.refreshPositionAndAngles(10.5, 1, 5.5, 63F, 0F);
+                    limboWorld.spawnEntity(theOther);
+                    player.teleport(limboWorld, 2.3, 1.5625, 9.7, null, -135, 40);
+                    Thread.sleep(20000);
+                }
                 player.getServer().getOverworld().setTimeOfDay(0);
                 if (player.getWorld() == player.getServer().getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY)) {
                     player.teleport(player.getServer().getWorld(player.getSpawnPointDimension()), player.getSpawnPointPosition().getX(), player.getSpawnPointPosition().getY() + 0.5625, player.getSpawnPointPosition().getZ(), null, 0, 0);
@@ -711,55 +727,63 @@ public class EventManager {
                 }).start();
                 break;
             case SHRINK:
+                if (client.options.getFullscreen().getValue()) {
+                    client.getWindow().toggleFullscreen();
+                }
                 new Thread(() -> {
                     try {
-                        world.playSound(null, Objects.requireNonNull(player).getBlockPos(), ModSounds.RUMBLE2, SoundCategory.MASTER, 1.0f, 1.0f);
-                        client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> " + SplitSelf.translate("events.splitself.shrink.message").getString()), false);
-                        WINDOW_MANIPULATION_ACTIVE = true;
-                        if (client.options.getFullscreen().getValue()) {
-                            client.execute(() -> client.options.getFullscreen().setValue(false));
-                            while (client.getWindow().isFullscreen()) {
-                                Thread.sleep(50);
+                        for (int i = 0; i < 100; i++) {
+                            if (!client.getWindow().isFullscreen()) {
+                                break;
                             }
+                            System.out.println("Game is still in fullscrreen, waiting 50 milliseoncds... attenpt: " + (i + 1));
+                            Thread.sleep(50);
                         }
-                        long glfwWindow = client.getWindow().getHandle();
-                        int[] width = new int[1];
-                        int[] height = new int[1];
-                        GLFW.glfwGetWindowSize(glfwWindow, width, height);
-                        int originalWidth = width[0];
-                        int originalHeight = height[0];
-                        int minWidth = originalWidth / 2;
-                        int minHeight = originalHeight / 2;
-                        long monitor = GLFW.glfwGetPrimaryMonitor();
-                        GLFWVidMode vidMode = GLFW.glfwGetVideoMode(monitor);
-                        int screenWidth = vidMode.width();
-                        int screenHeight = vidMode.height();
-                        int steps = 200;
-                        for (int i = 0; i < steps; i++) {
-                            float progress = (float) i / steps;
-                            int currentWidth = (int) (originalWidth - (originalWidth - minWidth) * progress);
-                            int currentHeight = (int) (originalHeight - (originalHeight - minHeight) * progress);
-                            int xPos = (screenWidth - currentWidth) / 2;
-                            int yPos = (screenHeight - currentHeight) / 2;
-                            GLFW.glfwSetWindowSize(glfwWindow, currentWidth, currentHeight);
-                            GLFW.glfwSetWindowPos(glfwWindow, xPos, yPos);
-                            Thread.sleep(20);
-                        }
-                        Random shakeRandom = new Random();
-                        int shakeIntensity = 7;
-                        int shakeSteps = 200;
+                        if (!client.getWindow().isFullscreen()) {
+                            world.playSound(null, Objects.requireNonNull(player).getBlockPos(), ModSounds.RUMBLE2, SoundCategory.MASTER, 1.0f, 1.0f);
+                            client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> " + SplitSelf.translate("events.splitself.shrink.message").getString()), false);
+                            WINDOW_MANIPULATION_ACTIVE = true;
+                            long glfwWindow = client.getWindow().getHandle();
+                            int[] width = new int[1];
+                            int[] height = new int[1];
+                            GLFW.glfwGetWindowSize(glfwWindow, width, height);
+                            int originalWidth = width[0];
+                            int originalHeight = height[0];
+                            int minWidth = originalWidth / 2;
+                            int minHeight = originalHeight / 2;
+                            long monitor = GLFW.glfwGetPrimaryMonitor();
+                            GLFWVidMode vidMode = GLFW.glfwGetVideoMode(monitor);
+                            int screenWidth = vidMode.width();
+                            int screenHeight = vidMode.height();
+                            int steps = 200;
+                            for (int i = 0; i < steps; i++) {
+                                float progress = (float) i / steps;
+                                int currentWidth = (int) (originalWidth - (originalWidth - minWidth) * progress);
+                                int currentHeight = (int) (originalHeight - (originalHeight - minHeight) * progress);
+                                int xPos = (screenWidth - currentWidth) / 2;
+                                int yPos = (screenHeight - currentHeight) / 2;
+                                GLFW.glfwSetWindowSize(glfwWindow, currentWidth, currentHeight);
+                                GLFW.glfwSetWindowPos(glfwWindow, xPos, yPos);
+                                Thread.sleep(20);
+                            }
+                            Random shakeRandom = new Random();
+                            int shakeIntensity = 7;
+                            int shakeSteps = 200;
 
-                        for (int i = 0; i < shakeSteps; i++) {
-                            int[] currentPosX = new int[1];
-                            int[] currentPosY = new int[1];
-                            GLFW.glfwGetWindowPos(glfwWindow, currentPosX, currentPosY);
+                            for (int i = 0; i < shakeSteps; i++) {
+                                int[] currentPosX = new int[1];
+                                int[] currentPosY = new int[1];
+                                GLFW.glfwGetWindowPos(glfwWindow, currentPosX, currentPosY);
 
-                            int shakeX = currentPosX[0] + shakeRandom.nextInt(shakeIntensity * 2) - shakeIntensity;
-                            int shakeY = currentPosY[0] + shakeRandom.nextInt(shakeIntensity * 2) - shakeIntensity;
-                            GLFW.glfwSetWindowPos(glfwWindow, shakeX, shakeY);
-                            Thread.sleep(20);
+                                int shakeX = currentPosX[0] + shakeRandom.nextInt(shakeIntensity * 2) - shakeIntensity;
+                                int shakeY = currentPosY[0] + shakeRandom.nextInt(shakeIntensity * 2) - shakeIntensity;
+                                GLFW.glfwSetWindowPos(glfwWindow, shakeX, shakeY);
+                                Thread.sleep(20);
+                            }
+                            client.getSoundManager().stopSounds(ModSounds.RUMBLE2.getId(), SoundCategory.MASTER);
+                        } else {
+                            System.err.println("Failed to unfullscreen user's screen after 5 seconds!");
                         }
-                        client.getSoundManager().stopSounds(ModSounds.RUMBLE2.getId(), SoundCategory.MASTER);
                     } catch (Exception e) {
                         SplitSelf.LOGGER.error("Shrink event failed: " + e.getMessage());
                         e.printStackTrace();
