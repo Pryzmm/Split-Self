@@ -54,7 +54,11 @@ public class TheOtherOverlay {
             int y = random.nextInt(screenHeight + 100) - 100;
             int width = 10 + random.nextInt(300);
             int height = 10 + random.nextInt(300);
-            drawContext.fill(x, y, x + width, y + height, 0xFF000000);
+            int red = random.nextInt(40);
+            int green = random.nextInt(40);
+            int blue = random.nextInt(40);
+            int randomColor = 0xFF000000 | (red << 16) | (green << 8) | blue;
+            drawContext.fill(x, y, x + width, y + height, randomColor);
             new Thread(() -> {
                 try {
                     Thread.sleep(150);
