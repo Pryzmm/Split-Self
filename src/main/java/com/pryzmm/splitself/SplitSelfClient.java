@@ -33,7 +33,10 @@ public class SplitSelfClient implements ClientModInitializer {
         ClientPlayConnectionEvents.JOIN.register((clientPlayNetworkHandler, packetSender, minecraftClient) -> {
             MinecraftClient client = MinecraftClient.getInstance();
             if (ClientDetector.isFeatherClient()) {
-                client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("misc.splitself.featherClient").getString()).formatted(Formatting.RED), false);
+                client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("misc.splitself.featherClient").getString()).formatted(Formatting.YELLOW), false);
+            }
+            if (!net.minecraft.util.Util.getOperatingSystem().toString().toLowerCase().contains("win")) {
+                client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("misc.splitself.windowsSupport").getString()).formatted(Formatting.RED), false);
             }
         });
 

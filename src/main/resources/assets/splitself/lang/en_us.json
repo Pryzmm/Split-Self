@@ -137,6 +137,7 @@
   "itemgroup.splitself.splitself_items": "Split Self Items",
 
   "misc.splitself.featherClient": "<SplitSelf> Warning: Some of this mods features may not be fully functional running on Feather Client. Please switch to the Modrinth App, CurseForge, or the normal Minecraft Launcher.",
+  "misc.splitself.windowsSupport": "<SplitSelf> ALERT! Only windows is fully supported; some features of this mod may not properly work on your device!",
   "misc.splitself.multiplayer": "Come back to me... don't retreat to our friends... you coward.",
   "misc.splitself.realms": "Who even plays Realms?",
 
