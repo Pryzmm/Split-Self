@@ -57,8 +57,7 @@ public class TheOtherOverlay {
             int red = random.nextInt(40);
             int green = random.nextInt(40);
             int blue = random.nextInt(40);
-            int randomColor = 0xFF000000 | (red << 16) | (green << 8) | blue;
-            drawContext.fill(x, y, x + width, y + height, randomColor);
+            drawContext.fill(x, y, x + width, y + height, (0xFF000000 | (red << 16) | (green << 8) | blue));
         }
     }
 }
