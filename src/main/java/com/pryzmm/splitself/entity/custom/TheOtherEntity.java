@@ -64,14 +64,21 @@ public class TheOtherEntity extends HostileEntity {
             }
         }
 
+        List<PlayerEntity> nearbyPlayers = this.getWorld().getEntitiesByClass(
+                PlayerEntity.class,
+                this.getBoundingBox().expand(10.0),
+                LivingEntity::isAlive
+        );
+
         if (!this.getWorld().isClient && this.getWorld() == this.getWorld().getServer().getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY)) {
-            this.noClip = true ;
+            this.noClip = true;
+            for (PlayerEntity player : nearbyPlayers) {
+                double distance = this.distanceTo(player);
+                if (distance < 3.0) {
+                    this.discard();
+                }
+            }
         } else if (!this.getWorld().isClient && this.getWorld() != this.getWorld().getServer().getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY)) {
-            List<PlayerEntity> nearbyPlayers = this.getWorld().getEntitiesByClass(
-                    PlayerEntity.class,
-                    this.getBoundingBox().expand(10.0),
-                    LivingEntity::isAlive
-            );
 
             for (PlayerEntity player : nearbyPlayers) {
                 double distance = this.distanceTo(player);

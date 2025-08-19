@@ -51,6 +51,14 @@ public class SplitSelf implements ModInitializer {
 					0,
 					true
 			);
+            StructureManager.placeStructureRandomRotation(
+                    limboWorld,
+                    new BlockPos(1000, 0, 0),
+                    "memory",
+                    0,
+                    0,
+                    true
+            );
 		}
 	}
 

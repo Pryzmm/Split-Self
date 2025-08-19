@@ -38,14 +38,6 @@ public class SplitSelfClient implements ClientModInitializer {
         });
 
         ScreenEvents.AFTER_INIT.register((client, screen, scaledWidth, scaledHeight) -> {
-            if (screen instanceof InventoryScreen) {
-                if (client.player != null) {
-                    Random random = new Random();
-                    if (random.nextInt(1000) == 0) {
-                        ScreenOverlay.executeInventoryScreen(client.player);
-                    }
-                }
-            }
             if (screen instanceof TitleScreen titleScreen) {
                 ButtonWidget multiplayerButton = findButtonByText(titleScreen, "menu.multiplayer");
                 if (multiplayerButton != null) {

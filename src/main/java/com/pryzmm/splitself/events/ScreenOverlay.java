@@ -50,7 +50,7 @@ public class ScreenOverlay {
 
     public static void executeInventoryScreen(PlayerEntity Player) {
         new Thread(() -> {
-            Player.getWorld().playSound(Player, Player.getBlockPos(), ModSounds.HORN, SoundCategory.MASTER, 1.0f, 1.0f);
+            Player.getWorld().playSound(null, Player.getBlockPos(), ModSounds.HORN, SoundCategory.MASTER, 1.0f, 1.0f);
             InventoryOverlayRenderer.toggleOverlay();
             try {
                 Thread.sleep(1000);

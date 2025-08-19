@@ -242,10 +242,10 @@ public class EventManager {
                     Thread.sleep(20000);
                 } else if (stage == 1) {
                     TheOtherEntity theOther = new TheOtherEntity(ModEntities.TheOther, limboWorld);
-                    theOther.refreshPositionAndAngles(10.5, 1, 5.5, 63F, 0F);
+                    theOther.refreshPositionAndAngles(1006.5, 3, 33.5, -160F, -40F);
                     limboWorld.spawnEntity(theOther);
-                    player.teleport(limboWorld, 2.3, 1.5625, 9.7, null, -135, 40);
-                    Thread.sleep(20000);
+                    player.teleport(limboWorld, 1015.3, 9.5625, 34.7, null, -135, 40);
+                    Thread.sleep(60000);
                 }
                 player.getServer().getOverworld().setTimeOfDay(0);
                 if (player.getWorld() == player.getServer().getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY)) {

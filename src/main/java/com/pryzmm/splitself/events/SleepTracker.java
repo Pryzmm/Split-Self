@@ -40,9 +40,9 @@ public class SleepTracker {
             if (tracker.getPlayerSleepStage(player.getUuid()) == 0) {
                 tracker.setPlayerSleepStage(player.getUuid(), tracker.getPlayerSleepStage(player.getUuid()) + 1);
                 EventManager.runSleepEvent(player, 0);
-            } else if (Math.floor((num * 2) + 1) == 1) {
+            } else if (tracker.getPlayerSleepStage(player.getUuid()) == 1 && Math.floor((num * 2) + 1) == 1) {
                 tracker.setPlayerSleepStage(player.getUuid(), tracker.getPlayerSleepStage(player.getUuid()) + 1);
-                EventManager.runSleepEvent(player, tracker.getPlayerSleepStage(player.getUuid()));
+                EventManager.runSleepEvent(player, 1);
             }
         }
     }
