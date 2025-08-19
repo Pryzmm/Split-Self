@@ -25,7 +25,6 @@ public class DimensionRegistry {
             RegistryKey.of(RegistryKeys.BIOME, Identifier.of(SplitSelf.MOD_ID, "limbo_biome"));
 
     public static void register() {
-        // Register chunk generator codec
         Registry.register(Registries.CHUNK_GENERATOR,
                 Identifier.of(SplitSelf.MOD_ID, "build_only"),
                 BuildOnlyChunkGenerator.CODEC);

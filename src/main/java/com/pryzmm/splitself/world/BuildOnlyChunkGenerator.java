@@ -54,28 +54,18 @@ public class BuildOnlyChunkGenerator extends ChunkGenerator {
     }
 
     @Override
-    public void carve(ChunkRegion chunkRegion, long seed, NoiseConfig noiseConfig, BiomeAccess biomeAccess, StructureAccessor structureAccessor, Chunk chunk, GenerationStep.Carver carverStep) {
-        // No carving needed for empty dimension
-    }
+    public void carve(ChunkRegion chunkRegion, long seed, NoiseConfig noiseConfig, BiomeAccess biomeAccess, StructureAccessor structureAccessor, Chunk chunk, GenerationStep.Carver carverStep) {}
 
     @Override
-    public void buildSurface(ChunkRegion region, StructureAccessor structures, NoiseConfig noiseConfig, Chunk chunk) {
-        // Keep everything as air - no surface generation
-    }
+    public void buildSurface(ChunkRegion region, StructureAccessor structures, NoiseConfig noiseConfig, Chunk chunk) {}
 
     @Override
-    public void populateEntities(ChunkRegion region) {
-        // Structure placement is handled separately
-    }
+    public void populateEntities(ChunkRegion region) {}
 
     @Override
     public CompletableFuture<Chunk> populateNoise(Blender blender, NoiseConfig noiseConfig, StructureAccessor structureAccessor, Chunk chunk) {
-        // Fill chunk with air blocks
-        ChunkPos chunkPos = chunk.getPos();
         int minY = chunk.getBottomY();
         int maxY = chunk.getTopY();
-
-        // Set all blocks to air
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
                 for (int y = minY; y < maxY; y++) {
@@ -83,7 +73,6 @@ public class BuildOnlyChunkGenerator extends ChunkGenerator {
                 }
             }
         }
-
         return CompletableFuture.completedFuture(chunk);
     }
 
@@ -122,22 +111,5 @@ public class BuildOnlyChunkGenerator extends ChunkGenerator {
         text.add("BuildOnly Generator");
         text.add("Structure: " + structureName);
         text.add("At: " + structureX + ", " + structureZ);
-    }
-
-    // Getters for the codec
-    public String getStructureName() {
-        return structureName;
-    }
-
-    public int getStructureX() {
-        return structureX;
-    }
-
-    public int getStructureZ() {
-        return structureZ;
-    }
-
-    public RegistryEntry<Biome> getBiome() {
-        return biome;
     }
 }
