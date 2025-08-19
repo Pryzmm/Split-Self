@@ -3,6 +3,7 @@ package com.pryzmm.splitself.entity.custom;
 import com.pryzmm.splitself.events.ScreenOverlay;
 import com.pryzmm.splitself.world.DimensionRegistry;
 import net.minecraft.entity.AnimationState;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.LookAtEntityGoal;
@@ -18,7 +19,9 @@ import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class TheOtherEntity extends HostileEntity {
 
@@ -27,6 +30,7 @@ public class TheOtherEntity extends HostileEntity {
     private PlayerEntity cachedNearestPlayer = null;
     private int playerUpdateTimer = 0;
     private static final int PLAYER_UPDATE_INTERVAL = 20;
+    public static Map<Entity, Integer> toBeDiscarded = new HashMap<>();
 
     @Override
     protected void initGoals() {
@@ -71,10 +75,18 @@ public class TheOtherEntity extends HostileEntity {
 
             for (PlayerEntity player : nearbyPlayers) {
                 double distance = this.distanceTo(player);
-                if (distance < 10.0) {
-                    ScreenOverlay.executeWhiteScreen(player);
+                if (distance < 10.0 && !toBeDiscarded.containsKey(this)) {
+                    toBeDiscarded.put(this, 1);
+                    ScreenOverlay.executeTheOtherScreen(player);
                     player.addStatusEffect(new StatusEffectInstance(StatusEffects.WITHER, 100, 1, false, false, false));
-                    this.discard();
+                    new Thread(() -> {
+                        try {
+                            Thread.sleep(5000);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                        this.discard();
+                    }).start();
                 }
             }
         }

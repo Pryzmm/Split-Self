@@ -25,13 +25,26 @@ public class ScreenOverlay {
     public static void executeWhiteScreen(PlayerEntity Player) {
         new Thread(() -> {
             Player.getWorld().playSound(null, Player.getBlockPos(), ModSounds.SCREECH, SoundCategory.MASTER, 1.0f, 1.0f);
-            TheOtherOverlayRenderer.toggleOverlay();
+            TheOtherWhiteOverlay.toggleOverlay();
             try {
                 Thread.sleep(200);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            TheOtherOverlayRenderer.toggleOverlay();
+            TheOtherWhiteOverlay.toggleOverlay();
+        }).start();
+    }
+
+    public static void executeTheOtherScreen(PlayerEntity Player) {
+        new Thread(() -> {
+            Player.getWorld().playSound(null, Player.getBlockPos(), ModSounds.SCREAM, SoundCategory.MASTER, 1.0f, 1.0f);
+            TheOtherOverlay.toggleOverlay();
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            TheOtherOverlay.toggleOverlay();
         }).start();
     }
 

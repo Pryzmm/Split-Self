@@ -100,5 +100,13 @@
         "name": "splitself:rumble2"
       }
     ]
+  },
+  "scream": {
+    "category": "master",
+    "sounds": [
+      {
+        "name": "splitself:scream"
+      }
+    ]
   }
 }

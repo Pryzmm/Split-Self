@@ -1,6 +1,5 @@
 package com.pryzmm.splitself.config;
 
-import com.pryzmm.splitself.events.EventManager;
 import java.util.HashMap;
 import java.util.Map;
 

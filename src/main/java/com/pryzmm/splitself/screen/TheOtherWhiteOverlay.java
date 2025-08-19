@@ -8,7 +8,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 
-public class TheOtherOverlayRenderer {
+public class TheOtherWhiteOverlay {
     public static boolean overlayVisible = false;
     public static long lastShakeUpdate = 0;
     static int shakeX;
