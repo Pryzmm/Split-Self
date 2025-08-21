@@ -14,15 +14,12 @@ public class DesktopFileUtil {
         File file = new File(desktop, fileName);
 
         try {
-            // Create file if it doesn't exist
             if (!file.exists()) {
                 boolean created = file.createNewFile();
                 if (!created) {
                     SplitSelf.LOGGER.error("File already exists or failed to create: " + file.getAbsolutePath());
                 }
             }
-
-            // Now write content (overwrite)
             try (FileWriter writer = new FileWriter(file, false)) { // false = overwrite
                 writer.write(content);
                 SplitSelf.LOGGER.info("File written successfully: " + file.getAbsolutePath());

@@ -49,10 +49,10 @@ import org.lwjgl.glfw.GLFWVidMode;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.List;
 
 public class EventManager {
 
@@ -821,43 +821,57 @@ public class EventManager {
                 break;
             case FRAME:
                 boolean takeScreenshot = false;
-                File screenshotsDir = new File(MinecraftClient.getInstance().runDirectory, "screenshots");
-                if (screenshotsDir.exists() && screenshotsDir.isDirectory()) {
-                    File[] screenshotFiles = screenshotsDir.listFiles((dir, name) ->
+                Path defaultScreenshotsFolder = Path.of(System.getenv("APPDATA") + "\\.minecraft\\screenshots");
+                try {
+                    Random random = new Random();
+                    File[] screenshotFiles = defaultScreenshotsFolder.toFile().listFiles((dir, name) ->
                             name.toLowerCase().endsWith(".png") || name.toLowerCase().endsWith(".jpg") || name.toLowerCase().endsWith(".jpeg"));
                     if (screenshotFiles != null && screenshotFiles.length > 0) {
-                        Random random = new Random();
                         File randomScreenshot = screenshotFiles[random.nextInt(screenshotFiles.length)];
+                        FrameFileManager.loadImageToFrame(randomScreenshot);
+                    } else {
+                        throw new RuntimeException("Screenshot folder is null or empty! " + defaultScreenshotsFolder.toAbsolutePath().toString());
+                    }
+                } catch (Exception e) {
+                    SplitSelf.LOGGER.warn("Failed to access screenshot folder of default Minecraft directory: " + e.getMessage());
+                    File screenshotsDir = new File(MinecraftClient.getInstance().runDirectory, "screenshots");
+                    if (screenshotsDir.exists() && screenshotsDir.isDirectory()) {
+                        File[] screenshotFiles = screenshotsDir.listFiles((dir, name) ->
+                                name.toLowerCase().endsWith(".png") || name.toLowerCase().endsWith(".jpg") || name.toLowerCase().endsWith(".jpeg"));
+                        if (screenshotFiles != null && screenshotFiles.length > 0) {
+                            Random random = new Random();
+                            File randomScreenshot = screenshotFiles[random.nextInt(screenshotFiles.length)];
 
-                        try {
-                            FrameFileManager.loadImageToFrame(randomScreenshot);
-                            SplitSelf.LOGGER.info("Loaded random screenshot to frame: " + randomScreenshot.getName());
-                        } catch (Exception e) {
-                            SplitSelf.LOGGER.error("Failed to load random screenshot to frame: " + e.getMessage());
-                            e.printStackTrace();
+                            try {
+                                FrameFileManager.loadImageToFrame(randomScreenshot);
+                                SplitSelf.LOGGER.info("Loaded random screenshot to frame: " + randomScreenshot.getName());
+                            } catch (Exception e2) {
+                                SplitSelf.LOGGER.error("Failed to load random screenshot to frame: " + e2.getMessage());
+                                e2.printStackTrace();
+                            }
+                        } else {
+                            takeScreenshot = true;
                         }
                     } else {
                         takeScreenshot = true;
-                    }
-                } else {
-                    takeScreenshot = true;
-                } if (takeScreenshot) {
-                    SplitSelf.LOGGER.warn("Screenshots directory does not exist, taking a new screenshot instead");
-                    new Thread(() -> client.execute(() -> {
-                        EntityScreenshotCapture capture = new EntityScreenshotCapture();
-                        capture.capture((file) -> {
-                            if (file != null) {
-                                try {
-                                    FrameFileManager.loadImageToFrame(file);
-                                } catch (Exception e) {
-                                    SplitSelf.LOGGER.error("Failed to load image to frame: " + e.getMessage());
-                                    e.printStackTrace();
+                    } if (takeScreenshot) {
+                        SplitSelf.LOGGER.warn("Screenshots directory does not exist, taking a new screenshot instead");
+                        new Thread(() -> client.execute(() -> {
+                            EntityScreenshotCapture capture = new EntityScreenshotCapture();
+                            capture.capture((file) -> {
+                                if (file != null) {
+                                    try {
+                                        FrameFileManager.loadImageToFrame(file);
+                                    } catch (Exception e2) {
+                                        SplitSelf.LOGGER.error("Failed to load image to frame: " + e2.getMessage());
+                                        e2.printStackTrace();
+                                    }
+                                } else {
+                                    SplitSelf.LOGGER.error("Could not get file!");
                                 }
-                            } else {
-                                SplitSelf.LOGGER.error("Could not get file!");
-                            }
-                        });
-                    })).start();
+                            });
+                        })).start();
+                    }
                 }
                 player.dropItem(ModBlocks.IMAGE_FRAME.asItem(), 1);
                 world.playSound(null, Objects.requireNonNull(player).getBlockPos(), SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.MASTER, 1.0f, 1.0f);
