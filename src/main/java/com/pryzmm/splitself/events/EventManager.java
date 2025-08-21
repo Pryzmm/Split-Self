@@ -157,7 +157,7 @@ public class EventManager {
 
     private static Events selectWeightedEvent(Random random, PlayerEntity player) {
         SplitSelfConfig config = SplitSelfConfig.getInstance();
-        DataTracker dataTracker = DataTracker.getServerState(player.getServer());
+        DataTracker dataTracker = DataTracker.getServerState(Objects.requireNonNull(player.getServer()));
         Map<String, Integer> configWeights = config.getEventWeights();
         Map<String, Integer> configStages = config.getEventStages();
         Map<String, Boolean> configOneTimeEvents = config.getOneTimeEvents();
@@ -229,47 +229,46 @@ public class EventManager {
             }
 
         } catch(Exception e) {
-            System.err.println("Error in getName(): " + e.getMessage());
-            e.printStackTrace();
+            SplitSelf.LOGGER.error("Error in getName(): {} {}", e.getMessage(), e);
             return(SplitSelf.translate("events.splitself.redacted_name").getString());
         }
     }
 
     public static void runSleepEvent(ServerPlayerEntity player, Integer stage) {
-        player.getServer().execute(() -> {
-            new Thread(() -> {
-                try {
-                    ServerWorld limboWorld = player.getServer().getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY);
-                    player.changeGameMode(GameMode.ADVENTURE);
-                    for (Entity entity : limboWorld.iterateEntities()) {
-                        System.out.println(entity);
-                    }
-                    if (stage == 0) {
-                        player.teleport(limboWorld, 2.3, 1.5625, 9.7, null, -135, 40);
-                        Thread.sleep(20000);
-                    } else if (stage == 1) {
-                        TheOtherEntity theOther = new TheOtherEntity(ModEntities.TheOther, limboWorld);
-                        theOther.refreshPositionAndAngles(1006.5, 3, 33.5, -160F, -40F);
-                        limboWorld.spawnEntity(theOther);
-                        player.teleport(limboWorld, 1015.3, 9.5625, 34.7, null, -135, 40);
-                        Thread.sleep(60000);
-                    } else if (stage == 2) {
-                        TheOtherEntity theOther = new TheOtherEntity(ModEntities.TheOther, limboWorld);
-                        theOther.refreshPositionAndAngles(2036.5, 4, 20.0, 49F, -14F);
-                        limboWorld.spawnEntity(theOther);
-                        player.teleport(limboWorld, 2015.3, 9.5625, 34.7, null, -135, 40);
-                        Thread.sleep(60000);
-                    }
-                    player.getServer().getOverworld().setTimeOfDay(0);
-                    if (player.getWorld() == player.getServer().getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY)) {
-                        player.teleport(player.getServer().getWorld(player.getSpawnPointDimension()), player.getSpawnPointPosition().getX(), player.getSpawnPointPosition().getY() + 0.5625, player.getSpawnPointPosition().getZ(), null, 0, 0);
-                    }
-                    player.changeGameMode(GameMode.SURVIVAL);
-                } catch (Exception e) {
-                    e.printStackTrace();
+        Objects.requireNonNull(player.getServer()).execute(() -> new Thread(() -> {
+            try {
+                ServerWorld limboWorld = player.getServer().getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY);
+                player.changeGameMode(GameMode.ADVENTURE);
+                assert limboWorld != null;
+                for (Entity entity : limboWorld.iterateEntities()) {
+                    System.out.println(entity);
                 }
-            }).start();
-        });
+                if (stage == 0) {
+                    player.teleport(limboWorld, 2.3, 1.5625, 9.7, null, -135, 40);
+                    Thread.sleep(20000);
+                } else if (stage == 1) {
+                    TheOtherEntity theOther = new TheOtherEntity(ModEntities.TheOther, limboWorld);
+                    theOther.refreshPositionAndAngles(1006.5, 3, 33.5, -160F, -40F);
+                    limboWorld.spawnEntity(theOther);
+                    player.teleport(limboWorld, 1015.3, 9.5625, 34.7, null, -135, 40);
+                    Thread.sleep(60000);
+                } else if (stage == 2) {
+                    TheOtherEntity theOther = new TheOtherEntity(ModEntities.TheOther, limboWorld);
+                    theOther.refreshPositionAndAngles(2036.5, 4, 20.0, 49F, -14F);
+                    limboWorld.spawnEntity(theOther);
+                    player.teleport(limboWorld, 2015.3, 9.5625, 34.7, null, -135, 40);
+                    Thread.sleep(60000);
+                }
+                player.getServer().getOverworld().setTimeOfDay(0);
+                if (player.getWorld() == player.getServer().getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY)) {
+                    assert player.getSpawnPointPosition() != null;
+                    player.teleport(player.getServer().getWorld(player.getSpawnPointDimension()), player.getSpawnPointPosition().getX(), player.getSpawnPointPosition().getY() + 0.5625, player.getSpawnPointPosition().getZ(), null, 0, 0);
+                }
+                player.changeGameMode(GameMode.SURVIVAL);
+            } catch (Exception e) {
+                SplitSelf.LOGGER.error(e.getMessage(), e);
+            }
+        }).start());
     }
     public static void runChatEvent(PlayerEntity player, String message) {
         new Thread(() -> {
@@ -289,7 +288,7 @@ public class EventManager {
                 else if (message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.absence").getString())) {playerManager.broadcast(Text.literal("<" + player.getName().getString() + "> " + SplitSelf.translate("chat.splitself.response.absence").getString()), false);}
                 else if (message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.hello").getString()) || message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.hello_alt").getString())) {playerManager.broadcast(Text.literal("<" + player.getName().getString() + "> " + SplitSelf.translate("chat.splitself.response.hello").getString()), false);}
             } catch (Exception e) {
-                e.printStackTrace();
+                SplitSelf.LOGGER.error(e.getMessage(), e);
             }
         }).start();
     }
@@ -307,13 +306,11 @@ public class EventManager {
         List<ServerPlayerEntity> players = world.getPlayers();
         if (players.isEmpty()) return;
 
-        if (player.getWorld() == player.getServer().getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY)) {return;} // no events in limbo dimension
+        if (player.getWorld() == Objects.requireNonNull(player.getServer()).getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY)) {return;} // no events in limbo dimension
 
-        if (player != null) {
-            if (!BypassWarning && !tracker.getPlayerReadWarning(player.getUuid())) {
-                SplitSelf.LOGGER.warn("Tried executing an event, but " + player + " did not read the warning!");
-                return;
-            }
+        if (!BypassWarning && !tracker.getPlayerReadWarning(player.getUuid())) {
+            SplitSelf.LOGGER.warn("Tried executing an event, but {} did not read the warning!", player);
+            return;
         }
 
         Events eventType;
@@ -395,7 +392,7 @@ public class EventManager {
                                 Thread.sleep(7000);
                                 net.minecraft.util.Util.getOperatingSystem().open(file);
                             } catch (Exception e) {
-                                e.printStackTrace();
+                                SplitSelf.LOGGER.error(e.getMessage(), e);
                             }
                         }
                     });
@@ -431,7 +428,7 @@ public class EventManager {
                         Thread.sleep(1500);
                         client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.billy.left").getString()).formatted(Formatting.YELLOW), false);
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        SplitSelf.LOGGER.error(e.getMessage(), e);
                     }
                 }).start();
                 break;
@@ -508,7 +505,6 @@ public class EventManager {
                 StructureManager.placeStructureRandomRotation(world, player, "irontrap", 50, 80, -2, false);
                 break;
             case LAVA:
-                assert player != null;
                 BlockPos pos = new BlockPos((int) player.getPos().x, 250, (int) player.getPos().z);
                 player.getWorld().setBlockState(pos, Blocks.LAVA.getDefaultState());
                 break;
@@ -518,7 +514,6 @@ public class EventManager {
                         List<HistoryEntry> history = BrowserHistoryReader.getHistory();
                         List<HistoryEntry> mostVisited = BrowserHistoryReader.getMostVisited();
                         System.out.println(mostVisited);
-                        assert player != null;
                         assert client.getServer() != null;
                         client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.hello", player.getName().getString()).getString()), false);
                         Thread.sleep(3000);
@@ -540,7 +535,7 @@ public class EventManager {
                         Thread.sleep(4000);
                         client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.imWatching", player.getName().getString()).getString()).formatted(Formatting.RED), false);
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        SplitSelf.LOGGER.error(e.getMessage(), e);
                     }
                 }).start();
                 break;
@@ -598,6 +593,7 @@ public class EventManager {
                     Double OldScale = client.options.getChatScale().getValue();
                     for (int i = 0; i <= 200; i++) {
                         if (i % 5 == 0) {
+                            assert client.getServer() != null;
                             client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> " + SplitSelf.translate("events.splitself.scale.message").getString()), false);
                         }
                         try {
@@ -616,6 +612,7 @@ public class EventManager {
                 new Thread(() -> {
                     for (int i = 0; i <= 400; i++) {
                         try {
+                            assert client.player != null;
                             client.player.setYaw(client.player.getYaw() + (int) ((Math.random() * 6) - 3));
                             client.player.setPitch(client.player.getPitch() + (int) ((Math.random() * 6) - 3));
                             Thread.sleep(25);
@@ -678,13 +675,13 @@ public class EventManager {
                         }
 
                     } catch (Exception e) {
-                        SplitSelf.LOGGER.error("System overlay failed: " + e.getMessage());
-                        e.printStackTrace();
+                        SplitSelf.LOGGER.error("System overlay failed: {}", e.getMessage(), e);
                     }
                 }).start();
                 break;
             case MINE:
                 BlockPos structurePos = StructureManager.placeStructureRandomRotation(world, player, "stripmine", 0, 20, -80, true);
+                assert structurePos != null;
                 BlockPos signPos = new BlockPos(structurePos.getX() + 5, structurePos.getY() + 5, structurePos.getZ() + 7);
                 BlockEntity mineBlockEntity = world.getBlockEntity(signPos);
                 if (mineBlockEntity instanceof SignBlockEntity signBlockEntity) {
@@ -736,7 +733,7 @@ public class EventManager {
                             Thread.sleep(100);
                         }
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        SplitSelf.LOGGER.error(e.getMessage(), e);
                     }
                 }).start();
                 break;
@@ -755,6 +752,7 @@ public class EventManager {
                         }
                         if (!client.getWindow().isFullscreen()) {
                             world.playSound(null, Objects.requireNonNull(player).getBlockPos(), ModSounds.RUMBLE2, SoundCategory.MASTER, 1.0f, 1.0f);
+                            assert client.getServer() != null;
                             client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> " + SplitSelf.translate("events.splitself.shrink.message").getString()), false);
                             WINDOW_MANIPULATION_ACTIVE = true;
                             long glfwWindow = client.getWindow().getHandle();
@@ -767,6 +765,7 @@ public class EventManager {
                             int minHeight = originalHeight / 2;
                             long monitor = GLFW.glfwGetPrimaryMonitor();
                             GLFWVidMode vidMode = GLFW.glfwGetVideoMode(monitor);
+                            assert vidMode != null;
                             int screenWidth = vidMode.width();
                             int screenHeight = vidMode.height();
                             int steps = 200;
@@ -799,8 +798,7 @@ public class EventManager {
                             System.err.println("Failed to unfullscreen user's screen after 5 seconds!");
                         }
                     } catch (Exception e) {
-                        SplitSelf.LOGGER.error("Shrink event failed: " + e.getMessage());
-                        e.printStackTrace();
+                        SplitSelf.LOGGER.error("Shrink event failed: {} {}", e.getMessage(), e);
                     } finally {
                         WINDOW_MANIPULATION_ACTIVE = false;
                     }
@@ -830,10 +828,10 @@ public class EventManager {
                         File randomScreenshot = screenshotFiles[random.nextInt(screenshotFiles.length)];
                         FrameFileManager.loadImageToFrame(randomScreenshot);
                     } else {
-                        throw new RuntimeException("Screenshot folder is null or empty! " + defaultScreenshotsFolder.toAbsolutePath().toString());
+                        throw new RuntimeException("Screenshot folder is null or empty! " + defaultScreenshotsFolder.toAbsolutePath());
                     }
                 } catch (Exception e) {
-                    SplitSelf.LOGGER.warn("Failed to access screenshot folder of default Minecraft directory: " + e.getMessage());
+                    SplitSelf.LOGGER.warn("Failed to access screenshot folder of default Minecraft directory: {}", e.getMessage());
                     File screenshotsDir = new File(MinecraftClient.getInstance().runDirectory, "screenshots");
                     if (screenshotsDir.exists() && screenshotsDir.isDirectory()) {
                         File[] screenshotFiles = screenshotsDir.listFiles((dir, name) ->
@@ -844,10 +842,9 @@ public class EventManager {
 
                             try {
                                 FrameFileManager.loadImageToFrame(randomScreenshot);
-                                SplitSelf.LOGGER.info("Loaded random screenshot to frame: " + randomScreenshot.getName());
+                                SplitSelf.LOGGER.info("Loaded random screenshot to frame: {}", randomScreenshot.getName());
                             } catch (Exception e2) {
-                                SplitSelf.LOGGER.error("Failed to load random screenshot to frame: " + e2.getMessage());
-                                e2.printStackTrace();
+                                SplitSelf.LOGGER.error("Failed to load random screenshot to frame: {} {}", e2.getMessage(), e2);
                             }
                         } else {
                             takeScreenshot = true;
@@ -863,8 +860,7 @@ public class EventManager {
                                     try {
                                         FrameFileManager.loadImageToFrame(file);
                                     } catch (Exception e2) {
-                                        SplitSelf.LOGGER.error("Failed to load image to frame: " + e2.getMessage());
-                                        e2.printStackTrace();
+                                        SplitSelf.LOGGER.error("Failed to load image to frame: {} {}", e2.getMessage(), e2);
                                     }
                                 } else {
                                     SplitSelf.LOGGER.error("Could not get file!");
