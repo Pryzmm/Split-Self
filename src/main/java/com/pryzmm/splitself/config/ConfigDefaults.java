@@ -52,6 +52,7 @@ public class ConfigDefaults {
         weights.put("PAUSE", 10);
         weights.put("ITEM", 10);
         weights.put("FRAME", 15);
+        weights.put("NAME", 10);
         return weights;
     }
 
@@ -91,6 +92,7 @@ public class ConfigDefaults {
         stages.put("PAUSE", 1);
         stages.put("ITEM", 0);
         stages.put("FRAME", 1);
+        stages.put("NAME", 2);
         return stages;
     }
 
@@ -127,6 +129,7 @@ public class ConfigDefaults {
         oneTimers.put("MINE", false);
         oneTimers.put("DOOR", false);
         oneTimers.put("SHRINK", false);
+        oneTimers.put("NAME", false);
         return oneTimers;
     }
 

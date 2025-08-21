@@ -47,12 +47,20 @@ import net.minecraft.world.GameMode;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 public class EventManager {
 
@@ -90,7 +98,8 @@ public class EventManager {
         SHRINK,
         PAUSE,
         ITEM,
-        FRAME
+        FRAME,
+        NAME,
     }
 
     public static Map<Events, Boolean> oneTimeEvents = new HashMap<>();
@@ -872,6 +881,24 @@ public class EventManager {
                 player.dropItem(ModBlocks.IMAGE_FRAME.asItem(), 1);
                 world.playSound(null, Objects.requireNonNull(player).getBlockPos(), SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.MASTER, 1.0f, 1.0f);
                 break;
+            case NAME:
+                SplitSelf.LOGGER.info("Player name: {}", player.getName().getString());
+                SplitSelf.LOGGER.info("Player UUID: {}", player.getUuidAsString());
+                try {
+                    List<String> nameHistory = AshconNameAPI.getNameHistory(player.getUuidAsString().replace("-", ""));
+                    if (!nameHistory.isEmpty()) {
+                        for (String name : nameHistory) {
+                            if (!name.equals(player.getName().getString())) {
+                                assert client.getServer() != null;
+                                client.getServer().getPlayerManager().broadcast(Text.literal("<" + name + "> " + SplitSelf.translate("events.splitself.sign.imWatchingYou").getString()), false); // I don't wanna ask the german translator to translate one line lmao
+                                break;
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    SplitSelf.LOGGER.error("Failed to fetch name history: {}", e.getMessage());
+                }
+
         }
     }
 }
