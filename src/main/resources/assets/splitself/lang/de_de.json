@@ -1,4 +1,5 @@
 {
+  "block.splitself.image_frame": "Bilderrahmen",
   "chat.splitself.prompt.absence" : "fehlen",
   "chat.splitself.prompt.control" : "kontrolle",
   "chat.splitself.prompt.freedom" : "freiheit",
@@ -39,6 +40,10 @@
   "config.splitself.category.events.tooltip": "Konfiguration des Verhaltens und des Zeitpunkts von Ereignissen",
   "config.splitself.group.event_weights": "Ereignisgewichtung",
   "config.splitself.group.event_weights.description": "Die Gewichtungsoptionen für Ereignisse (d.h. je höher die Gewichtung, desto häufiger tritt dieses Ereignis im Vergleich zu anderen auf)",
+  "config.splitself.group.event_stages": "Ereignisphasen",
+  "config.splitself.group.event_stages.description": "Die Phasenoptionen für Ereignisse (d.h. je höher die Phase, desto später wird das Ereignis in deinem Schlafstadium aktiviert)",
+  "config.splitself.group.one_time_events": "Einmalige Ereignisse",
+  "config.splitself.group.one_time_events.description": "Die einmaligen Ereignisoptionen (d.h. wenn aktiviert, wird das Ereignis nur einmal pro Sitzung ausgelöst)",
   "config.splitself.group.general": "Allgemeine Einstellungen",
   "config.splitself.group.general.description": "Wichtigste Konfigurationsoptionen für Split Self-Ereignisse",
   "config.splitself.events_enabled": "Ereignisse aktivieren",
@@ -54,6 +59,8 @@
   "config.splitself.guaranteed_event": "Danach garantiertes Ereignis",
   "config.splitself.guaranteed_event.description": "Wie lange es dauert, bis ein Ereignis nach einer bestimmten Zeit der Inaktivität garantiert eintritt",
   "config.splitself.weight_value_title": "Gewichtung für das Ereignis %s",
+  "config.splitself.stage_value_title": "Phase bis zur Aktivierung für Ereignis %s",
+  "config.splitself.one_time_event_value_title": "Kann das Ereignis %s mehrfach innerhalb einer Sitzung ausgelöst werden?",
 
   "entity.splitself.the_other": "Der Andere",
 
@@ -116,9 +123,10 @@
   "events.splitself.sign.getOutMyHouse": "Raus aus meinem Haus.",
   "events.splitself.sign.imYou": "Ich bin du.",
   "events.splitself.sign.redacted": "[UNTERDRÜCKT]",
-  "events.splitself.sign.giveMeFreedom": "Gib mir Freiheit.",
+  "events.splitself.sign.giveMeFreedom": "Gib mir Freiheit.",    
+  "events.splitself.sleep.remember": "Erinnerst du dich?",
   "events.splitself.theOtherScreenshot.line1": "Ich sehe dich.",
-  "events.splitself.theOtherScreenshot.line2": "Das kommt dir bekannt vor, nicht wahr.",
+  "events.splitself.theOtherScreenshot.line2": "Das kommt dir bekannt vor, nicht wahr?",
 
   "files.splitself.begin.title": "anfang",
   "files.splitself.begin.message": "Kannst du dich selbst nicht sehen?",
@@ -131,6 +139,7 @@
   "itemgroup.splitself.splitself_items": "Split Self-Gegenstände",
 
   "misc.splitself.featherClient": "<SplitSelf> Warnung: Einige Funktionen dieser Mod funktionieren möglicherweise nicht vollständig auf dem Feather Client. Bitte wechsle zur Modrinth App, CurseForge oder zum normalen Minecraft Launcher.",
+  "misc.splitself.windowsSupport": "<SplitSelf> WARNUNG! Nur Windows ist für diese Version vollständig unterstützt; einige Funktionen dieser Mod könnten auf deinem Gerät ggf. nicht richtig funktionieren!",
   "misc.splitself.multiplayer": "Komm zu mir zurück... flieh nicht zu unseren Freunden... du Feigling.",
   "misc.splitself.realms": "Wer spielt eigentlich Realms?",
 
