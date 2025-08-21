@@ -129,6 +129,9 @@ public class ConfigDefaults {
         oneTimers.put("MINE", false);
         oneTimers.put("DOOR", false);
         oneTimers.put("SHRINK", false);
+        oneTimers.put("PAUSE", false);
+        oneTimers.put("ITEM", false);
+        oneTimers.put("FRAME", false);
         oneTimers.put("NAME", false);
         return oneTimers;
     }
