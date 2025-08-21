@@ -108,5 +108,14 @@
         "name": "splitself:scream"
       }
     ]
+  },
+  "disappear": {
+    "category": "master",
+    "sounds": [
+      {"name": "splitself:disappear1"},
+      {"name": "splitself:disappear2"},
+      {"name": "splitself:disappear3"},
+      {"name": "splitself:disappear4"}
+    ]
   }
 }

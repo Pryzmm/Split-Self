@@ -1,5 +1,6 @@
 package com.pryzmm.splitself;
 
+import com.pryzmm.splitself.block.ModBlocks;
 import com.pryzmm.splitself.command.SplitSelfCommands;
 import com.pryzmm.splitself.config.SplitSelfConfig;
 import com.pryzmm.splitself.entity.ModEntities;
@@ -59,6 +60,14 @@ public class SplitSelf implements ModInitializer {
                     0,
                     true
             );
+            StructureManager.placeStructureRandomRotation(
+                    limboWorld,
+                    new BlockPos(2000, 0, 0),
+                    "broken_memory",
+                    0,
+                    0,
+                    true
+            );
 		}
 	}
 
@@ -77,6 +86,7 @@ public class SplitSelf implements ModInitializer {
 
 		ModEntities.registerModEntities();
 		ModSounds.registerSounds();
+        ModBlocks.registerModBlocks();
 		ModItems.registerModItems();
 		ModItemGroups.registerItemGroups();
 		DimensionRegistry.register();

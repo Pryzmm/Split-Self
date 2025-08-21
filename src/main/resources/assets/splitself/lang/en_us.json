@@ -1,4 +1,6 @@
 {
+  "block.splitself.image_frame" : "Image Frame",
+
   "chat.splitself.prompt.absence" : "absence",
   "chat.splitself.prompt.control" : "control",
   "chat.splitself.prompt.freedom" : "freedom",
@@ -123,6 +125,7 @@
   "events.splitself.sign.imYou": "I'm You.",
   "events.splitself.sign.redacted": "[REDACTED]",
   "events.splitself.sign.giveMeFreedom": "Give me freeedom.",
+  "events.splitself.sleep.remember": "Do you remember?",
   "events.splitself.theOtherScreenshot.line1": "I see you.",
   "events.splitself.theOtherScreenshot.line2": "Looks familiar, doesn't it.",
 

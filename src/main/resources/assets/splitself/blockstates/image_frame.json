@@ -1,0 +1,20 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "splitself:block/image_frame"
+    },
+    "facing=south": {
+      "model": "splitself:block/image_frame",
+      "y": 180
+    },
+    "facing=east": {
+      "model": "splitself:block/image_frame",
+      "y": 90
+    },
+    "facing=west": {
+      "model": "splitself:block/image_frame",
+      "y": 270
+    }
+  }
+
+}

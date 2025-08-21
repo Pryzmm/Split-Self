@@ -1,6 +1,7 @@
 package com.pryzmm.splitself.item;
 
 import com.pryzmm.splitself.SplitSelf;
+import com.pryzmm.splitself.block.ModBlocks;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -16,6 +17,7 @@ public class ModItemGroups {
                     .entries((displayContext, entries) -> {
                         entries.add(ModItems.IN_MY_LIFE_MUSIC_DISC);
                         entries.add(ModItems.CIET_DOKE);
+                        entries.add(ModBlocks.IMAGE_FRAME);
                     })
                     .build());
 

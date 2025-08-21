@@ -1,6 +1,8 @@
 package com.pryzmm.splitself.entity.custom;
 
+import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.events.ScreenOverlay;
+import com.pryzmm.splitself.sound.ModSounds;
 import com.pryzmm.splitself.world.DimensionRegistry;
 import net.minecraft.entity.AnimationState;
 import net.minecraft.entity.Entity;
@@ -17,11 +19,14 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.text.Text;
 import net.minecraft.world.World;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class TheOtherEntity extends HostileEntity {
 
@@ -75,11 +80,14 @@ public class TheOtherEntity extends HostileEntity {
             for (PlayerEntity player : nearbyPlayers) {
                 double distance = this.distanceTo(player);
                 if (distance < 3.0) {
+                    if (this.getX() >= 1500) {
+                        this.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> " + SplitSelf.translate("events.splitself.sleep.remember").getString()), false);
+                    }
+                    this.getWorld().playSound(null, Objects.requireNonNull(player).getBlockPos(), ModSounds.DISAPPEAR, SoundCategory.MASTER, 1.0f, 1.0f);
                     this.discard();
                 }
             }
         } else if (!this.getWorld().isClient && this.getWorld() != this.getWorld().getServer().getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY)) {
-
             for (PlayerEntity player : nearbyPlayers) {
                 double distance = this.distanceTo(player);
                 if (distance < 10.0 && !toBeDiscarded.containsKey(this)) {

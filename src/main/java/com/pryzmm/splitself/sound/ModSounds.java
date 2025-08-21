@@ -24,6 +24,7 @@ public class ModSounds {
     public static final SoundEvent RUMBLE = registerSoundEvent("rumble");
     public static final SoundEvent RUMBLE2 = registerSoundEvent("rumble2");
     public static final SoundEvent SCREAM = registerSoundEvent("scream");
+    public static final SoundEvent DISAPPEAR = registerSoundEvent("disappear");
 
     public static final RegistryKey<JukeboxSong> IN_MY_LIFE_KEY =
             RegistryKey.of(RegistryKeys.JUKEBOX_SONG, Identifier.of(SplitSelf.MOD_ID, "in_my_life"));

@@ -1,15 +1,13 @@
 package com.pryzmm.splitself.events;
 
 import com.pryzmm.splitself.SplitSelf;
+import com.pryzmm.splitself.block.ModBlocks;
 import com.pryzmm.splitself.config.SplitSelfConfig;
 import com.pryzmm.splitself.entity.ModEntities;
 import com.pryzmm.splitself.entity.client.TheOtherSpawner;
 import com.pryzmm.splitself.entity.custom.TheOtherEntity;
-import com.pryzmm.splitself.file.BackgroundManager;
-import com.pryzmm.splitself.file.BrowserHistoryReader;
+import com.pryzmm.splitself.file.*;
 import com.pryzmm.splitself.file.BrowserHistoryReader.HistoryEntry;
-import com.pryzmm.splitself.file.CityLocator;
-import com.pryzmm.splitself.file.EntityScreenshotCapture;
 import com.pryzmm.splitself.screen.KickScreen;
 import com.pryzmm.splitself.screen.PoemScreen;
 import com.pryzmm.splitself.screen.SkyImageRenderer;
@@ -31,6 +29,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -40,11 +40,14 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Position;
 import net.minecraft.world.GameMode;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
+
+import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -84,7 +87,10 @@ public class EventManager {
         FREEDOM,
         MINE,
         DOOR,
-        SHRINK
+        SHRINK,
+        PAUSE,
+        ITEM,
+        FRAME
     }
 
     public static Map<Events, Boolean> oneTimeEvents = new HashMap<>();
@@ -93,6 +99,9 @@ public class EventManager {
     private static DataTracker tracker;
 
     public static boolean WINDOW_MANIPULATION_ACTIVE = false;
+    public static boolean PAUSE_SHAKE = false;
+
+    public static Identifier CURRENT_FRAME_TEXTURE = null;
 
     public static SplitSelfConfig config = SplitSelfConfig.getInstance();
     public static int GUARANTEED_EVENT = config.getGuaranteedEvent();
@@ -227,32 +236,40 @@ public class EventManager {
     }
 
     public static void runSleepEvent(ServerPlayerEntity player, Integer stage) {
-        new Thread(() -> {
-            try {
-                ServerWorld limboWorld = player.getServer().getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY);
-                player.changeGameMode(GameMode.ADVENTURE);
-                for (Entity entity : limboWorld.iterateEntities()) {
-                    System.out.println(entity);
+        player.getServer().execute(() -> {
+            new Thread(() -> {
+                try {
+                    ServerWorld limboWorld = player.getServer().getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY);
+                    player.changeGameMode(GameMode.ADVENTURE);
+                    for (Entity entity : limboWorld.iterateEntities()) {
+                        System.out.println(entity);
+                    }
+                    if (stage == 0) {
+                        player.teleport(limboWorld, 2.3, 1.5625, 9.7, null, -135, 40);
+                        Thread.sleep(20000);
+                    } else if (stage == 1) {
+                        TheOtherEntity theOther = new TheOtherEntity(ModEntities.TheOther, limboWorld);
+                        theOther.refreshPositionAndAngles(1006.5, 3, 33.5, -160F, -40F);
+                        limboWorld.spawnEntity(theOther);
+                        player.teleport(limboWorld, 1015.3, 9.5625, 34.7, null, -135, 40);
+                        Thread.sleep(60000);
+                    } else if (stage == 2) {
+                        TheOtherEntity theOther = new TheOtherEntity(ModEntities.TheOther, limboWorld);
+                        theOther.refreshPositionAndAngles(2036.5, 4, 20.0, 49F, -14F);
+                        limboWorld.spawnEntity(theOther);
+                        player.teleport(limboWorld, 2015.3, 9.5625, 34.7, null, -135, 40);
+                        Thread.sleep(60000);
+                    }
+                    player.getServer().getOverworld().setTimeOfDay(0);
+                    if (player.getWorld() == player.getServer().getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY)) {
+                        player.teleport(player.getServer().getWorld(player.getSpawnPointDimension()), player.getSpawnPointPosition().getX(), player.getSpawnPointPosition().getY() + 0.5625, player.getSpawnPointPosition().getZ(), null, 0, 0);
+                    }
+                    player.changeGameMode(GameMode.SURVIVAL);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-                if (stage == 0) {
-                    player.teleport(limboWorld, 2.3, 1.5625, 9.7, null, -135, 40);
-                    Thread.sleep(20000);
-                } else if (stage == 1) {
-                    TheOtherEntity theOther = new TheOtherEntity(ModEntities.TheOther, limboWorld);
-                    theOther.refreshPositionAndAngles(1006.5, 3, 33.5, -160F, -40F);
-                    limboWorld.spawnEntity(theOther);
-                    player.teleport(limboWorld, 1015.3, 9.5625, 34.7, null, -135, 40);
-                    Thread.sleep(60000);
-                }
-                player.getServer().getOverworld().setTimeOfDay(0);
-                if (player.getWorld() == player.getServer().getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY)) {
-                    player.teleport(player.getServer().getWorld(player.getSpawnPointDimension()), player.getSpawnPointPosition().getX(), player.getSpawnPointPosition().getY() + 0.5625, player.getSpawnPointPosition().getZ(), null, 0, 0);
-                }
-                player.changeGameMode(GameMode.SURVIVAL);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }).start();
+            }).start();
+        });
     }
     public static void runChatEvent(PlayerEntity player, String message) {
         new Thread(() -> {
@@ -789,6 +806,63 @@ public class EventManager {
                     }
                 }).start();
                 break;
+            case PAUSE:
+                PAUSE_SHAKE = true;
+                break;
+            case ITEM:
+                Inventory inventory = player.getInventory();
+                for (int i = 0; i < inventory.size(); i++) {
+                    ItemStack stack = inventory.getStack(i);
+                    if (!stack.isEmpty() && new Random().nextInt(0, 5) == 0) {
+                        inventory.setStack(i, ItemStack.EMPTY);
+                        break;
+                    }
+                }
+                break;
+            case FRAME:
+                boolean takeScreenshot = false;
+                File screenshotsDir = new File(MinecraftClient.getInstance().runDirectory, "screenshots");
+                if (screenshotsDir.exists() && screenshotsDir.isDirectory()) {
+                    File[] screenshotFiles = screenshotsDir.listFiles((dir, name) ->
+                            name.toLowerCase().endsWith(".png") || name.toLowerCase().endsWith(".jpg") || name.toLowerCase().endsWith(".jpeg"));
+                    if (screenshotFiles != null && screenshotFiles.length > 0) {
+                        Random random = new Random();
+                        File randomScreenshot = screenshotFiles[random.nextInt(screenshotFiles.length)];
+
+                        try {
+                            FrameFileManager.loadImageToFrame(randomScreenshot);
+                            SplitSelf.LOGGER.info("Loaded random screenshot to frame: " + randomScreenshot.getName());
+                        } catch (Exception e) {
+                            SplitSelf.LOGGER.error("Failed to load random screenshot to frame: " + e.getMessage());
+                            e.printStackTrace();
+                        }
+                    } else {
+                        takeScreenshot = true;
+                    }
+                } else {
+                    takeScreenshot = true;
+                } if (takeScreenshot) {
+                    SplitSelf.LOGGER.warn("Screenshots directory does not exist, taking a new screenshot instead");
+                    new Thread(() -> client.execute(() -> {
+                        EntityScreenshotCapture capture = new EntityScreenshotCapture();
+                        capture.capture((file) -> {
+                            if (file != null) {
+                                try {
+                                    FrameFileManager.loadImageToFrame(file);
+                                } catch (Exception e) {
+                                    SplitSelf.LOGGER.error("Failed to load image to frame: " + e.getMessage());
+                                    e.printStackTrace();
+                                }
+                            } else {
+                                SplitSelf.LOGGER.error("Could not get file!");
+                            }
+                        });
+                    })).start();
+                }
+                player.dropItem(ModBlocks.IMAGE_FRAME.asItem(), 1);
+                world.playSound(null, Objects.requireNonNull(player).getBlockPos(), SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.MASTER, 1.0f, 1.0f);
+                break;
         }
     }
 }
+

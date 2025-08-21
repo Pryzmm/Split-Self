@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(MinecraftClient.class)
-public class PausePreventionMixin {
+public class PauseMixin {
 
     @Inject(method = "setScreen", at = @At("HEAD"), cancellable = true)
     private void preventPauseDuringEvent(net.minecraft.client.gui.screen.Screen screen, CallbackInfo ci) {

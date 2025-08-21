@@ -1,10 +1,11 @@
 package com.pryzmm.splitself;
 
+import com.pryzmm.splitself.block.entity.ModBlockEntities;
 import com.pryzmm.splitself.client.ClientDetector;
+import com.pryzmm.splitself.client.render.ImageFrameBlockEntityRenderer;
 import com.pryzmm.splitself.entity.ModEntities;
 import com.pryzmm.splitself.entity.client.TheOtherModel;
 import com.pryzmm.splitself.entity.client.TheOtherRenderer;
-import com.pryzmm.splitself.events.ScreenOverlay;
 import com.pryzmm.splitself.screen.SkyImageRenderer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
@@ -13,9 +14,9 @@ import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.TitleScreen;
-import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
@@ -29,6 +30,7 @@ public class SplitSelfClient implements ClientModInitializer {
         EntityRendererRegistry.register(ModEntities.TheOther, TheOtherRenderer::new);
 
         SkyImageRenderer.register();
+        BlockEntityRendererFactories.register(ModBlockEntities.IMAGE_FRAME_BLOCK_ENTITY, ImageFrameBlockEntityRenderer::new);
 
         ClientPlayConnectionEvents.JOIN.register((clientPlayNetworkHandler, packetSender, minecraftClient) -> {
             MinecraftClient client = MinecraftClient.getInstance();

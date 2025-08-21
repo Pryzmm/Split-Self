@@ -6,8 +6,8 @@ import java.util.Map;
 public class ConfigDefaults {
 
     public static final boolean DEFAULT_EVENTS_ENABLED = true;
-    public static final int DEFAULT_EVENT_TICK_INTERVAL = 20;
-    public static final double DEFAULT_EVENT_CHANCE = 0.003;
+    public static final int DEFAULT_EVENT_TICK_INTERVAL = 60;
+    public static final double DEFAULT_EVENT_CHANCE = 0.01;
     public static final int DEFAULT_EVENT_COOLDOWN = 600;
     public static final int DEFAULT_START_EVENTS_AFTER = 3000;
     public static final int DEFAULT_GUARANTEED_EVENT = 15600;
@@ -49,6 +49,9 @@ public class ConfigDefaults {
         weights.put("MINE", 10);
         weights.put("DOOR", 10);
         weights.put("SHRINK", 10);
+        weights.put("PAUSE", 10);
+        weights.put("ITEM", 10);
+        weights.put("FRAME", 15);
         return weights;
     }
 
@@ -85,6 +88,9 @@ public class ConfigDefaults {
         stages.put("MINE", 0);
         stages.put("DOOR", 0);
         stages.put("SHRINK", 2);
+        stages.put("PAUSE", 1);
+        stages.put("ITEM", 0);
+        stages.put("FRAME", 1);
         return stages;
     }
 

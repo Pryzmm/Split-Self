@@ -1,0 +1,14 @@
+{
+  "type": "image_frame",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "item",
+          "name": "splitself:image_frame"
+        }
+      ]
+    }
+  ]
+}
