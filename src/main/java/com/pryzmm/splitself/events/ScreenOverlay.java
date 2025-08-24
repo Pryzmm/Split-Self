@@ -2,7 +2,6 @@ package com.pryzmm.splitself.events;
 
 import com.pryzmm.splitself.screen.*;
 import com.pryzmm.splitself.sound.ModSounds;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundCategory;
