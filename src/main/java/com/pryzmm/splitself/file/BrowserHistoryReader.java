@@ -120,7 +120,7 @@ public class BrowserHistoryReader {
 
                 if (title == null || title.trim().isEmpty()) {
                     continue;
-                } else if (title.contains("GX Corner") || title.contains("New Tab")) { // Removing startup pages from the list
+                } else if (title.contains("GX Corner") || title.contains("New Tab") || title.equals("Home")) { // Removing startup pages from the list
                     continue;
                 }
 
