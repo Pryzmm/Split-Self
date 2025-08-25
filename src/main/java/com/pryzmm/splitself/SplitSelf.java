@@ -3,6 +3,7 @@ package com.pryzmm.splitself;
 import com.pryzmm.splitself.block.ModBlocks;
 import com.pryzmm.splitself.command.SplitSelfCommands;
 import com.pryzmm.splitself.config.SplitSelfConfig;
+import com.pryzmm.splitself.dimension.LimboLevitation;
 import com.pryzmm.splitself.entity.ModEntities;
 import com.pryzmm.splitself.entity.custom.TheOtherEntity;
 import com.pryzmm.splitself.events.EventManager;
@@ -93,6 +94,7 @@ public class SplitSelf implements ModInitializer {
 		ServerLifecycleEvents.SERVER_STARTED.register(this::onServerStarted);
 
 		ServerTickEvents.END_SERVER_TICK.register(EventManager::onTick);
+        ServerTickEvents.END_SERVER_TICK.register(LimboLevitation::onTick);
 
 		FabricDefaultAttributeRegistry.register(ModEntities.TheOther, TheOtherEntity.createAttributes());
 

@@ -262,6 +262,8 @@ public class EventManager {
                 player.getServer().getOverworld().setTimeOfDay(0);
                 if (player.getWorld() == player.getServer().getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY)) {
                     assert player.getSpawnPointPosition() != null;
+                    player.removeStatusEffect(StatusEffects.SLOW_FALLING);
+                    player.removeStatusEffect(StatusEffects.LEVITATION);
                     player.teleport(player.getServer().getWorld(player.getSpawnPointDimension()), player.getSpawnPointPosition().getX(), player.getSpawnPointPosition().getY() + 0.5625, player.getSpawnPointPosition().getZ(), null, 0, 0);
                 }
                 player.changeGameMode(GameMode.SURVIVAL);
