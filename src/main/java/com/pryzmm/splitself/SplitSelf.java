@@ -105,6 +105,13 @@ public class SplitSelf implements ModInitializer {
             }
         });
 
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            if (BackgroundManager.getUserBackground() != null &&
+                    Objects.equals(BackgroundManager.getCurrentBackground(), BackgroundManager.getModBackground())) {
+                BackgroundManager.restoreUserBackground();
+            }
+        }));
+
 		ServerMessageEvents.CHAT_MESSAGE.register((message, messageSender, params) -> {
 			EventManager.runChatEvent(messageSender, message.getContent().getString());
 		});
