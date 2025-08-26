@@ -222,6 +222,7 @@ public class EventManager {
             else if (playerName.equalsIgnoreCase("rekrap2")) {return("Parker Jerry Marriott");}
             else if (playerName.equalsIgnoreCase("dream")) {return("Clay");}
             else if (playerName.equalsIgnoreCase("itzmiai_21")) {return("M1keyz");}
+            else if (playerName.equalsIgnoreCase("zachbealetv")) {return("Zach Beale");}
             if (currentTracker != null && !currentTracker.getPlayerPII(player.getUuid())) {
                 return(SplitSelf.translate("events.splitself.redacted_name").getString());
             } else {
@@ -272,11 +273,12 @@ public class EventManager {
             }
         }).start());
     }
-    public static void runChatEvent(PlayerEntity player, String message) {
+    public static void runChatEvent(PlayerEntity player, String rawMessage) {
         new Thread(() -> {
             try {
                 Thread.sleep((int) (Math.random() * 7000) + 3000);
                 PlayerManager playerManager = Objects.requireNonNull(player.getServer()).getPlayerManager();
+                String message = rawMessage.replace("?", "").replace("!", "").replace(".", "");
                 if (message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.control").getString())) {playerManager.broadcast(Text.literal("<" + player.getName().getString() + "> " + SplitSelf.translate("chat.splitself.response.control").getString()), false);}
                 else if (message.equalsIgnoreCase(player.getName().getString())) {playerManager.broadcast(Text.literal("<" + player.getName().getString() + "> " + SplitSelf.translate("chat.splitself.response.nameConflict").getString()), false);}
                 else if (message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.tethered").getString())) {playerManager.broadcast(Text.literal("<" + player.getName().getString() + "> " + SplitSelf.translate("chat.splitself.response.tethered").getString()), false);}
@@ -407,7 +409,7 @@ public class EventManager {
                 new Thread(() -> client.execute(() -> {
                     EntityScreenshotCapture capture = new EntityScreenshotCapture();
                     capture.captureFromEntity(player, client.getWindow().getScaledWidth(), client.getWindow().getScaledHeight(), (file) -> {
-                        world.playSound(null, Objects.requireNonNull(player).getBlockPos(), ModSounds.STATICSCREAM, SoundCategory.MASTER, 0.6f, 1.0f);
+                        world.playSound(null, Objects.requireNonNull(player).getBlockPos(), ModSounds.STATICSCREAM, SoundCategory.MASTER, 1f, 1.0f);
                         ScreenOverlay.executeFrozenScreen(file);
                     });
                 })).start();
