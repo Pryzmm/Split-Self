@@ -2,6 +2,7 @@ package com.pryzmm.splitself.entity.client;
 
 import com.pryzmm.splitself.entity.ModEntities;
 import com.pryzmm.splitself.entity.custom.TheOtherEntity;
+import com.pryzmm.splitself.world.DimensionRegistry;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
@@ -19,10 +20,12 @@ public class TheOtherSpawner {
     public static Position[] spawnPositions = null;
 
     public static void trySpawnTheOther(ServerWorld world, PlayerEntity player) {
+        if (spawnPositions == null || spawnPositions.length == 0) {
+            return;
+        }
 
         for (int attempt = 0; attempt < 100; attempt++) {
-            java.util.Random randomPos = new java.util.Random();
-            Position prevPlayerPos = spawnPositions[randomPos.nextInt(spawnPositions.length)];
+            Position prevPlayerPos = spawnPositions[world.getRandom().nextInt(spawnPositions.length)];
             Random random = world.getRandom();
             double spawnX = prevPlayerPos.getX();
             double spawnY = prevPlayerPos.getY();

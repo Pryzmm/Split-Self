@@ -4,31 +4,37 @@ import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.events.ScreenOverlay;
 import com.pryzmm.splitself.sound.ModSounds;
 import com.pryzmm.splitself.world.DimensionRegistry;
-import net.minecraft.entity.AnimationState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.goal.LookAtEntityGoal;
-import net.minecraft.entity.ai.goal.SwimGoal;
+import net.minecraft.entity.*;
+import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageTypes;
+import net.minecraft.entity.data.DataTracker;
+import net.minecraft.entity.data.TrackedData;
+import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.text.Text;
+import net.minecraft.util.Util;
+import net.minecraft.world.LocalDifficulty;
+import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
-
+import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 public class TheOtherEntity extends HostileEntity {
+
+    private static final TrackedData<Integer> DATA_ID_TYPE_VARIANT =
+            DataTracker.registerData(TheOtherEntity.class, TrackedDataHandlerRegistry.INTEGER);
 
     public final AnimationState idleAnimationState = new AnimationState();
 
@@ -37,19 +43,53 @@ public class TheOtherEntity extends HostileEntity {
     private static final int PLAYER_UPDATE_INTERVAL = 20;
     public static Map<Entity, Integer> toBeDiscarded = new HashMap<>();
 
-    @Override
-    protected void initGoals() {
-        this.goalSelector.add(0, new SwimGoal(this));
-        this.goalSelector.add(1, new LookAtEntityGoal(this, PlayerEntity.class, 100.0F, 1F));
+    private void setupGoals() {
+        TheOtherVariant variant = this.getVariant();
+        switch (variant) {
+            case TWITCHING:
+                System.out.println("Twitching variant");
+                this.goalSelector.add(0, new SwimGoal(this));
+                this.goalSelector.add(1, new MeleeAttackGoal(this, 1.0, false));
+                this.targetSelector.add(1, new ActiveTargetGoal<>(this, PlayerEntity.class, false));
+                this.goalSelector.add(2, new WanderAroundGoal(this, 1F));
+                this.goalSelector.add(3, new LookAtEntityGoal(this, PlayerEntity.class, 100.0F, 1F));
+                break;
+            case DEFAULT:
+                System.out.println("Default variant");
+            default:
+                System.out.println("Default case");
+                this.goalSelector.add(0, new SwimGoal(this));
+                this.goalSelector.add(3, new LookAtEntityGoal(this, PlayerEntity.class, 100.0F, 1F));
+                break;
+        }
     }
 
     public static DefaultAttributeContainer.Builder createAttributes() {
         return MobEntity.createMobAttributes()
-                .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 0)
-                .add(EntityAttributes.GENERIC_JUMP_STRENGTH, 0)
+                .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 100)
                 .add(EntityAttributes.GENERIC_MAX_HEALTH, 1024)
-                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0)
-                .add(EntityAttributes.GENERIC_GRAVITY, 0);
+                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 0);
+    }
+
+    private void applyVariantAttributes() {
+        TheOtherVariant variant = this.getVariant();
+        World world = this.getWorld();
+        if (world == Objects.requireNonNull(this.getServer()).getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY)) {
+            Objects.requireNonNull(this.getAttributeInstance(EntityAttributes.GENERIC_GRAVITY)).setBaseValue(0);
+        }
+        switch (variant) {
+            case TWITCHING:
+                Objects.requireNonNull(this.getAttributeInstance(EntityAttributes.GENERIC_JUMP_STRENGTH)).setBaseValue(0.42);
+                Objects.requireNonNull(this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED)).setBaseValue(0.5);
+                Objects.requireNonNull(this.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE)).setBaseValue(10);
+                Objects.requireNonNull(this.getAttributeInstance(EntityAttributes.GENERIC_WATER_MOVEMENT_EFFICIENCY)).setBaseValue(10);
+                break;
+            case DEFAULT:
+            default:
+                Objects.requireNonNull(this.getAttributeInstance(EntityAttributes.GENERIC_JUMP_STRENGTH)).setBaseValue(0);
+                Objects.requireNonNull(this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED)).setBaseValue(0);
+                break;
+        }
     }
 
     public PlayerEntity getNearestPlayer() {
@@ -58,7 +98,6 @@ public class TheOtherEntity extends HostileEntity {
 
     public void tick() {
         super.tick();
-
         if (this.getWorld().isClient()) {
             this.idleAnimationState.startIfNotRunning(this.age);
             if (this.playerUpdateTimer <= 0) {
@@ -76,7 +115,6 @@ public class TheOtherEntity extends HostileEntity {
         );
 
         if (!this.getWorld().isClient && this.getWorld() == this.getWorld().getServer().getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY)) {
-            this.noClip = true;
             for (PlayerEntity player : nearbyPlayers) {
                 double distance = this.distanceTo(player);
                 if (distance < 3.0) {
@@ -117,5 +155,44 @@ public class TheOtherEntity extends HostileEntity {
 
     public TheOtherEntity(EntityType<? extends HostileEntity> entityType, World world) {
         super(entityType, world);
+    }
+
+    @Override
+    protected void initDataTracker(DataTracker.Builder builder) {
+        super.initDataTracker(builder);
+        builder.add(DATA_ID_TYPE_VARIANT, 0);
+    }
+
+    public TheOtherVariant getVariant() {
+        return TheOtherVariant.byId(this.getTypeVariant() & 255);
+    }
+
+    private int getTypeVariant() {
+        return this.dataTracker.get(DATA_ID_TYPE_VARIANT);
+    }
+
+    private void setTypeVariant(TheOtherVariant variant) {
+        this.dataTracker.set(DATA_ID_TYPE_VARIANT, variant.getId() & 255);
+    }
+
+    @Override
+    public void writeCustomDataToNbt(NbtCompound nbt) {
+        super.writeCustomDataToNbt(nbt);
+        nbt.putInt("Variant", this.getTypeVariant());
+    }
+
+    @Override
+    public void readCustomDataFromNbt(NbtCompound nbt) {
+        super.readCustomDataFromNbt(nbt);
+        this.dataTracker.set(DATA_ID_TYPE_VARIANT, nbt.getInt("Variant"));
+    }
+
+    @Override
+    public @Nullable EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData) {
+        TheOtherVariant variant = Util.getRandom(TheOtherVariant.values(), this.getRandom());
+        setTypeVariant(variant);
+        applyVariantAttributes();
+        setupGoals();
+        return super.initialize(world, difficulty, spawnReason, entityData);
     }
 }

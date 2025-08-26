@@ -5,6 +5,7 @@ import com.pryzmm.splitself.entity.custom.TheOtherEntity;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.model.*;
 import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.render.entity.animation.Animation;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.client.render.entity.model.SinglePartEntityModel;
 import net.minecraft.util.Identifier;
@@ -74,8 +75,18 @@ public class TheOtherModel<T extends TheOtherEntity> extends SinglePartEntityMod
     public void setAngles(TheOtherEntity entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
         this.getPart().traverse().forEach(ModelPart::resetTransform);
         this.setHeadAngles(headYaw, headPitch);
-
-        this.updateAnimation(entity.idleAnimationState, TheOtherAnimations.ANIM_THE_OTHER_IDLE, animationProgress);
+        Animation idleAnimation;
+        switch (entity.getVariant()) {
+            case TWITCHING:
+                idleAnimation = TheOtherAnimations.ANIM_THE_OTHER_TWITCH;
+                break;
+            case DEFAULT:
+            default:
+                idleAnimation = TheOtherAnimations.ANIM_THE_OTHER_IDLE;
+                break;
+        }
+        this.animateMovement(TheOtherAnimations.ANIM_THE_OTHER_RUN, limbAngle, limbDistance, 1f, 1f);
+        this.updateAnimation(entity.idleAnimationState, idleAnimation, animationProgress);
     }
 
     public ModelPart getPart() {
