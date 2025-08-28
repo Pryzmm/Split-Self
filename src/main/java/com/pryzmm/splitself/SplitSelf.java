@@ -2,7 +2,7 @@ package com.pryzmm.splitself;
 
 import com.pryzmm.splitself.block.ModBlocks;
 import com.pryzmm.splitself.command.SplitSelfCommands;
-import com.pryzmm.splitself.config.SplitSelfConfig;
+import com.pryzmm.splitself.file.JsonReader;
 import com.pryzmm.splitself.dimension.LimboLevitation;
 import com.pryzmm.splitself.entity.ModEntities;
 import com.pryzmm.splitself.entity.custom.TheOtherEntity;
@@ -78,12 +78,17 @@ public class SplitSelf implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		SplitSelfConfig.reload();
-		SplitSelfConfig config = SplitSelfConfig.getInstance();
 
-		LOGGER.info("Configuration loaded. Values: eventsEnabled={}, eventTickInterval={}, eventChance={}, eventCooldown={}, startEventsAfter={}",
-				config.isEventsEnabled(), config.getEventTickInterval(), config.getEventChance(),
-				config.getEventCooldown(), config.getStartEventsAfter());
+        MinecraftClient client = MinecraftClient.getInstance();
+
+        JsonReader config = new JsonReader("splitself.json5");
+
+        //SplitSelfConfig.reload();
+		//SplitSelfConfig config = SplitSelfConfig.getInstance();
+
+		//LOGGER.info("Configuration loaded. Values: eventsEnabled={}, eventTickInterval={}, eventChance={}, eventCooldown={}, startEventsAfter={}",
+		//		config.isEventsEnabled(), config.getEventTickInterval(), config.getEventChance(),
+		//		config.getEventCooldown(), config.getStartEventsAfter());
 
 		ModEntities.registerModEntities();
 		ModSounds.registerSounds();
@@ -122,7 +127,6 @@ public class SplitSelf implements ModInitializer {
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
 			ServerPlayerEntity player = handler.getPlayer();
 			DataTracker joinTracker = DataTracker.getServerState(server);
-			MinecraftClient client = MinecraftClient.getInstance();
 			if (!joinTracker.hasJoinedBefore(player.getUuid())) {
 				joinTracker.markAsJoined(player.getUuid());
 				new Thread(() -> {

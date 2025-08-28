@@ -13,14 +13,13 @@ import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-
-import java.util.Random;
 
 public class SplitSelfClient implements ClientModInitializer {
     @Override
@@ -58,7 +57,7 @@ public class SplitSelfClient implements ClientModInitializer {
         });
     }
 
-    private ButtonWidget findButtonByText(TitleScreen screen, String translation) {
+    public static ButtonWidget findButtonByText(Screen screen, String translation) {
         return screen.children().stream()
                 .filter(element -> element instanceof ButtonWidget)
                 .map(element -> (ButtonWidget) element)

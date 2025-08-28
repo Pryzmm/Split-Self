@@ -35,7 +35,7 @@
   "command.splitself.unknown_value": "...",
   "command.splitself.invalid_value": "Nein.",
 
-  "config.splitself.title": "Split Self-Konfiguration",
+  "config.splitself.title": "Split Self-Konfiguration...",
   "config.splitself.category.events": "Ereigniseinstellungen",
   "config.splitself.category.events.tooltip": "Konfiguration des Verhaltens und des Zeitpunkts von Ereignissen",
   "config.splitself.group.event_weights": "Ereignisgewichtung",

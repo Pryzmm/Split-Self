@@ -23,7 +23,7 @@
 			"com.pryzmm.splitself.SplitSelfClient"
 		],
 		"modmenu": [
-			"com.pryzmm.splitself.config.ModMenuApiImpl"
+          "com.pryzmm.splitself.config.ModMenuApiImpl"
 		]
 	},
 	"mixins": [

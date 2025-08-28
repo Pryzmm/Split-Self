@@ -3,18 +3,19 @@ package com.pryzmm.splitself.config;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ConfigDefaults {
+public class DefaultConfig {
 
-    public static final boolean DEFAULT_EVENTS_ENABLED = true;
-    public static final int DEFAULT_EVENT_TICK_INTERVAL = 60;
-    public static final double DEFAULT_EVENT_CHANCE = 0.01;
-    public static final int DEFAULT_EVENT_COOLDOWN = 600;
-    public static final int DEFAULT_START_EVENTS_AFTER = 3000;
-    public static final int DEFAULT_GUARANTEED_EVENT = 15600;
+    public static boolean eventsEnabled = true;
+    public static int eventTickInterval = 60;
+    public static double eventChance = 0.01;
+    public static int eventCooldown = 600;
+    public static int startEventsAfter = 3000;
+    public static int guaranteedEvent = 15600;
+    public static int repeatEventsAfter = 5;
 
-    private static final Map<String, Integer> DEFAULT_EVENT_WEIGHTS = createDefaultEventWeights();
-    private static final Map<String, Integer> DEFAULT_EVENT_STAGES = createDefaultEventStages();
-    private static final Map<String, Boolean> DEFAULT_ONE_TIME_EVENTS = createDefaultOneTimeEvents();
+    public static Map<String, Integer> eventWeights = createDefaultEventWeights();
+    public static Map<String, Integer> eventStages = createDefaultEventStages();
+    public static Map<String, Boolean> oneTimeEvents = createDefaultOneTimeEvents();
 
     private static Map<String, Integer> createDefaultEventWeights() {
         Map<String, Integer> weights = new HashMap<>();
@@ -136,12 +137,13 @@ public class ConfigDefaults {
         return oneTimers;
     }
 
-    public static Map<String, Integer> getDefaultEventWeights() {return new HashMap<>(DEFAULT_EVENT_WEIGHTS);}
-    public static int getDefaultEventWeight(String eventName) {return DEFAULT_EVENT_WEIGHTS.getOrDefault(eventName, 10);}
+    public static Map<String, Integer> getDefaultEventWeights() {return new HashMap<>(eventWeights);}
+    public static int getDefaultEventWeight(String eventName) {return eventWeights.getOrDefault(eventName, 10);}
 
-    public static Map<String, Integer> getDefaultEventStages() {return new HashMap<>(DEFAULT_EVENT_STAGES);}
-    public static int getDefaultEventStage(String eventName) {return DEFAULT_EVENT_STAGES.getOrDefault(eventName, 0);}
+    public static Map<String, Integer> getDefaultEventStages() {return new HashMap<>(eventStages);}
+    public static int getDefaultEventStage(String eventName) {return eventStages.getOrDefault(eventName, 0);}
 
-    public static Map<String, Boolean> getDefaultOneTimeEvents() {return new HashMap<>(DEFAULT_ONE_TIME_EVENTS);}
-    public static Boolean getDefaultOneTimeEvents(String eventName) {return DEFAULT_ONE_TIME_EVENTS.getOrDefault(eventName, false);}
+    public static Map<String, Boolean> getDefaultOneTimeEvents() {return new HashMap<>(oneTimeEvents);}
+    public static Boolean getDefaultOneTimeEvents(String eventName) {return oneTimeEvents.getOrDefault(eventName, false);}
+
 }

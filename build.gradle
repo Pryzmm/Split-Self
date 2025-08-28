@@ -12,11 +12,6 @@ base {
 
 repositories {
 	maven {
-		name 'Xander Maven'
-		url 'https://maven.isxander.dev/releases'
-	}
-
-	maven {
 		name = "Terraformers"
 		url = "https://maven.terraformersmc.com/"
 	}
@@ -39,9 +34,10 @@ dependencies {
 	include 'com.maxmind.geoip2:geoip2:4.0.1'
 	implementation 'com.maxmind.db:maxmind-db:3.0.0'
 	include 'com.maxmind.db:maxmind-db:3.0.0'
+    implementation 'com.google.code.gson:gson:2.10.1'
+    include 'com.google.code.gson:gson:2.10.1'
 
-	modImplementation "com.terraformersmc:modmenu:${project.mod_menu_version}"
-	modImplementation "dev.isxander:yet-another-config-lib:${project.yaclConfigVersion}"
+    modImplementation "com.terraformersmc:modmenu:${project.mod_menu_version}"
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"

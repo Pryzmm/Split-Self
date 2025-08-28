@@ -36,7 +36,7 @@
   "command.splitself.unknown_value": "...",
   "command.splitself.invalid_value": "Não.",
 
-  "config.splitself.title": "Configurações do Split Self",
+  "config.splitself.title": "Configurações do Split Self...",
   "config.splitself.category.events": "Configurar Eventos",
   "config.splitself.category.events.tooltip": "Ajuste o comportamento e o tempo entre eventos",
   "config.splitself.group.event_weights": "Pesos dos Eventos",

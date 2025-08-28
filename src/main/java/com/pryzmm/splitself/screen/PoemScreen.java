@@ -68,7 +68,7 @@ public class PoemScreen extends Screen {
 
     @Override
     public boolean shouldPause() {
-        return false;
+        return true;
     }
 }
 

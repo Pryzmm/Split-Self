@@ -2,7 +2,8 @@ package com.pryzmm.splitself.events;
 
 import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.block.ModBlocks;
-import com.pryzmm.splitself.config.SplitSelfConfig;
+import com.pryzmm.splitself.config.DefaultConfig;
+import com.pryzmm.splitself.file.JsonReader;
 import com.pryzmm.splitself.entity.ModEntities;
 import com.pryzmm.splitself.entity.client.TheOtherSpawner;
 import com.pryzmm.splitself.entity.custom.TheOtherEntity;
@@ -101,17 +102,17 @@ public class EventManager {
     public static boolean WINDOW_MANIPULATION_ACTIVE = false;
     public static boolean PAUSE_SHAKE = false;
 
+    public static JsonReader jsonReader = new JsonReader("splitself.json5");
+
     public static Identifier CURRENT_FRAME_TEXTURE = null;
 
-    public static SplitSelfConfig config = SplitSelfConfig.getInstance();
-    public static int GUARANTEED_EVENT = config.getGuaranteedEvent();
+    public static boolean EVENTS_ENABLED = JsonReader.getBoolean("eventsEnabled", DefaultConfig.eventsEnabled);
+    public static int TICK_INTERVAL = JsonReader.getInt("eventTickInterval", DefaultConfig.eventTickInterval);
+    public static double EVENT_CHANCE = JsonReader.getDouble("eventChance", DefaultConfig.eventChance);
+    public static double START_AFTER = JsonReader.getDouble("startEventsAfter", DefaultConfig.startEventsAfter);
+    public static double GUARANTEED_EVENT = JsonReader.getDouble("guaranteedEvent", DefaultConfig.guaranteedEvent);
 
     public static void onTick(MinecraftServer server) {
-        SplitSelfConfig config = SplitSelfConfig.getInstance();
-        int TICK_INTERVAL = config.getEventTickInterval();
-        double EVENT_CHANCE = config.getEventChance();
-        int START_AFTER = config.getStartEventsAfter();
-        boolean EVENTS_ENABLED = config.isEventsEnabled();
 
         if (!EVENTS_ENABLED) {
             return;
@@ -149,18 +150,18 @@ public class EventManager {
 
             if (world.getRandom().nextDouble() < EVENT_CHANCE || GUARANTEED_EVENT == 0) {
                 triggerRandomEvent(world, world.getRandomAlivePlayer(), null, false);
-                CURRENT_COOLDOWN = SplitSelfConfig.getInstance().getEventCooldown();
-                GUARANTEED_EVENT = SplitSelfConfig.getInstance().getGuaranteedEvent();
+                CURRENT_COOLDOWN = JsonReader.getInt("eventCooldown", DefaultConfig.eventCooldown);
+                GUARANTEED_EVENT = JsonReader.getInt("guaranteedEvent", DefaultConfig.guaranteedEvent);
             }
         }
     }
 
     private static Events selectWeightedEvent(Random random, PlayerEntity player) {
-        SplitSelfConfig config = SplitSelfConfig.getInstance();
         DataTracker dataTracker = DataTracker.getServerState(Objects.requireNonNull(player.getServer()));
-        Map<String, Integer> configWeights = config.getEventWeights();
-        Map<String, Integer> configStages = config.getEventStages();
-        Map<String, Boolean> configOneTimeEvents = config.getOneTimeEvents();
+        Map<String, Integer> configWeights = jsonReader.getMap("eventWeights", Integer.class);
+        Map<String, Integer> configStages = jsonReader.getMap("eventStages", Integer.class);
+        Map<String, Boolean> configOneTimeEvents = jsonReader.getMap("oneTimeEvents", Boolean.class);
+
         Map<Events, Integer> eventWeights = new HashMap<>();
 
         for (Events event : Events.values()) {
@@ -751,7 +752,7 @@ public class EventManager {
                             if (!client.getWindow().isFullscreen()) {
                                 break;
                             }
-                            System.out.println("Game is still in fullscrreen, waiting 50 milliseoncds... attenpt: " + (i + 1));
+                            System.out.println("Game is still in fullscreen, waiting 50 milliseconds... attempt: " + (i + 1));
                             Thread.sleep(50);
                         }
                         if (!client.getWindow().isFullscreen()) {
