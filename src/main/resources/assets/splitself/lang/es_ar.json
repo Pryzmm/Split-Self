@@ -57,11 +57,14 @@
   "config.splitself.event_cooldown.description": "Que tan largo sera el enfriamiento antes de que otro evento pueda ocurrir",
   "config.splitself.start_events_after": "Retraso de comienzo de Eventos",
   "config.splitself.start_events_after.description": "Cuanto tiempo antes de que eventos puedan empezar a ocurrir en ticks",
+  "config.splitself.event_until_repeat": "Events Until Repeat",
+  "config.splitself.event_until_repeat.description": "How many events can happen before a previously activated event can happen again",
   "config.splitself.guaranteed_event": "Garantizar Evento Despues de",
   "config.splitself.guaranteed_event.description": "Cuanto tiempo debe pasar sin ocurrir nada para que se fuerce un evento a ocurrir",
   "config.splitself.weight_value_title": "Preferencia por el evento %s",
   "config.splitself.stage_value_title": "Fase de activacion para el evento %s",
   "config.splitself.one_time_event_value_title": "¿Puede el evento %s activarse varias veces por sesion?",
+  "config.splitself.numeric_value": "Input a number... (%s-%s)",
 
   "entity.splitself.the_other": "Tu otro",
 

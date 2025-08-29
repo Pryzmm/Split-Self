@@ -57,11 +57,14 @@
   "config.splitself.event_cooldown.description": "Długość czasu odnawianie zanim kolejne wydarzenie może się wydarzyć",
   "config.splitself.start_events_after": "Opóźnienie Rozpoczęcia Wydarzenia",
   "config.splitself.start_events_after.description": "Jak długo zanim wydarzenia mogą się zacząć w tickach",
+  "config.splitself.event_until_repeat": "Events Until Repeat",
+  "config.splitself.event_until_repeat.description": "How many events can happen before a previously activated event can happen again",
   "config.splitself.guaranteed_event": "Gwarantowane Wydarzenie po",
   "config.splitself.guaranteed_event.description": "Jak długo zanim wydarzenie jest gwarantowane po ilości nieaktywności",
   "config.splitself.weight_value_title": "Waga dla wydarzenia %s",
   "config.splitself.stage_value_title": "Etap do aktywacji wydarzenia %s",
   "config.splitself.one_time_event_value_title": "Czy wydarzenie %s może wystąpić wielokrotnie podczas sesji?",
+  "config.splitself.numeric_value": "Input a number... (%s-%s)",
 
   "entity.splitself.the_other": "Ten Inny",
 

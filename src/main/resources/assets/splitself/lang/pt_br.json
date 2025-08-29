@@ -57,11 +57,14 @@
   "config.splitself.event_cooldown.description": "Intervalo antes de outro evento poder ocorrer.",
   "config.splitself.start_events_after": "Delay para Início",
   "config.splitself.start_events_after.description": "Tempo (em ticks) até os eventos começarem a aparecer.",
+  "config.splitself.event_until_repeat": "Events Until Repeat",
+  "config.splitself.event_until_repeat.description": "How many events can happen before a previously activated event can happen again",
   "config.splitself.guaranteed_event": "Evento Garantido Após",
   "config.splitself.guaranteed_event.description": "Quanto tempo sem eventos até um ser forçado a acontecer.",
   "config.splitself.weight_value_title": "Peso para o evento '%s'",
   "config.splitself.stage_value_title": "Estágio para ativar o evento '%s'",
   "config.splitself.one_time_event_value_title": "O evento '%s' pode ocorrer várias vezes na sessão?",
+  "config.splitself.numeric_value": "Input a number... (%s-%s)",
 
   "entity.splitself.the_other": "O Outro",
 
