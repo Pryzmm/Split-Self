@@ -83,7 +83,6 @@ public class EventManager {
         KICK,
         SIGN,
         SCALE,
-        CAMERA,
         FREEDOM,
         MINE,
         DOOR,
@@ -613,18 +612,6 @@ public class EventManager {
                     client.options.getChatScale().setValue(OldScale);
                 }).start();
                 break;
-            case CAMERA:
-                new Thread(() -> {
-                    for (int i = 0; i <= 400; i++) {
-                        try {
-                            assert client.player != null;
-                            client.player.setYaw(client.player.getYaw() + (int) ((Math.random() * 6) - 3));
-                            client.player.setPitch(client.player.getPitch() + (int) ((Math.random() * 6) - 3));
-                            Thread.sleep(25);
-                        } catch (Exception ignored) {}
-                    }
-                }).start();
-                break;
             case FREEDOM:
                 new Thread(() -> {
                     try {
@@ -782,6 +769,8 @@ public class EventManager {
                                 int yPos = (screenHeight - currentHeight) / 2;
                                 GLFW.glfwSetWindowSize(glfwWindow, currentWidth, currentHeight);
                                 GLFW.glfwSetWindowPos(glfwWindow, xPos, yPos);
+                                client.player.setYaw(client.player.getYaw() + (int) ((Math.random() * 6) - 3));
+                                client.player.setPitch(client.player.getPitch() + (int) ((Math.random() * 6) - 3));
                                 Thread.sleep(20);
                             }
                             Random shakeRandom = new Random();
@@ -796,6 +785,8 @@ public class EventManager {
                                 int shakeX = currentPosX[0] + shakeRandom.nextInt(shakeIntensity * 2) - shakeIntensity;
                                 int shakeY = currentPosY[0] + shakeRandom.nextInt(shakeIntensity * 2) - shakeIntensity;
                                 GLFW.glfwSetWindowPos(glfwWindow, shakeX, shakeY);
+                                client.player.setYaw(client.player.getYaw() + (int) ((Math.random() * 6) - 3));
+                                client.player.setPitch(client.player.getPitch() + (int) ((Math.random() * 6) - 3));
                                 Thread.sleep(20);
                             }
                             client.getSoundManager().stopSounds(ModSounds.RUMBLE2.getId(), SoundCategory.MASTER);

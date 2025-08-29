@@ -45,7 +45,6 @@ public class DefaultConfig {
         weights.put("KICK", 5);
         weights.put("SIGN", 10);
         weights.put("SCALE", 10);
-        weights.put("CAMERA", 10);
         weights.put("FREEDOM", 5);
         weights.put("MINE", 10);
         weights.put("DOOR", 10);
@@ -85,7 +84,6 @@ public class DefaultConfig {
         stages.put("KICK", 1);
         stages.put("SIGN", 0);
         stages.put("SCALE", 1);
-        stages.put("CAMERA", 0);
         stages.put("FREEDOM", 2);
         stages.put("MINE", 0);
         stages.put("DOOR", 0);
@@ -125,7 +123,6 @@ public class DefaultConfig {
         oneTimers.put("KICK", false);
         oneTimers.put("SIGN", false);
         oneTimers.put("SCALE", false);
-        oneTimers.put("CAMERA", false);
         oneTimers.put("FREEDOM", false);
         oneTimers.put("MINE", false);
         oneTimers.put("DOOR", false);

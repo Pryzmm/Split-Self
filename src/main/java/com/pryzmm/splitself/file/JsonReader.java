@@ -26,6 +26,7 @@ public class JsonReader {
                 if (element.isJsonObject()) {
                     jsonObject = element.getAsJsonObject();
                     fillMissingDefaults();
+                    removeNonDefaultKeys();
                 } else {
                     createDefaultConfig();
                 }
@@ -38,43 +39,11 @@ public class JsonReader {
         }
     }
 
-    public static Set<String> getAllKeys() {
-        return jsonObject.keySet();
-    }
-
-    // Get all keys as a List (if you prefer List over Set)
-    public static List<String> getAllKeysAsList() {
-        return new ArrayList<>(jsonObject.keySet());
-    }
-
-    // Get all keys from a nested JSON object
     public static Set<String> getKeysFromObject(String objectKey) {
         if (jsonObject.has(objectKey) && jsonObject.get(objectKey).isJsonObject()) {
             return jsonObject.getAsJsonObject(objectKey).keySet();
         }
         return new HashSet<>();
-    }
-
-    // Get size of an array
-    public static int getArraySize(String arrayKey) {
-        if (jsonObject.has(arrayKey) && jsonObject.get(arrayKey).isJsonArray()) {
-            return jsonObject.getAsJsonArray(arrayKey).size();
-        }
-        return 0;
-    }
-
-    // Get all values from a string array (if that's what you meant)
-    public static List<String> getStringArray(String arrayKey) {
-        List<String> result = new ArrayList<>();
-        if (jsonObject.has(arrayKey) && jsonObject.get(arrayKey).isJsonArray()) {
-            JsonArray array = jsonObject.getAsJsonArray(arrayKey);
-            for (JsonElement element : array) {
-                if (element.isJsonPrimitive()) {
-                    result.add(element.getAsString());
-                }
-            }
-        }
-        return result;
     }
 
     private void createDefaultConfig() {
@@ -114,6 +83,61 @@ public class JsonReader {
         }
         if (hasChanges) {
             saveConfig();
+        }
+    }
+
+    private void removeNonDefaultKeys() {
+        boolean hasChanges = false;
+        Set<String> validKeys = new HashSet<>();
+        Field[] fields = DefaultConfig.class.getDeclaredFields();
+        for (Field field : fields) {
+            if (java.lang.reflect.Modifier.isStatic(field.getModifiers())) {
+                validKeys.add(field.getName());
+            }
+        }
+        Set<String> keysToRemove = new HashSet<>();
+        for (String key : jsonObject.keySet()) {
+            if (!validKeys.contains(key)) {
+                keysToRemove.add(key);
+                hasChanges = true;
+            }
+        }
+        for (String key : keysToRemove) {
+            jsonObject.remove(key);
+            System.out.println("Removed invalid config key: " + key);
+        }
+        for (Field field : fields) {
+            if (java.lang.reflect.Modifier.isStatic(field.getModifiers())) {
+                field.setAccessible(true);
+                try {
+                    String fieldName = field.getName();
+                    Object defaultValue = field.get(null);
+                    if (defaultValue instanceof Map && jsonObject.has(fieldName)
+                            && jsonObject.get(fieldName).isJsonObject()) {
+                        @SuppressWarnings("unchecked")
+                        Map<String, Object> defaultMap = (Map<String, Object>) defaultValue;
+                        JsonObject configMapJson = jsonObject.getAsJsonObject(fieldName);
+                        Set<String> invalidMapKeys = new HashSet<>();
+                        for (String configKey : configMapJson.keySet()) {
+                            if (!defaultMap.containsKey(configKey)) {
+                                invalidMapKeys.add(configKey);
+                                hasChanges = true;
+                            }
+                        }
+                        for (String invalidKey : invalidMapKeys) {
+                            configMapJson.remove(invalidKey);
+                            System.out.println("Removed invalid key '" + invalidKey
+                                    + "' from " + fieldName);
+                        }
+                    }
+                } catch (IllegalAccessException e) {
+                    System.err.println("Could not access field: " + field.getName());
+                }
+            }
+        }
+        if (hasChanges) {
+            saveConfig();
+            System.out.println("Config cleaned up - removed non-default keys");
         }
     }
 
@@ -181,10 +205,6 @@ public class JsonReader {
         return defaultValue;
     }
 
-    public static int getInt(String key) {
-        return getInt(key, 0);
-    }
-
     public static int getInt(String key, int defaultValue) {
         if (jsonObject.has(key) && !jsonObject.get(key).isJsonNull()) {
             return jsonObject.get(key).getAsInt();
@@ -192,19 +212,11 @@ public class JsonReader {
         return defaultValue;
     }
 
-    public static double getDouble(String key) {
-        return getDouble(key, 0.0);
-    }
-
     public static double getDouble(String key, double defaultValue) {
         if (jsonObject.has(key) && !jsonObject.get(key).isJsonNull()) {
             return jsonObject.get(key).getAsDouble();
         }
         return defaultValue;
-    }
-
-    public static boolean getBoolean(String key) {
-        return getBoolean(key, false);
     }
 
     public static boolean getBoolean(String key, boolean defaultValue) {
@@ -260,20 +272,6 @@ public class JsonReader {
         return false;
     }
 
-    public static int getIntFromArray(String arrayKey, int index) {
-        return getIntFromArray(arrayKey, index, 0);
-    }
-
-    public static int getIntFromArray(String arrayKey, int index, int defaultValue) {
-        if (jsonObject.has(arrayKey) && jsonObject.get(arrayKey).isJsonArray()) {
-            JsonArray array = jsonObject.getAsJsonArray(arrayKey);
-            if (index >= 0 && index < array.size()) {
-                return array.get(index).getAsInt();
-            }
-        }
-        return defaultValue;
-    }
-
     public void setInt(String key, int value) {
         jsonObject.addProperty(key, value);
     }
@@ -284,14 +282,6 @@ public class JsonReader {
 
     public void setBoolean(String key, boolean value) {
         jsonObject.addProperty(key, value);
-    }
-
-    public <T> void setMap(String key, Map<String, T> map) {
-        JsonObject mapObject = new JsonObject();
-        for (Map.Entry<String, T> entry : map.entrySet()) {
-            addValueToJson(mapObject, entry.getKey(), entry.getValue());
-        }
-        jsonObject.add(key, mapObject);
     }
 
     public void setIntInObject(String arrayKey, String configKey, int value) {
@@ -314,44 +304,5 @@ public class JsonReader {
             jsonObject.add(key, new JsonObject());
         }
         return jsonObject.getAsJsonObject(key);
-    }
-
-    public void addStringToArray(String arrayKey, String value) {
-        JsonArray array = getOrCreateArray(arrayKey);
-        array.add(value);
-    }
-
-    public void addIntToArray(String arrayKey, int value) {
-        JsonArray array = getOrCreateArray(arrayKey);
-        array.add(value);
-    }
-
-    private JsonArray getOrCreateArray(String key) {
-        if (!jsonObject.has(key) || !jsonObject.get(key).isJsonArray()) {
-            jsonObject.add(key, new JsonArray());
-        }
-        return jsonObject.getAsJsonArray(key);
-    }
-
-    private void ensureArraySize(JsonArray array, int minSize) {
-        while (array.size() < minSize) {
-            array.add(JsonNull.INSTANCE);
-        }
-    }
-
-    public boolean hasKey(String key) {
-        return jsonObject.has(key);
-    }
-
-    public void removeKey(String key) {
-        jsonObject.remove(key);
-    }
-
-    public JsonObject getJsonObject() {
-        return jsonObject;
-    }
-
-    public String toJsonString() {
-        return GSON.toJson(jsonObject);
     }
 }
