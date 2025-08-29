@@ -18,10 +18,14 @@ import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 public class SplitSelfClient implements ClientModInitializer {
+
+    public static PlayerEntity player;
+
     @Override
     public void onInitializeClient() {
         EntityModelLayerRegistry.registerModelLayer(TheOtherModel.THEOTHER, TheOtherModel::getTexturedModelData);
@@ -39,6 +43,7 @@ public class SplitSelfClient implements ClientModInitializer {
             if (!net.minecraft.util.Util.getOperatingSystem().toString().toLowerCase().contains("win")) {
                 client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("misc.splitself.windowsSupport").getString()).formatted(Formatting.RED), false);
             }
+            player = MinecraftClient.getInstance().player;
         });
 
         ScreenEvents.AFTER_INIT.register((client, screen, scaledWidth, scaledHeight) -> {
