@@ -37,13 +37,12 @@ public class ScrollingConfigScreen extends Screen {
 
     public void createElementListWidget() {
         this.elementList = this.addDrawableChild(new ElementList(
-                client, 0, this.height/2 - 110, this.width, this.height - 110
+                client, 0, 60, this.width, this.height - 110
         ));
         this.elementList.getRowWidth();
     }
 
     private void populateConfigOptions(String arrayID, InputType inputType) {
-        System.out.println(arrayID);
         for (String configKey : JsonReader.getKeysFromObject(arrayID)) {
             elementList.addEntry(new ElementList.DoubleButtonEntry(
                     configKey,
@@ -123,9 +122,7 @@ public class ScrollingConfigScreen extends Screen {
                 x + 100, y, 50, 20,
                 Text.literal("Submit"),
                 null,
-                button -> {
-                    submitPrompt(textFieldWidget, minimum, maximum, inputType, configKey);
-                }
+                button -> submitPrompt(textFieldWidget, minimum, maximum, inputType, configKey)
         ));
     }
 
