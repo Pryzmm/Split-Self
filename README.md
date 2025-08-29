@@ -14,7 +14,7 @@ To ensure the safety and authenticity of the Split Self mod, please download it 
 
 - [Modrinth](https://modrinth.com/mod/split-self)
 - [GitHub](https://github.com/Pryzmm/Split-Self)
-- [DIscord](https://discord.gg/bPpNGH6tbt)
+- [Discord](https://discord.gg/bPpNGH6tbt)
 
 Downloading the mod from any other source may compromise your device's security.
 
