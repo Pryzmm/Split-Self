@@ -1,6 +1,7 @@
 package com.pryzmm.splitself.entity.custom;
 
 import com.pryzmm.splitself.SplitSelf;
+import com.pryzmm.splitself.SplitSelfClient;
 import com.pryzmm.splitself.events.ScreenOverlay;
 import com.pryzmm.splitself.sound.ModSounds;
 import com.pryzmm.splitself.world.DimensionRegistry;
@@ -21,7 +22,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.text.Text;
-import net.minecraft.util.Util;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
@@ -128,7 +128,13 @@ public class TheOtherEntity extends HostileEntity {
         } else if (!this.getWorld().isClient && this.getWorld() != this.getWorld().getServer().getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY)) {
             for (PlayerEntity player : nearbyPlayers) {
                 double distance = this.distanceTo(player);
-                if (distance < 10.0 && !toBeDiscarded.containsKey(this)) {
+                double distanceMax;
+                if (this.getVariant() == TheOtherVariant.TWITCHING) {
+                    distanceMax = 4;
+                } else {
+                    distanceMax = 10;
+                }
+                if (distance < distanceMax && !toBeDiscarded.containsKey(this)) {
                     toBeDiscarded.put(this, 1);
                     ScreenOverlay.executeTheOtherScreen(player);
                     player.addStatusEffect(new StatusEffectInstance(StatusEffects.WITHER, 100, 1, false, false, false));
@@ -189,8 +195,13 @@ public class TheOtherEntity extends HostileEntity {
 
     @Override
     public @Nullable EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData) {
-        TheOtherVariant variant = Util.getRandom(TheOtherVariant.values(), this.getRandom());
-        setTypeVariant(variant);
+        com.pryzmm.splitself.world.DataTracker dataTracker = com.pryzmm.splitself.world.DataTracker.getServerState(Objects.requireNonNull(world.getServer()));
+        assert SplitSelfClient.player != null;
+        if (dataTracker.getPlayerSleepStage(SplitSelfClient.player.getUuid()) >= 2) {
+            setTypeVariant(TheOtherVariant.TWITCHING);
+        } else {
+            setTypeVariant(TheOtherVariant.DEFAULT);
+        }
         applyVariantAttributes();
         setupGoals();
         return super.initialize(world, difficulty, spawnReason, entityData);
