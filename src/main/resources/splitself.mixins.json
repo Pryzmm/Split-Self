@@ -7,6 +7,7 @@
     "GameMenuMixin",
     "OptionsScreenMixin",
     "PauseMixin",
+    "SignMixin",
     "WindowMixin",
     "WorldRendererMixin"
   ],

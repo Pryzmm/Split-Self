@@ -828,7 +828,6 @@ public class EventManager {
                         if (screenshotFiles != null && screenshotFiles.length > 0) {
                             Random random = new Random();
                             File randomScreenshot = screenshotFiles[random.nextInt(screenshotFiles.length)];
-
                             try {
                                 FrameFileManager.loadImageToFrame(randomScreenshot);
                                 SplitSelf.LOGGER.info("Loaded random screenshot to frame: {}", randomScreenshot.getName());
