@@ -108,8 +108,11 @@ public class EventManager {
     public static boolean EVENTS_ENABLED = JsonReader.getBoolean("eventsEnabled", DefaultConfig.eventsEnabled);
     public static int TICK_INTERVAL = JsonReader.getInt("eventTickInterval", DefaultConfig.eventTickInterval);
     public static double EVENT_CHANCE = JsonReader.getDouble("eventChance", DefaultConfig.eventChance);
-    public static double START_AFTER = JsonReader.getDouble("startEventsAfter", DefaultConfig.startEventsAfter);
-    public static double GUARANTEED_EVENT = JsonReader.getDouble("guaranteedEvent", DefaultConfig.guaranteedEvent);
+    public static double START_AFTER = JsonReader.getInt("startEventsAfter", DefaultConfig.startEventsAfter);
+    public static double GUARANTEED_EVENT = JsonReader.getInt("guaranteedEvent", DefaultConfig.guaranteedEvent);
+    public static double REPEAT_EVENTS_AFTER = JsonReader.getInt("repeatEventsAfter", DefaultConfig.repeatEventsAfter);
+    private static final Map<Events, Integer> eventLastTriggered = new HashMap<>();
+    private static int totalEventsTriggered = 0;
 
     public static void onTick(MinecraftServer server) {
 
@@ -159,19 +162,18 @@ public class EventManager {
         DataTracker dataTracker = DataTracker.getServerState(Objects.requireNonNull(player.getServer()));
         Map<String, Integer> configWeights = jsonReader.getMap("eventWeights", Integer.class);
         Map<String, Integer> configStages = jsonReader.getMap("eventStages", Integer.class);
-        Map<String, Boolean> configOneTimeEvents = jsonReader.getMap("oneTimeEvents", Boolean.class);
 
         Map<Events, Integer> eventWeights = new HashMap<>();
 
         for (Events event : Events.values()) {
             Integer weight = configWeights.get(event.name());
             Integer stage = configStages.get(event.name());
-            if (
-                    weight != null
-                    && weight > 0
+            Integer lastTriggered = eventLastTriggered.get(event);
+
+            if (weight != null && weight > 0
                     && stage <= dataTracker.getPlayerSleepStage(player.getUuid())
                     && !oneTimeEvents.containsKey(event)
-            ) {
+                    && (lastTriggered == null || (totalEventsTriggered - lastTriggered) >= REPEAT_EVENTS_AFTER)) {
                 eventWeights.put(event, weight);
             }
         }
@@ -184,23 +186,12 @@ public class EventManager {
         int randomWeight = random.nextInt(totalWeight);
         int currentWeight = 0;
 
-        System.out.println(configOneTimeEvents.entrySet());
-        System.out.println(configOneTimeEvents.get("UNDERGROUNDMINING"));
-
         for (Map.Entry<Events, Integer> entry : eventWeights.entrySet()) {
-            System.out.println(entry.getKey() + " " + entry.getValue());
-            System.out.println(configOneTimeEvents.get(entry.getKey().toString()));
             currentWeight += entry.getValue();
-            if (configOneTimeEvents.get(entry.getKey().toString()) && !oneTimeEvents.containsKey(entry.getKey())) {
-                System.out.println("contained entry.getKey() = " + entry.getKey());
-                oneTimeEvents.put(entry.getKey(), true);
-            } else {
-                System.out.println("did not contain entry.getKey() = " + entry.getKey());
-            }
             if (randomWeight < currentWeight) return entry.getKey();
         }
 
-        // Fallback (shouldn't reach here)
+        // Fallback event, in case something breaks
         return Events.SPAWNTHEOTHER;
     }
 
@@ -307,10 +298,12 @@ public class EventManager {
      *
      */
     public static void triggerRandomEvent(ServerWorld world, PlayerEntity player, Events ForceEvent, Boolean BypassWarning) {
+        totalEventsTriggered++;
+
         List<ServerPlayerEntity> players = world.getPlayers();
         if (players.isEmpty()) return;
 
-        if (player.getWorld() == Objects.requireNonNull(player.getServer()).getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY)) {return;} // no events in limbo dimension
+        if (player.getWorld() == Objects.requireNonNull(player.getServer()).getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY)) {return;}
 
         if (!BypassWarning && !tracker.getPlayerReadWarning(player.getUuid())) {
             SplitSelf.LOGGER.warn("Tried executing an event, but {} did not read the warning!", player);
@@ -321,12 +314,11 @@ public class EventManager {
         if (ForceEvent == null) {
             Random javaRandom = new Random(world.getRandom().nextLong());
             eventType = selectWeightedEvent(javaRandom, player);
-            System.out.println(eventType);
-        } else try {
+        } else {
             eventType = ForceEvent;
-        } catch (RuntimeException e) {
-            throw new RuntimeException(e);
         }
+
+        eventLastTriggered.put(eventType, totalEventsTriggered);
 
         System.out.println("Running Event: " + eventType);
 
@@ -743,6 +735,7 @@ public class EventManager {
                             Thread.sleep(50);
                         }
                         if (!client.getWindow().isFullscreen()) {
+                            assert client.player != null;
                             world.playSound(null, Objects.requireNonNull(player).getBlockPos(), ModSounds.RUMBLE2, SoundCategory.MASTER, 1.0f, 1.0f);
                             assert client.getServer() != null;
                             client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> " + SplitSelf.translate("events.splitself.shrink.message").getString()), false);
@@ -791,7 +784,7 @@ public class EventManager {
                             }
                             client.getSoundManager().stopSounds(ModSounds.RUMBLE2.getId(), SoundCategory.MASTER);
                         } else {
-                            System.err.println("Failed to unfullscreen user's screen after 5 seconds!");
+                            System.err.println("Failed to un-fullscreen user's screen after 5 seconds!");
                         }
                     } catch (Exception e) {
                         SplitSelf.LOGGER.error("Shrink event failed: {} {}", e.getMessage(), e);
