@@ -57,14 +57,14 @@
   "config.splitself.event_cooldown.description": "Wie lange die Abklingzeit dauert, bevor ein weiteres Ereignis eintreten kann",
   "config.splitself.start_events_after": "Ereignisstartverzögerung",
   "config.splitself.start_events_after.description": "Wie lange es dauert, bis Ereignisse in Ticks stattfinden können",
-  "config.splitself.event_until_repeat": "Events Until Repeat",
-  "config.splitself.event_until_repeat.description": "How many events can happen before a previously activated event can happen again",
+  "config.splitself.event_until_repeat": "Ereignisse bis Wiederholung",
+  "config.splitself.event_until_repeat.description": "Wie viele Ereignisse eintreten können, bevor ein zuvor aktiviertes Ereignis erneut eintreten kann",
   "config.splitself.guaranteed_event": "Danach garantiertes Ereignis",
   "config.splitself.guaranteed_event.description": "Wie lange es dauert, bis ein Ereignis nach einer bestimmten Zeit der Inaktivität garantiert eintritt",
   "config.splitself.weight_value_title": "Gewichtung für das Ereignis %s",
   "config.splitself.stage_value_title": "Phase bis zur Aktivierung für Ereignis %s",
   "config.splitself.one_time_event_value_title": "Kann das Ereignis %s mehrfach innerhalb einer Sitzung ausgelöst werden?",
-  "config.splitself.numeric_value": "Input a number... (%s-%s)",
+  "config.splitself.numeric_value": "Gib eine Zahl ein... (%s-%s)",
 
   "entity.splitself.the_other": "Der Andere",
 
