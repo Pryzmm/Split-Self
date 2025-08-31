@@ -53,6 +53,7 @@ public class DefaultConfig {
         weights.put("ITEM", 10);
         weights.put("FRAME", 15);
         weights.put("NAME", 10);
+        weights.put("WHISPER", 10);
         return weights;
     }
 
@@ -92,6 +93,7 @@ public class DefaultConfig {
         stages.put("ITEM", 0);
         stages.put("FRAME", 1);
         stages.put("NAME", 2);
+        stages.put("WHISPER", 1);
         return stages;
     }
 
@@ -131,6 +133,7 @@ public class DefaultConfig {
         oneTimers.put("ITEM", false);
         oneTimers.put("FRAME", false);
         oneTimers.put("NAME", false);
+        oneTimers.put("WHISPER", false);
         return oneTimers;
     }
 

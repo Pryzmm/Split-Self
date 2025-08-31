@@ -83,13 +83,6 @@ public class SplitSelf implements ModInitializer {
 
         JsonReader config = new JsonReader("splitself.json5");
 
-        //SplitSelfConfig.reload();
-		//SplitSelfConfig config = SplitSelfConfig.getInstance();
-
-		//LOGGER.info("Configuration loaded. Values: eventsEnabled={}, eventTickInterval={}, eventChance={}, eventCooldown={}, startEventsAfter={}",
-		//		config.isEventsEnabled(), config.getEventTickInterval(), config.getEventChance(),
-		//		config.getEventCooldown(), config.getStartEventsAfter());
-
 		ModEntities.registerModEntities();
 		ModSounds.registerSounds();
         ModBlocks.registerModBlocks();

@@ -43,11 +43,10 @@ public class TheOtherEntity extends HostileEntity {
     private static final int PLAYER_UPDATE_INTERVAL = 20;
     public static Map<Entity, Integer> toBeDiscarded = new HashMap<>();
 
-    private void setupGoals() { // known bug; either goals, attributes or both aren't being properly applied on game restart, leading to twitching variant not moving
+    public void setupGoals() { // known bug; either goals, attributes or both aren't being properly applied on game restart, leading to twitching variant not moving
         TheOtherVariant variant = this.getVariant();
         switch (variant) {
             case TWITCHING:
-                System.out.println("Twitching variant");
                 this.goalSelector.add(0, new SwimGoal(this));
                 this.goalSelector.add(1, new MeleeAttackGoal(this, 1.0, false));
                 this.targetSelector.add(1, new ActiveTargetGoal<>(this, PlayerEntity.class, false));
@@ -55,9 +54,7 @@ public class TheOtherEntity extends HostileEntity {
                 this.goalSelector.add(3, new LookAtEntityGoal(this, PlayerEntity.class, 100.0F, 1F));
                 break;
             case DEFAULT:
-                System.out.println("Default variant");
             default:
-                System.out.println("Default case");
                 this.goalSelector.add(0, new SwimGoal(this));
                 this.goalSelector.add(3, new LookAtEntityGoal(this, PlayerEntity.class, 100.0F, 1F));
                 break;

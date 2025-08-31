@@ -20,28 +20,20 @@ public class SignMixin {
     @Shadow private SignText frontText;
     @Shadow private SignText backText;
 
-    // Hook into NBT reading to catch signs loaded from structures
     @Inject(method = "readNbt", at = @At("TAIL"))
     private void onReadNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup, CallbackInfo ci) {
-        System.out.println("Sign loaded from NBT");
-
-        // Translate the text after NBT is loaded
         if (frontText != null) {
             frontText = translateSignText(frontText);
-            System.out.println("Translated front text from NBT");
         }
         if (backText != null) {
             backText = translateSignText(backText);
-            System.out.println("Translated back text from NBT");
         }
     }
 
-    // Also hook into getText for runtime translation
     @Inject(method = "getText", at = @At("RETURN"), cancellable = true)
     private void translateSignTextOnGet(boolean front, CallbackInfoReturnable<SignText> cir) {
         SignText originalText = cir.getReturnValue();
         if (originalText != null && needsTranslation(originalText)) {
-            System.out.println("Translating sign text on get");
             SignText translatedText = translateSignText(originalText);
             cir.setReturnValue(translatedText);
         }
@@ -62,9 +54,7 @@ public class SignMixin {
             }
         }
 
-        // Only create new SignText if there were actual translations
         if (hasChanges) {
-            System.out.println("Creating translated SignText");
             return new SignText(
                     translatedMessages,
                     translatedMessages,
@@ -91,9 +81,7 @@ public class SignMixin {
     private Text translateText(Text text) {
         String content = text.getString();
         if (content.startsWith("SS|")) {
-            System.out.println("Translating sign text: " + content);
             content = "sign.splitself." + content.substring(3);
-            System.out.println("Translating sign text to: " + content);
             return SplitSelf.translate(content);
         }
         return text;

@@ -91,6 +91,7 @@ public class EventManager {
         ITEM,
         FRAME,
         NAME,
+        WHISPER
     }
 
     public static Map<Events, Boolean> oneTimeEvents = new HashMap<>();
@@ -248,6 +249,7 @@ public class EventManager {
                     TheOtherEntity theOther = new TheOtherEntity(ModEntities.TheOther, limboWorld);
                     theOther.refreshPositionAndAngles(2036.5, 4, 20.0, 49F, -14F);
                     limboWorld.spawnEntity(theOther);
+                    theOther.setupGoals();
                     player.teleport(limboWorld, 2015.3, 9.5625, 34.7, null, -135, 40);
                     Thread.sleep(60000);
                 }
@@ -877,7 +879,15 @@ public class EventManager {
                 } catch (Exception e) {
                     SplitSelf.LOGGER.error("Failed to fetch name history: {}", e.getMessage());
                 }
-
+            case WHISPER:
+                Random random = new Random();
+                double distance = 20 + random.nextDouble() * (30 - 20);
+                double angle = random.nextDouble() * 2 * Math.PI;
+                double spawnX = player.getPos().getX() + Math.cos(angle) * distance;
+                double spawnY = player.getPos().getY() + Math.cos(angle) * distance;
+                double spawnZ = player.getPos().getZ() + Math.sin(angle) * distance;
+                BlockPos soundPos = new BlockPos((int) spawnX, (int) spawnY, (int) spawnZ);
+                world.playSound(null, soundPos, ModSounds.WHISPER, SoundCategory.MASTER, 40.0f, 1.0f);
         }
     }
 }

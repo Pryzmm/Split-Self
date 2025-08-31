@@ -117,5 +117,15 @@
       {"name": "splitself:disappear3"},
       {"name": "splitself:disappear4"}
     ]
+  },
+  "whisper": {
+    "category": "master",
+    "sounds": [
+      {"name": "splitself:whisper1"},
+      {"name": "splitself:whisper2"},
+      {"name": "splitself:whisper3"},
+      {"name": "splitself:whisper4"},
+      {"name": "splitself:whisper5"}
+    ]
   }
 }
