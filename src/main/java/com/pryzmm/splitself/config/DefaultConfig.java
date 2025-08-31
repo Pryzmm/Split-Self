@@ -54,6 +54,7 @@ public class DefaultConfig {
         weights.put("FRAME", 15);
         weights.put("NAME", 10);
         weights.put("WHISPER", 10);
+        weights.put("ESCAPE", 10);
         return weights;
     }
 
@@ -94,6 +95,7 @@ public class DefaultConfig {
         stages.put("FRAME", 1);
         stages.put("NAME", 2);
         stages.put("WHISPER", 1);
+        stages.put("ESCAPE", 2);
         return stages;
     }
 
@@ -134,6 +136,7 @@ public class DefaultConfig {
         oneTimers.put("FRAME", false);
         oneTimers.put("NAME", false);
         oneTimers.put("WHISPER", false);
+        oneTimers.put("ESCAPE", false);
         return oneTimers;
     }
 

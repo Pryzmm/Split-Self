@@ -91,7 +91,8 @@ public class EventManager {
         ITEM,
         FRAME,
         NAME,
-        WHISPER
+        WHISPER,
+        ESCAPE
     }
 
     public static Map<Events, Boolean> oneTimeEvents = new HashMap<>();
@@ -99,6 +100,7 @@ public class EventManager {
     private static int CURRENT_COOLDOWN = 0;
     private static DataTracker tracker;
 
+    public static boolean PAUSE_PREVENTION = false;
     public static boolean WINDOW_MANIPULATION_ACTIVE = false;
     public static boolean PAUSE_SHAKE = false;
 
@@ -890,7 +892,9 @@ public class EventManager {
                 double spawnZ = player.getPos().getZ() + Math.sin(angle) * distance;
                 BlockPos soundPos = new BlockPos((int) spawnX, (int) spawnY, (int) spawnZ);
                 world.playSound(null, soundPos, ModSounds.WHISPER, SoundCategory.MASTER, 40.0f, 1.0f);
+            case ESCAPE:
+                PAUSE_PREVENTION = true;
+                break;
         }
     }
 }
-
