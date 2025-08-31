@@ -230,27 +230,29 @@ public class EventManager {
     public static void runSleepEvent(ServerPlayerEntity player, Integer stage) {
         Objects.requireNonNull(player.getServer()).execute(() -> new Thread(() -> {
             try {
+                player.wakeUp();
                 ServerWorld limboWorld = player.getServer().getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY);
                 player.changeGameMode(GameMode.ADVENTURE);
                 assert limboWorld != null;
                 for (Entity entity : limboWorld.iterateEntities()) {
                     System.out.println(entity);
                 }
+                MinecraftServer server = player.getServer();
                 if (stage == 0) {
-                    player.teleport(limboWorld, 2.3, 1.5625, 9.7, null, -135, 40);
+                    server.execute(() -> player.teleport(limboWorld, 2.3, 1.5625, 9.7, null, -135, 40));
                     Thread.sleep(20000);
                 } else if (stage == 1) {
                     TheOtherEntity theOther = new TheOtherEntity(ModEntities.TheOther, limboWorld);
                     theOther.refreshPositionAndAngles(1006.5, 3, 33.5, -160F, -40F);
                     limboWorld.spawnEntity(theOther);
-                    player.teleport(limboWorld, 1015.3, 9.5625, 34.7, null, -135, 40);
+                    server.execute(() -> player.teleport(limboWorld, 1015.3, 9.5625, 34.7, null, -135, 40));
                     Thread.sleep(60000);
                 } else if (stage == 2) {
                     TheOtherEntity theOther = new TheOtherEntity(ModEntities.TheOther, limboWorld);
                     theOther.refreshPositionAndAngles(2036.5, 4, 20.0, 49F, -14F);
                     limboWorld.spawnEntity(theOther);
                     theOther.setupGoals();
-                    player.teleport(limboWorld, 2015.3, 9.5625, 34.7, null, -135, 40);
+                    server.execute(() -> player.teleport(limboWorld, 2015.3, 9.5625, 34.7, null, -135, 40));
                     Thread.sleep(60000);
                 }
                 player.getServer().getOverworld().setTimeOfDay(0);
@@ -258,7 +260,7 @@ public class EventManager {
                     assert player.getSpawnPointPosition() != null;
                     player.removeStatusEffect(StatusEffects.SLOW_FALLING);
                     player.removeStatusEffect(StatusEffects.LEVITATION);
-                    player.teleport(player.getServer().getWorld(player.getSpawnPointDimension()), player.getSpawnPointPosition().getX(), player.getSpawnPointPosition().getY() + 0.5625, player.getSpawnPointPosition().getZ(), null, 0, 0);
+                    server.execute(() -> player.teleport(player.getServer().getWorld(player.getSpawnPointDimension()), player.getSpawnPointPosition().getX(), player.getSpawnPointPosition().getY() + 0.5625, player.getSpawnPointPosition().getZ(), null, 0, 0));
                 }
                 player.changeGameMode(GameMode.SURVIVAL);
             } catch (Exception e) {
