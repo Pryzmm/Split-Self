@@ -23,7 +23,6 @@ import java.util.Arrays;
 
 public class SplitSelfCommands {
 
-    // Suggestion provider for main subcommands
     private static final SuggestionProvider<ServerCommandSource> MAIN_SUGGESTIONS =
             (context, builder) -> {
                 String[] suggestions = {
@@ -72,6 +71,7 @@ public class SplitSelfCommands {
                         })
                 )
                 .then(CommandManager.literal("debugFullscreen")
+                        .requires(source -> source.hasPermissionLevel(2))
                         .executes(context -> {
                             if (client.options.getFullscreen().getValue()) {
                                 context.getSource().sendFeedback(() -> Text.literal("In fullscreen"), false);
@@ -82,6 +82,7 @@ public class SplitSelfCommands {
                         })
                 )
                 .then(CommandManager.literal("debugToggleEvents")
+                        .requires(source -> source.hasPermissionLevel(2))
                         .executes(context -> {
                             DataTracker tracker = DataTracker.getServerState(client.getServer());
                             tracker.setPlayerReadWarning(client.player.getUuid(), !tracker.getPlayerReadWarning(client.player.getUuid()));
@@ -90,12 +91,12 @@ public class SplitSelfCommands {
                         })
                 )
                 .then(CommandManager.literal("debugSleepStage")
+                        .requires(source -> source.hasPermissionLevel(2))
                         .executes(context -> {
                             DataTracker tracker = DataTracker.getServerState(client.getServer());
                             context.getSource().sendFeedback(() -> Text.literal(String.valueOf(tracker.getPlayerSleepStage(client.player.getUuid()))), false);
                             return 1;
                         })
-                        // Debug Sleep Stage subcommand - set stage
                         .then(CommandManager.argument("stage", IntegerArgumentType.integer(0))
                                 .executes(context -> {
                                     int stage = IntegerArgumentType.getInteger(context, "stage");
@@ -109,6 +110,7 @@ public class SplitSelfCommands {
                         )
                 )
                 .then(CommandManager.literal("runEvent")
+                        .requires(source -> source.hasPermissionLevel(2))
                         .then(CommandManager.argument("event", StringArgumentType.word())
                                 .suggests(EVENT_SUGGESTIONS)
                                 .executes(context -> {
