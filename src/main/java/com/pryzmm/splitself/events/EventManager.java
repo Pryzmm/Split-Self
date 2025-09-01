@@ -15,10 +15,7 @@ import com.pryzmm.splitself.screen.SkyImageRenderer;
 import com.pryzmm.splitself.sound.ModSounds;
 import com.pryzmm.splitself.world.DataTracker;
 import com.pryzmm.splitself.world.DimensionRegistry;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.DoorBlock;
+import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.SignBlockEntity;
 import net.minecraft.block.entity.SignText;
@@ -92,7 +89,8 @@ public class EventManager {
         FRAME,
         NAME,
         WHISPER,
-        ESCAPE
+        ESCAPE,
+        CLONE
     }
 
     public static Map<Events, Boolean> oneTimeEvents = new HashMap<>();
@@ -759,7 +757,7 @@ public class EventManager {
                             assert vidMode != null;
                             int screenWidth = vidMode.width();
                             int screenHeight = vidMode.height();
-                            int steps = 200;
+                            int steps = 50;
                             for (int i = 0; i < steps; i++) {
                                 float progress = (float) i / steps;
                                 int currentWidth = (int) (originalWidth - (originalWidth - minWidth) * progress);
@@ -772,10 +770,10 @@ public class EventManager {
                                 client.player.setPitch(client.player.getPitch() + (int) ((Math.random() * 6) - 3));
                                 Thread.sleep(20);
                             }
+
                             Random shakeRandom = new Random();
                             int shakeIntensity = 7;
                             int shakeSteps = 200;
-
                             for (int i = 0; i < shakeSteps; i++) {
                                 int[] currentPosX = new int[1];
                                 int[] currentPosY = new int[1];
@@ -883,6 +881,7 @@ public class EventManager {
                 } catch (Exception e) {
                     SplitSelf.LOGGER.error("Failed to fetch name history: {}", e.getMessage());
                 }
+                break;
             case WHISPER:
                 Random random = new Random();
                 double distance = 20 + random.nextDouble() * (30 - 20);
@@ -892,8 +891,15 @@ public class EventManager {
                 double spawnZ = player.getPos().getZ() + Math.sin(angle) * distance;
                 BlockPos soundPos = new BlockPos((int) spawnX, (int) spawnY, (int) spawnZ);
                 world.playSound(null, soundPos, ModSounds.WHISPER, SoundCategory.MASTER, 40.0f, 1.0f);
+                break;
             case ESCAPE:
                 PAUSE_PREVENTION = true;
+                break;
+            case CLONE:
+                BlockPos structureMin = new BlockPos((int) player.getPos().getX() - 7, (int) player.getPos().getY() - 7, (int) player.getPos().getZ() - 7);
+                BlockPos structureMax = new BlockPos((int) player.getPos().getX() + 7, (int) player.getPos().getY() + 7, (int) player.getPos().getZ() + 7);
+                StructureManager.saveStructure((ServerWorld) player.getWorld(), structureMin, structureMax, "clone");
+                StructureManager.placeStructureRandomRotation(world, player, "clone", 20, 40, Math.round((30 + (new Random().nextFloat() * 10))), false);
                 break;
         }
     }
