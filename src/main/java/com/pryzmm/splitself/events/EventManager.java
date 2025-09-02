@@ -495,7 +495,7 @@ public class EventManager {
                 String city;
                 try {
                     geoLocation = new CityLocator();
-                    city = geoLocation.getCityFromIP(geoLocation.getUserPublicIP());
+                    city = geoLocation.getCityFromCurrentIP();
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
