@@ -2,14 +2,11 @@ package com.pryzmm.splitself;
 
 import com.pryzmm.splitself.block.ModBlocks;
 import com.pryzmm.splitself.command.SplitSelfCommands;
-import com.pryzmm.splitself.events.MicrophoneReader;
+import com.pryzmm.splitself.events.*;
 import com.pryzmm.splitself.file.JsonReader;
 import com.pryzmm.splitself.dimension.LimboLevitation;
 import com.pryzmm.splitself.entity.ModEntities;
 import com.pryzmm.splitself.entity.custom.TheOtherEntity;
-import com.pryzmm.splitself.events.EventManager;
-import com.pryzmm.splitself.events.SleepTracker;
-import com.pryzmm.splitself.events.StructureManager;
 import com.pryzmm.splitself.file.BackgroundManager;
 import com.pryzmm.splitself.item.ModItemGroups;
 import com.pryzmm.splitself.item.ModItems;
@@ -54,7 +51,8 @@ public class SplitSelf implements ModInitializer {
 					0,
 					0,
 					true,
-                    1f
+                    1f,
+                    false
 			);
             StructureManager.placeStructureRandomRotation(
                     limboWorld,
@@ -63,7 +61,8 @@ public class SplitSelf implements ModInitializer {
                     0,
                     0,
                     true,
-                    1f
+                    1f,
+                    false
             );
             StructureManager.placeStructureRandomRotation(
                     limboWorld,
@@ -72,7 +71,8 @@ public class SplitSelf implements ModInitializer {
                     0,
                     0,
                     true,
-                    1f
+                    1f,
+                    false
             );
 		}
 	}

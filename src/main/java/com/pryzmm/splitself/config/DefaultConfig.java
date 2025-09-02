@@ -55,7 +55,8 @@ public class DefaultConfig {
         weights.put("NAME", 10);
         weights.put("WHISPER", 10);
         weights.put("ESCAPE", 10);
-        weights.put("CLONE", 10);
+        weights.put("LIFT", 10);
+        weights.put("SURROUND", 5);
         return weights;
     }
 
@@ -97,7 +98,8 @@ public class DefaultConfig {
         stages.put("NAME", 2);
         stages.put("WHISPER", 1);
         stages.put("ESCAPE", 2);
-        stages.put("CLONE", 1);
+        stages.put("LIFT", 1);
+        stages.put("SURROUND", 3);
         return stages;
     }
 
@@ -139,7 +141,8 @@ public class DefaultConfig {
         oneTimers.put("NAME", false);
         oneTimers.put("WHISPER", false);
         oneTimers.put("ESCAPE", false);
-        oneTimers.put("CLONE", false);
+        oneTimers.put("LIFT", false);
+        oneTimers.put("SURROUND", true);
         return oneTimers;
     }
 

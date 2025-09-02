@@ -127,5 +127,13 @@
       {"name": "splitself:whisper4"},
       {"name": "splitself:whisper5"}
     ]
+  },
+  "glitch": {
+    "category": "master",
+    "sounds": [
+      {
+        "name": "splitself:glitch"
+      }
+    ]
   }
 }
