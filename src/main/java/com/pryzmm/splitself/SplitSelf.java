@@ -2,6 +2,7 @@ package com.pryzmm.splitself;
 
 import com.pryzmm.splitself.block.ModBlocks;
 import com.pryzmm.splitself.command.SplitSelfCommands;
+import com.pryzmm.splitself.events.MicrophoneReader;
 import com.pryzmm.splitself.file.JsonReader;
 import com.pryzmm.splitself.dimension.LimboLevitation;
 import com.pryzmm.splitself.entity.ModEntities;
@@ -25,6 +26,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.message.SignedMessage;
 import net.minecraft.server.MinecraftServer;
@@ -51,7 +53,8 @@ public class SplitSelf implements ModInitializer {
 					"house_empty",
 					0,
 					0,
-					true
+					true,
+                    1f
 			);
             StructureManager.placeStructureRandomRotation(
                     limboWorld,
@@ -59,7 +62,8 @@ public class SplitSelf implements ModInitializer {
                     "memory",
                     0,
                     0,
-                    true
+                    true,
+                    1f
             );
             StructureManager.placeStructureRandomRotation(
                     limboWorld,
@@ -67,7 +71,8 @@ public class SplitSelf implements ModInitializer {
                     "broken_memory",
                     0,
                     0,
-                    true
+                    true,
+                    1f
             );
 		}
 	}
@@ -93,6 +98,12 @@ public class SplitSelf implements ModInitializer {
 
 		ServerTickEvents.END_SERVER_TICK.register(EventManager::onTick);
         ServerTickEvents.END_SERVER_TICK.register(LimboLevitation::onTick);
+        if (FabricLoader.getInstance().isModLoaded("voicelib") && FabricLoader.getInstance().isModLoaded("architectury")) {
+            MicrophoneReader.register();
+            System.out.println("Registering microphone reader");
+        } else {
+            System.out.println("Cannot register microphone reader, missing voicelib or architectury");
+        }
 
 		FabricDefaultAttributeRegistry.register(ModEntities.TheOther, TheOtherEntity.createAttributes());
 
@@ -113,7 +124,7 @@ public class SplitSelf implements ModInitializer {
         }));
 
 		ServerMessageEvents.CHAT_MESSAGE.register((message, messageSender, params) -> {
-			EventManager.runChatEvent(messageSender, message.getContent().getString());
+			EventManager.runChatEvent(messageSender, message.getContent().getString(), false);
 		});
 
 

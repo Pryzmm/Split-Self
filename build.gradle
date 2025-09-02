@@ -15,6 +15,10 @@ repositories {
 		name = "Terraformers"
 		url = "https://maven.terraformersmc.com/"
 	}
+    maven {
+        name = "Modrinth"
+        url = "https://api.modrinth.com/maven"
+    }
 }
 
 fabricApi {
@@ -36,6 +40,13 @@ dependencies {
 	include 'com.maxmind.db:maxmind-db:3.0.0'
     implementation 'com.google.code.gson:gson:2.10.1'
     include 'com.google.code.gson:gson:2.10.1'
+    implementation "com.alphacephei:vosk:0.3.45"
+    include "com.alphacephei:vosk:0.3.45"
+
+    modCompileOnly "maven.modrinth:architectury-api:13.0.6+fabric"
+    modRuntimeOnly "maven.modrinth:architectury-api:13.0.6+fabric"
+    modCompileOnly "maven.modrinth:voicelib:1.0.1"
+    modRuntimeOnly "maven.modrinth:voicelib:1.0.1"
 
     modImplementation "com.terraformersmc:modmenu:${project.mod_menu_version}"
 

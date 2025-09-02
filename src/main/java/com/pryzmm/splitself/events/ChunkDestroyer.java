@@ -4,10 +4,25 @@ import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 
 import java.util.Random;
 
 public class ChunkDestroyer {
+
+    public static void deleteArea(World world, BlockPos minimumPos, BlockPos maximumPos) {
+        for (int y = minimumPos.getY(); y <= maximumPos.getY(); y++) {
+            for (int x = minimumPos.getX(); x <= maximumPos.getX(); x++) {
+                for (int z = minimumPos.getZ(); z <= maximumPos.getZ(); z++) {
+                    BlockPos pos = new BlockPos(x, y, z);
+                    if (!world.getBlockState(pos).isAir()) {
+                        world.setBlockState(pos, Blocks.AIR.getDefaultState());
+                    }
+                }
+            }
+        }
+    }
+
     public static void execute(PlayerEntity Player) {
         Vec3d playerPos = new Vec3d(
                 Player.getPos().x + (new Random().nextInt(20 + 20) - 20),

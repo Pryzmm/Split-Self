@@ -1,6 +1,7 @@
 package com.pryzmm.splitself.events;
 
 import com.pryzmm.splitself.SplitSelf;
+import com.pryzmm.splitself.world.IntegrityProcessor;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtIo;
@@ -28,7 +29,7 @@ public class StructureManager {
 
     public static void saveStructure(ServerWorld world, BlockPos startPos, BlockPos endPos, String fileName) {
         try {
-            Path structuresPath = getStructuresDirectory();
+            Path structuresPath = getStructuresDirectory(world);
             Files.createDirectories(structuresPath);
             BlockPos size = endPos.subtract(startPos).add(1, 1, 1);
             StructureTemplate template = new StructureTemplate();
@@ -45,7 +46,7 @@ public class StructureManager {
 
     public static Optional<StructureTemplate> loadStructure(ServerWorld world, String fileName) {
         try {
-            Path structuresPath = getStructuresDirectory();
+            Path structuresPath = getStructuresDirectory(world);
             Path filePath = structuresPath.resolve(fileName + ".nbt");
             if (Files.exists(filePath)) {
                 try (FileInputStream fis = new FileInputStream(filePath.toFile())) {
@@ -80,14 +81,14 @@ public class StructureManager {
         }
     }
 
-    public static boolean placeStructure(ServerWorld world, BlockPos pos, String fileName, BlockRotation rotation, BlockMirror mirror) {
+    public static boolean placeStructure(ServerWorld world, BlockPos pos, String fileName, BlockRotation rotation, BlockMirror mirror, Float Integrity) {
         Optional<StructureTemplate> templateOpt = loadStructure(world, fileName);
         if (templateOpt.isEmpty()) {
             SplitSelf.LOGGER.warn("Could not load structure: {}", fileName);
             return false;
         }
         try {
-            placeTemplate(world, pos, templateOpt.get(), rotation, mirror);
+            placeTemplate(world, pos, templateOpt.get(), rotation, mirror, Integrity);
             return true;
         } catch (Exception e) {
             SplitSelf.LOGGER.error("Error placing structure {}: {}", fileName, e.getMessage());
@@ -95,7 +96,7 @@ public class StructureManager {
         }
     }
 
-    public static void placeStructureRandomRotation(ServerWorld world, BlockPos pos, String structureName, Integer MinimumRange, Integer MaximumRange, boolean DisableRotation) {
+    public static void placeStructureRandomRotation(ServerWorld world, BlockPos pos, String structureName, Integer MinimumRange, Integer MaximumRange, boolean DisableRotation, Float Integrity) {
         try {
             Random random = new Random();
             double distance = MinimumRange + random.nextDouble() * (MaximumRange - MinimumRange);
@@ -114,16 +115,16 @@ public class StructureManager {
             Identifier structureId = Identifier.of(SplitSelf.MOD_ID, structureName);
             var template = templateManager.getTemplate(structureId);
             if (template.isPresent()) {
-                placeTemplate(world, spawnPos, template.get(), rotation, BlockMirror.NONE);
+                placeTemplate(world, spawnPos, template.get(), rotation, BlockMirror.NONE, Integrity);
                 return;
             }
-            placeStructure(world, spawnPos, structureName, rotation, BlockMirror.NONE);
+            placeStructure(world, spawnPos, structureName, rotation, BlockMirror.NONE, Integrity);
         } catch (Exception e) {
             SplitSelf.LOGGER.info("Error placing structure with rotation: {}", String.valueOf(e));
         }
     }
 
-    public static BlockPos placeStructureRandomRotation(ServerWorld world, PlayerEntity Player, String structureName, Integer MinimumRange, Integer MaximumRange, Integer YOffset, boolean DisableRotation) {
+    public static BlockPos placeStructureRandomRotation(ServerWorld world, PlayerEntity Player, String structureName, Integer MinimumRange, Integer MaximumRange, Integer YOffset, boolean DisableRotation, Float Integrity) {
         try {
             Random random = new Random();
             double distance = MinimumRange + random.nextDouble() * (MaximumRange - MinimumRange);
@@ -145,29 +146,32 @@ public class StructureManager {
             var template = templateManager.getTemplate(structureId);
 
             if (template.isPresent()) {
-                placeTemplate(world, finalSpawnPos, template.get(), rotation, BlockMirror.NONE);
+                placeTemplate(world, finalSpawnPos, template.get(), rotation, BlockMirror.NONE, Integrity);
                 return finalSpawnPos;
             }
-            if (placeStructure(world, finalSpawnPos, structureName, rotation, BlockMirror.NONE)) {
+            if (placeStructure(world, finalSpawnPos, structureName, rotation, BlockMirror.NONE, Integrity)) {
                 return finalSpawnPos;
             }
         } catch (Exception e) {
-            SplitSelf.LOGGER.info("Error placing structure:{}", String.valueOf(e));
+            SplitSelf.LOGGER.info("Error placing structure: {}", String.valueOf(e));
         }
         return null;
     }
 
-    private static void placeTemplate(ServerWorld world, BlockPos pos, StructureTemplate template, BlockRotation rotation, BlockMirror mirror) {
+    private static void placeTemplate(ServerWorld world, BlockPos pos, StructureTemplate template, BlockRotation rotation, BlockMirror mirror, Float Integrity) {
         StructurePlacementData placementData = new StructurePlacementData()
                 .setRotation(rotation)
                 .setMirror(mirror)
                 .setIgnoreEntities(false)
                 .addProcessor(BlockIgnoreStructureProcessor.IGNORE_AIR_AND_STRUCTURE_BLOCKS);
+        if (Integrity != null && Integrity < 1.0f) {
+            placementData.addProcessor(new IntegrityProcessor(Integrity));
+        }
         template.place(world, pos, pos, placementData, world.getRandom(), 2);
     }
 
-    private static Path getStructuresDirectory() {
-        Path gameDir = Paths.get(".");
-        return gameDir.resolve("structures");
+    private static Path getStructuresDirectory(ServerWorld world) {
+        Path worldDir = world.getServer().getSavePath(net.minecraft.util.WorldSavePath.ROOT);
+        return worldDir.resolve("generated/minecraft/structures");
     }
 }
