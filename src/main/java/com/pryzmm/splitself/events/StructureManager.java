@@ -81,14 +81,14 @@ public class StructureManager {
         }
     }
 
-    public static boolean placeStructure(ServerWorld world, BlockPos pos, String fileName, BlockRotation rotation, BlockMirror mirror, Float Integrity) {
+    public static boolean placeStructure(ServerWorld world, BlockPos pos, String fileName, BlockRotation rotation, BlockMirror mirror, Float Integrity, boolean ignoreEntities) {
         Optional<StructureTemplate> templateOpt = loadStructure(world, fileName);
         if (templateOpt.isEmpty()) {
             SplitSelf.LOGGER.warn("Could not load structure: {}", fileName);
             return false;
         }
         try {
-            placeTemplate(world, pos, templateOpt.get(), rotation, mirror, Integrity);
+            placeTemplate(world, pos, templateOpt.get(), rotation, mirror, Integrity, ignoreEntities);
             return true;
         } catch (Exception e) {
             SplitSelf.LOGGER.error("Error placing structure {}: {}", fileName, e.getMessage());
@@ -96,7 +96,7 @@ public class StructureManager {
         }
     }
 
-    public static void placeStructureRandomRotation(ServerWorld world, BlockPos pos, String structureName, Integer MinimumRange, Integer MaximumRange, boolean DisableRotation, Float Integrity) {
+    public static void placeStructureRandomRotation(ServerWorld world, BlockPos pos, String structureName, Integer MinimumRange, Integer MaximumRange, boolean DisableRotation, Float Integrity, boolean ignoreEntities) {
         try {
             Random random = new Random();
             double distance = MinimumRange + random.nextDouble() * (MaximumRange - MinimumRange);
@@ -115,16 +115,16 @@ public class StructureManager {
             Identifier structureId = Identifier.of(SplitSelf.MOD_ID, structureName);
             var template = templateManager.getTemplate(structureId);
             if (template.isPresent()) {
-                placeTemplate(world, spawnPos, template.get(), rotation, BlockMirror.NONE, Integrity);
+                placeTemplate(world, spawnPos, template.get(), rotation, BlockMirror.NONE, Integrity, ignoreEntities);
                 return;
             }
-            placeStructure(world, spawnPos, structureName, rotation, BlockMirror.NONE, Integrity);
+            placeStructure(world, spawnPos, structureName, rotation, BlockMirror.NONE, Integrity, ignoreEntities);
         } catch (Exception e) {
             SplitSelf.LOGGER.info("Error placing structure with rotation: {}", String.valueOf(e));
         }
     }
 
-    public static BlockPos placeStructureRandomRotation(ServerWorld world, PlayerEntity Player, String structureName, Integer MinimumRange, Integer MaximumRange, Integer YOffset, boolean DisableRotation, Float Integrity) {
+    public static BlockPos placeStructureRandomRotation(ServerWorld world, PlayerEntity Player, String structureName, Integer MinimumRange, Integer MaximumRange, Integer YOffset, boolean DisableRotation, Float Integrity, boolean ignoreEntities) {
         try {
             Random random = new Random();
             double distance = MinimumRange + random.nextDouble() * (MaximumRange - MinimumRange);
@@ -146,10 +146,10 @@ public class StructureManager {
             var template = templateManager.getTemplate(structureId);
 
             if (template.isPresent()) {
-                placeTemplate(world, finalSpawnPos, template.get(), rotation, BlockMirror.NONE, Integrity);
+                placeTemplate(world, finalSpawnPos, template.get(), rotation, BlockMirror.NONE, Integrity, ignoreEntities);
                 return finalSpawnPos;
             }
-            if (placeStructure(world, finalSpawnPos, structureName, rotation, BlockMirror.NONE, Integrity)) {
+            if (placeStructure(world, finalSpawnPos, structureName, rotation, BlockMirror.NONE, Integrity, ignoreEntities)) {
                 return finalSpawnPos;
             }
         } catch (Exception e) {
@@ -158,11 +158,11 @@ public class StructureManager {
         return null;
     }
 
-    private static void placeTemplate(ServerWorld world, BlockPos pos, StructureTemplate template, BlockRotation rotation, BlockMirror mirror, Float Integrity) {
+    private static void placeTemplate(ServerWorld world, BlockPos pos, StructureTemplate template, BlockRotation rotation, BlockMirror mirror, Float Integrity, boolean ignoreEntities) {
         StructurePlacementData placementData = new StructurePlacementData()
                 .setRotation(rotation)
                 .setMirror(mirror)
-                .setIgnoreEntities(false)
+                .setIgnoreEntities(ignoreEntities)
                 .addProcessor(BlockIgnoreStructureProcessor.IGNORE_AIR_AND_STRUCTURE_BLOCKS);
         if (Integrity != null && Integrity < 1.0f) {
             placementData.addProcessor(new IntegrityProcessor(Integrity));

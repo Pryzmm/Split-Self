@@ -92,7 +92,8 @@ public class EventManager {
         NAME,
         WHISPER,
         ESCAPE,
-        CLONE
+        LIFT,
+        SURROUND
     }
 
     public static Map<Events, Boolean> oneTimeEvents = new HashMap<>();
@@ -415,11 +416,11 @@ public class EventManager {
                 })).start();
                 break;
             case HOUSE:
-                StructureManager.placeStructureRandomRotation(world, player, "house", 50, 80, -5, false, 1f);
+                StructureManager.placeStructureRandomRotation(world, player, "house", 50, 80, -5, false, 1f, true);
                 break;
             case BEDROCKPILLAR:
                 for (int i = 0; i <= 30; i++) {
-                    StructureManager.placeStructureRandomRotation(world, player, "bedrockpillar", 50, 80, 0, false, 1f);
+                    StructureManager.placeStructureRandomRotation(world, player, "bedrockpillar", 50, 80, 0, false, 1f, true);
                 }
                 break;
             case BILLY:
@@ -506,7 +507,7 @@ public class EventManager {
                 TNTSpawner.spawnTntInCircle(player, 1.5, 8, 300);
                 break;
             case IRONTRAP:
-                StructureManager.placeStructureRandomRotation(world, player, "irontrap", 50, 80, -2, false, 1f);
+                StructureManager.placeStructureRandomRotation(world, player, "irontrap", 50, 80, -2, false, 1f, true);
                 break;
             case LAVA:
                 BlockPos pos = new BlockPos((int) player.getPos().x, 250, (int) player.getPos().z);
@@ -672,7 +673,7 @@ public class EventManager {
                 }).start();
                 break;
             case MINE:
-                BlockPos structurePos = StructureManager.placeStructureRandomRotation(world, player, "stripmine", 0, 20, -80, true, 1f);
+                BlockPos structurePos = StructureManager.placeStructureRandomRotation(world, player, "stripmine", 0, 20, -80, true, 1f, true);
                 assert structurePos != null;
                 BlockPos signPos = new BlockPos(structurePos.getX() + 5, structurePos.getY() + 5, structurePos.getZ() + 7);
                 BlockEntity mineBlockEntity = world.getBlockEntity(signPos);
@@ -899,17 +900,14 @@ public class EventManager {
             case ESCAPE:
                 PAUSE_PREVENTION = true;
                 break;
-            case CLONE:
-                double structureDistance = 20 + new Random().nextDouble() * (40 - 20);
-                int centerX = Math.toIntExact(Math.round(player.getPos().x + structureDistance));
-                int centerZ = Math.toIntExact(Math.round(player.getPos().z + structureDistance));
-                int surfaceY = player.getWorld().getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, centerX, centerZ);
-                BlockPos centerPos = new BlockPos(centerX, surfaceY, centerZ);
-                BlockPos structureMin = new BlockPos(centerPos.getX() - 7, surfaceY - 14, centerPos.getZ() - 7);
-                BlockPos structureMax = new BlockPos(centerPos.getX() + 7, surfaceY + 7, centerPos.getZ() + 7);
-                StructureManager.saveStructure((ServerWorld) player.getWorld(), structureMin, structureMax, "clone");
-                ChunkDestroyer.deleteArea(player.getWorld(), structureMin, structureMax);
-                StructureManager.placeStructureRandomRotation(world, new BlockPos(centerPos.getX() - 7, centerPos.getY() + 40, centerPos.getZ() - 7), "clone", 0, 0, true, 0.75f);
+            case LIFT:
+                ChunkDestroyer.liftChunk((ServerPlayerEntity) player, world, 1, 40);
+                break;
+            case SURROUND:
+                ChunkDestroyer.liftChunkActive = true;
+                ScreenOverlay.executeGlitchScreen(client);
+                world.playSound(null, Objects.requireNonNull(player).getBlockPos(), ModSounds.GLITCH, SoundCategory.MASTER, 1.0f, 1.0f);
+                ChunkDestroyer.liftChunk((ServerPlayerEntity) player, world, 100, 14);
                 break;
         }
     }

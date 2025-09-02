@@ -2,6 +2,7 @@ package com.pryzmm.splitself.events;
 
 import com.pryzmm.splitself.screen.*;
 import com.pryzmm.splitself.sound.ModSounds;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundCategory;
@@ -104,6 +105,21 @@ public class ScreenOverlay {
                 throw new RuntimeException(e);
             }
             EmergencyOverlayRenderer.toggleOverlay(player, city);
+        }).start();
+    }
+
+    public static void executeGlitchScreen(MinecraftClient client) {
+        new Thread(() -> {
+            GlitchOverlay.toggleOverlay();
+            try {
+                while (ChunkDestroyer.liftChunkActive) {
+                    Thread.sleep(50);
+                }
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            client.getSoundManager().stopSounds(ModSounds.GLITCH.getId(), SoundCategory.MASTER);
+            GlitchOverlay.toggleOverlay();
         }).start();
     }
 }
