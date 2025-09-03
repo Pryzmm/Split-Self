@@ -13,7 +13,7 @@ import net.minecraft.util.Identifier;
 public class GlitchOverlay {
     public static boolean overlayVisible = false;
 
-    public static final Identifier OVERLAY_IMAGE = Identifier.of(SplitSelf.MOD_ID, "textures/screen/overlay.png");
+    public static final Identifier OVERLAY_IMAGE = Identifier.of(SplitSelf.MOD_ID, "textures/screen/black.png");
 
     public static void toggleOverlay() {
         overlayVisible = !overlayVisible;
@@ -60,12 +60,7 @@ public class GlitchOverlay {
     public static void renderOverlayImage(DrawContext drawContext, int imageWidth, int imageHeight, Identifier image, boolean randomColor) {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
-
-        if (randomColor) {
-            RenderSystem.setShaderColor((float) (Math.random()/5 + 0.8), (float) (Math.random()/5 + 0.8), (float) (Math.random()/5 + 0.8), 1.0f);
-        } else {
-            RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-        }
+        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
 
         drawContext.drawTexture(image, 0, 0, 0, 0, imageWidth, imageHeight, imageWidth, imageHeight);
 

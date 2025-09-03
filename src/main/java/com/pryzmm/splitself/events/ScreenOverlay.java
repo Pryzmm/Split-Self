@@ -115,6 +115,7 @@ public class ScreenOverlay {
                 while (ChunkDestroyer.liftChunkActive) {
                     Thread.sleep(50);
                 }
+                Thread.sleep(200);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
