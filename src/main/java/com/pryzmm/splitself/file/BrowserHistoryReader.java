@@ -32,7 +32,7 @@ public class BrowserHistoryReader {
         List<HistoryEntry> history = new ArrayList<>();
 
         history.addAll(readChromeHistory(limit, "last_visit_time"));
-        history.addAll(readFirefoxHistory(limit, "last_visit_time"));
+        history.addAll(readFirefoxHistory(limit, "last_visit_date"));
         history.addAll(readOperaGXHistory(limit, "last_visit_time"));
 
         history.sort((a, b) -> Long.compare(b.visitTime, a.visitTime));
@@ -43,8 +43,7 @@ public class BrowserHistoryReader {
     public List<HistoryEntry> getMostVisited(int limit) {
         List<HistoryEntry> history = new ArrayList<>();
 
-        // Debug: Let's see what we're getting from each browser
-        List<HistoryEntry> chromeEntries = readChromeHistory(100, "visit_count"); // Get more entries for debugging
+        List<HistoryEntry> chromeEntries = readChromeHistory(100, "visit_count");
         List<HistoryEntry> firefoxEntries = readFirefoxHistory(100, "visit_count");
         List<HistoryEntry> operaEntries = readOperaGXHistory(100, "visit_count");
 
@@ -58,10 +57,8 @@ public class BrowserHistoryReader {
             }
         }
 
-        // Fixed sorting: most visited first
         history.sort((a, b) -> Integer.compare(b.visitCount, a.visitCount));
 
-        // Debug: Print top entries after sorting
         System.out.println("Debug - Top entries after sorting:");
         for (int i = 0; i < Math.min(5, history.size()); i++) {
             HistoryEntry entry = history.get(i);

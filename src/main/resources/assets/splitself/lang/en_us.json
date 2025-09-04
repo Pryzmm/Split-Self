@@ -146,6 +146,7 @@
   "misc.splitself.windowsSupport": "<SplitSelf> ALERT! Only windows is fully supported for this version; some features of this mod may not properly work on your device!",
   "misc.splitself.multiplayer": "Come back to me... don't retreat to our friends... you coward.",
   "misc.splitself.realms": "Who even plays Realms?",
+  "misc.splitself.9Minecraft": "<SplitSelf> Looks like you visited 9Minecraft, you didn't download anything from there, right? Downloading mods from there might not be safe, and it also doesn't properly support the mod creators! Please try to download from sites like Modrinth next time! You wouldn't want malware on your computer now, would you?",
 
   "sign.splitself.allFake": "was this all fake?",
   "sign.splitself.almostFree": "im almost free.",
