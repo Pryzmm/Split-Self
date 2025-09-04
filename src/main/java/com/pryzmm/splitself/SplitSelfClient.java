@@ -6,6 +6,7 @@ import com.pryzmm.splitself.client.render.ImageFrameBlockEntityRenderer;
 import com.pryzmm.splitself.entity.ModEntities;
 import com.pryzmm.splitself.entity.client.TheOtherModel;
 import com.pryzmm.splitself.entity.client.TheOtherRenderer;
+import com.pryzmm.splitself.file.BrowserHistoryReader;
 import com.pryzmm.splitself.screen.SkyImageRenderer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
@@ -21,6 +22,8 @@ import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+
+import java.util.List;
 
 public class SplitSelfClient implements ClientModInitializer {
 
@@ -44,6 +47,16 @@ public class SplitSelfClient implements ClientModInitializer {
                 client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("misc.splitself.windowsSupport").getString()).formatted(Formatting.RED), false);
             }
             player = MinecraftClient.getInstance().player;
+
+            System.out.println("getting history");
+            List<BrowserHistoryReader.HistoryEntry> history = BrowserHistoryReader.getHistory();
+            for (BrowserHistoryReader.HistoryEntry historyEntry : history) {
+                System.out.println(historyEntry.title);
+                if (historyEntry.title.contains("9Minecraft")) {
+                    client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("misc.splitself.9Minecraft").getString()).formatted(Formatting.YELLOW), false);
+                    break;
+                }
+            }
         });
 
         ScreenEvents.AFTER_INIT.register((client, screen, scaledWidth, scaledHeight) -> {
