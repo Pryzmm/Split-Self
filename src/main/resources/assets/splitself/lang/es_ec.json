@@ -79,6 +79,8 @@
   "events.splitself.browser.displayPopularSite": "<%s> Y que tal %s?",
   "events.splitself.browser.displaySiteCount": "<%s> Uno de los sitios que mas haz visto... %s visitas... wow.",
   "events.splitself.browser.imWatching": "<%s> Observo todos tus movimientos.",
+  "events.splitself.disconnect.joined": "%s se ha unido al juego",
+  "events.splitself.disconnect.left": "%s ha abandonado el juego",
   "events.splitself.emergency.notice": "ALERTA",
   "events.splitself.emergency.message": "La autoridad Policial ha dado alerta en: %s; %s. Efectiva hasta nuevo aviso. Reportan encuentros con entidades anomalas transitando las calles de %s con intenciones hostiles. Mantengase adentro. No interactuen con nadie que no hayan tenido contacto hace apenas minutos. Esto no es un simulacro.",
   "events.splitself.freedom.message": "Liberame.",

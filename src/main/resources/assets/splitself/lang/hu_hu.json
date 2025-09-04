@@ -80,6 +80,8 @@
   "events.splitself.browser.displayPopularSite": "<%s> Mi van a(z) %s oldallal?",
   "events.splitself.browser.displaySiteCount": "<%s> Wowww, az a leglátogatotabb oldalad, %s látogatással.",
   "events.splitself.browser.imWatching": "<%s> Minden lépésedet követem.",
+  "events.splitself.disconnect.joined": "%s csatlakozott a játékhoz.",
+  "events.splitself.disconnect.left": "%s kilépett a játékból.",
   "events.splitself.emergency.notice": "VÉSZHELYZET FIGYELMEZTETŐ",
   "events.splitself.emergency.message": "Egy civil hatóság kiadott egy riasztást %snek %s, Érvényes következő figyelmeztetésig. Észlelések jelentik, hogy egy abnormális entitás, rosszakarattal barangolja %s utcáit. Maradjanak bent. Ne lépjenek kapcsolatba, olyannal aki már nincs jelen. Ez nem egy vicc.",
   "events.splitself.freedom.message": "Engedj szabadon.",

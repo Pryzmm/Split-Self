@@ -80,6 +80,8 @@
   "events.splitself.browser.displayPopularSite": "<%s> Was ist mit %s?",
   "events.splitself.browser.displaySiteCount": "<%s> Das ist eine deiner meistbesuchten Webseiten mit %s Besuchen... wow.",
   "events.splitself.browser.imWatching": "<%s> Ich beobachte all deine Bewegungen.",
+  "events.splitself.disconnect.joined": "%s hat das Spiel betreten",
+  "events.splitself.disconnect.left": "%s hat das Spiel verlassen",
   "events.splitself.emergency.notice": "NOTFALLMELDUNG",
   "events.splitself.emergency.message": "Die Zivilbehörde hat eine Warnung herausgegeben für die Stadt %s; um %s Uhr. Gültig bis auf Weiteres. Es gibt Berichte über Sichtungen einer anomalen Entität, die mit böswilliger Absicht durch die Straßen der Stadt %s streift. Bleibe drinnen. Interagiere nicht mit Personen, die nicht bereits anwesend sind. Dies ist keine Übung.",
   "events.splitself.freedom.message": "Lass mich frei.",

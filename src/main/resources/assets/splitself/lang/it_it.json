@@ -80,6 +80,8 @@
   "events.splitself.browser.displayPopularSite": "<%s> Che mi dici di %s?",
   "events.splitself.browser.displaySiteCount": "<%s> Quello è uno dei tuoi siti più visitati con %s visite... notevole.",
   "events.splitself.browser.imWatching": "<%s> Tengo sott'occhio ogni tua singola mossa.",
+  "events.splitself.disconnect.joined": "%s si è unito alla partita",
+  "events.splitself.disconnect.left": "%s Di nuovo mod sbagliata, scusa.",
   "events.splitself.emergency.notice": "AVVISO DI EMERGENZA",
   "events.splitself.emergency.message": "Le autorità civili hanno emesso un'avviso per: %s; %s. Valido fino a nuova indicazione. Sono state raccolte delle segnalazioni riguardanti avvistamenti di un'entità anomala che si aggira per le strade di %s con intenti malevoli. Si raccomanda di rimanere in casa. Non interagite con nessuno che non sia già presente. Questa non è un'esercitazione.",
   "events.splitself.freedom.message": "Liberami.",

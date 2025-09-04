@@ -1,5 +1,6 @@
 package com.pryzmm.splitself.events;
 
+import com.pryzmm.splitself.world.DimensionRegistry;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.text.Text;
 import org.modogthedev.api.VoiceLibApi;
@@ -7,10 +8,10 @@ import org.modogthedev.api.events.ServerPlayerTalkEvent;
 
 import java.util.Objects;
 
-// Due to VOSK only supporting English, translations are not supported, nor are they planned </3
 public class MicrophoneReader {
     public static void playerSpeaks(ServerPlayerTalkEvent event) {
         System.out.println("Player said: " + event.getText());
+        if (event.getPlayer().getWorld() == Objects.requireNonNull(event.getPlayer().getServer()).getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY)) {return;}
         PlayerManager playerManager = Objects.requireNonNull(event.getPlayer().getServer()).getPlayerManager();
         if (event.getText().toLowerCase().matches(".*can (you|they|he|she|it|the mod) hear (me|us|you).*")) {
             playerManager.broadcast(Text.literal("<" + event.getPlayer().getName().getString() + "> I hear everything you say."), false);

@@ -80,6 +80,8 @@
   "events.splitself.browser.displayPopularSite": "<%s> E quanto ao %s?",
   "events.splitself.browser.displaySiteCount": "<%s> Esse é um dos sites que você mais visitou. Foram %s vezes...",
   "events.splitself.browser.imWatching": "<%s> Estou vendo cada passo seu.",
+  "events.splitself.disconnect.joined": "%s entrou no jogo",
+  "events.splitself.disconnect.left": "%s saiu do jogo",
   "events.splitself.emergency.notice": "AVISO DE EMERGÊNCIA",
   "events.splitself.emergency.message": "Uma autoridade civil emitiu um alerta para: %s; %s. Efetivo até segunda ordem. Relatos de entidade anômala andando pelas ruas de %s com intenções maliciosas. Fique dentro de casa. Não interaja com qualquer pessoa de fora. Isso não é um teste.",
   "events.splitself.freedom.message": "Me liberte.",

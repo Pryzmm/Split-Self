@@ -80,6 +80,8 @@
   "events.splitself.browser.displayPopularSite": "<%s> Hoe zit het %s?",
   "events.splitself.browser.displaySiteCount": "<%s> Dat is een van je meest bezochte sites met %s bezoeken... wow.",
   "events.splitself.browser.imWatching": "<%s> Ik houd elke beweging van je in de gaten.",
+  "events.splitself.disconnect.joined": "%s deed mee aan het spel",
+  "events.splitself.disconnect.left": "%s verliet het spel",
   "events.splitself.emergency.notice": "NOODBERICHT",
   "events.splitself.emergency.message": "Een civiele autoriteit heeft een waarschuwing afgegeven voor: %s; %s. Geldig tot nader order. Er is een melding gemaakt van een afwijkende entiteit die met kwade bedoelingen door de straten van %s zwerft. Blijf binnen. Ga niet in gesprek met mensen die nog niet aanwezig zijn. Dit is geen oefening.",
   "events.splitself.freedom.message": "Laat mij vrij.",

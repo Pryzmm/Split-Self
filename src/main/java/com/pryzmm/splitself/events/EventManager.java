@@ -93,7 +93,8 @@ public class EventManager {
         ESCAPE,
         LIFT,
         SURROUND,
-        LOGS
+        LOGS,
+        DISCONNECT
     }
 
     public static Map<Events, Boolean> oneTimeEvents = new HashMap<>();
@@ -272,6 +273,7 @@ public class EventManager {
         }).start());
     }
     public static void runChatEvent(PlayerEntity player, String rawMessage, boolean SkipWait) {
+        if (player.getWorld() == Objects.requireNonNull(player.getServer()).getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY)) {return;}
         new Thread(() -> {
             try {
                 if (!SkipWait) {
@@ -888,9 +890,8 @@ public class EventManager {
                 }
                 break;
             case WHISPER:
-                Random random = new Random();
-                double distance = 20 + random.nextDouble() * (30 - 20);
-                double angle = random.nextDouble() * 2 * Math.PI;
+                double distance = 20 + new Random().nextDouble() * (30 - 20);
+                double angle = new Random().nextDouble() * 2 * Math.PI;
                 double spawnX = player.getPos().getX() + Math.cos(angle) * distance;
                 double spawnY = player.getPos().getY() + Math.cos(angle) * distance;
                 double spawnZ = player.getPos().getZ() + Math.sin(angle) * distance;
@@ -913,11 +914,9 @@ public class EventManager {
                 String resourcePath = "data/splitself/saved_text/logs.txt";
                 try {
                     InputStream inputStream = EventManager.class.getClassLoader().getResourceAsStream(resourcePath);
-
                     if (inputStream == null) {
                         SplitSelf.LOGGER.error("Resource not found: {}", resourcePath);
                     }
-
                     StringBuilder content = new StringBuilder();
                     assert inputStream != null;
                     try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
@@ -926,12 +925,31 @@ public class EventManager {
                             content.append(line).append("\n");
                         }
                     }
-
                     DesktopFileUtil.createFileOnDesktop("latest.log", content.toString().replace("PLAYERNAME", player.getName().getString()));
-
                 } catch (IOException e) {
-                    SplitSelf.LOGGER.error("Error reading resource file: " + resourcePath, e);
+                    SplitSelf.LOGGER.error("Error reading resource file: {}", resourcePath, e);
                 }
+                break;
+            case DISCONNECT:
+                new Thread(() -> {
+                    try {
+                        assert client.getServer() != null;
+                        client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.disconnect.left", player.getName().getString()).getString()).formatted(Formatting.YELLOW), false);
+                        Thread.sleep(100);
+                        client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.disconnect.joined", player.getName().getString()).getString()).formatted(Formatting.YELLOW), false);
+                        Thread.sleep(1700);
+                        client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.disconnect.left", player.getName().getString()).getString()).formatted(Formatting.YELLOW), false);
+                        Thread.sleep(100);
+                        client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.disconnect.joined", player.getName().getString()).getString()).formatted(Formatting.YELLOW), false);
+                        Thread.sleep(3900);
+                        client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.disconnect.left", player.getName().getString()).getString()).formatted(Formatting.YELLOW), false);
+                        Thread.sleep(100);
+                        client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.disconnect.joined", player.getName().getString()).getString()).formatted(Formatting.YELLOW), false);
+                    } catch (Exception e) {
+                        SplitSelf.LOGGER.error(e.getMessage(), e);
+                    }
+                }).start();
+                break;
         }
     }
 }

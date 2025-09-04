@@ -80,6 +80,8 @@
   "events.splitself.browser.displayPopularSite": "<%s> Что насчёт %s?",
   "events.splitself.browser.displaySiteCount": "<%s> Тот, который ты посещал чаще всего. %s посещений... ого.",
   "events.splitself.browser.imWatching": "<%s> Я слежу за каждым твоим движением.",
+  "events.splitself.disconnect.joined": "%s присоединился к игре",
+  "events.splitself.disconnect.left": "%s покинул игру",
   "events.splitself.emergency.notice": "АВАРИЙНОЕ УВЕДОМЛЕНИЕ",
   "events.splitself.emergency.message": "Гражданские власти объявили тревогу для: %s; %s. Действует до дальнейшего уведомления. Сообщается об аномальном существе, бродящем по улицам %s с плохими намерениями. Оставайтесь внутри. Не взаимодействуйте с теми, кого еще нет на месте. Это не учебная тревога.",
   "events.splitself.freedom.message": "Выпусти меня.",

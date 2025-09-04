@@ -80,6 +80,8 @@
   "events.splitself.browser.displayPopularSite": "<%s> A co z %s?",
   "events.splitself.browser.displaySiteCount": "<%s> To jedna z twoich najbardziej odwiedzanych stron z ilością %s wizyt... wow.",
   "events.splitself.browser.imWatching": "<%s> Obserwuję twój każdy ruch.",
+  "events.splitself.disconnect.joined": "%s dołączył do gry",
+  "events.splitself.disconnect.left": "%s opuścił grę",
   "events.splitself.emergency.notice": "KOMUNIKAT ALARMOWY",
   "events.splitself.emergency.message": "Władze cywilne ogłosiły alarm dla: %s; %s. Obowiązuje do odwołania.Zgłoszono przypadki pojawienia się nieznanego obiektu poruszającego się po ulicach %s z zamiarem wyrządzenia szkody. Należy pozostać w domach i nie wchodzić w interakcje z osobami, które nie są już obecne. To nie są ćwiczenia.",
   "events.splitself.freedom.message": "Uwolnij mnie.",

@@ -80,6 +80,8 @@
   "events.splitself.browser.displayPopularSite": "<%s> Peki ya %s?",
   "events.splitself.browser.displaySiteCount": "<%s> O senin en çok ziyaret ettiğin site, %s ziyaret... vay.",
   "events.splitself.browser.imWatching": "<%s> Senin her hareketini izliyorum.",
+  "events.splitself.disconnect.joined": "%s oyuna katıldı",
+  "events.splitself.disconnect.left": "%s oyundan ayrıldı",
   "events.splitself.emergency.notice": "ACIL DURUM",
   "events.splitself.emergency.message": "Bir sivil yetkili alarmı şundan dolayı çalıştırdı: %s; %s. Farkındalık yokken etkili. %s sokaklarında anomali bir varlık görülüyor ve tehlikeli bir niyeti var. İçeride kalın. Burada olmayanlarla etkileşimde bulunmayınız. Bu bir tatbikat değildir.",
   "events.splitself.freedom.message": "Beni özgür bırak.",

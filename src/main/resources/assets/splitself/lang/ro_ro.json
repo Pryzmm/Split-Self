@@ -80,6 +80,8 @@
   "events.splitself.browser.displayPopularSite": "<%s> Ce zici de %s?",
   "events.splitself.browser.displaySiteCount": "<%s> Acesta este unul dintre cele mai vizitate site-uri ale tale, cu %s vizite... wow.",
   "events.splitself.browser.imWatching": "<%s> Iti urmaresc fiecare miscare.",
+  "events.splitself.disconnect.joined": "%s s-a alaturat jocului",
+  "events.splitself.disconnect.left": "%s a iesit din joc",
   "events.splitself.emergency.notice": "AVIZ DE URGENȚĂ",
   "events.splitself.emergency.message": "O autoritate civilă a emis o alertă pentru: %s; %s. Valabilă până la o nouă notificare. Se raportează observarea unei entități anormale care cutreieră străzile din %s cu intenții rele. Rămâneți înăuntru. Nu interacționați cu nimeni care nu este deja prezent. Acesta nu este un exercițiu..",
   "events.splitself.freedom.message": "Lasa-ma sa ies.",

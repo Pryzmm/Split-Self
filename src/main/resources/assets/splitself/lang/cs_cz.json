@@ -80,6 +80,8 @@
   "events.splitself.browser.displayPopularSite": "<%s> A co %s?",
   "events.splitself.browser.displaySiteCount": "<%s> To je jedna z tvých nejnavštěvovanějších stránek s %s shlédhnutí... wow.",
   "events.splitself.browser.imWatching": "<%s> Sleduji tvůj každý pohyb.",
+  "events.splitself.disconnect.joined": "%s jse připojil do hry",
+  "events.splitself.disconnect.left": "%s opustil hru",
   "events.splitself.emergency.notice": "NOUZOVÉ OZNÁMENÍ",
   "events.splitself.emergency.message": "Občanský úřad vydal varování pro: %s; %s. Účinné do dalšího odvolání. Svědci nahlásili anomální entitu plížit ulicí %s se špatným úmyslem. Zůstante uvnitř. Nekomunikujte s nikým, kdo není u vás přítomen. Tohle není zkouška.",
   "events.splitself.freedom.message": "Vysvoboď mě.",
