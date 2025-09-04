@@ -57,6 +57,7 @@ public class DefaultConfig {
         weights.put("ESCAPE", 10);
         weights.put("LIFT", 10);
         weights.put("SURROUND", 5);
+        weights.put("LOGS", 10);
         return weights;
     }
 
@@ -100,6 +101,7 @@ public class DefaultConfig {
         stages.put("ESCAPE", 2);
         stages.put("LIFT", 1);
         stages.put("SURROUND", 3);
+        stages.put("LOGS", 3);
         return stages;
     }
 
@@ -143,6 +145,7 @@ public class DefaultConfig {
         oneTimers.put("ESCAPE", false);
         oneTimers.put("LIFT", false);
         oneTimers.put("SURROUND", true);
+        oneTimers.put("LOGS", true);
         return oneTimers;
     }
 

@@ -1,0 +1,132 @@
+[12:06:36] [main/INFO]: Loading Minecraft 1.21.1 with Fabric Loader 0.17.2
+[12:06:36] [main/INFO]: Loading 44 mods:
+ 	- fabric-api 0.116.5+1.21.1
+ 	   |-- fabric-api-base 0.4.42+6573ed8c19
+ 	   |-- fabric-api-lookup-api-v1 1.6.71+b559734419
+ 	   |-- fabric-biome-api-v1 13.0.31+d527f9fd19
+ 	   |-- fabric-block-api-v1 1.1.0+0bc3503219
+ 	   |-- fabric-block-view-api-v2 1.0.11+ebb2264e19
+ 	   |-- fabric-blockrenderlayer-v1 1.1.52+0af3f5a719
+ 	   |-- fabric-client-tags-api-v1 1.1.15+6573ed8c19
+ 	   |-- fabric-command-api-v1 1.2.49+f71b366f19
+ 	   |-- fabric-command-api-v2 2.2.28+6ced4dd919
+ 	   |-- fabric-commands-v0 0.2.66+df3654b319
+ 	   |-- fabric-content-registries-v0 8.0.19+b559734419
+ 	   |-- fabric-convention-tags-v1 2.1.5+7f945d5b19
+ 	   |-- fabric-convention-tags-v2 2.11.1+a406e79519
+ 	   |-- fabric-crash-report-info-v1 0.2.29+0af3f5a719
+ 	   |-- fabric-data-attachment-api-v1 1.4.5+6116a37819
+ 	   |-- fabric-data-generation-api-v1 20.2.33+37516cd619
+ 	   |-- fabric-dimensions-v1 4.0.0+6fc22b9919
+ 	   |-- fabric-entity-events-v1 1.8.0+2b27e0a419
+ 	   |-- fabric-events-interaction-v0 0.7.13+ba9dae0619
+ 	   |-- fabric-game-rule-api-v1 1.0.53+6ced4dd919
+ 	   |-- fabric-item-api-v1 11.2.0+3b3cb2e819
+ 	   |-- fabric-item-group-api-v1 4.1.7+def88e3a19
+ 	   |-- fabric-key-binding-api-v1 1.0.47+0af3f5a719
+ 	   |-- fabric-keybindings-v0 0.2.45+df3654b319
+ 	   |-- fabric-lifecycle-events-v1 2.6.0+0865547519
+ 	   |-- fabric-loot-api-v2 3.0.15+3f89f5a519
+ 	   |-- fabric-loot-api-v3 1.0.3+3f89f5a519
+ 	   |-- fabric-message-api-v1 6.0.14+8aaf3aca19
+ 	   |-- fabric-model-loading-api-v1 2.1.0+b4d813fc19
+ 	   |-- fabric-networking-api-v1 4.3.0+c7469b2119
+ 	   |-- fabric-object-builder-api-v1 15.2.1+40875a9319
+ 	   |-- fabric-particles-v1 4.0.2+6573ed8c19
+ 	   |-- fabric-recipe-api-v1 5.0.14+248df81c19
+ 	   |-- fabric-registry-sync-v0 5.3.1+e3eddc2119
+ 	   |-- fabric-renderer-api-v1 3.4.1+b4d813fc19
+ 	   |-- fabric-renderer-indigo 1.7.1+c705a49c19
+ 	   |-- fabric-renderer-registries-v1 3.2.69+df3654b319
+ 	   |-- fabric-rendering-data-attachment-v1 0.3.49+73761d2e19
+ 	   |-- fabric-rendering-fluids-v1 3.1.6+1daea21519
+ 	   |-- fabric-rendering-v0 1.1.72+df3654b319
+ 	   |-- fabric-rendering-v1 5.1.0+ab4c25a019
+ 	   |-- fabric-resource-conditions-api-v1 4.3.0+8dc279b119
+ 	   |-- fabric-resource-loader-v0 1.3.1+5b5275af19
+ 	   |-- fabric-screen-api-v1 2.0.25+8b68f1c719
+ 	   |-- fabric-screen-handler-api-v1 1.3.90+b559734419
+ 	   |-- fabric-sound-api-v1 1.0.23+6573ed8c19
+ 	   |-- fabric-transfer-api-v1 5.4.3+c24bd99419
+ 	   \-- fabric-transitive-access-wideners-v1 6.2.0+45b9699719
+ 	- fabricloader 0.17.2
+ 	   \-- mixinextras 0.5.0
+ 	- fabricproxy-lite 2.9.0
+ 	   \-- com_moandjiezana_toml_toml4j 0.7.2
+ 	- java 21
+ 	- minecraft 1.21.1
+[12:06:36] [main/INFO]: SpongePowered MIXIN Subsystem Version=0.8.7 Source=file:/home/minecraft/server/libraries/net/fabricmc/sponge-mixin/0.16.3+mixin.0.8.7/sponge-mixin-0.16.3+mixin.0.8.7.jar Service=Knot/Fabric Env=SERVER
+[12:06:36] [main/INFO]: Compatibility level set to JAVA_17
+[12:06:36] [main/INFO]: Compatibility level set to JAVA_21
+[12:06:37] [main/INFO]: Initializing MixinExtras via com.llamalad7.mixinextras.service.MixinExtrasServiceImpl(version=0.5.0).
+[12:06:42] [main/INFO]: Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, name=PROD]
+[12:06:44] [main/INFO]: Loaded 1290 recipes
+[12:06:44] [main/INFO]: Loaded 1399 advancements
+[12:06:45] [main/INFO]: Applied 0 biome modifications to 0 of 64 new biomes in 893.2 μs
+[12:06:45] [Server thread/INFO]: Starting minecraft server version 1.21.1
+[12:06:45] [Server thread/INFO]: Loading properties
+[12:06:45] [Server thread/INFO]: Default game type: SURVIVAL
+[12:06:45] [Server thread/INFO]: Generating keypair
+[12:06:45] [Server thread/INFO]: Starting Minecraft server on *:25575
+[12:06:45] [Server thread/INFO]: Using epoll channel type
+[12:06:45] [Server thread/INFO]: Preparing level "world"
+[12:06:50] [Server thread/INFO]: Preparing start region for dimension minecraft:overworld
+[12:06:50] [Worker-Main-1/INFO]: Preparing spawn area: 0%
+[12:06:50] [Server thread/INFO]: Time elapsed: 505 ms
+[12:06:50] [Server thread/INFO]: Done (5.116s)! For help, type "help"
+[12:07:18] [Server thread/INFO]: ████████████[/█████████████████████] logged in with entity id 8 at (-154.5, 85.0, -823.5)
+[12:07:18] [Server thread/INFO]: ████████████ joined the game
+[12:18:44] [Server thread/INFO]: ████████████ has made the advancement [Not Today, Thank You]
+[12:21:18] [Server thread/INFO]: PLAYERNAME[/█████████████████████] logged in with entity id 9 at (715.5, 87.0, 254.5)
+[12:21:18] [Server thread/INFO]: PLAYERNAME joined the game
+[12:21:24] [Server thread/INFO]: [Not Secure] <████████████> hey!
+[12:21:38] [Server thread/INFO]: [Not Secure] <PLAYERNAME> hi!
+[12:21:43] [Server thread/INFO]: [Not Secure] <████████████> hru doing?
+[12:21:49] [Server thread/INFO]: [Not Secure] <PLAYERNAME> i'm okay, wbu?
+[12:21:54] [Server thread/INFO]: [Not Secure] <████████████> i'm doing wonderful today
+[12:22:01] [Server thread/INFO]: [Not Secure] <PLAYERNAME> that's good to hear
+[12:22:04] [Server thread/INFO]: [Not Secure] <████████████> :D
+[12:22:07] [Server thread/INFO]: [Not Secure] <████████████> where you at?
+[12:22:32] [Server thread/INFO]: [Not Secure] <PLAYERNAME> umm in a cave right now
+[12:22:42] [Server thread/INFO]: [Not Secure] <████████████> you think you can get more iron?
+[12:22:49] [Server thread/INFO]: [Not Secure] <PLAYERNAME> i'll try
+[12:22:54] [Server thread/INFO]: [Not Secure] <████████████> thank you!
+[12:28:44] [Server thread/INFO]: PLAYERNAME has made the advancement [Ice Bucket Challenge]
+[12:28:48] [Server thread/INFO]: [Not Secure] <PLAYERNAME> found some iron for you
+[12:29:54] [Server thread/INFO]: [Not Secure] <████████████> thank you!
+[12:30:37] [Server thread/INFO]: [Not Secure] <████████████> when do you leave for your trip again?
+[12:31:54] [Server thread/INFO]: [Not Secure] <PLAYERNAME> umm, sometime next week
+[12:32:02] [Server thread/INFO]: [Not Secure] <████████████> aww, alright
+[12:32:08] [Server thread/INFO]: [Not Secure] <PLAYERNAME> sorry, i don't know how long i'll be
+[12:32:19] [Server thread/INFO]: [Not Secure] <████████████> well the iron isn't that important anyway, i can wait
+[12:32:27] [Server thread/INFO]: [Not Secure] <PLAYERNAME> i meant i don't know how long the trip will last
+[12:32:34] [Server thread/INFO]: [Not Secure] <████████████> oh
+[12:32:42] [Server thread/INFO]: [Not Secure] <████████████> but you'll still keep in touch right?
+[12:32:56] [Server thread/INFO]: [Not Secure] <PLAYERNAME> sure thing
+[12:33:03] [Server thread/INFO]: [Not Secure] <████████████> thank you
+[12:33:12] [Server thread/INFO]: [Not Secure] <████████████> i hope you enjoy ██████, lots of fun stuff there from what i've heard
+[12:32:23] [Server thread/INFO]: [Not Secure] <PLAYERNAME> yea
+[12:33:03] [Server thread/INFO]: [Not Secure] <████████████> can you come to base?
+[12:33:59] [Server thread/INFO]: [Not Secure] <PLAYERNAME> i actually have to log off early, sorry
+[12:34:03] [Server thread/INFO]: [Not Secure] <████████████> oh, okay
+[12:34:09] [Server thread/INFO]: [Not Secure] <████████████> i'll message you later, alright?
+[12:34:16] [Server thread/INFO]: [Not Secure] <PLAYERNAME> sure
+[12:34:19] [Server thread/INFO]: PLAYERNAME lost connection: Disconnected
+[12:34:19] [Server thread/INFO]: PLAYERNAME left the game
+[12:34:20] [Server thread/INFO]: [Not Secure] <████████████> okay, see you later
+[12:49:17] [Server thread/INFO]: ████████████ has made the advancement [Diamonds!]
+[12:49:42] [Server thread/INFO]: ████████████ lost connection: Disconnected
+[12:49:42] [Server thread/INFO]: ████████████ left the game
+[12:50:34] [Server thread/INFO]: Saving the game (this may take a moment!)
+[12:50:34] [Server thread/INFO]: Saved the game
+[12:50:34] [Server thread/INFO]: Stopping the server
+[12:50:34] [Server thread/INFO]: Stopping server
+[12:50:34] [Server thread/INFO]: Saving players
+[12:50:34] [Server thread/INFO]: Saving worlds
+[12:50:34] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:overworld
+[12:50:34] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_end
+[12:50:34] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_nether
+[12:50:34] [Server thread/INFO]: ThreadedAnvilChunkStorage (world): All chunks are saved
+[12:50:34] [Server thread/INFO]: ThreadedAnvilChunkStorage (DIM1): All chunks are saved
+[12:50:34] [Server thread/INFO]: ThreadedAnvilChunkStorage (DIM-1): All chunks are saved
+[12:50:34] [Server thread/INFO]: ThreadedAnvilChunkStorage: All dimensions are saved

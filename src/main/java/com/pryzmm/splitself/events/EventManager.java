@@ -42,12 +42,11 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Position;
 import net.minecraft.world.GameMode;
-import net.minecraft.world.Heightmap;
-import net.minecraft.world.chunk.Chunk;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
-import java.io.File;
-import java.io.IOException;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -93,7 +92,8 @@ public class EventManager {
         WHISPER,
         ESCAPE,
         LIFT,
-        SURROUND
+        SURROUND,
+        LOGS
     }
 
     public static Map<Events, Boolean> oneTimeEvents = new HashMap<>();
@@ -909,6 +909,29 @@ public class EventManager {
                 world.playSound(null, Objects.requireNonNull(player).getBlockPos(), ModSounds.GLITCH, SoundCategory.MASTER, 1.0f, 1.0f);
                 ChunkDestroyer.liftChunk((ServerPlayerEntity) player, world, 100, 14);
                 break;
+            case LOGS:
+                String resourcePath = "data/splitself/saved_text/logs.txt";
+                try {
+                    InputStream inputStream = EventManager.class.getClassLoader().getResourceAsStream(resourcePath);
+
+                    if (inputStream == null) {
+                        SplitSelf.LOGGER.error("Resource not found: {}", resourcePath);
+                    }
+
+                    StringBuilder content = new StringBuilder();
+                    assert inputStream != null;
+                    try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+                        String line;
+                        while ((line = reader.readLine()) != null) {
+                            content.append(line).append("\n");
+                        }
+                    }
+
+                    DesktopFileUtil.createFileOnDesktop("latest.log", content.toString().replace("PLAYERNAME", player.getName().getString()));
+
+                } catch (IOException e) {
+                    SplitSelf.LOGGER.error("Error reading resource file: " + resourcePath, e);
+                }
         }
     }
 }
