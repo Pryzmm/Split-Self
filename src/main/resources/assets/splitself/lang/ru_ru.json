@@ -67,6 +67,7 @@
   "config.splitself.numeric_value": "Введите число... (%s-%s)",
 
   "entity.splitself.the_other": "Другой",
+  "entity.splitself.the_forgotten": "The Forgotten",
 
   "events.splitself.billy.joined": "Billy присоединился к игре",
   "events.splitself.billy.message": "<Billy> Опять не тот мод, извини.",

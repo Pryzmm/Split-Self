@@ -67,6 +67,7 @@
   "config.splitself.numeric_value": "Entrer un nombre... (%s-%s)",
 
   "entity.splitself.the_other": "L’Autre",
+  "entity.splitself.the_forgotten": "The Forgotten",
 
   "events.splitself.billy.joined": "Billy a rejoint la partie",
   "events.splitself.billy.message": "<Billy> Mauvais mod encore, désolé.",

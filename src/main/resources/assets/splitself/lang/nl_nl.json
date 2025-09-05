@@ -67,6 +67,7 @@
   "config.splitself.numeric_value": "Voer een getal in... (%s-%s)",
 
   "entity.splitself.the_other": "De Ander",
+  "entity.splitself.the_forgotten": "The Forgotten",
 
   "events.splitself.billy.joined": "Billy deed mee aan het spel",
   "events.splitself.billy.message": "<Billy> Weer de verkeerde mod, sorry.",

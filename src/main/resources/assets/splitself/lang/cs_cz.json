@@ -67,6 +67,7 @@
   "config.splitself.numeric_value": "Vložte číslo... (%s-%s)",
 
   "entity.splitself.the_other": "Ten druhej",
+  "entity.splitself.the_forgotten": "The Forgotten",
 
   "events.splitself.billy.joined": "Billy jse připojil do hry",
   "events.splitself.billy.message": "<Billy> Zase špatný mód, pardon.",

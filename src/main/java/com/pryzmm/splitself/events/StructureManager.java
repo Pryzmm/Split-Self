@@ -1,6 +1,7 @@
 package com.pryzmm.splitself.events;
 
 import com.pryzmm.splitself.SplitSelf;
+import com.pryzmm.splitself.entity.client.TheForgottenSpawner;
 import com.pryzmm.splitself.world.IntegrityProcessor;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -15,13 +16,13 @@ import net.minecraft.util.BlockMirror;
 import net.minecraft.util.BlockRotation;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Position;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Heightmap;
-
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 
@@ -135,6 +136,20 @@ public class StructureManager {
             BlockPos spawnPos = new BlockPos((int) spawnX, 0, (int) spawnZ);
             int surfaceY = Player.getWorld().getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, spawnPos.getX(), spawnPos.getZ()) + YOffset;
             BlockPos finalSpawnPos = new BlockPos((int) spawnX, surfaceY, (int) spawnZ);
+            if (structureName.equals("house")) { // The forgotten
+                BlockPos[] newPositions;
+                int arrayLength;
+                try {
+                    newPositions = new BlockPos[TheForgottenSpawner.spawnPositions.length + 1];
+                    arrayLength = TheForgottenSpawner.spawnPositions.length;
+                    System.arraycopy(TheForgottenSpawner.spawnPositions, 0, newPositions, 0, arrayLength);
+                } catch (Exception e) {
+                    newPositions = new BlockPos[1];
+                    arrayLength = 0;
+                }
+                newPositions[arrayLength] = finalSpawnPos;
+                TheForgottenSpawner.spawnPositions = newPositions;
+            }
             BlockRotation rotation;
             if (!DisableRotation) {
                 rotation = BlockRotation.values()[world.getRandom().nextInt(4)];

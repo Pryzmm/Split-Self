@@ -3,6 +3,7 @@ package com.pryzmm.splitself.events;
 import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.block.ModBlocks;
 import com.pryzmm.splitself.config.DefaultConfig;
+import com.pryzmm.splitself.entity.client.TheForgottenSpawner;
 import com.pryzmm.splitself.file.JsonReader;
 import com.pryzmm.splitself.entity.ModEntities;
 import com.pryzmm.splitself.entity.client.TheOtherSpawner;
@@ -94,7 +95,8 @@ public class EventManager {
         LIFT,
         SURROUND,
         LOGS,
-        DISCONNECT
+        DISCONNECT,
+        FORGOTTEN
     }
 
     public static Map<Events, Boolean> oneTimeEvents = new HashMap<>();
@@ -418,6 +420,7 @@ public class EventManager {
                 })).start();
                 break;
             case HOUSE:
+                // omg dr house reference guys !!!
                 StructureManager.placeStructureRandomRotation(world, player, "house", 50, 80, -5, false, 1f, true);
                 break;
             case BEDROCKPILLAR:
@@ -949,6 +952,9 @@ public class EventManager {
                         SplitSelf.LOGGER.error(e.getMessage(), e);
                     }
                 }).start();
+                break;
+            case FORGOTTEN:
+                TheForgottenSpawner.trySpawnTheForgotten(world, player);
                 break;
         }
     }

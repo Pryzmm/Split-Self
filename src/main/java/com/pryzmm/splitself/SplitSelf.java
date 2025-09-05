@@ -106,6 +106,7 @@ public class SplitSelf implements ModInitializer {
         }
 
 		FabricDefaultAttributeRegistry.register(ModEntities.TheOther, TheOtherEntity.createAttributes());
+        FabricDefaultAttributeRegistry.register(ModEntities.    TheForgotten, TheOtherEntity.createAttributes());
 
 		CommandRegistrationCallback.EVENT.register(SplitSelfCommands::register);
 

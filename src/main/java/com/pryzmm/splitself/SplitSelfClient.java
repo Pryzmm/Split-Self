@@ -4,6 +4,8 @@ import com.pryzmm.splitself.block.entity.ModBlockEntities;
 import com.pryzmm.splitself.client.ClientDetector;
 import com.pryzmm.splitself.client.render.ImageFrameBlockEntityRenderer;
 import com.pryzmm.splitself.entity.ModEntities;
+import com.pryzmm.splitself.entity.client.TheForgottenModel;
+import com.pryzmm.splitself.entity.client.TheForgottenRenderer;
 import com.pryzmm.splitself.entity.client.TheOtherModel;
 import com.pryzmm.splitself.entity.client.TheOtherRenderer;
 import com.pryzmm.splitself.file.BrowserHistoryReader;
@@ -34,6 +36,9 @@ public class SplitSelfClient implements ClientModInitializer {
         EntityModelLayerRegistry.registerModelLayer(TheOtherModel.THEOTHER, TheOtherModel::getTexturedModelData);
         EntityModelLayerRegistry.registerModelLayer(TheOtherModel.THEOTHER_SLIM, TheOtherModel::getSlimTexturedModelData);
         EntityRendererRegistry.register(ModEntities.TheOther, TheOtherRenderer::new);
+
+        EntityModelLayerRegistry.registerModelLayer(TheForgottenModel.THEFORGOTTEN, TheForgottenModel::getTexturedModelData);
+        EntityRendererRegistry.register(ModEntities.TheForgotten, TheForgottenRenderer::new);
 
         SkyImageRenderer.register();
         BlockEntityRendererFactories.register(ModBlockEntities.IMAGE_FRAME_BLOCK_ENTITY, ImageFrameBlockEntityRenderer::new);

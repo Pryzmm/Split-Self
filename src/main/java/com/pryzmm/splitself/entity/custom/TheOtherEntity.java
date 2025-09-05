@@ -43,7 +43,7 @@ public class TheOtherEntity extends HostileEntity {
     private static final int PLAYER_UPDATE_INTERVAL = 20;
     public static Map<Entity, Integer> toBeDiscarded = new HashMap<>();
 
-    public void setupGoals() { // known bug; either goals, attributes or both aren't being properly applied on game restart, leading to twitching variant not moving
+    public void setupGoals() {
         TheOtherVariant variant = this.getVariant();
         switch (variant) {
             case TWITCHING:
@@ -158,6 +158,7 @@ public class TheOtherEntity extends HostileEntity {
 
     public TheOtherEntity(EntityType<? extends HostileEntity> entityType, World world) {
         super(entityType, world);
+        setupGoals();
     }
 
     @Override

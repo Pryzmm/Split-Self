@@ -67,6 +67,7 @@
   "config.splitself.numeric_value": "Bir sayı girin... (%s-%s)",
 
   "entity.splitself.the_other": "Diğerleri",
+  "entity.splitself.the_forgotten": "The Forgotten",
 
   "events.splitself.billy.joined": "Billy oyuna katıldı",
   "events.splitself.billy.message": "<Billy> Yine yanlış mod, özür dilerim.",

@@ -67,6 +67,7 @@
   "config.splitself.numeric_value": "Irj be egy számot... (%s-%s)",
 
   "entity.splitself.the_other": "A másik.",
+  "entity.splitself.the_forgotten": "The Forgotten",
 
   "events.splitself.billy.joined": "Billy csatlakozott a játékhoz.",
   "events.splitself.billy.message": "<Billy> Rossz mod újra, bocs.",
