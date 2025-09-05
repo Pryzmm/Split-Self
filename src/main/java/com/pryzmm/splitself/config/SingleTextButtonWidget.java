@@ -1,20 +1,17 @@
 package com.pryzmm.splitself.config;
 
-import com.pryzmm.splitself.SplitSelf;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
 
-import java.util.function.Supplier;
-
 public class SingleTextButtonWidget extends ButtonWidget {
 
-    public SingleTextButtonWidget(int x, int y, int width, int height, Text text, String tooltipTranslatableKey, PressAction onPress) {
+    public SingleTextButtonWidget(int x, int y, int width, int height, Text text, String translation, PressAction onPress) {
         super(x, y, width, height, text, onPress, DEFAULT_NARRATION_SUPPLIER);
-        if (tooltipTranslatableKey != null) {
-            this.setTooltip(Tooltip.of(Text.of(text.getString() + "\n" + SplitSelf.translate(tooltipTranslatableKey).getString())));
+        if (translation != null) {
+            this.setTooltip(Tooltip.of(Text.of(text.getString() + "\n" + translation)));
         }
     }
 

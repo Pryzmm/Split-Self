@@ -135,5 +135,13 @@
         "name": "splitself:glitch"
       }
     ]
+  },
+  "forgotten": {
+    "category": "master",
+    "sounds": [
+      {
+        "name": "splitself:forgotten"
+      }
+    ]
   }
 }

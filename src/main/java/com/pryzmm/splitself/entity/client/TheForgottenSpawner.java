@@ -2,13 +2,12 @@ package com.pryzmm.splitself.entity.client;
 
 import com.pryzmm.splitself.entity.ModEntities;
 import com.pryzmm.splitself.entity.custom.TheForgottenEntity;
+import com.pryzmm.splitself.sound.ModSounds;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.math.Position;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.Heightmap;
@@ -42,7 +41,7 @@ public class TheForgottenSpawner {
                 world.spawnEntity(theForgotten);
                 System.out.println(player);
                 System.out.println(theForgotten.getBlockPos());
-                world.playSound(null, theForgotten.getBlockPos(), SoundEvents.BLOCK_BELL_RESONATE, SoundCategory.MASTER, 1000.0f, 0.2f);
+                world.playSound(null, theForgotten.getBlockPos(), ModSounds.FORGOTTEN, SoundCategory.MASTER, 1000.0f, 1f);
                 break;
             }
         }
@@ -62,6 +61,6 @@ public class TheForgottenSpawner {
             return false;
         }
 
-        return !(Math.sqrt(player.squaredDistanceTo(new Vec3d(pos.getX(), pos.getY(), pos.getZ()))) <= 30);
+        return !(Math.sqrt(player.squaredDistanceTo(new Vec3d(pos.getX(), pos.getY(), pos.getZ()))) <= 20);
     }
 }

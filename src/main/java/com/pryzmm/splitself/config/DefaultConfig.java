@@ -13,6 +13,8 @@ public class DefaultConfig {
     public static int guaranteedEvent = 15600;
     public static int repeatEventsAfter = 5;
 
+    public static String voskModel = "vosk-model-small-en-us-0.15";
+
     public static Map<String, Integer> eventWeights = createDefaultEventWeights();
     public static Map<String, Integer> eventStages = createDefaultEventStages();
     public static Map<String, Boolean> oneTimeEvents = createDefaultOneTimeEvents();
@@ -58,6 +60,8 @@ public class DefaultConfig {
         weights.put("LIFT", 10);
         weights.put("SURROUND", 5);
         weights.put("LOGS", 10);
+        weights.put("DISCONNECT", 10);
+        weights.put("FORGOTTEN", 5);
         return weights;
     }
 
@@ -102,6 +106,8 @@ public class DefaultConfig {
         stages.put("LIFT", 1);
         stages.put("SURROUND", 3);
         stages.put("LOGS", 3);
+        stages.put("DISCONNECT", 2);
+        stages.put("FORGOTTEN", 3);
         return stages;
     }
 
@@ -146,6 +152,8 @@ public class DefaultConfig {
         oneTimers.put("LIFT", false);
         oneTimers.put("SURROUND", true);
         oneTimers.put("LOGS", true);
+        oneTimers.put("DISCONNECT", false);
+        oneTimers.put("FORGOTTEN", false);
         return oneTimers;
     }
 

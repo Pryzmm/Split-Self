@@ -31,6 +31,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
+import org.modogthedev.client.event.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,6 +100,7 @@ public class SplitSelf implements ModInitializer {
 		ServerTickEvents.END_SERVER_TICK.register(EventManager::onTick);
         ServerTickEvents.END_SERVER_TICK.register(LimboLevitation::onTick);
         if (FabricLoader.getInstance().isModLoaded("voicelib") && FabricLoader.getInstance().isModLoaded("architectury")) {
+            EventHandler.loadVoskModel(JsonReader.getString("voskModel"));
             MicrophoneReader.register();
             System.out.println("Registering microphone reader");
         } else {
@@ -106,7 +108,7 @@ public class SplitSelf implements ModInitializer {
         }
 
 		FabricDefaultAttributeRegistry.register(ModEntities.TheOther, TheOtherEntity.createAttributes());
-        FabricDefaultAttributeRegistry.register(ModEntities.    TheForgotten, TheOtherEntity.createAttributes());
+        FabricDefaultAttributeRegistry.register(ModEntities.TheForgotten, TheOtherEntity.createAttributes());
 
 		CommandRegistrationCallback.EVENT.register(SplitSelfCommands::register);
 

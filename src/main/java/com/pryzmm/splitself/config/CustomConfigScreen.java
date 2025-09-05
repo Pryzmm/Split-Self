@@ -2,6 +2,7 @@ package com.pryzmm.splitself.config;
 
 import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.events.EventManager;
+import com.pryzmm.splitself.events.MicrophoneReader;
 import com.pryzmm.splitself.file.JsonReader;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -10,6 +11,7 @@ import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.TextWidget;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Util;
 
 import java.awt.*;
 
@@ -68,7 +70,12 @@ public class CustomConfigScreen extends Screen {
     }
 
     public void createConfigButtons() {
-        createBooleanConfigButton(this.width / 2 - 75, 65, "eventsEnabled", DefaultConfig.eventsEnabled, "config.splitself.events_enabled");
+        if (MicrophoneReader.ShriekInstalled) {
+            createBooleanConfigButton(this.width / 2 - 153, 65, "eventsEnabled", DefaultConfig.eventsEnabled, "config.splitself.events_enabled");
+            createVoskConfigButton(this.width / 2 + 3, 65, "https://alphacephei.com/vosk/models", "config.splitself.vosk_model");
+        } else {
+            createBooleanConfigButton(this.width / 2 - 75, 65, "eventsEnabled", DefaultConfig.eventsEnabled, "config.splitself.events_enabled");
+        }
         createIntConfigButton(this.width / 2 - 230, 105, "eventTickInterval", DefaultConfig.eventTickInterval, 1, 1000, "config.splitself.event_tick_interval");
         createDoubleConfigButton(this.width / 2 - 75, 105, "eventChance", DefaultConfig.eventChance, 0.01, 1.00, "config.splitself.event_chance");
         createIntConfigButton(this.width / 2 + 80, 105, "eventCooldown", DefaultConfig.eventCooldown, 100, 10000, "config.splitself.event_cooldown");
@@ -121,11 +128,23 @@ public class CustomConfigScreen extends Screen {
         ));
     }
 
+    public void createVoskConfigButton(int x, int y, String link, String translationKey) {
+        this.addDrawableChild(new SingleTextButtonWidget(
+                x, y, 150, 20,
+                SplitSelf.translate(translationKey),
+                SplitSelf.translate(translationKey + ".description", JsonReader.getString("voskModel")).getString(),
+                button -> {
+                    Util.getOperatingSystem().open(link);
+                    createVoskValueWidget(5, this.height - 25);
+                }
+        ));
+    }
+
     public void createMenuConfigButton(int x, int y, String translationKey, double minimum, double maximum, String menuID, InputType inputType) {
         this.addDrawableChild(new SingleTextButtonWidget(
                 x, y, 150, 20,
                 SplitSelf.translate(translationKey),
-                translationKey + ".description",
+                SplitSelf.translate(translationKey + ".description").getString(),
                 button -> {
                     assert client != null;
                     arrayID = menuID;
@@ -171,12 +190,39 @@ public class CustomConfigScreen extends Screen {
                 Text.literal("Submit"),
                 null,
                 button -> {
-                    submitPrompt(textFieldWidget, minimum, maximum, inputType, configKey);
+                    submitNumericPrompt(textFieldWidget, minimum, maximum, inputType, configKey);
                 }
         ));
     }
 
-    private void submitPrompt(TextFieldWidget textFieldWidget, double minimum, double maximum, InputType inputType, String configValue) {
+    public void createVoskValueWidget(int x, int y) {
+        if (textFieldWidget != null) {
+            this.remove(textFieldWidget);
+            this.remove(textFieldHeaderWidget);
+            this.remove(submitButtonWidget);
+        }
+        textFieldWidget = this.addDrawableChild(new TextFieldWidget(
+                this.textRenderer,
+                x, y, 100, 20,
+                Text.empty() // nothing renders here for some reason :(
+        ));
+        int textWidth = textRenderer.getWidth(SplitSelf.translate("config.splitself.string_value"));
+        textFieldHeaderWidget = this.addDrawableChild(new TextWidget(
+                x, y - 15, textWidth, 20,
+                SplitSelf.translate("config.splitself.string_value"),
+                this.textRenderer
+        ));
+        submitButtonWidget = this.addDrawableChild(new SingleTextButtonWidget(
+                x + 100, y, 50, 20,
+                Text.literal("Submit"),
+                null,
+                button -> {
+                    submitVoskPrompt(textFieldWidget);
+                }
+        ));
+    }
+
+    private void submitNumericPrompt(TextFieldWidget textFieldWidget, double minimum, double maximum, InputType inputType, String configValue) {
         try {
             if (textFieldWidget.getText().isEmpty()) {
                 throw new NumberFormatException("Input value between " + minimum + " and " + maximum + "!");
@@ -200,6 +246,20 @@ public class CustomConfigScreen extends Screen {
                         throw new NumberFormatException("Invalid value! (Not Within Bounds!)");
                     }
                 }
+            }
+        } catch (NumberFormatException e) {
+            textFieldHeaderWidget.setTextColor(0xFF0000);
+        }
+    }
+
+    private void submitVoskPrompt(TextFieldWidget textFieldWidget) {
+        try {
+            if (textFieldWidget.getText().isEmpty()) {
+                throw new NumberFormatException("Input a value!");
+            } else {
+                textFieldHeaderWidget.setTextColor(0xFFFFFF);
+                configReader.setString("voskModel", textFieldWidget.getText());
+                configReader.saveConfig();
             }
         } catch (NumberFormatException e) {
             textFieldHeaderWidget.setTextColor(0xFF0000);

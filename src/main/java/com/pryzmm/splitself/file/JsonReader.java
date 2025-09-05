@@ -280,6 +280,10 @@ public class JsonReader {
         jsonObject.addProperty(key, value);
     }
 
+    public void setString(String key, String value) {
+        jsonObject.addProperty(key, value);
+    }
+
     public void setBoolean(String key, boolean value) {
         jsonObject.addProperty(key, value);
     }

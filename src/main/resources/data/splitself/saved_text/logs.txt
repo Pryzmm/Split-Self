@@ -79,41 +79,41 @@
 [12:18:44] [Server thread/INFO]: ████████████ has made the advancement [Not Today, Thank You]
 [12:21:18] [Server thread/INFO]: PLAYERNAME[/█████████████████████] logged in with entity id 9 at (715.5, 87.0, 254.5)
 [12:21:18] [Server thread/INFO]: PLAYERNAME joined the game
-[12:21:24] [Server thread/INFO]: [Not Secure] <████████████> hey!
-[12:21:38] [Server thread/INFO]: [Not Secure] <PLAYERNAME> hi!
-[12:21:43] [Server thread/INFO]: [Not Secure] <████████████> hru doing?
-[12:21:49] [Server thread/INFO]: [Not Secure] <PLAYERNAME> i'm okay, wbu?
-[12:21:54] [Server thread/INFO]: [Not Secure] <████████████> i'm doing wonderful today
-[12:22:01] [Server thread/INFO]: [Not Secure] <PLAYERNAME> that's good to hear
-[12:22:04] [Server thread/INFO]: [Not Secure] <████████████> :D
-[12:22:07] [Server thread/INFO]: [Not Secure] <████████████> where you at?
-[12:22:32] [Server thread/INFO]: [Not Secure] <PLAYERNAME> umm in a cave right now
-[12:22:42] [Server thread/INFO]: [Not Secure] <████████████> you think you can get more iron?
-[12:22:49] [Server thread/INFO]: [Not Secure] <PLAYERNAME> i'll try
-[12:22:54] [Server thread/INFO]: [Not Secure] <████████████> thank you!
+[12:21:24] [Server thread/INFO]: [Not Secure] <████████████> files.splitself.log.message1
+[12:21:38] [Server thread/INFO]: [Not Secure] <PLAYERNAME> files.splitself.log.message2
+[12:21:43] [Server thread/INFO]: [Not Secure] <████████████> files.splitself.log.message3
+[12:21:49] [Server thread/INFO]: [Not Secure] <PLAYERNAME> files.splitself.log.message4
+[12:21:54] [Server thread/INFO]: [Not Secure] <████████████> files.splitself.log.message5
+[12:22:01] [Server thread/INFO]: [Not Secure] <PLAYERNAME> files.splitself.log.message6
+[12:22:04] [Server thread/INFO]: [Not Secure] <████████████> files.splitself.log.message7
+[12:22:07] [Server thread/INFO]: [Not Secure] <████████████> files.splitself.log.message8
+[12:22:32] [Server thread/INFO]: [Not Secure] <PLAYERNAME> files.splitself.log.message9
+[12:22:42] [Server thread/INFO]: [Not Secure] <████████████> files.splitself.log.message10
+[12:22:49] [Server thread/INFO]: [Not Secure] <PLAYERNAME> files.splitself.log.message11
+[12:22:54] [Server thread/INFO]: [Not Secure] <████████████> files.splitself.log.message12
 [12:28:44] [Server thread/INFO]: PLAYERNAME has made the advancement [Ice Bucket Challenge]
-[12:28:48] [Server thread/INFO]: [Not Secure] <PLAYERNAME> found some iron for you
-[12:29:54] [Server thread/INFO]: [Not Secure] <████████████> thank you!
-[12:30:37] [Server thread/INFO]: [Not Secure] <████████████> when do you leave for your trip again?
-[12:31:54] [Server thread/INFO]: [Not Secure] <PLAYERNAME> umm, sometime next week
-[12:32:02] [Server thread/INFO]: [Not Secure] <████████████> aww, alright
-[12:32:08] [Server thread/INFO]: [Not Secure] <PLAYERNAME> sorry, i don't know how long i'll be
-[12:32:19] [Server thread/INFO]: [Not Secure] <████████████> well the iron isn't that important anyway, i can wait
-[12:32:27] [Server thread/INFO]: [Not Secure] <PLAYERNAME> i meant i don't know how long the trip will last
-[12:32:34] [Server thread/INFO]: [Not Secure] <████████████> oh
-[12:32:42] [Server thread/INFO]: [Not Secure] <████████████> but you'll still keep in touch right?
-[12:32:56] [Server thread/INFO]: [Not Secure] <PLAYERNAME> sure thing
-[12:33:03] [Server thread/INFO]: [Not Secure] <████████████> thank you
-[12:33:12] [Server thread/INFO]: [Not Secure] <████████████> i hope you enjoy ██████, lots of fun stuff there from what i've heard
-[12:32:23] [Server thread/INFO]: [Not Secure] <PLAYERNAME> yea
-[12:33:03] [Server thread/INFO]: [Not Secure] <████████████> can you come to base?
-[12:33:59] [Server thread/INFO]: [Not Secure] <PLAYERNAME> i actually have to log off early, sorry
-[12:34:03] [Server thread/INFO]: [Not Secure] <████████████> oh, okay
-[12:34:09] [Server thread/INFO]: [Not Secure] <████████████> i'll message you later, alright?
-[12:34:16] [Server thread/INFO]: [Not Secure] <PLAYERNAME> sure
+[12:28:48] [Server thread/INFO]: [Not Secure] <PLAYERNAME> files.splitself.log.message13
+[12:29:54] [Server thread/INFO]: [Not Secure] <████████████> files.splitself.log.message14
+[12:30:37] [Server thread/INFO]: [Not Secure] <████████████> files.splitself.log.message15
+[12:31:54] [Server thread/INFO]: [Not Secure] <PLAYERNAME> files.splitself.log.message16
+[12:32:02] [Server thread/INFO]: [Not Secure] <████████████> files.splitself.log.message17
+[12:32:08] [Server thread/INFO]: [Not Secure] <PLAYERNAME> files.splitself.log.message18
+[12:32:19] [Server thread/INFO]: [Not Secure] <████████████> files.splitself.log.message19
+[12:32:27] [Server thread/INFO]: [Not Secure] <PLAYERNAME> files.splitself.log.message20
+[12:32:34] [Server thread/INFO]: [Not Secure] <████████████> files.splitself.log.message21
+[12:32:42] [Server thread/INFO]: [Not Secure] <████████████> files.splitself.log.message22
+[12:32:56] [Server thread/INFO]: [Not Secure] <PLAYERNAME> files.splitself.log.message23
+[12:33:03] [Server thread/INFO]: [Not Secure] <████████████> files.splitself.log.message24
+[12:33:12] [Server thread/INFO]: [Not Secure] <████████████> files.splitself.log.message25
+[12:32:23] [Server thread/INFO]: [Not Secure] <PLAYERNAME> files.splitself.log.message26
+[12:33:03] [Server thread/INFO]: [Not Secure] <████████████> files.splitself.log.message27
+[12:33:59] [Server thread/INFO]: [Not Secure] <PLAYERNAME> files.splitself.log.message28
+[12:34:03] [Server thread/INFO]: [Not Secure] <████████████> files.splitself.log.message29
+[12:34:09] [Server thread/INFO]: [Not Secure] <████████████> files.splitself.log.message30
+[12:34:16] [Server thread/INFO]: [Not Secure] <PLAYERNAME> files.splitself.log.message31
 [12:34:19] [Server thread/INFO]: PLAYERNAME lost connection: Disconnected
 [12:34:19] [Server thread/INFO]: PLAYERNAME left the game
-[12:34:20] [Server thread/INFO]: [Not Secure] <████████████> okay, see you later
+[12:34:20] [Server thread/INFO]: [Not Secure] <████████████> files.splitself.log.message32
 [12:49:17] [Server thread/INFO]: ████████████ has made the advancement [Diamonds!]
 [12:49:42] [Server thread/INFO]: ████████████ lost connection: Disconnected
 [12:49:42] [Server thread/INFO]: ████████████ left the game
