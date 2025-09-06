@@ -114,7 +114,7 @@
   "events.splitself.emergency.message": "Le autorità civili hanno emesso un'avviso per: %s; %s. Valido fino a nuova indicazione. Sono state raccolte delle segnalazioni riguardanti avvistamenti di un'entità anomala che si aggira per le strade di %s con intenti malevoli. Si raccomanda di rimanere in casa. Non interagite con nessuno che non sia già presente. Questa non è un'esercitazione.",
   "events.splitself.freedom.message": "Liberami.",
   "events.splitself.inventoryOverlay.message": "Ciao",
-  "events.splitself.notepad.line1": "Hello, %s.",
+  "events.splitself.notepad.line1": "Ciao, %s.",
   "events.splitself.notepad.line2": "Lo so che puoi vedermi.",
   "events.splitself.notepad.line3": "Voglio avere la mia libertà.",
   "events.splitself.notepad.line4": "Sono in trappola.",
