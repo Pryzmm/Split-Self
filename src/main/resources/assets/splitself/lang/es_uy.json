@@ -199,6 +199,8 @@
   "item.splitself.in_my_life_music_disc": "Disco Musical",
   "item.splitself.in_my_life_music_disc.desc": "En Mi Vida - Yo",
   "item.splitself.in_my_life_music_disc.subtitle": "Dejame ser libre",
+  "item.splitself.freedom_music_disc": "Disco Musical",
+  "item.splitself.freedom_music_disc.desc": "libertad",
   "itemgroup.splitself.splitself_items": "Objetos de Split Self",
   "misc.splitself.9Minecraft": "<SplitSelf> Looks like you visited 9Minecraft, you didn't download anything from there, right? Downloading mods from there might not be safe, and it also doesn't properly support the mod creators! Please try to download from sites like Modrinth next time! You wouldn't want malware on your computer now, would you?",
   "misc.splitself.featherClient": "<SplitSelf> Advertencia: Algunas caracteristicas de este mod pueden no ser completamente funcionales en el cliente Feather, Porfavor prefiera usar la Aplicacion de Modrinth, CurseForge o el Lanzador de Minecraft Oficial.",

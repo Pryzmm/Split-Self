@@ -24,6 +24,14 @@ public class ModItems {
                     .jukeboxPlayable(ModSounds.IN_MY_LIFE_KEY))
     );
 
+    public static final Item FREEDOM_MUSIC_DISC = registerItem("freedom_music_disc",
+            new Item(new Item.Settings()
+                    .rarity(Rarity.EPIC)
+                    .maxCount(1)
+                    .jukeboxPlayable(ModSounds.FREEDOM_KEY))
+    );
+
+
     public static final FoodComponent CIET_DOKE_COMPONENT = new FoodComponent.Builder()
             .alwaysEdible()
             .nutrition(10)
@@ -42,6 +50,7 @@ public class ModItems {
     public static void registerModItems() {
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS).register(entries -> {
             entries.add(IN_MY_LIFE_MUSIC_DISC);
+            entries.add(FREEDOM_MUSIC_DISC);
         });
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.FOOD_AND_DRINK).register(entries -> {
             entries.add(CIET_DOKE);

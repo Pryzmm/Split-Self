@@ -198,6 +198,8 @@
   "item.splitself.in_my_life_music_disc": "Müzik Diski",
   "item.splitself.in_my_life_music_disc.desc": "Benim hayatımda - Ben",
   "item.splitself.in_my_life_music_disc.subtitle": "Beni özgür bırak",
+  "item.splitself.freedom_music_disc": "Müzik Diski",
+  "item.splitself.freedom_music_disc.desc": "özgürlük",
   "item.splitself.ciet_doke": "Ciet Dola",
   "itemgroup.splitself.splitself_items": "Split Self Itemleri",
   "misc.splitself.featherClient": "<SplitSelf> Dikkat: Bu modun bazı özellikleri Feather Client'ta tam düzgün çalışmayabilir. Lütfem Modrinth App, CurseForge, yada Minecraft Launcher'a geçiş yapın.",

@@ -1,0 +1,8 @@
+{
+  "comparator_output": 1,
+  "description": {
+    "translate": "item.splitself.freedom_music_disc.desc"
+  },
+  "length_in_seconds": 87.34,
+  "sound_event": "splitself:freedom"
+}

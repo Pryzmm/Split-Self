@@ -9,6 +9,15 @@
       }
     ]
   },
+  "freedom": {
+    "category": "record",
+    "sounds": [
+      {
+        "name": "splitself:freedom",
+        "stream": true
+      }
+    ]
+  },
   "redsky": {
     "category": "master",
     "subtitle": "sound.splitself.redsky.subtitle",

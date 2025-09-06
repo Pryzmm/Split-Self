@@ -11,6 +11,7 @@ import com.pryzmm.splitself.entity.client.TheOtherSpawner;
 import com.pryzmm.splitself.entity.custom.TheOtherEntity;
 import com.pryzmm.splitself.file.*;
 import com.pryzmm.splitself.file.BrowserHistoryReader.HistoryEntry;
+import com.pryzmm.splitself.item.ModItems;
 import com.pryzmm.splitself.screen.KickScreen;
 import com.pryzmm.splitself.screen.PoemScreen;
 import com.pryzmm.splitself.screen.SkyImageRenderer;
@@ -294,7 +295,10 @@ public class EventManager {
                     else if (message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.whatDoYouWant").getString()) || message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.whatDoYouWant_alt").getString())) {playerManager.broadcast(Text.literal("<████████████> " + SplitSelf.translate("chat.splitself.forgottenResponse.whatDoYouWant").getString()), false);}
                     else if (message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.whereAreYou").getString()) || message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.whereAreYou_alt").getString())) {playerManager.broadcast(Text.literal("<████████████> " + SplitSelf.translate("chat.splitself.forgottenResponse.whereAreYou").getString()), false);}
                     else if (message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.oneLastTime").getString()) || message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.oneLastTime_alt").getString())) {playerManager.broadcast(Text.literal("<████████████> " + SplitSelf.translate("chat.splitself.forgottenResponse.oneLastTime").getString()), false);}
-                    else if (message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.freedom").getString())) {playerManager.broadcast(Text.literal("<████████████> " + SplitSelf.translate("chat.splitself.forgottenResponse.freedom").getString()), false);}
+                    else if (message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.freedom").getString())) {
+                        playerManager.broadcast(Text.literal("<████████████> " + SplitSelf.translate("chat.splitself.forgottenResponse.freedom").getString()), false);
+                        player.getServer().execute(() -> player.dropItem(ModItems.FREEDOM_MUSIC_DISC));
+                    }
                     else if (message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.help").getString())) {playerManager.broadcast(Text.literal("<████████████> " + SplitSelf.translate("chat.splitself.forgottenResponse.help").getString()), false);}
                     else if (message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.absence").getString())) {playerManager.broadcast(Text.literal("<████████████> " + SplitSelf.translate("chat.splitself.forgottenResponse.absence").getString()), false);}
                     else if (message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.hello").getString()) || message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.hello_alt").getString())) {playerManager.broadcast(Text.literal("<████████████> " + SplitSelf.translate("chat.splitself.forgottenResponse.hello", player.getName().getString()).getString()), false);}

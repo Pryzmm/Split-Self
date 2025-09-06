@@ -198,6 +198,8 @@
   "item.splitself.in_my_life_music_disc": "Musik Skiva",
   "item.splitself.in_my_life_music_disc.desc": "I Mitt Liv - Jag",
   "item.splitself.in_my_life_music_disc.subtitle": "Släpp Mig Fri",
+  "item.splitself.freedom_music_disc": "Musik Skiva",
+  "item.splitself.freedom_music_disc.desc": "frihet",
   "item.splitself.ciet_doke": "Ciet Doke",
   "itemgroup.splitself.splitself_items": "Split Self Föremål",
   "misc.splitself.featherClient": "<SplitSelf> Varning: Vissa av modens funktioner kanske inte fungerar fullt på Feather Client. Växla till Modrinth appen, CurseForge eller den vanliga Minecraft Launchern..",

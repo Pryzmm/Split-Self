@@ -16,6 +16,7 @@ public class ModItemGroups {
                     .displayName(Text.translatable("itemgroup.splitself.splitself_items"))
                     .entries((displayContext, entries) -> {
                         entries.add(ModItems.IN_MY_LIFE_MUSIC_DISC);
+                        entries.add(ModItems.FREEDOM_MUSIC_DISC);
                         entries.add(ModItems.CIET_DOKE);
                         entries.add(ModBlocks.IMAGE_FRAME);
                     })

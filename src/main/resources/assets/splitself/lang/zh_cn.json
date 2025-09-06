@@ -198,6 +198,8 @@
   "item.splitself.in_my_life_music_disc": "Music Disc",
   "item.splitself.in_my_life_music_disc.desc": "In My Life - Me",
   "item.splitself.in_my_life_music_disc.subtitle": "Let me free",
+  "item.splitself.freedom_music_disc": "Music Disc",
+  "item.splitself.freedom_music_disc.desc": "Freedom",
   "item.splitself.ciet_doke": "Ciet Doke",
   "itemgroup.splitself.splitself_items": "Split Self Items",
   "misc.splitself.featherClient": "<SplitSelf> Warning: Some of this mods features may not be fully functional running on Feather Client. Please switch to the Modrinth App, CurseForge, or the normal Minecraft Launcher.",

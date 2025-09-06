@@ -28,9 +28,13 @@ public class ModSounds {
     public static final SoundEvent WHISPER = registerSoundEvent("whisper");
     public static final SoundEvent GLITCH = registerSoundEvent("glitch");
     public static final SoundEvent FORGOTTEN = registerSoundEvent("forgotten");
+    public static final SoundEvent FREEDOM = registerSoundEvent("freedom");
 
     public static final RegistryKey<JukeboxSong> IN_MY_LIFE_KEY =
             RegistryKey.of(RegistryKeys.JUKEBOX_SONG, Identifier.of(SplitSelf.MOD_ID, "in_my_life"));
+
+    public static final RegistryKey<JukeboxSong> FREEDOM_KEY =
+            RegistryKey.of(RegistryKeys.JUKEBOX_SONG, Identifier.of(SplitSelf.MOD_ID, "freedom"));
 
     private static SoundEvent registerSoundEvent(String name) {
         Identifier id = Identifier.of(SplitSelf.MOD_ID, name);
