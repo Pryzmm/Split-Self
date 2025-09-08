@@ -19,7 +19,7 @@ public class TheOtherSpawner {
 
     public static Position[] spawnPositions = null;
 
-    public static void trySpawnTheOther(ServerWorld world, PlayerEntity player) {
+    public static void trySpawnTheOther(ServerWorld world, PlayerEntity player, boolean silentSpawn) {
         if (spawnPositions == null || spawnPositions.length == 0) {
             return;
         }
@@ -41,7 +41,9 @@ public class TheOtherSpawner {
                 world.spawnEntity(theOther);
                 System.out.println(player);
                 System.out.println(theOther.getBlockPos());
-                world.playSound(null, theOther.getBlockPos(), SoundEvents.BLOCK_BELL_RESONATE, SoundCategory.MASTER, 1000.0f, 1.0f);
+                if (!silentSpawn) {
+                    world.playSound(null, theOther.getBlockPos(), SoundEvents.BLOCK_BELL_RESONATE, SoundCategory.MASTER, 1000.0f, 1.0f);
+                }
                 break;
             }
         }

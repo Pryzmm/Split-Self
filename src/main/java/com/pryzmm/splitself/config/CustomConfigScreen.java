@@ -70,7 +70,7 @@ public class CustomConfigScreen extends Screen {
     }
 
     public void createConfigButtons() {
-        if (MicrophoneReader.ShriekInstalled) {
+        if (SplitSelf.ShriekInstalled) {
             createBooleanConfigButton(this.width / 2 - 153, 65, "eventsEnabled", DefaultConfig.eventsEnabled, "config.splitself.events_enabled");
             createVoskConfigButton(this.width / 2 + 3, 65, "https://alphacephei.com/vosk/models", "config.splitself.vosk_model");
         } else {

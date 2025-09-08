@@ -71,7 +71,7 @@ public class NotepadManager {
                     writer.write("        $textBox.SelectionStart = $textBox.Text.Length\n");
                     writer.write("        $textBox.ScrollToCaret()\n");
                     writer.write("        [System.Windows.Forms.Application]::DoEvents()\n");
-                    writer.write("        Start-Sleep -Milliseconds (Get-Random -Minimum 0 -Maximum 300)\n");
+                    writer.write("        Start-Sleep -Milliseconds (Get-Random -Minimum 0 -Maximum 250)\n");
                     writer.write("    }\n");
                     writer.write("    $textBox.Text = $currentText\n");
                     writer.write("    $currentText += \"`r`n\"\n");

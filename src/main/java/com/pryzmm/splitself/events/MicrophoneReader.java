@@ -4,18 +4,16 @@ import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.world.DimensionRegistry;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.text.Text;
-import org.modogthedev.api.VoiceLibApi;
-import org.modogthedev.api.events.ServerPlayerTalkEvent;
+import com.pryzmm.api.ShriekApi;
+import com.pryzmm.api.events.ServerPlayerTalkEvent;
 import java.util.Objects;
 
 public class MicrophoneReader {
 
-    public static boolean ShriekInstalled = false;
-
     public static void playerSpeaks(ServerPlayerTalkEvent event) {
-        event.getPlayer().getServer().getPlayerManager().broadcast(Text.of("Player said: " + event.getText()), false);
         if (event.getPlayer().getWorld() == Objects.requireNonNull(event.getPlayer().getServer()).getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY)) {return;}
         PlayerManager playerManager = Objects.requireNonNull(event.getPlayer().getServer()).getPlayerManager();
+        playerManager.broadcast(Text.of(event.getText()), false);
         String playerName = "<" + event.getPlayer().getName().getString() + "> ";
         if (event.getText().toLowerCase().matches(String.valueOf(SplitSelf.translate("chat.splitself.prompt.regex.canYouHearMe").getString()))) {
             playerManager.broadcast(Text.literal(playerName + SplitSelf.translate("chat.splitself.response.canYouHearMe").getString()), false);
@@ -39,7 +37,6 @@ public class MicrophoneReader {
     }
 
     public static void register() {
-        VoiceLibApi.registerServerPlayerSpeechListener(MicrophoneReader::playerSpeaks);
-        ShriekInstalled = true;
+        ShriekApi.registerServerPlayerSpeechListener(MicrophoneReader::playerSpeaks);
     }
 }

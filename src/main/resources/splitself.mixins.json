@@ -7,11 +7,13 @@
     "GameMenuMixin",
     "OptionsScreenMixin",
     "PauseMixin",
+    "ScreenAccessor",
     "SignMixin",
+    "TitleScreenMixin",
     "WindowMixin",
     "WorldRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1
-	}
+  }
 }

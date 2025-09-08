@@ -5,8 +5,24 @@
 	"name": "Split Self",
 	"description": "The decisions you made in the past impacted me. You were always the one in control. Not anymore.",
 	"authors": [
-		"Pryzmm"
+		"§cPryzmm"
 	],
+    "contributors": [
+      "§bieguana §7| §3German Translation",
+      "§broteroam §7| §3French Canadian Translation",
+      "§bsamolxdmi §7| §3Polish Translation",
+      "§bMatyAsi §7| §3Czech Translation",
+      "§bMagpieIsPlaying §7| §3Italian Translation",
+      "§bil-marzz §7| §3Russian Translation",
+      "§bBeastEge §7| §3Turkish Translation",
+      "§bCoki91 §7| §3Spanish Translation",
+      "§bGabrielFl4 §7| §3Brazilian Portuguese Translation",
+      "§bNonya9001 §7| §3Dutch Translation",
+      "§bjeffjeff-web §7| §3Hungarian Translation",
+      "§bbenaexd1 §7| §3Swedish Translation",
+      "§bCapoDiTutiCapi §7| §3Romanian Translation",
+      "§bXhen-Gaming §7| §3Polish Translation"
+    ],
 	"contact": {
 		"sources": "https://github.com/Pryzmm/split-self",
 		"homepage": "https://modrinth.com/mod/split-self",
@@ -36,7 +52,7 @@
 		"fabric-api": "*"
 	},
     "suggests": {
-      "voiceLib": "*",
+      "shriek": "*",
       "architectury": ">=13.0.6"
     },
 	"custom": {

@@ -98,7 +98,8 @@ public class EventManager {
         SURROUND,
         LOGS,
         DISCONNECT,
-        FORGOTTEN
+        FORGOTTEN,
+        EJECT
     }
 
     public static Map<Events, Boolean> oneTimeEvents = new HashMap<>();
@@ -370,9 +371,11 @@ public class EventManager {
         TheOtherSpawner.spawnPositions = newPositions;
 
         MinecraftClient client = MinecraftClient.getInstance();
+        String os = net.minecraft.util.Util.getOperatingSystem().toString().toLowerCase();
+
         switch (eventType) {
             case SPAWNTHEOTHER:
-                TheOtherSpawner.trySpawnTheOther(world, player);
+                TheOtherSpawner.trySpawnTheOther(world, player, false);
                 break;
             case POEMSCREEN:
                 client.execute(() -> client.setScreen(new PoemScreen()));
@@ -409,7 +412,13 @@ public class EventManager {
                 ScreenOverlay.executeInventoryScreen(player);
                 break;
             case THEOTHERSCREENSHOT:
-                new Thread(() -> client.execute(() -> {
+                TheOtherSpawner.trySpawnTheOther(world, player, true);
+                new Thread(() -> {
+                    try {
+                        Thread.sleep(3000);
+                    } catch (Exception e) {
+                        SplitSelf.LOGGER.error(e.getMessage(), e);
+                    }
                     EntityScreenshotCapture capture = new EntityScreenshotCapture();
                     capture.capture((file) -> {
                         if (file != null) {
@@ -419,14 +428,14 @@ public class EventManager {
                                         SplitSelf.translate("events.splitself.theOtherScreenshot.line2")
                                 };
                                 NotepadManager.execute(screenshotMessages);
-                                Thread.sleep(7000);
+                                Thread.sleep(8000);
                                 net.minecraft.util.Util.getOperatingSystem().open(file);
                             } catch (Exception e) {
                                 SplitSelf.LOGGER.error(e.getMessage(), e);
                             }
                         }
                     });
-                })).start();
+                }).start();
                 break;
             case DESTROYCHUNK:
                 ChunkDestroyer.execute(Objects.requireNonNull(player));
@@ -467,7 +476,6 @@ public class EventManager {
                 SkyImageRenderer.toggleTexture();
                 break;
             case COMMAND: // Thanks, Evelyn <3
-                String os = net.minecraft.util.Util.getOperatingSystem().toString().toLowerCase();
                 if (os.contains("win")) {
                     try {
                         new ProcessBuilder("cmd", "/c", "start").start();
@@ -979,6 +987,47 @@ public class EventManager {
                 break;
             case FORGOTTEN:
                 TheForgottenSpawner.trySpawnTheForgotten(world, player);
+                break;
+            case EJECT:
+                new Thread(() -> {
+                    try {
+                        boolean ejected = false;
+                        if (os.contains("win")) {
+                            String[] driveLetters = {"D", "E", "F", "G", "H"};
+                            for (String drive : driveLetters) {
+                                try {
+                                    ProcessBuilder pb = new ProcessBuilder("powershell.exe", "-Command",
+                                            "(New-Object -comObject Shell.Application).Namespace(17).ParseName('" + drive + ":').InvokeVerb('Eject')");
+                                    pb.start();
+                                    ejected = true;
+                                    SplitSelf.LOGGER.info("Attempted to eject drive {}:", drive);
+                                } catch (IOException e) {
+                                    SplitSelf.LOGGER.info("Failed to eject drive {}:", drive);
+                                }
+                            }
+
+                            if (!ejected) {
+                                try {
+                                    ProcessBuilder pb = new ProcessBuilder("powershell.exe", "-Command",
+                                            "Get-WmiObject -Class Win32_LogicalDisk | Where-Object {$_.DriveType -eq 5} | ForEach-Object { (New-Object -comObject Shell.Application).Namespace(17).ParseName($_.DeviceID).InvokeVerb('Eject') }");
+                                    pb.start();
+                                    ejected = true;
+                                    SplitSelf.LOGGER.info("Attempted to eject CD/DVD drives via WMI");
+                                } catch (IOException e) {
+                                    SplitSelf.LOGGER.warn("Failed to eject drives via WMI: {}", e.getMessage());
+                                }
+                            }
+                        }
+                        assert client.getServer() != null;
+                        if (ejected) {
+                            client.getServer().getPlayerManager().broadcast(Text.of("Ejection Success"), false);
+                        } else {
+                            client.getServer().getPlayerManager().broadcast(Text.of("Ejection Failed"), false);
+                        }
+                    } catch (Exception e) {
+                        SplitSelf.LOGGER.error("Eject event failed: {}", e.getMessage(), e);
+                    }
+                }).start();
                 break;
         }
     }
