@@ -102,7 +102,8 @@ public class SplitSelf implements ModInitializer {
         ServerTickEvents.END_SERVER_TICK.register(LimboLevitation::onTick);
         if (FabricLoader.getInstance().isModLoaded("shriek") && FabricLoader.getInstance().isModLoaded("architectury")) {
             EventHandler.loadVoskModel(JsonReader.getString("voskModel"));
-            System.out.println("Registering microphone reader");
+            MicrophoneReader.register();
+            System.out.println("Registered MicrophoneReader...");
             ShriekInstalled = true;
         } else {
             System.out.println("Cannot register microphone reader, missing shriek or architectury");
