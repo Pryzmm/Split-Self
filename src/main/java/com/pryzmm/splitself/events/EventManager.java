@@ -27,8 +27,11 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.ChatHud;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.entity.passive.WolfEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
@@ -40,6 +43,7 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
+import net.minecraft.util.DyeColor;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
@@ -47,8 +51,8 @@ import net.minecraft.util.math.Position;
 import net.minecraft.world.GameMode;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
-
 import java.io.*;
+import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.time.LocalDate;
@@ -100,7 +104,8 @@ public class EventManager {
         DISCONNECT,
         FORGOTTEN,
         EJECT,
-        FREEZE
+        FREEZE,
+        BLU
     }
 
     public static Map<Events, Boolean> oneTimeEvents = new HashMap<>();
@@ -1032,6 +1037,22 @@ public class EventManager {
                         throw new RuntimeException(e);
                     }
                 })).start();
+                break;
+            case BLU:
+                WolfEntity wolf = new WolfEntity(EntityType.WOLF, player.getWorld());
+                wolf.setOwner(player);
+                wolf.setTamed(true, true);
+                try {
+                    Field collarColorField = WolfEntity.class.getDeclaredField("COLLAR_COLOR");
+                    collarColorField.setAccessible(true);
+                    TrackedData<Integer> COLLAR_COLOR = (TrackedData<Integer>) collarColorField.get(null);
+                    wolf.getDataTracker().set(COLLAR_COLOR, DyeColor.CYAN.getId());
+                } catch (Exception e) {
+                    SplitSelf.LOGGER.error("Blu event failed: {}", e.getMessage(), e);
+                }
+                wolf.setCustomName(Text.of("Blu"));
+                wolf.refreshPositionAndAngles(player.getX(), player.getY(), player.getZ(), 0F, 0F);
+                world.spawnEntity(wolf);
                 break;
         }
     }
