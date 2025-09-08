@@ -99,7 +99,8 @@ public class EventManager {
         LOGS,
         DISCONNECT,
         FORGOTTEN,
-        EJECT
+        EJECT,
+        FREEZE
     }
 
     public static Map<Events, Boolean> oneTimeEvents = new HashMap<>();
@@ -302,7 +303,7 @@ public class EventManager {
                     }
                     else if (message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.help").getString())) {playerManager.broadcast(Text.literal("<████████████> " + SplitSelf.translate("chat.splitself.forgottenResponse.help").getString()), false);}
                     else if (message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.absence").getString())) {playerManager.broadcast(Text.literal("<████████████> " + SplitSelf.translate("chat.splitself.forgottenResponse.absence").getString()), false);}
-                    else if (message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.hello").getString()) || message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.hello_alt").getString())) {playerManager.broadcast(Text.literal("<████████████> " + SplitSelf.translate("chat.splitself.forgottenResponse.hello", player.getName().getString()).getString()), false);}
+                    else if (message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.hello").getString()) || message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.hello_alt").getString())) {playerManager.broadcast(Text.literal("<████████████> " + SplitSelf.translate("chat.splitself.forgottenResponse.hello", System.getProperty("user.name")).getString()), false);}
                     return;
                 } // Default to The Other entity messages
                 if (message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.control").getString())) {playerManager.broadcast(Text.literal("<" + player.getName().getString() + "> " + SplitSelf.translate("chat.splitself.response.control").getString()), false);}
@@ -1005,29 +1006,32 @@ public class EventManager {
                                     SplitSelf.LOGGER.info("Failed to eject drive {}:", drive);
                                 }
                             }
-
                             if (!ejected) {
                                 try {
                                     ProcessBuilder pb = new ProcessBuilder("powershell.exe", "-Command",
                                             "Get-WmiObject -Class Win32_LogicalDisk | Where-Object {$_.DriveType -eq 5} | ForEach-Object { (New-Object -comObject Shell.Application).Namespace(17).ParseName($_.DeviceID).InvokeVerb('Eject') }");
                                     pb.start();
-                                    ejected = true;
                                     SplitSelf.LOGGER.info("Attempted to eject CD/DVD drives via WMI");
                                 } catch (IOException e) {
                                     SplitSelf.LOGGER.warn("Failed to eject drives via WMI: {}", e.getMessage());
                                 }
                             }
                         }
-                        assert client.getServer() != null;
-                        if (ejected) {
-                            client.getServer().getPlayerManager().broadcast(Text.of("Ejection Success"), false);
-                        } else {
-                            client.getServer().getPlayerManager().broadcast(Text.of("Ejection Failed"), false);
-                        }
                     } catch (Exception e) {
                         SplitSelf.LOGGER.error("Eject event failed: {}", e.getMessage(), e);
                     }
                 }).start();
+                break;
+            case FREEZE:
+                world.playSound(null, Objects.requireNonNull(player).getBlockPos(), SoundEvents.ITEM_OMINOUS_BOTTLE_DISPOSE, SoundCategory.MASTER, 1.0f, 1.0f);
+                new Thread(() -> client.execute(() -> {
+                    try {
+                        System.out.println(Thread.currentThread());
+                        Thread.sleep(2000);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                })).start();
                 break;
         }
     }

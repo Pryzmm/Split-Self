@@ -13,7 +13,6 @@ public class MicrophoneReader {
     public static void playerSpeaks(ServerPlayerTalkEvent event) {
         if (event.getPlayer().getWorld() == Objects.requireNonNull(event.getPlayer().getServer()).getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY)) {return;}
         PlayerManager playerManager = Objects.requireNonNull(event.getPlayer().getServer()).getPlayerManager();
-        playerManager.broadcast(Text.of(event.getText()), false);
         String playerName = "<" + event.getPlayer().getName().getString() + "> ";
         if (event.getText().toLowerCase().matches(String.valueOf(SplitSelf.translate("chat.splitself.prompt.regex.canYouHearMe").getString()))) {
             playerManager.broadcast(Text.literal(playerName + SplitSelf.translate("chat.splitself.response.canYouHearMe").getString()), false);
