@@ -21,7 +21,7 @@ public class DefaultConfig {
 
     private static Map<String, Integer> createDefaultEventWeights() {
         Map<String, Integer> weights = new HashMap<>();
-        weights.put("SPAWNTHEOTHER", 100);
+        weights.put("SPAWNTHEOTHER", 120);
         weights.put("POEMSCREEN", 5);
         weights.put("DOYOUSEEME", 10);
         weights.put("UNDERGROUNDMINING", 10);
@@ -62,6 +62,9 @@ public class DefaultConfig {
         weights.put("LOGS", 10);
         weights.put("DISCONNECT", 10);
         weights.put("FORGOTTEN", 5);
+        weights.put("EJECT", 10);
+        weights.put("FREEZE", 10);
+        weights.put("BLU", 10);
         return weights;
     }
 
@@ -108,6 +111,9 @@ public class DefaultConfig {
         stages.put("LOGS", 3);
         stages.put("DISCONNECT", 2);
         stages.put("FORGOTTEN", 3);
+        stages.put("EJECT", 2);
+        stages.put("FREEZE", 1);
+        stages.put("BLU", 3);
         return stages;
     }
 
@@ -154,6 +160,9 @@ public class DefaultConfig {
         oneTimers.put("LOGS", true);
         oneTimers.put("DISCONNECT", false);
         oneTimers.put("FORGOTTEN", false);
+        oneTimers.put("EJECT", false);
+        oneTimers.put("FREEZE", false);
+        oneTimers.put("BLU", true);
         return oneTimers;
     }
 

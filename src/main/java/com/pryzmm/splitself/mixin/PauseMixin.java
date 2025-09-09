@@ -24,7 +24,7 @@ public class PauseMixin {
 
     @Inject(method = "openGameMenu", at = @At("HEAD"), cancellable = true)
     private void preventGameMenuDuringEvent(boolean pauseOnly, CallbackInfo ci) {
-        if (EventManager.WINDOW_MANIPULATION_ACTIVE) {
+        if (EventManager.WINDOW_MANIPULATION_ACTIVE || EventManager.ACTIVE_EVENT) {
             ci.cancel();
         } else if (EventManager.PAUSE_PREVENTION) {
             pauseAttempts++;

@@ -11,6 +11,7 @@ import java.io.File;
 
 public class ScreenOverlay {
     public static void executeBlackScreen(PlayerEntity Player) {
+        EventManager.ACTIVE_EVENT = true;
         new Thread(() -> {
             Player.getWorld().playSound(null, Player.getBlockPos(), ModSounds.STATIC, SoundCategory.MASTER, 1.0f, 1.0f);
             ScreenOverlayRenderer.toggleOverlay();
@@ -20,6 +21,7 @@ public class ScreenOverlay {
                 throw new RuntimeException(e);
             }
             ScreenOverlayRenderer.toggleOverlay();
+            EventManager.ACTIVE_EVENT = false;
         }).start();
     }
 
@@ -63,6 +65,7 @@ public class ScreenOverlay {
     }
 
     public static void executeFrozenScreen(File image) {
+        EventManager.ACTIVE_EVENT = true;
         new Thread(() -> {
             FrozenOverlayRenderer.toggleOverlay(image);
             try {
@@ -71,11 +74,13 @@ public class ScreenOverlay {
                 throw new RuntimeException(e);
             }
             FrozenOverlayRenderer.toggleOverlay(image);
+            EventManager.ACTIVE_EVENT = false;
         }).start();
     }
 
     public static void executeFaceScreen(File image, PlayerEntity Player, Entity source) {
         new Thread(() -> {
+            EventManager.ACTIVE_EVENT = true;
             Player.getWorld().playSound(source, Player.getBlockPos(), ModSounds.AMSTATIC, SoundCategory.MASTER, 1.0f, 1.0f);
             FaceOverlayRenderer.toggleOverlay(image, 0.5f, 0.5f, 0.5f, 1.0f, 100, 133);
             try {
@@ -92,11 +97,13 @@ public class ScreenOverlay {
                 throw new RuntimeException(e);
             }
             FaceOverlayRenderer.toggleOverlay(image, 0f, 0f, 0f, 0f, 0, 0);
+            EventManager.ACTIVE_EVENT = false;
         }).start();
     }
 
     public static void executeEmergencyScreen(PlayerEntity player, String city) {
         new Thread(() -> {
+            EventManager.ACTIVE_EVENT = true;
             player.getWorld().playSound(null, player.getBlockPos(), ModSounds.AMBER, SoundCategory.MASTER, 1.0f, 1.0f);
             EmergencyOverlayRenderer.toggleOverlay(player, city);
             try {
@@ -105,10 +112,12 @@ public class ScreenOverlay {
                 throw new RuntimeException(e);
             }
             EmergencyOverlayRenderer.toggleOverlay(player, city);
+            EventManager.ACTIVE_EVENT = false;
         }).start();
     }
 
     public static void executeGlitchScreen(MinecraftClient client) {
+        EventManager.ACTIVE_EVENT = true;
         new Thread(() -> {
             GlitchOverlay.toggleOverlay();
             try {
@@ -121,6 +130,7 @@ public class ScreenOverlay {
             }
             client.getSoundManager().stopSounds(ModSounds.GLITCH.getId(), SoundCategory.MASTER);
             GlitchOverlay.toggleOverlay();
+            EventManager.ACTIVE_EVENT = false;
         }).start();
     }
 }

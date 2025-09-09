@@ -32,9 +32,11 @@ import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.passive.WolfEntity;
+import net.minecraft.entity.passive.WolfVariants;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -116,6 +118,7 @@ public class EventManager {
     public static boolean PAUSE_PREVENTION = false;
     public static boolean WINDOW_MANIPULATION_ACTIVE = false;
     public static boolean PAUSE_SHAKE = false;
+    public static boolean ACTIVE_EVENT = false;
 
     public static JsonReader jsonReader = new JsonReader("splitself.json5");
 
@@ -633,6 +636,7 @@ public class EventManager {
                 }
                 break;
             case SCALE:
+                ACTIVE_EVENT = true;
                 new Thread(() -> {
                     world.playSound(null, Objects.requireNonNull(player).getBlockPos(), ModSounds.BUZZ, SoundCategory.MASTER, 1.0f, 1.0f);
                     Double OldScale = client.options.getChatScale().getValue();
@@ -651,6 +655,7 @@ public class EventManager {
                     ChatHud chatHud = client.inGameHud.getChatHud();
                     chatHud.clear(true);
                     client.options.getChatScale().setValue(OldScale);
+                    ACTIVE_EVENT = false;
                 }).start();
                 break;
             case FREEDOM:
@@ -1040,6 +1045,7 @@ public class EventManager {
                 break;
             case BLU:
                 WolfEntity wolf = new WolfEntity(EntityType.WOLF, player.getWorld());
+                wolf.setVariant(world.getRegistryManager().get(RegistryKeys.WOLF_VARIANT).getEntry(WolfVariants.ASHEN).orElseThrow());
                 wolf.setOwner(player);
                 wolf.setTamed(true, true);
                 try {
