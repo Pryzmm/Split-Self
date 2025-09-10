@@ -84,7 +84,7 @@
   "config.splitself.start_events_after": "Händelse Start Fördröjning",
   "config.splitself.start_events_after.description": "Hur länge tills händelser kan börja aktiveras i ticks",
   "config.splitself.vosk_model": "Vosk Modell",
-  "config.splitself.vosk_model.description": "§bNuvarande Modell: %s\n\n§fNär du använder VoiceLib/Shriek laddas en Vosk-modell ner för att användas för taligenkänning. Den här inställningen kan inte inaktiveras utan att VoiceLib/Shriek tas bort..\n\n§eSpråkändringar kräver omstart.\n\n§cVoskmodellerna varierar i storlek. Klicka för att öppna Voskmodellens webbplats.",
+  "config.splitself.vosk_model.description": "§bNuvarande Modell: %s\n\n§fNär du använder Shriek laddas en Vosk-modell ner för att användas för taligenkänning. Den här inställningen kan inte inaktiveras utan att Shriek tas bort..\n\n§eSpråkändringar kräver omstart.\n\n§cVoskmodellerna varierar i storlek. Klicka för att öppna Voskmodellens webbplats.",
   "config.splitself.event_until_repeat": "Händelser tills upprepas",
   "config.splitself.event_until_repeat.description": "Hur många händelser kan aktiveras innan en tidigare aktiverad händelse kan aktiveras igen",
   "config.splitself.guaranteed_event": "Garanterat efter",

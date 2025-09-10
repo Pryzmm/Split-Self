@@ -2,13 +2,14 @@ package com.pryzmm.splitself.config;
 
 import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.events.EventManager;
-import com.pryzmm.splitself.events.MicrophoneReader;
 import com.pryzmm.splitself.file.JsonReader;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.TextWidget;
+import net.minecraft.client.toast.Toast;
+import net.minecraft.client.toast.ToastManager;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
@@ -260,6 +261,29 @@ public class CustomConfigScreen extends Screen {
                 textFieldHeaderWidget.setTextColor(0xFFFFFF);
                 configReader.setString("voskModel", textFieldWidget.getText());
                 configReader.saveConfig();
+                Toast restartToast = new Toast() {
+                    @Override
+                    public Visibility draw(DrawContext context, ToastManager manager, long startTime) {
+                        int width = 200;
+                        int height = 32;
+                        context.fill(0, 0, width, height, 0x88000000);
+                        context.drawBorder(0, 0, width, height, 0xFF888888);
+                        String message = Text.translatable("mco.error.invalid.session.message").getString();
+                        int textX = (width - client.textRenderer.getWidth(message)) / 2;
+                        int textY = (height - client.textRenderer.fontHeight) / 2;
+                        context.drawText(client.textRenderer, message, textX, textY, 0xFFFFFF, false);
+                        return startTime >= 5000L ? Visibility.HIDE : Visibility.SHOW;
+                    }
+                    @Override
+                    public int getWidth() {
+                        return 200;
+                    }
+                    @Override
+                    public int getHeight() {
+                        return 32;
+                    }
+                };
+                client.getToastManager().add(restartToast);
             }
         } catch (NumberFormatException e) {
             textFieldHeaderWidget.setTextColor(0xFF0000);

@@ -84,7 +84,7 @@
   "config.splitself.start_events_after": "Startvertraging evenement",
   "config.splitself.start_events_after.description": "Hoe lang duurt het voordat gebeurtenissen in teken kunnen beginnen",
   "config.splitself.vosk_model": "Vosk Model",
-  "config.splitself.vosk_model.description": "§bCurrent Model: %s\n\n§fWhen using VoiceLib/Shriek, a Vosk model will be downloaded to be used for speech recognition. This setting cannot be disabled without removing VoiceLib/Shriek.\n\n§eLanguage changes require a restart.\n\n§cVosk models vary in size. Click to open the Vosk model website.",
+  "config.splitself.vosk_model.description": "§bCurrent Model: %s\n\n§fWhen using Shriek, a Vosk model will be downloaded to be used for speech recognition. This setting cannot be disabled without removing Shriek.\n\n§eLanguage changes require a restart.\n\n§cVosk models vary in size. Click to open the Vosk model website.",
   "config.splitself.event_until_repeat": "Gebeurtenissen tot herhaling",
   "config.splitself.event_until_repeat.description": "Hoeveel gebeurtenissen kunnen er plaatsvinden voordat een eerder geactiveerde gebeurtenis opnieuw kan plaatsvinden",
   "config.splitself.guaranteed_event": "Gegarandeerd daarna",

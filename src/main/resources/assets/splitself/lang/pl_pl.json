@@ -84,7 +84,7 @@
   "config.splitself.start_events_after": "Opóźnienie Rozpoczęcia Wydarzenia",
   "config.splitself.start_events_after.description": "Jak długo zanim wydarzenia mogą się zacząć w tickach",
   "config.splitself.vosk_model": "Model Vosk",
-  "config.splitself.vosk_model.description": "§bObecny model: %s\n\n§fKiedy używasz VoiceLib/Shriek, Model Vosk zostanie pobrany aby wykryć Wypowiadane słowa. Tego ustawienia Nie da się wyłączyć bez usuwania VoiceLib/Shriek.\n\n§eZmiana języka wymaga restartu.\n\n§cModele vosk Mogą różnić się w rozmiarze. Naciśnij aby otworzyć stronę Modelu vosk.",
+  "config.splitself.vosk_model.description": "§bObecny model: %s\n\n§fKiedy używasz Shriek, Model Vosk zostanie pobrany aby wykryć Wypowiadane słowa. Tego ustawienia Nie da się wyłączyć bez usuwania Shriek.\n\n§eZmiana języka wymaga restartu.\n\n§cModele vosk Mogą różnić się w rozmiarze. Naciśnij aby otworzyć stronę Modelu vosk.",
   "config.splitself.event_until_repeat": "Wydarzenia przed Powtórzeniem",
   "config.splitself.event_until_repeat.description": "Ile zdarzeń może się wydarzyć, zanim wcześniej aktywowane zdarzenie będzie mogło wystąpić ponownie",
   "config.splitself.guaranteed_event": "Gwarantowane Wydarzenie po",

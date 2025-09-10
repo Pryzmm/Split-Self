@@ -84,7 +84,7 @@
   "config.splitself.start_events_after": "Event odložení startu",
   "config.splitself.start_events_after.description": "Jak dlouho trvá, než eventy se začnou dít v tikechs",
   "config.splitself.vosk_model": "Vosk Model",
-  "config.splitself.vosk_model.description": "§bAktuální Model: %s\n\n§fPři použití VoiceLib/Shriek, a Vosk model bude staženo pro použití v rozpoznávání mluvi. Toto nastavení nelze vypnout bez odstranění VoiceLib/Shriek.\n\n§eZměna jazyka vyžadují restart.\n\n§cVosk modely se liší velikostí. Klikni pro otevření Vosk model stránku.",
+  "config.splitself.vosk_model.description": "§bAktuální Model: %s\n\n§fPři použití Shriek, a Vosk model bude staženo pro použití v rozpoznávání mluvi. Toto nastavení nelze vypnout bez odstranění Shriek.\n\n§eZměna jazyka vyžadují restart.\n\n§cVosk modely se liší velikostí. Klikni pro otevření Vosk model stránku.",
   "config.splitself.event_until_repeat": "Eventy před opakováním",
   "config.splitself.event_until_repeat.description": "Kolik eventů může nastat než bývalý event nastane znovu",
   "config.splitself.guaranteed_event": "Zaručeno potom",

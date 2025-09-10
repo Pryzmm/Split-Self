@@ -84,7 +84,7 @@
   "config.splitself.start_events_after": "Gebeurtenis Startvertraging",
   "config.splitself.start_events_after.description": "Hoe lang het moet duren tot er gebeurtenis plaatsvindt in ticks",
   "config.splitself.vosk_model": "Vosk Model",
-  "config.splitself.vosk_model.description": "§bHuidig Model: %s\n\n§fWaaner je VoiceLib/Shriek gebruikt, zal er een Vosk model gedownload worden voor spraak herkennig. Deze optie kan niet worden uitgezet zonder VoiceLib/Shriek te de-instaleren.\n\n§eTaal aanpassingen moeten opgevolgt worden door een restart changes.\n\n§cVosk modelen variëren in groote. Click hier om de Vosk model website te openen.",
+  "config.splitself.vosk_model.description": "§bHuidig Model: %s\n\n§fWaaner je Shriek gebruikt, zal er een Vosk model gedownload worden voor spraak herkennig. Deze optie kan niet worden uitgezet zonder Shriek te de-instaleren.\n\n§eTaal aanpassingen moeten opgevolgt worden door een restart changes.\n\n§cVosk modelen variëren in groote. Click hier om de Vosk model website te openen.",
   "config.splitself.event_until_repeat": "Gebeurtenissen tot herhaaling",
   "config.splitself.event_until_repeat.description": "Het aantal Gebeurtenissen dat moetten plaatsvinden tot een vorige Gebeurtenis opnieuw kan plaatsvinden",
   "config.splitself.guaranteed_event": "Garantie Na",

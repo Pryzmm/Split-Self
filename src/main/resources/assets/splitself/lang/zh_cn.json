@@ -84,7 +84,7 @@
   "config.splitself.start_events_after": "事件开始延迟",
   "config.splitself.start_events_after.description": "多少刻之后事件才会开始发生",
   "config.splitself.vosk_model": "Vosk 模型",
-  "config.splitself.vosk_model.description": "§b当前模型: %s\n\n§f当使用 VoiceLib/Shriek 时，将下载 Vosk 模型用于语音识别。此设置无法在不移除 VoiceLib/Shriek 的情况下禁用。\n\n§e语言更改需要重启。\n\n§cVosk 模型大小不一。点击打开 Vosk 模型网站。",
+  "config.splitself.vosk_model.description": "§b当前模型: %s\n\n§f当使用 Shriek 时，将下载 Vosk 模型用于语音识别。此设置无法在不移除 Shriek 的情况下禁用。\n\n§e语言更改需要重启。\n\n§cVosk 模型大小不一。点击打开 Vosk 模型网站。",
   "config.splitself.event_until_repeat": "事件重复前数量",
   "config.splitself.event_until_repeat.description": "多少个事件发生后，一个先前的事件才可以再次发生",
   "config.splitself.guaranteed_event": "保证发生",

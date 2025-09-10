@@ -84,7 +84,7 @@
   "config.splitself.start_events_after": "Задержка начала",
   "config.splitself.start_events_after.description": "Сколько времени пройдет, прежде чем события начнут происходить в тиках?",
   "config.splitself.vosk_model": "Модель Vosk",
-  "config.splitself.vosk_model.description": "§bУстановленная модель: %s\n\n§fИспользуя VoiceLib/Shriek, модель Vosk будет установлена для распознания речи. Эта настройка не может быть выключена без удаления VoiceLib/Shriek.\n\n§eСмена языка требует перезапуска игры.\n\n§cМодели Vosk варьируются в размере. Нажмите, чтобы открыть сайт моделей Vosk.",
+  "config.splitself.vosk_model.description": "§bУстановленная модель: %s\n\n§fИспользуя Shriek, модель Vosk будет установлена для распознания речи. Эта настройка не может быть выключена без удаления Shriek.\n\n§eСмена языка требует перезапуска игры.\n\n§cМодели Vosk варьируются в размере. Нажмите, чтобы открыть сайт моделей Vosk.",
   "config.splitself.event_until_repeat": "События до повторения",
   "config.splitself.event_until_repeat.description": "Сколько событий может произойти, прежде чем ранее активированное событие может произойти снова?",
   "config.splitself.guaranteed_event": "Гарантия после",

@@ -84,7 +84,7 @@
   "config.splitself.start_events_after": "Scoppio Ritardato",
   "config.splitself.start_events_after.description": "Quanto tempo aspettare prima che gli eventi inizino a verificarsi in ticks",
   "config.splitself.vosk_model": "Modello Vosk",
-  "config.splitself.vosk_model.description": "§bModello Corrente: %s\n\n§fQuando usi VoiceLib/Shriek, un modello Vosk verrà scaricato per essere usato per il riconoscimento vocale. Questa impostazione non può essere disattivata senza rimuovere VoiceLib/Shriek.\n\n§eI cambi di lingua necessitano di un riavvio.\n\n§cModelli Vosk variano di grandezza. Clicca per aprire il sito dei modelli Vosk.",
+  "config.splitself.vosk_model.description": "§bModello Corrente: %s\n\n§fQuando usi Shriek, un modello Vosk verrà scaricato per essere usato per il riconoscimento vocale. Questa impostazione non può essere disattivata senza rimuovere Shriek.\n\n§eI cambi di lingua necessitano di un riavvio.\n\n§cModelli Vosk variano di grandezza. Clicca per aprire il sito dei modelli Vosk.",
   "config.splitself.event_until_repeat": "Ripetizione di Eventi",
   "config.splitself.event_until_repeat.description": "Quanti eventi possono verificarsi prima che un evento già avvenuto possa accadare nuovamente",
   "config.splitself.guaranteed_event": "Garanzia di Inattività",

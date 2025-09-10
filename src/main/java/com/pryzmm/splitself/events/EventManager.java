@@ -1011,7 +1011,7 @@ public class EventManager {
                         Thread.sleep(100);
                         client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.disconnect.joined", player.getName().getString()).getString()).formatted(Formatting.YELLOW), false);
                     } catch (Exception e) {
-                        SplitSelf.LOGGER.error(e.getMessage(), e);
+                        SplitSelf.LOGGER.error("Disconnect event failed: {}", e.getMessage(), e);
                     }
                 }).start();
                 break;
@@ -1058,7 +1058,7 @@ public class EventManager {
                         System.out.println(Thread.currentThread());
                         Thread.sleep(2000);
                     } catch (Exception e) {
-                        throw new RuntimeException(e);
+                        SplitSelf.LOGGER.error("Freeze event failed: {}", e.getMessage(), e);
                     }
                 })).start();
                 break;
@@ -1070,14 +1070,15 @@ public class EventManager {
                 try {
                     Field collarColorField = WolfEntity.class.getDeclaredField("COLLAR_COLOR");
                     collarColorField.setAccessible(true);
+                    @SuppressWarnings("unchecked")
                     TrackedData<Integer> COLLAR_COLOR = (TrackedData<Integer>) collarColorField.get(null);
                     wolf.getDataTracker().set(COLLAR_COLOR, DyeColor.CYAN.getId());
+                    wolf.setCustomName(Text.of("Blu"));
+                    wolf.refreshPositionAndAngles(player.getX(), player.getY(), player.getZ(), 0F, 0F);
+                    world.spawnEntity(wolf);
                 } catch (Exception e) {
                     SplitSelf.LOGGER.error("Blu event failed: {}", e.getMessage(), e);
                 }
-                wolf.setCustomName(Text.of("Blu"));
-                wolf.refreshPositionAndAngles(player.getX(), player.getY(), player.getZ(), 0F, 0F);
-                world.spawnEntity(wolf);
                 break;
         }
     }

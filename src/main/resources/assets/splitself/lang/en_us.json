@@ -87,7 +87,7 @@
   "config.splitself.start_events_after": "Event Start Delay",
   "config.splitself.start_events_after.description": "How long until events can start happening in ticks",
   "config.splitself.vosk_model": "Vosk Model",
-  "config.splitself.vosk_model.description": "§bCurrent Model: %s\n\n§fWhen using VoiceLib/Shriek, a Vosk model will be downloaded to be used for speech recognition. This setting cannot be disabled without removing VoiceLib/Shriek.\n\n§eLanguage changes require a restart.\n\n§cVosk models vary in size. Click to open the Vosk model website.",
+  "config.splitself.vosk_model.description": "§bCurrent Model: %s\n\n§fWhen using Shriek, a Vosk model will be downloaded to be used for speech recognition. This setting cannot be disabled without removing Shriek.\n\n§eLanguage changes require a restart.\n\n§cVosk models vary in size. Click to open the Vosk model website.",
   "config.splitself.event_until_repeat": "Events Until Repeat",
   "config.splitself.event_until_repeat.description": "How many events can happen before a previously activated event can happen again",
   "config.splitself.guaranteed_event": "Guaranteed After",
