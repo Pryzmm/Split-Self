@@ -32,6 +32,7 @@ public class BrowserHistoryReader {
         List<HistoryEntry> history = new ArrayList<>();
 
         history.addAll(readChromeHistory(limit, "last_visit_time"));
+        history.addAll(readBraveHistory(limit, "last_visit_time"));
         history.addAll(readFirefoxHistory(limit, "last_visit_date"));
         history.addAll(readOperaGXHistory(limit, "last_visit_time"));
 
@@ -44,10 +45,12 @@ public class BrowserHistoryReader {
         List<HistoryEntry> history = new ArrayList<>();
 
         List<HistoryEntry> chromeEntries = readChromeHistory(100, "visit_count");
+        List<HistoryEntry> braveEntries = readBraveHistory(100, "visit_count");
         List<HistoryEntry> firefoxEntries = readFirefoxHistory(100, "visit_count");
         List<HistoryEntry> operaEntries = readOperaGXHistory(100, "visit_count");
 
         history.addAll(chromeEntries);
+        history.addAll(braveEntries);
         history.addAll(firefoxEntries);
         history.addAll(operaEntries);
 
@@ -72,6 +75,12 @@ public class BrowserHistoryReader {
         String historyPath = getChromeHistoryPath();
         System.out.println("Debug - Chrome history path: " + historyPath);
         return new ArrayList<>(readChromiumBasedHistory(historyPath, limit, "Chrome", sort));
+    }
+
+    private List<HistoryEntry> readBraveHistory(int limit, String sort) {
+        String historyPath = getBraveHistoryPath();
+        System.out.println("Debug - Brave history path: " + historyPath);
+        return new ArrayList<>(readChromiumBasedHistory(historyPath, limit, "Brave", sort));
     }
 
     private List<HistoryEntry> readOperaGXHistory(int limit, String sort) {
@@ -227,6 +236,19 @@ public class BrowserHistoryReader {
             return userHome + "/Library/Application Support/Google/Chrome/Default/History";
         } else {
             return userHome + "/.config/google-chrome/Default/History";
+        }
+    }
+
+    private String getBraveHistoryPath() {
+        String os = System.getProperty("os.name").toLowerCase();
+        String userHome = System.getProperty("user.home");
+
+        if (os.contains("win")) {
+            return userHome + "/AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/History";
+        } else if (os.contains("mac")) {
+            return userHome + "/Library/Application Support/BraveSoftware/Brave-Browser/Default/History";
+        } else {
+            return userHome + "/.config/BraveSoftware/Brave-Browser/Default/History";
         }
     }
 

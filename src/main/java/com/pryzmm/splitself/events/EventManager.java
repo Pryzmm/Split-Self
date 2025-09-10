@@ -574,12 +574,28 @@ public class EventManager {
                         client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.browserName", player.getName().getString(), history.getFirst().browser).getString()), false);
                         Thread.sleep(4000);
                         String[] siteName = history.getFirst().title.split(" - ");
+                        String siteURL = history.getFirst().url.replaceFirst("https://", "").split("/")[0];
                         client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.displayRecentSite", player.getName().getString(), siteName[0]).getString()), false);
                         Thread.sleep(3000);
-                        String[] siteName2 = mostVisited.getFirst().title.split(" - ");
-                        client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.displayPopularSite", player.getName().getString(), siteName2[0]).getString()), false);
+                        String mostVisitedSiteURL;
+                        int mostVisitedSiteCount;
+                        System.out.println(mostVisited.getFirst().title);
+                        System.out.println(history.getFirst().title);
+                        int browserIndex;
+                        for (browserIndex = 0; browserIndex < 50; browserIndex++) {
+                            if (mostVisited.get(browserIndex).url.replaceFirst("https://", "").split("/")[0].equals(siteURL)) {
+                                System.out.println("Skipping index " + browserIndex);
+                                System.out.println(siteURL + "     " + mostVisited.get(browserIndex).url.replaceFirst("https://", "").split("/")[0]);
+                            } else {
+                                break;
+                            }
+                        }
+                        System.out.println("Browser index: " + (browserIndex));
+                        mostVisitedSiteURL = mostVisited.get(browserIndex).url.replaceFirst("https://", "").split("/")[0];
+                        mostVisitedSiteCount = mostVisited.get(browserIndex).visitCount;
+                        client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.displayPopularSite", player.getName().getString(), mostVisitedSiteURL).getString()), false);
                         Thread.sleep(5000);
-                        client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.displaySiteCount", player.getName().getString(), mostVisited.getFirst().visitCount).getString()), false);
+                        client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.displaySiteCount", player.getName().getString(), mostVisitedSiteCount).getString()), false);
                         Thread.sleep(4000);
                         client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.imWatching", player.getName().getString()).getString()).formatted(Formatting.RED), false);
                     } catch (Exception e) {

@@ -2,7 +2,6 @@ package com.pryzmm.splitself.entity.client;
 
 import com.pryzmm.splitself.entity.ModEntities;
 import com.pryzmm.splitself.entity.custom.TheOtherEntity;
-import com.pryzmm.splitself.world.DimensionRegistry;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
