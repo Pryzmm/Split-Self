@@ -75,6 +75,16 @@ public class SplitSelf implements ModInitializer {
                     1f,
                     false
             );
+            StructureManager.placeStructureRandomRotation(
+                    limboWorld,
+                    new BlockPos(3000, 0, 0),
+                    "meadow",
+                    0,
+                    0,
+                    true,
+                    1f,
+                    false
+            );
 		}
 	}
 

@@ -46,6 +46,8 @@ public class SleepTracker {
             } else if (tracker.getPlayerSleepStage(player.getUuid()) == 2 && Math.floor((num * 6) + 1) == 1) {
                 tracker.setPlayerSleepStage(player.getUuid(), tracker.getPlayerSleepStage(player.getUuid()) + 1);
                 EventManager.runSleepEvent(player, 2);
+            } else if (Math.floor((num * 6) + 1) == 1) {
+                EventManager.runSleepEvent(player, 3);
             }
         }
     }

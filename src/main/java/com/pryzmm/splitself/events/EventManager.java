@@ -272,6 +272,9 @@ public class EventManager {
                     theOther.setupGoals();
                     server.execute(() -> player.teleport(limboWorld, 2015.3, 9.5625, 34.7, null, -135, 40));
                     Thread.sleep(60000);
+                } else if (stage == 3) {
+                    server.execute(() -> player.teleport(limboWorld, 3009.5, 11.5625, 6.5, null, -45, 40));
+                    Thread.sleep(30000);
                 }
                 player.getServer().getOverworld().setTimeOfDay(0);
                 if (player.getWorld() == player.getServer().getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY)) {
