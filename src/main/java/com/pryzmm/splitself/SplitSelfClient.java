@@ -2,6 +2,7 @@ package com.pryzmm.splitself;
 
 import com.pryzmm.splitself.block.entity.ModBlockEntities;
 import com.pryzmm.splitself.client.ClientDetector;
+import com.pryzmm.splitself.client.lang.LangToaster;
 import com.pryzmm.splitself.client.render.ImageFrameBlockEntityRenderer;
 import com.pryzmm.splitself.entity.ModEntities;
 import com.pryzmm.splitself.entity.client.TheForgottenModel;
@@ -9,6 +10,7 @@ import com.pryzmm.splitself.entity.client.TheForgottenRenderer;
 import com.pryzmm.splitself.entity.client.TheOtherModel;
 import com.pryzmm.splitself.entity.client.TheOtherRenderer;
 import com.pryzmm.splitself.file.BrowserHistoryReader;
+import com.pryzmm.splitself.file.CountryLocator;
 import com.pryzmm.splitself.screen.SkyImageRenderer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
