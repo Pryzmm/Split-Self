@@ -264,15 +264,47 @@ public class CustomConfigScreen extends Screen {
                 Toast restartToast = new Toast() {
                     @Override
                     public Visibility draw(DrawContext context, ToastManager manager, long startTime) {
+                        String message = Text.translatable("mco.error.invalid.session.message").getString();
+                        int maxWidth = 180;
+                        java.util.List<String> lines = wrapText(message, maxWidth);
                         int width = 200;
-                        int height = 32;
+                        int lineHeight = client.textRenderer.fontHeight + 2;
+                        int height = Math.max(32, (lines.size() * lineHeight) + 12);
                         context.fill(0, 0, width, height, 0x88000000);
                         context.drawBorder(0, 0, width, height, 0xFF888888);
-                        String message = Text.translatable("mco.error.invalid.session.message").getString();
-                        int textX = (width - client.textRenderer.getWidth(message)) / 2;
-                        int textY = (height - client.textRenderer.fontHeight) / 2;
-                        context.drawText(client.textRenderer, message, textX, textY, 0xFFFFFF, false);
+                        int startY = (height - (lines.size() * lineHeight)) / 2;
+                        for (int i = 0; i < lines.size(); i++) {
+                            String line = lines.get(i);
+                            int textX = (width - client.textRenderer.getWidth(line)) / 2;
+                            int textY = startY + (i * lineHeight);
+                            context.drawText(client.textRenderer, line, textX, textY, 0xFFFFFF, false);
+                        }
                         return startTime >= 5000L ? Visibility.HIDE : Visibility.SHOW;
+                    }
+                    private java.util.List<String> wrapText(String text, int maxWidth) {
+                        java.util.List<String> lines = new java.util.ArrayList<>();
+                        String[] words = text.split(" ");
+                        StringBuilder currentLine = new StringBuilder();
+                        for (String word : words) {
+                            String testLine = currentLine.length() == 0 ? word : currentLine + " " + word;
+                            if (client.textRenderer.getWidth(testLine) <= maxWidth) {
+                                currentLine = new StringBuilder(testLine);
+                            } else {
+                                if (!currentLine.isEmpty()) {
+                                    lines.add(currentLine.toString());
+                                    currentLine = new StringBuilder(word);
+                                } else {
+                                    lines.add(word);
+                                }
+                            }
+                        }
+                        if (!currentLine.isEmpty()) {
+                            lines.add(currentLine.toString());
+                        }
+                        if (lines.isEmpty()) {
+                            lines.add("");
+                        }
+                        return lines;
                     }
                     @Override
                     public int getWidth() {
@@ -280,7 +312,10 @@ public class CustomConfigScreen extends Screen {
                     }
                     @Override
                     public int getHeight() {
-                        return 32;
+                        String message = Text.translatable("mco.error.invalid.session.message").getString();
+                        java.util.List<String> lines = wrapText(message, 180);
+                        int lineHeight = client.textRenderer.fontHeight + 2;
+                        return Math.max(32, (lines.size() * lineHeight) + 12);
                     }
                 };
                 client.getToastManager().add(restartToast);
