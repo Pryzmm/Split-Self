@@ -33,6 +33,8 @@ public class SplitSelfClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        CountryLocator.getCountryCodeAsync(); // Addition to make the country location in cache
+
         EntityModelLayerRegistry.registerModelLayer(TheOtherModel.THEOTHER, TheOtherModel::getTexturedModelData);
         EntityModelLayerRegistry.registerModelLayer(TheOtherModel.THEOTHER_SLIM, TheOtherModel::getSlimTexturedModelData);
         EntityRendererRegistry.register(ModEntities.TheOther, TheOtherRenderer::new);
@@ -76,6 +78,9 @@ public class SplitSelfClient implements ClientModInitializer {
                     realmsButton.setTooltip(Tooltip.of(SplitSelf.translate("misc.splitself.realms")));
                     realmsButton.active = false;
                     }
+
+                // This is the call for the Toast notification that does the translation verification
+                LangToaster.addToast(client, titleScreen);
             }
         });
     }

@@ -1,0 +1,83 @@
+{
+  "default": {
+    "title": "Translations Available",
+    "body": "Split Self has support for different languages"
+  },
+  "fail": {
+    "title": "Recommendation",
+    "body": "We encourage you to play Split Self on your native language"
+  },
+
+  "pt_br": {
+    "title": "Tradução Disponível",
+    "body": "Split Self possui tradução para: {language}"
+  },
+
+  "es": {
+    "title": "Traducción Disponible",
+    "body": "Split Self tiene traducción para: {language}"
+  },
+  "fr_fr": {
+    "title": "Traduction Disponible",
+    "body": "Split Self possède une traduction pour : {language}"
+  },
+  "de_de": {
+    "title": "Übersetzung Verfügbar",
+    "body": "Split Self hat eine Übersetzung für: {language}"
+  },
+  "it_it": {
+    "title": "Traduzione Disponibile",
+    "body": "Split Self ha una traduzione per: {language}"
+  },
+  "nl_nl": {
+    "title": "Vertaling Beschikbaar",
+    "body": "Split Self heeft een vertaling voor: {language}"
+  },
+  "pl_pl": {
+    "title": "Tłumaczenie Dostępne",
+    "body": "Split Self ma tłumaczenie dla: {language}"
+  },
+  "ro_ro": {
+    "title": "Traducere Disponibilă",
+    "body": "Split Self are traducere pentru: {language}"
+  },
+  "ru_ru": {
+    "title": "Доступен Перевод",
+    "body": "Split Self имеет перевод для: {language}"
+  },
+  "sv_se": {
+    "title": "Översättning Tillgänglig",
+    "body": "Split Self har översättning för: {language}"
+  },
+  "tr_tr": {
+    "title": "Çeviri Mevcut",
+    "body": "Split Self {language} için çeviri içerir"
+  },
+  "hu_hu": {
+    "title": "Fordítás Elérhető",
+    "body": "Split Self rendelkezik {language} fordítással"
+  },
+  "cs_cz": {
+    "title": "Překlad K Dispozici",
+    "body": "Split Self má překlad pro: {language}"
+  },
+  "zh_cn": {
+    "title": "提供翻译",
+    "body": "Split Self 提供 {language} 翻译"
+  },
+
+  "aliases": {
+    "es_ar": "es",
+    "es_cl": "es",
+    "es_ec": "es",
+    "es_mx": "es",
+    "es_uy": "es",
+    "es_ve": "es",
+
+    "fr_ca": "fr_fr",
+    "nl_be": "nl_nl",
+
+    "be_by": "default",
+    "be_latn": "default"
+  }
+}
