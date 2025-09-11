@@ -38,7 +38,7 @@ dependencies {
     include 'com.google.code.gson:gson:2.10.1'
 
     modImplementation "maven.modrinth:architectury-api:13.0.6+fabric"
-    modImplementation "maven.modrinth:shriek:1.1.01+fabric"
+    modImplementation "maven.modrinth:shriek:1.1.1+fabric"
 
     modImplementation "com.terraformersmc:modmenu:${project.mod_menu_version}"
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
