@@ -16,7 +16,7 @@ import java.util.List;
 public class LanguageOptionsScreenMixin {
 
     @Unique
-    private List<String> supportedLanguageCodes = List.of("cs_cz", "de_de", "en_us", "es_ar", "es_cl", "es_ec", "es_es", "es_mx", "es_uy", "es_ve", "fr_ca", "fr_fr", "it_it", "nl_be", "nl_nl", "pl_pl", "pt_br", "ro_ro", "ru_ru", "tr_tr", "zh_cn");
+    private List<String> supportedLanguageCodes = List.of("cs_cz", "en_us", "es_ar", "es_cl", "es_ec", "es_es", "es_mx", "es_uy", "es_ve", "fr_ca", "hu_hu", "it_it", "nl_be", "nl_nl", "pl_pl", "pt_br", "ro_ro", "ru_ru", "sv_se", "tr_tr", "zh_cn");
 
     @Inject(method = "initBody", at = @At("TAIL"))
     private void modifyLanguageButtons(CallbackInfo ci) {

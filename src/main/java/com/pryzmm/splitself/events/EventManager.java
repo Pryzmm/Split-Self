@@ -955,7 +955,7 @@ public class EventManager {
                         for (String name : nameHistory) {
                             if (!name.equals(player.getName().getString())) {
                                 assert client.getServer() != null;
-                                client.getServer().getPlayerManager().broadcast(Text.literal("<" + name + "> " + SplitSelf.translate("events.splitself.sign.imWatchingYou").getString()), false); // I don't wanna ask the german translator to translate one line lmao
+                                client.getServer().getPlayerManager().broadcast(Text.literal("<" + name + "> " + SplitSelf.translate("events.splitself.sign.imWatchingYou").getString()), false);
                                 break;
                             }
                         }
