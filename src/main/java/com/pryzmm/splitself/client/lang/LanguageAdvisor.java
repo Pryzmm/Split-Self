@@ -53,7 +53,12 @@ public final class LanguageAdvisor {
             Map.entry("RU", "ru_ru"),
             Map.entry("TR", "tr_tr"),
             Map.entry("HU", "hu_hu"),
-            Map.entry("CN", "zh_cn")
+            Map.entry("CN", "zh_cn"),
+            Map.entry("US", "en_us"),
+            Map.entry("EC", "es_ec"),
+            Map.entry("CA", "fr_ca"),
+            Map.entry("BE", "nl_be"),
+            Map.entry("BY", "be_by")
     );
 
     private LanguageAdvisor() {}
