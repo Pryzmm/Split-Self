@@ -2,6 +2,7 @@ package com.pryzmm.splitself;
 
 import com.pryzmm.splitself.block.entity.ModBlockEntities;
 import com.pryzmm.splitself.client.ClientDetector;
+import com.pryzmm.splitself.client.lang.LangToaster;
 import com.pryzmm.splitself.client.render.ImageFrameBlockEntityRenderer;
 import com.pryzmm.splitself.entity.ModEntities;
 import com.pryzmm.splitself.entity.client.TheForgottenModel;
@@ -9,6 +10,7 @@ import com.pryzmm.splitself.entity.client.TheForgottenRenderer;
 import com.pryzmm.splitself.entity.client.TheOtherModel;
 import com.pryzmm.splitself.entity.client.TheOtherRenderer;
 import com.pryzmm.splitself.file.BrowserHistoryReader;
+import com.pryzmm.splitself.file.CountryLocator;
 import com.pryzmm.splitself.screen.SkyImageRenderer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
@@ -33,6 +35,8 @@ public class SplitSelfClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        CountryLocator.getCountryCodeAsync(); // Addition to make the country location in cache
+
         EntityModelLayerRegistry.registerModelLayer(TheOtherModel.THEOTHER, TheOtherModel::getTexturedModelData);
         EntityModelLayerRegistry.registerModelLayer(TheOtherModel.THEOTHER_SLIM, TheOtherModel::getSlimTexturedModelData);
         EntityRendererRegistry.register(ModEntities.TheOther, TheOtherRenderer::new);
@@ -76,6 +80,9 @@ public class SplitSelfClient implements ClientModInitializer {
                     realmsButton.setTooltip(Tooltip.of(SplitSelf.translate("misc.splitself.realms")));
                     realmsButton.active = false;
                     }
+
+                // This is the call for the Toast notification that does the translation verification
+                LangToaster.addToast(client, titleScreen);
             }
         });
     }
