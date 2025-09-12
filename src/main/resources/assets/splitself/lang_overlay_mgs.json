@@ -7,12 +7,10 @@
     "title": "Recommendation",
     "body": "We encourage you to play Split Self on your native language"
   },
-
   "pt_br": {
     "title": "Tradução Disponível",
     "body": "Split Self possui tradução para: {language}"
   },
-
   "es": {
     "title": "Traducción Disponible",
     "body": "Split Self tiene traducción para: {language}"
@@ -65,7 +63,6 @@
     "title": "提供翻译",
     "body": "Split Self 提供 {language} 翻译"
   },
-
   "aliases": {
     "es_ar": "es",
     "es_cl": "es",
@@ -73,11 +70,14 @@
     "es_mx": "es",
     "es_uy": "es",
     "es_ve": "es",
-
     "fr_ca": "fr_fr",
     "nl_be": "nl_nl",
-
     "be_by": "default",
-    "be_latn": "default"
+    "be_latn": "default",
+    "es_es": "es"
+  },
+  "en_us": {
+    "title": "Translation Available",
+    "body": "Split Self is also available in {language}"
   }
 }
