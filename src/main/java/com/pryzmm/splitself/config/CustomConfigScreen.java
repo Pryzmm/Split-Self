@@ -257,9 +257,11 @@ public class CustomConfigScreen extends Screen {
         try {
             if (textFieldWidget.getText().isEmpty()) {
                 throw new NumberFormatException("Input a value!");
+            } else if (!textFieldWidget.getText().startsWith("vosk-model-")) {
+                throw new NumberFormatException("Input a model starting with `vosk-model-`!");
             } else {
                 textFieldHeaderWidget.setTextColor(0xFFFFFF);
-                configReader.setString("voskModel", textFieldWidget.getText());
+                configReader.setString("voskModel", textFieldWidget.getText().replace(" ", "").replace(".zip", ""));
                 configReader.saveConfig();
                 Toast restartToast = new Toast() {
                     @Override
