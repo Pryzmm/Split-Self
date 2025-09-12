@@ -42,7 +42,7 @@ public class Lang_Toaster_Overlay extends ClickableWidget {
 
     // =================== ANIMATION / SFX ===================
     // (Animation + appear SFX happen only when instant=false)
-    private static final long  APPEAR_DELAY_MS  = 2000L;
+    private static final long  APPEAR_DELAY_MS  = 500L;
     private static final float ANIM_IN_SPEED    = 0.12f;
     private static final float ANIM_OUT_SPEED   = 0.18f;
     private static final boolean PLAY_APPEAR_SOUND = true;
