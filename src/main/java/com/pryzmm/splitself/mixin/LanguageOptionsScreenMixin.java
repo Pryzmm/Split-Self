@@ -1,7 +1,5 @@
 package com.pryzmm.splitself.mixin;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import net.fabricmc.loader.api.LanguageAdapter;
 import net.minecraft.client.gui.screen.option.LanguageOptionsScreen;
 import net.minecraft.client.gui.widget.EntryListWidget;
 import org.spongepowered.asm.mixin.Mixin;

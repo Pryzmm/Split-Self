@@ -25,9 +25,9 @@ public final class LangToaster {
         String currentGameLang = client.getLanguageManager().getLanguage();
 
         // 3-layer decision (OS lang -> Region if EN -> IP). Empty => no toast.
-        //var prefer = LanguageAdvisor.preferLanguageForPlayer(rm, currentGameLang);
-        var prefer = java.util.Optional.of("en_us");
-        //if (prefer.isEmpty()) return;
+        var prefer = LanguageAdvisor.preferLanguageForPlayer(rm, currentGameLang);
+        //var prefer = java.util.Optional.of("en_us");
+        if (prefer.isEmpty()) return;
 
         String code = prefer.get();
 
