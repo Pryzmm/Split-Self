@@ -5,7 +5,7 @@
   "client": [
     "BackgroundRendererMixin",
     "GameMenuMixin",
-    "LanguageOptionsScreenMixin",
+    "LanguageEntryMixin",
     "OptionsScreenMixin",
     "PauseMixin",
     "ScreenAccessor",
