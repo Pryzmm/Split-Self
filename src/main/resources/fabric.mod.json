@@ -32,6 +32,7 @@
 	"license": "CC0-1.0",
 	"icon": "assets/splitself/icon.png",
 	"environment": "*",
+    "accessWidener": "splitself.accesswidener",
 	"entrypoints": {
 		"main": [
 			"com.pryzmm.splitself.SplitSelf"

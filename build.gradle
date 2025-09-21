@@ -21,6 +21,10 @@ repositories {
     }
 }
 
+loom {
+    accessWidenerPath = file("src/main/resources/splitself.accesswidener")
+}
+
 fabricApi {
 	configureDataGeneration {
 		client = true
