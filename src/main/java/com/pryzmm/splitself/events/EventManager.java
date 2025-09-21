@@ -12,6 +12,7 @@ import com.pryzmm.splitself.entity.custom.TheOtherEntity;
 import com.pryzmm.splitself.file.*;
 import com.pryzmm.splitself.file.BrowserHistoryReader.HistoryEntry;
 import com.pryzmm.splitself.item.ModItems;
+import com.pryzmm.splitself.mixin.WolfMixin;
 import com.pryzmm.splitself.screen.KickScreen;
 import com.pryzmm.splitself.screen.PoemScreen;
 import com.pryzmm.splitself.screen.SkyImageRenderer;
@@ -28,7 +29,6 @@ import net.minecraft.client.gui.hud.ChatHud;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.passive.WolfEntity;
@@ -54,7 +54,6 @@ import net.minecraft.world.GameMode;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
 import java.io.*;
-import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.time.LocalDate;
@@ -1080,18 +1079,10 @@ public class EventManager {
                 wolf.setVariant(world.getRegistryManager().get(RegistryKeys.WOLF_VARIANT).getEntry(WolfVariants.ASHEN).orElseThrow());
                 wolf.setOwner(player);
                 wolf.setTamed(true, true);
-                try {
-                    Field collarColorField = WolfEntity.class.getDeclaredField("COLLAR_COLOR");
-                    collarColorField.setAccessible(true);
-                    @SuppressWarnings("unchecked")
-                    TrackedData<Integer> COLLAR_COLOR = (TrackedData<Integer>) collarColorField.get(null);
-                    wolf.getDataTracker().set(COLLAR_COLOR, DyeColor.CYAN.getId());
-                    wolf.setCustomName(Text.of("Blu"));
-                    wolf.refreshPositionAndAngles(player.getX(), player.getY(), player.getZ(), 0F, 0F);
-                    world.spawnEntity(wolf);
-                } catch (Exception e) {
-                    SplitSelf.LOGGER.error("Blu event failed: {}", e.getMessage(), e);
-                }
+                wolf.getDataTracker().set(WolfMixin.getCollarColorData(), DyeColor.CYAN.getId());
+                wolf.setCustomName(Text.of("Blu"));
+                wolf.refreshPositionAndAngles(player.getX(), player.getY(), player.getZ(), 0F, 0F);
+                world.spawnEntity(wolf);
                 break;
         }
     }
