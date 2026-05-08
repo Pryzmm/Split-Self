@@ -63,11 +63,11 @@ public class CustomConfigScreen extends Screen {
 
     public static void applyConfig() {
         configReader.saveConfig();
-        EventManager.EVENTS_ENABLED = JsonReader.getBoolean("eventsEnabled", DefaultConfig.eventsEnabled);
-        EventManager.TICK_INTERVAL = JsonReader.getInt("eventTickInterval", DefaultConfig.eventTickInterval);
-        EventManager.EVENT_CHANCE = JsonReader.getDouble("eventChance", DefaultConfig.eventChance);
-        EventManager.START_AFTER = JsonReader.getDouble("startEventsAfter", DefaultConfig.startEventsAfter);
-        EventManager.GUARANTEED_EVENT = JsonReader.getDouble("guaranteedEvent", DefaultConfig.guaranteedEvent);
+        EventManager.EVENTS_ENABLED = configReader.getBoolean("eventsEnabled", DefaultConfig.eventsEnabled);
+        EventManager.TICK_INTERVAL = configReader.getInt("eventTickInterval", DefaultConfig.eventTickInterval);
+        EventManager.EVENT_CHANCE = configReader.getDouble("eventChance", DefaultConfig.eventChance);
+        EventManager.START_AFTER = configReader.getDouble("startEventsAfter", DefaultConfig.startEventsAfter);
+        EventManager.GUARANTEED_EVENT = configReader.getDouble("guaranteedEvent", DefaultConfig.guaranteedEvent);
     }
 
     public void createConfigButtons() {
@@ -92,12 +92,10 @@ public class CustomConfigScreen extends Screen {
         this.addDrawableChild(new DoubleTextButtonWidget(
                 x, y, 150, 20,
                 SplitSelf.translate(translationKey),
-                () -> String.valueOf(JsonReader.getInt(configKey, defaultValue)),
+                () -> String.valueOf(configReader.getInt(configKey, defaultValue)),
                 () -> 0xFFFF00,
                 translationKey + ".description",
-                button -> {
-                    createNumericValueWidget(5, this.height - 25, minimum, maximum, configKey, InputType.INT);
-                }
+                button -> createNumericValueWidget(5, this.height - 25, minimum, maximum, configKey, InputType.INT)
         ));
     }
 
@@ -105,7 +103,7 @@ public class CustomConfigScreen extends Screen {
         this.addDrawableChild(new DoubleTextButtonWidget(
                 x, y, 150, 20,
                 SplitSelf.translate(translationKey),
-                () -> String.valueOf(JsonReader.getDouble(configKey, defaultValue)),
+                () -> String.valueOf(configReader.getDouble(configKey, defaultValue)),
                 () -> 0xFFFF00,
                 translationKey + ".description",
                 button -> {
@@ -118,11 +116,11 @@ public class CustomConfigScreen extends Screen {
         this.addDrawableChild(new DoubleTextButtonWidget(
                 x, y, 150, 20,
                 SplitSelf.translate(translationKey),
-                () -> JsonReader.getBoolean(configKey, defaultValue) ? "True" : "False",
-                () -> JsonReader.getBoolean(configKey,defaultValue) ? 0x00FF00 : 0xFF0000,
+                () -> configReader.getBoolean(configKey, defaultValue) ? "True" : "False",
+                () -> configReader.getBoolean(configKey,defaultValue) ? 0x00FF00 : 0xFF0000,
                 translationKey + ".description",
                 button -> {
-                    boolean newValue = !JsonReader.getBoolean(configKey, defaultValue);
+                    boolean newValue = !configReader.getBoolean(configKey, defaultValue);
                     configReader.setBoolean(configKey, newValue);
                     configReader.saveConfig();
                 }
@@ -133,7 +131,7 @@ public class CustomConfigScreen extends Screen {
         this.addDrawableChild(new SingleTextButtonWidget(
                 x, y, 150, 20,
                 SplitSelf.translate(translationKey),
-                SplitSelf.translate(translationKey + ".description", JsonReader.getString("voskModel")).getString(),
+                SplitSelf.translate(translationKey + ".description", configReader.getString("voskModel")).getString(),
                 button -> {
                     Util.getOperatingSystem().open(link);
                     createVoskValueWidget(5, this.height - 25);

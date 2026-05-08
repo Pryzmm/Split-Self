@@ -1,5 +1,6 @@
 package com.pryzmm.splitself.events;
 
+import com.pryzmm.memory.Memory;
 import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.block.ModBlocks;
 import com.pryzmm.splitself.config.DefaultConfig;
@@ -106,10 +107,11 @@ public class EventManager {
         FORGOTTEN,
         EJECT,
         FREEZE,
-        BLU
+        BLU,
+        MEMORY
     }
 
-    public static Map<Events, Boolean> oneTimeEvents = new HashMap<>();
+    public static Map<Events, Boolean> oneTimeEvents = new HashMap<>(); // oneLastTime events ong
 
     private static int CURRENT_COOLDOWN = 0;
     private static DataTracker tracker;
@@ -123,12 +125,12 @@ public class EventManager {
 
     public static Identifier CURRENT_FRAME_TEXTURE = null;
 
-    public static boolean EVENTS_ENABLED = JsonReader.getBoolean("eventsEnabled", DefaultConfig.eventsEnabled);
-    public static int TICK_INTERVAL = JsonReader.getInt("eventTickInterval", DefaultConfig.eventTickInterval);
-    public static double EVENT_CHANCE = JsonReader.getDouble("eventChance", DefaultConfig.eventChance);
-    public static double START_AFTER = JsonReader.getInt("startEventsAfter", DefaultConfig.startEventsAfter);
-    public static double GUARANTEED_EVENT = JsonReader.getInt("guaranteedEvent", DefaultConfig.guaranteedEvent);
-    public static double REPEAT_EVENTS_AFTER = JsonReader.getInt("repeatEventsAfter", DefaultConfig.repeatEventsAfter);
+    public static boolean EVENTS_ENABLED = jsonReader.getBoolean("eventsEnabled", DefaultConfig.eventsEnabled);
+    public static int TICK_INTERVAL = jsonReader.getInt("eventTickInterval", DefaultConfig.eventTickInterval);
+    public static double EVENT_CHANCE = jsonReader.getDouble("eventChance", DefaultConfig.eventChance);
+    public static double START_AFTER = jsonReader.getInt("startEventsAfter", DefaultConfig.startEventsAfter);
+    public static double GUARANTEED_EVENT = jsonReader.getInt("guaranteedEvent", DefaultConfig.guaranteedEvent);
+    public static double REPEAT_EVENTS_AFTER = jsonReader.getInt("repeatEventsAfter", DefaultConfig.repeatEventsAfter);
     private static final Map<Events, Integer> eventLastTriggered = new HashMap<>();
     private static int totalEventsTriggered = 0;
 
@@ -170,8 +172,8 @@ public class EventManager {
 
             if (world.getRandom().nextDouble() < EVENT_CHANCE || GUARANTEED_EVENT == 0) {
                 triggerRandomEvent(world, world.getRandomAlivePlayer(), null, false);
-                CURRENT_COOLDOWN = JsonReader.getInt("eventCooldown", DefaultConfig.eventCooldown);
-                GUARANTEED_EVENT = JsonReader.getInt("guaranteedEvent", DefaultConfig.guaranteedEvent);
+                CURRENT_COOLDOWN = jsonReader.getInt("eventCooldown", DefaultConfig.eventCooldown);
+                GUARANTEED_EVENT = jsonReader.getInt("guaranteedEvent", DefaultConfig.guaranteedEvent);
             }
         }
     }
@@ -1084,6 +1086,12 @@ public class EventManager {
                 wolf.refreshPositionAndAngles(player.getX(), player.getY(), player.getZ(), 0F, 0F);
                 world.spawnEntity(wolf);
                 break;
+            case MEMORY:
+                try {
+                    MinecraftClient.getInstance().execute(() -> Memory.main(new String[]{}));
+                } catch (Throwable t) {
+                    SplitSelf.LOGGER.error("MEMORY event failed", t);
+                }
         }
     }
 }

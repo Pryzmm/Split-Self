@@ -5,6 +5,7 @@ import com.pryzmm.splitself.config.DefaultConfig;
 import net.fabricmc.loader.api.FabricLoader;
 import java.io.*;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -56,7 +57,7 @@ public class JsonReader {
         boolean hasChanges = false;
         Field[] fields = DefaultConfig.class.getDeclaredFields();
         for (Field field : fields) {
-            if (java.lang.reflect.Modifier.isStatic(field.getModifiers())) {
+            if (Modifier.isStatic(field.getModifiers())) {
                 field.setAccessible(true);
                 try {
                     String fieldName = field.getName();
@@ -194,32 +195,32 @@ public class JsonReader {
         }
     }
 
-    public static String getString(String key) {
+    public String getString(String key) {
         return getString(key, "");
     }
 
-    public static String getString(String key, String defaultValue) {
+    public String getString(String key, String defaultValue) {
         if (jsonObject.has(key) && !jsonObject.get(key).isJsonNull()) {
             return jsonObject.get(key).getAsString();
         }
         return defaultValue;
     }
 
-    public static int getInt(String key, int defaultValue) {
+    public int getInt(String key, int defaultValue) {
         if (jsonObject.has(key) && !jsonObject.get(key).isJsonNull()) {
             return jsonObject.get(key).getAsInt();
         }
         return defaultValue;
     }
 
-    public static double getDouble(String key, double defaultValue) {
+    public double getDouble(String key, double defaultValue) {
         if (jsonObject.has(key) && !jsonObject.get(key).isJsonNull()) {
             return jsonObject.get(key).getAsDouble();
         }
         return defaultValue;
     }
 
-    public static boolean getBoolean(String key, boolean defaultValue) {
+    public boolean getBoolean(String key, boolean defaultValue) {
         if (jsonObject.has(key) && !jsonObject.get(key).isJsonNull()) {
             return jsonObject.get(key).getAsBoolean();
         }

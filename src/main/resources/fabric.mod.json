@@ -56,10 +56,5 @@
     "suggests": {
       "shriek": "*",
       "architectury": ">=13.0.6"
-    },
-	"custom": {
-		"fzzy_config": [
-			"splitself"
-		]
-	}
+    }
 }

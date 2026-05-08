@@ -26,6 +26,7 @@ import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Util;
 
 import java.util.List;
 
@@ -35,6 +36,9 @@ public class SplitSelfClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+
+        System.setProperty("java.awt.headless", "false");
+
         CountryLocator.getCountryCodeAsync(); // Addition to make the country location in cache
 
         EntityModelLayerRegistry.registerModelLayer(TheOtherModel.THEOTHER, TheOtherModel::getTexturedModelData);
@@ -52,7 +56,7 @@ public class SplitSelfClient implements ClientModInitializer {
             if (ClientDetector.isFeatherClient()) {
                 client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("misc.splitself.featherClient").getString()).formatted(Formatting.YELLOW), false);
             }
-            if (!net.minecraft.util.Util.getOperatingSystem().toString().toLowerCase().contains("win")) {
+            if (!Util.getOperatingSystem().toString().toLowerCase().contains("win")) {
                 client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("misc.splitself.windowsSupport").getString()).formatted(Formatting.RED), false);
             }
             player = MinecraftClient.getInstance().player;

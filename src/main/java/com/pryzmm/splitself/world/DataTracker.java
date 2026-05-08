@@ -17,10 +17,11 @@ import java.util.Set;
 import java.util.UUID;
 
 public class DataTracker extends PersistentState {
-    private Set<UUID> joinedPlayers = new HashSet<>();
-    private Map<UUID, Boolean> playerPII = new HashMap<>();
-    private Map<UUID, Boolean> playerReadWarning = new HashMap<>();
-    private Map<UUID, Integer> playerSleepStage = new HashMap<>();
+    private final Set<UUID> joinedPlayers = new HashSet<>();
+    private final Map<UUID, Boolean> playerPII = new HashMap<>();
+    private final Map<UUID, Boolean> playerReadWarning = new HashMap<>();
+    private final Map<UUID, Integer> playerSleepStage = new HashMap<>();
+    private final Map<UUID, Integer> playerMemoryStage = new HashMap<>();
 
     public DataTracker() {}
 
@@ -46,6 +47,14 @@ public class DataTracker extends PersistentState {
         for (String key : SleepStageData.getKeys()) {
             try {
                 playerSleepStage.put(UUID.fromString(key), SleepStageData.getInt(key));
+            } catch (IllegalArgumentException ignored) {
+            }
+        }
+
+        NbtCompound MemoryStageData = nbt.getCompound("MemoryStageData");
+        for (String key : MemoryStageData.getKeys()) {
+            try {
+                playerMemoryStage.put(UUID.fromString(key), MemoryStageData.getInt(key));
             } catch (IllegalArgumentException ignored) {
             }
         }
@@ -86,6 +95,12 @@ public class DataTracker extends PersistentState {
         }
         nbt.put("SleepStageData", SleepStageData);
 
+        NbtCompound MemoryStageData = new NbtCompound();
+        for (Map.Entry<UUID, Integer> entry : playerMemoryStage.entrySet()) {
+            MemoryStageData.putInt(entry.getKey().toString(), entry.getValue());
+        }
+        nbt.put("MemoryStageData", MemoryStageData);
+
         return nbt;
     }
 
@@ -113,6 +128,15 @@ public class DataTracker extends PersistentState {
 
     public void setPlayerSleepStage(UUID playerUuid, Integer sleepStage) {
         playerSleepStage.put(playerUuid, sleepStage);
+        markDirty();
+    }
+
+    public Integer getPlayerMemoryStage(UUID playerUuid) {
+        return playerMemoryStage.getOrDefault(playerUuid, 0);
+    }
+
+    public void setPlayerMemoryStage(UUID playerUuid, Integer memoryStage) {
+        playerMemoryStage.put(playerUuid, memoryStage);
         markDirty();
     }
 

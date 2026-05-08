@@ -65,6 +65,7 @@ public class DefaultConfig {
         weights.put("EJECT", 10);
         weights.put("FREEZE", 10);
         weights.put("BLU", 10);
+        weights.put("MEMORY", 10);
         return weights;
     }
 
@@ -114,6 +115,7 @@ public class DefaultConfig {
         stages.put("EJECT", 2);
         stages.put("FREEZE", 1);
         stages.put("BLU", 3);
+        stages.put("MEMORY", 0);
         return stages;
     }
 
@@ -163,6 +165,7 @@ public class DefaultConfig {
         oneTimers.put("EJECT", false);
         oneTimers.put("FREEZE", false);
         oneTimers.put("BLU", true);
+        oneTimers.put("MEMORY", false);
         return oneTimers;
     }
 

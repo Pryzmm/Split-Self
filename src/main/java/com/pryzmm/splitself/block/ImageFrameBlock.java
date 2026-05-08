@@ -58,7 +58,6 @@ public class ImageFrameBlock extends Block implements BlockEntityProvider {
 
     private VoxelShape getShapeForDirection(Direction direction) {
         return switch (direction) {
-            case NORTH -> NORTH_SHAPE;
             case SOUTH -> SOUTH_SHAPE;
             case EAST -> EAST_SHAPE;
             case WEST -> WEST_SHAPE;

@@ -9,11 +9,8 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class WarningScreen extends Screen {
-    private static final Logger log = LoggerFactory.getLogger(WarningScreen.class);
     private static boolean localPII = false;
     private DataTracker tracker;
 
