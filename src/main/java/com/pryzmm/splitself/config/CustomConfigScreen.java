@@ -72,10 +72,12 @@ public class CustomConfigScreen extends Screen {
 
     public void createConfigButtons() {
         if (SplitSelf.ShriekInstalled) {
-            createBooleanConfigButton(this.width / 2 - 153, 65, "eventsEnabled", DefaultConfig.eventsEnabled, "config.splitself.events_enabled");
-            createVoskConfigButton(this.width / 2 + 3, 65, "https://alphacephei.com/vosk/models", "config.splitself.vosk_model");
+            createBooleanConfigButton(this.width / 2 - 230, 65, "eventsEnabled", DefaultConfig.eventsEnabled, "config.splitself.events_enabled");
+            createVoskConfigButton(this.width / 2 - 75, 65, "https://alphacephei.com/vosk/models", "config.splitself.vosk_model");
+            createIntConfigButton(this.width / 2 + 80, 65, "baseSafeRadius", DefaultConfig.baseSafeRadius, 0, 50, "config.splitself.base_safe_radius");
         } else {
-            createBooleanConfigButton(this.width / 2 - 75, 65, "eventsEnabled", DefaultConfig.eventsEnabled, "config.splitself.events_enabled");
+            createBooleanConfigButton(this.width / 2 - 153, 65, "eventsEnabled", DefaultConfig.eventsEnabled, "config.splitself.events_enabled");
+            createIntConfigButton(this.width / 2 + 3, 65, "baseSafeRadius", DefaultConfig.baseSafeRadius, 0, 50, "config.splitself.base_safe_radius");
         }
         createIntConfigButton(this.width / 2 - 230, 105, "eventTickInterval", DefaultConfig.eventTickInterval, 1, 1000, "config.splitself.event_tick_interval");
         createDoubleConfigButton(this.width / 2 - 75, 105, "eventChance", DefaultConfig.eventChance, 0.01, 1.00, "config.splitself.event_chance");
@@ -84,7 +86,7 @@ public class CustomConfigScreen extends Screen {
         createIntConfigButton(this.width / 2 - 75, 130, "startEventsAfter", DefaultConfig.startEventsAfter, 50, 20000, "config.splitself.start_events_after");
         createIntConfigButton(this.width / 2 + 80, 130, "repeatEventsAfter", DefaultConfig.repeatEventsAfter, 0, 10, "config.splitself.event_until_repeat");
         createMenuConfigButton(this.width / 2 - 230, 180, "config.splitself.group.event_weights", 0, 200, "eventWeights", InputType.INT);
-        createMenuConfigButton(this.width / 2 - 75, 180, "config.splitself.group.event_stages", 0, 3, "eventStages", InputType.INT);
+        createMenuConfigButton(this.width / 2 - 75, 180, "config.splitself.group.event_stages", 0, 4, "eventStages", InputType.INT);
         createMenuConfigButton(this.width / 2 + 80, 180, "config.splitself.group.one_time_events", 0, 0, "oneTimeEvents", InputType.BOOLEAN);
     }
 
@@ -286,7 +288,7 @@ public class CustomConfigScreen extends Screen {
                         String[] words = text.split(" ");
                         StringBuilder currentLine = new StringBuilder();
                         for (String word : words) {
-                            String testLine = currentLine.length() == 0 ? word : currentLine + " " + word;
+                            String testLine = currentLine.isEmpty() ? word : currentLine + " " + word;
                             if (client.textRenderer.getWidth(testLine) <= maxWidth) {
                                 currentLine = new StringBuilder(testLine);
                             } else {

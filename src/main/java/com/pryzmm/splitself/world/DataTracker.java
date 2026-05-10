@@ -122,12 +122,14 @@ public class DataTracker extends PersistentState {
         markDirty();
     }
 
+    public static int sleepStage = 0;
     public Integer getPlayerSleepStage(UUID playerUuid) {
         return playerSleepStage.getOrDefault(playerUuid, 0);
     }
 
     public void setPlayerSleepStage(UUID playerUuid, Integer sleepStage) {
         playerSleepStage.put(playerUuid, sleepStage);
+        DataTracker.sleepStage = sleepStage;
         markDirty();
     }
 

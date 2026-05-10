@@ -46,39 +46,41 @@ public class ChunkDestroyer {
         }
     }
 
-    public static void execute(PlayerEntity Player) {
+    public static void execute(PlayerEntity player) {
+        ServerWorld world = (ServerWorld) player.getWorld();
+
         Vec3d playerPos = new Vec3d(
-                Player.getPos().x + (new Random().nextInt(20 + 20) - 20),
-                319,
-                Player.getPos().z + (new Random().nextInt(20 + 20) - 20)
+            player.getPos().x + (new Random().nextInt(40) - 20),
+            319,
+            player.getPos().z + (new Random().nextInt(40) - 20)
         );
-        Vec3d pos1 = new Vec3d(
-                playerPos.x - 8,
-                Player.getWorld().getTopY(),
-                playerPos.z - 8
-        );
-        Vec3d pos2 = new Vec3d(
-                playerPos.x + 7,
-                Player.getWorld().getBottomY(),
-                playerPos.z + 7
-        );
+        playerPos = EventManager.moveVectorFromBase(player, playerPos);
+
+        final int x1 = (int) playerPos.x - 8, x2 = (int) playerPos.x + 7;
+        final int z1 = (int) playerPos.z - 8, z2 = (int) playerPos.z + 7;
+        final int topY = world.getTopY(), bottomY = world.getBottomY();
 
         new Thread(() -> {
-            for (int y = (int) pos1.getY(); y >= (int) pos2.getY(); y--) {
-                for (int x = (int) pos1.getX(); x <= (int) pos2.getX(); x++) {
-                    for (int z = (int) pos1.getZ(); z <= (int) pos2.getZ(); z++) {
-                        BlockPos pos = new BlockPos(x, y, z);
-                        if (!Player.getWorld().getBlockState(pos).isAir()) {
-                            Player.getWorld().setBlockState(pos, Blocks.AIR.getDefaultState());
+            for (int y = topY; y >= bottomY; y--) {
+                final int finalY = y;
+                world.getServer().execute(() -> {
+                    for (int x = x1; x <= x2; x++) {
+                        for (int z = z1; z <= z2; z++) {
+                            BlockPos pos = new BlockPos(x, finalY, z);
+                            if (!world.getBlockState(pos).isAir()) {
+                                world.setBlockState(pos, Blocks.AIR.getDefaultState());
+                            }
                         }
                     }
-                    try {
-                        Thread.sleep(10);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
+                });
+                try {
+                    Thread.sleep(50); // give the server thread time to process
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    return;
                 }
             }
         }).start();
     }
+
 }

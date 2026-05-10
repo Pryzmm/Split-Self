@@ -24,8 +24,7 @@ public class SleepTracker {
 
     public static void startSleep(ServerPlayerEntity player) {
         ServerWorld world = player.getServerWorld();
-        sleepingPlayers.put(player.getUuid(),
-                new SleepData(world.getTime(), world.getTimeOfDay()));
+        sleepingPlayers.put(player.getUuid(), new SleepData(world.getTime(), world.getTimeOfDay()));
     }
 
     public static void updateSleep(ServerPlayerEntity player) {
@@ -36,6 +35,7 @@ public class SleepTracker {
         long currentGameTime = world.getTime();
         long sleepDuration = currentGameTime - data.sleepStartTime;
         if (sleepDuration == 100) {
+            System.out.println(tracker.getPlayerSleepStage(player.getUuid()));
             double num = Math.random();
             if (tracker.getPlayerSleepStage(player.getUuid()) == 0) {
                 tracker.setPlayerSleepStage(player.getUuid(), tracker.getPlayerSleepStage(player.getUuid()) + 1);
@@ -46,8 +46,10 @@ public class SleepTracker {
             } else if (tracker.getPlayerSleepStage(player.getUuid()) == 2 && Math.floor((num * 6) + 1) == 1) {
                 tracker.setPlayerSleepStage(player.getUuid(), tracker.getPlayerSleepStage(player.getUuid()) + 1);
                 EventManager.runSleepEvent(player, 2);
-            } else if (Math.floor((num * 6) + 1) == 1) {
+            } else if (tracker.getPlayerSleepStage(player.getUuid()) == 3 && Math.floor((num * 6) + 1) == 1) {
                 EventManager.runSleepEvent(player, 3);
+            } else if (tracker.getPlayerSleepStage(player.getUuid()) == 4 && Math.floor((num * 2) + 1) == 1) {
+                EventManager.runSleepEvent(player, 4);
             }
         }
     }

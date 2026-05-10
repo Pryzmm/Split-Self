@@ -3,6 +3,7 @@ package com.pryzmm.splitself.screen;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.pryzmm.splitself.events.ScreenOverlay;
 import com.pryzmm.splitself.file.EntityScreenshotCapture;
+import com.pryzmm.splitself.world.DataTracker;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.client.MinecraftClient;
@@ -63,16 +64,18 @@ public class SkyImageRenderer {
         BufferRenderer.drawWithGlobalProgram(buffer.end());
 
         if (isPlayerLookingAtImage(context)) {
-            ImageX = (float) (ImageX + 0.006);
-            ImageY = (float) (ImageY + 0.009);
-            if (ImageX >= 10) {
-                toggleTexture();
-                new Thread(() -> client.execute(() -> {
-                    PlayerEntity Player = context.world().getPlayerByUuid(client.player.getUuid());
-                    EntityScreenshotCapture capture = new EntityScreenshotCapture();
-                    capture.captureFromEntity(Player, client.getWindow().getScaledWidth(), client.getWindow().getScaledHeight(), (file) -> ScreenOverlay.executeFaceScreen(file, Player, Player));
-                })).start();
-            }
+            if (DataTracker.sleepStage >= 3) {
+                ImageX = (float) (ImageX + 0.006);
+                ImageY = (float) (ImageY + 0.009);
+                if (ImageX >= 10) {
+                    toggleTexture();
+                    new Thread(() -> client.execute(() -> {
+                        PlayerEntity Player = context.world().getPlayerByUuid(client.player.getUuid());
+                        EntityScreenshotCapture capture = new EntityScreenshotCapture();
+                        capture.captureFromEntity(Player, client.getWindow().getScaledWidth(), client.getWindow().getScaledHeight(), file -> ScreenOverlay.executeFaceScreen(file, Player, Player));
+                    })).start();
+                }
+            } else toggleTexture();
         }
         RenderSystem.disableBlend();
 

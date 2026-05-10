@@ -3,6 +3,7 @@ package com.pryzmm.splitself.screen;
 import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.events.EventManager;
 import com.pryzmm.splitself.world.DataTracker;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -35,7 +36,6 @@ public class PoemScreen extends Screen {
         }
 
         assert client != null;
-        String UserName = client.getName();
         this.renderBackground(context, mouseX, mouseY, delta);
         super.render(context, mouseX, mouseY, delta);
         context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 20, 0xFFFFFF);

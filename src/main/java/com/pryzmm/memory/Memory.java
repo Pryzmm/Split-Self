@@ -49,7 +49,7 @@ public class Memory extends JPanel implements Runnable {
         }
     }
 
-    private static BufferedImage readImage(String path) throws IOException {
+    public static BufferedImage readImage(String path) throws IOException {
         InputStream stream = Memory.class.getResourceAsStream(path);
         if (stream == null) throw new IOException("Resource not found on classpath: " + path);
         return ImageIO.read(stream);

@@ -1,6 +1,5 @@
-package com.pryzmm.splitself.dimension;
+package com.pryzmm.splitself.world;
 
-import com.pryzmm.splitself.world.DimensionRegistry;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;

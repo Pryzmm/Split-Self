@@ -2,9 +2,10 @@ package com.pryzmm.splitself;
 
 import com.pryzmm.splitself.block.ModBlocks;
 import com.pryzmm.splitself.command.SplitSelfCommands;
+import com.pryzmm.splitself.config.DefaultConfig;
 import com.pryzmm.splitself.events.*;
 import com.pryzmm.splitself.file.JsonReader;
-import com.pryzmm.splitself.dimension.LimboLevitation;
+import com.pryzmm.splitself.world.LimboLevitation;
 import com.pryzmm.splitself.entity.ModEntities;
 import com.pryzmm.splitself.entity.custom.TheOtherEntity;
 import com.pryzmm.splitself.file.BackgroundManager;
@@ -97,6 +98,8 @@ public class SplitSelf implements ModInitializer {
 	public void onInitialize() {
 
         MinecraftClient client = MinecraftClient.getInstance();
+
+        DefaultConfig.createDefaultConfigs();
 
         JsonReader config = new JsonReader("splitself.json5");
 

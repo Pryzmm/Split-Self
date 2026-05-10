@@ -21,7 +21,6 @@ import java.util.function.Consumer;
 
 public class EntityScreenshotCapture {
     private final MinecraftClient client;
-    private WorldRenderer worldRenderer;
     private Method renderWorldMethod;
     private boolean isIrisPresent = false;
     private Object irisApi = null;
@@ -51,13 +50,13 @@ public class EntityScreenshotCapture {
             irisApi = getInstanceMethod.invoke(null);
             SplitSelf.LOGGER.info("IRIS API initialized successfully");
         } catch (Exception e) {
-            SplitSelf.LOGGER.warn("Could not initialize IRIS API: " + e.getMessage());
+            SplitSelf.LOGGER.warn("Could not initialize IRIS API: {}", e.getMessage());
         }
     }
 
     private void initializeReflection() {
         try {
-            worldRenderer = client.worldRenderer;
+            WorldRenderer worldRenderer = client.worldRenderer;
 
             if (worldRenderer == null) {
                 Field worldRendererField = MinecraftClient.class.getDeclaredField("worldRenderer");
@@ -123,12 +122,12 @@ public class EntityScreenshotCapture {
                 }
             }
         } catch (Exception e) {
-            SplitSelf.LOGGER.debug("Could not manage IRIS shaders: " + e.getMessage());
+            SplitSelf.LOGGER.debug("Could not manage IRIS shaders: {}", e.getMessage());
         }
         try {
             captureUsingMainFramebuffer(entity, width, height, callback);
         } catch (Exception e) {
-            SplitSelf.LOGGER.warn("Main framebuffer approach failed: " + e.getMessage());
+            SplitSelf.LOGGER.warn("Main framebuffer approach failed: {}", e.getMessage());
             captureWithMinimalRendering(entity, width, height, callback);
         }
     }
@@ -241,7 +240,7 @@ public class EntityScreenshotCapture {
                 gameRenderer.renderWorld(client.getRenderTickCounter());
                 renderingSuccessful = true;
             } catch (Exception e) {
-                SplitSelf.LOGGER.warn("Standard gameRenderer approach failed: " + e.getMessage());
+                SplitSelf.LOGGER.warn("Standard gameRenderer approach failed: {}", e.getMessage());
             } finally {
                 client.setCameraEntity(originalCameraEntity);
             }
@@ -344,7 +343,7 @@ public class EntityScreenshotCapture {
             GL11.glColor3f(1.0f, 1.0f, 1.0f);
 
         } catch (Exception e) {
-            SplitSelf.LOGGER.debug("Simple world rendering issues: " + e.getMessage());
+            SplitSelf.LOGGER.debug("Simple world rendering issues: {}", e.getMessage());
         }
     }
 
@@ -353,6 +352,7 @@ public class EntityScreenshotCapture {
             String filename = "hello_" + entity.getUuidAsString().substring(0, 8) + "_" + System.currentTimeMillis() + ".png";
             File screenshotsDir = new File(client.runDirectory, "screenshots");
             if (!screenshotsDir.exists()) {
+                //noinspection ResultOfMethodCallIgnored
                 screenshotsDir.mkdirs();
             }
             ScreenshotRecorder.saveScreenshot(
@@ -362,7 +362,7 @@ public class EntityScreenshotCapture {
                     (text) -> {
                         File screenshotFile = new File(screenshotsDir, filename);
                         if (screenshotFile.exists()) {
-                            SplitSelf.LOGGER.info("Screenshot saved: " + screenshotFile.getAbsolutePath());
+                            SplitSelf.LOGGER.info("Screenshot saved: {}", screenshotFile.getAbsolutePath());
                             callback.accept(screenshotFile);
                         } else {
                             File[] files = screenshotsDir.listFiles((dir, name) ->
@@ -374,7 +374,7 @@ public class EntityScreenshotCapture {
                                         mostRecent = file;
                                     }
                                 }
-                                SplitSelf.LOGGER.info("Found recent screenshot: " + mostRecent.getAbsolutePath());
+                                SplitSelf.LOGGER.info("Found recent screenshot: {}", mostRecent.getAbsolutePath());
                                 callback.accept(mostRecent);
                             } else {
                                 SplitSelf.LOGGER.warn("No screenshot files found");
@@ -384,7 +384,7 @@ public class EntityScreenshotCapture {
                     }
             );
         } catch (Exception e) {
-            SplitSelf.LOGGER.error("Failed to save screenshot: " + e.getMessage());
+            SplitSelf.LOGGER.error("Failed to save screenshot: {}", e.getMessage());
             callback.accept(null);
         }
     }
@@ -409,8 +409,7 @@ public class EntityScreenshotCapture {
             Vec3d entityPos = nearestEntity.getPos();
             float entityYaw = nearestEntity.getYaw();
             float entityPitch = nearestEntity.getPitch();
-            SplitSelf.LOGGER.info(String.format("Capturing from TheOtherEntity at %.2f, %.2f, %.2f (yaw: %.1f, pitch: %.1f)",
-                    entityPos.x, entityPos.y, entityPos.z, entityYaw, entityPitch));
+            SplitSelf.LOGGER.info(String.format("Capturing from TheOtherEntity at %.2f, %.2f, %.2f (yaw: %.1f, pitch: %.1f)", entityPos.x, entityPos.y, entityPos.z, entityYaw, entityPitch));
             captureFromEntity(nearestEntity, width, height, (file) -> {
                 if (file != null && client.player != null) {
                     fileCallback.accept(file);

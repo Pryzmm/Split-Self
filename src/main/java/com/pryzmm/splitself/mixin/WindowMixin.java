@@ -16,4 +16,10 @@ public class WindowMixin {
             ci.cancel();
         }
     }
+
+    @Inject(method = "setTitle", at = @At("HEAD"), cancellable = true)
+    private void onChangeTitle(String title, CallbackInfo ci) {
+        if (EventManager.preventTitleChange) ci.cancel();
+    }
+
 }

@@ -1,5 +1,7 @@
 package com.pryzmm.splitself.config;
 
+import com.pryzmm.splitself.events.EventManager;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,170 +14,76 @@ public class DefaultConfig {
     public static int startEventsAfter = 3000;
     public static int guaranteedEvent = 15600;
     public static int repeatEventsAfter = 5;
+    public static int baseSafeRadius = 15;
 
     public static String voskModel = "vosk-model-small-en-us-0.15";
 
-    public static Map<String, Integer> eventWeights = createDefaultEventWeights();
-    public static Map<String, Integer> eventStages = createDefaultEventStages();
-    public static Map<String, Boolean> oneTimeEvents = createDefaultOneTimeEvents();
+    public static Map<String, Integer> eventWeights = new HashMap<>();
+    public static Map<String, Integer> eventStages = new HashMap<>();
+    public static Map<String, Boolean> oneTimeEvents = new HashMap<>();
 
-    private static Map<String, Integer> createDefaultEventWeights() {
-        Map<String, Integer> weights = new HashMap<>();
-        weights.put("SPAWNTHEOTHER", 120);
-        weights.put("POEMSCREEN", 5);
-        weights.put("DOYOUSEEME", 10);
-        weights.put("UNDERGROUNDMINING", 10);
-        weights.put("REDSKY", 10);
-        weights.put("NOTEPAD", 10);
-        weights.put("SCREENOVERLAY", 10);
-        weights.put("WHITESCREENOVERLAY", 10);
-        weights.put("INVENTORYOVERLAY", 10);
-        weights.put("THEOTHERSCREENSHOT", 10);
-        weights.put("DESTROYCHUNK", 10);
-        weights.put("FROZENSCREEN", 10);
-        weights.put("HOUSE", 10);
-        weights.put("BEDROCKPILLAR", 10);
-        weights.put("BILLY", 3);
-        weights.put("FACE", 3);
-        weights.put("COMMAND", 10);
-        weights.put("INVERT", 10);
-        weights.put("EMERGENCY", 10);
-        weights.put("TNT", 5);
-        weights.put("IRONTRAP", 10);
-        weights.put("LAVA", 10);
-        weights.put("BROWSER", 3);
-        weights.put("KICK", 5);
-        weights.put("SIGN", 10);
-        weights.put("SCALE", 10);
-        weights.put("FREEDOM", 5);
-        weights.put("MINE", 10);
-        weights.put("DOOR", 10);
-        weights.put("SHRINK", 10);
-        weights.put("PAUSE", 10);
-        weights.put("ITEM", 10);
-        weights.put("FRAME", 10);
-        weights.put("NAME", 10);
-        weights.put("WHISPER", 10);
-        weights.put("ESCAPE", 10);
-        weights.put("LIFT", 10);
-        weights.put("SURROUND", 5);
-        weights.put("LOGS", 10);
-        weights.put("DISCONNECT", 10);
-        weights.put("FORGOTTEN", 5);
-        weights.put("EJECT", 10);
-        weights.put("FREEZE", 10);
-        weights.put("BLU", 10);
-        weights.put("MEMORY", 10);
-        return weights;
+    public record EventOptions(Integer weight, Integer stage, Boolean oneTime) {}
+
+    private static void updateEventOptions(String eventName, EventOptions options) {
+        if (options.weight  != null)  eventWeights.put(eventName, options.weight);
+        if (options.stage   != null)  eventStages.put(eventName, options.stage);
+        if (options.oneTime != null)  oneTimeEvents.put(eventName, options.oneTime);
     }
 
-    private static Map<String, Integer> createDefaultEventStages() {
-        Map<String, Integer> stages = new HashMap<>();
-        stages.put("SPAWNTHEOTHER", 0);
-        stages.put("POEMSCREEN", 1);
-        stages.put("DOYOUSEEME", 2);
-        stages.put("UNDERGROUNDMINING", 0);
-        stages.put("REDSKY", 1);
-        stages.put("NOTEPAD", 1);
-        stages.put("SCREENOVERLAY", 1);
-        stages.put("WHITESCREENOVERLAY", 0);
-        stages.put("INVENTORYOVERLAY", 0);
-        stages.put("THEOTHERSCREENSHOT", 1);
-        stages.put("DESTROYCHUNK", 1);
-        stages.put("FROZENSCREEN", 2);
-        stages.put("HOUSE", 1);
-        stages.put("BEDROCKPILLAR", 0);
-        stages.put("BILLY", 0);
-        stages.put("FACE", 1);
-        stages.put("COMMAND", 1);
-        stages.put("INVERT", 0);
-        stages.put("EMERGENCY", 2);
-        stages.put("TNT", 0);
-        stages.put("IRONTRAP", 0);
-        stages.put("LAVA", 1);
-        stages.put("BROWSER", 1);
-        stages.put("KICK", 1);
-        stages.put("SIGN", 0);
-        stages.put("SCALE", 1);
-        stages.put("FREEDOM", 2);
-        stages.put("MINE", 0);
-        stages.put("DOOR", 0);
-        stages.put("SHRINK", 2);
-        stages.put("PAUSE", 1);
-        stages.put("ITEM", 0);
-        stages.put("FRAME", 1);
-        stages.put("NAME", 2);
-        stages.put("WHISPER", 1);
-        stages.put("ESCAPE", 2);
-        stages.put("LIFT", 1);
-        stages.put("SURROUND", 3);
-        stages.put("LOGS", 3);
-        stages.put("DISCONNECT", 2);
-        stages.put("FORGOTTEN", 3);
-        stages.put("EJECT", 2);
-        stages.put("FREEZE", 1);
-        stages.put("BLU", 3);
-        stages.put("MEMORY", 0);
-        return stages;
+    private static boolean hasConfigValues(EventManager.Events event) {
+        return !eventWeights.containsKey(event.name()) || !eventStages.containsKey(event.name()) || !oneTimeEvents.containsKey(event.name());
     }
 
-    private static Map<String, Boolean> createDefaultOneTimeEvents() {
-        Map<String, Boolean> oneTimers = new HashMap<>();
-        oneTimers.put("SPAWNTHEOTHER", false);
-        oneTimers.put("POEMSCREEN", false);
-        oneTimers.put("DOYOUSEEME", false);
-        oneTimers.put("UNDERGROUNDMINING", false);
-        oneTimers.put("REDSKY", false);
-        oneTimers.put("NOTEPAD", true);
-        oneTimers.put("SCREENOVERLAY", false);
-        oneTimers.put("WHITESCREENOVERLAY", false);
-        oneTimers.put("INVENTORYOVERLAY", false);
-        oneTimers.put("THEOTHERSCREENSHOT", false);
-        oneTimers.put("DESTROYCHUNK", false);
-        oneTimers.put("FROZENSCREEN", false);
-        oneTimers.put("HOUSE", false);
-        oneTimers.put("BEDROCKPILLAR", false);
-        oneTimers.put("BILLY", true);
-        oneTimers.put("FACE", false);
-        oneTimers.put("COMMAND", false);
-        oneTimers.put("INVERT", false);
-        oneTimers.put("EMERGENCY", true);
-        oneTimers.put("TNT", false);
-        oneTimers.put("IRONTRAP", false);
-        oneTimers.put("LAVA", false);
-        oneTimers.put("BROWSER", true);
-        oneTimers.put("KICK", false);
-        oneTimers.put("SIGN", false);
-        oneTimers.put("SCALE", false);
-        oneTimers.put("FREEDOM", false);
-        oneTimers.put("MINE", false);
-        oneTimers.put("DOOR", false);
-        oneTimers.put("SHRINK", false);
-        oneTimers.put("PAUSE", false);
-        oneTimers.put("ITEM", false);
-        oneTimers.put("FRAME", false);
-        oneTimers.put("NAME", false);
-        oneTimers.put("WHISPER", false);
-        oneTimers.put("ESCAPE", false);
-        oneTimers.put("LIFT", false);
-        oneTimers.put("SURROUND", true);
-        oneTimers.put("LOGS", true);
-        oneTimers.put("DISCONNECT", false);
-        oneTimers.put("FORGOTTEN", false);
-        oneTimers.put("EJECT", false);
-        oneTimers.put("FREEZE", false);
-        oneTimers.put("BLU", true);
-        oneTimers.put("MEMORY", false);
-        return oneTimers;
+    public static void createDefaultConfigs() {
+        updateEventOptions("SPAWNTHEOTHER",         new EventOptions(120, 0, false));
+        updateEventOptions("POEMSCREEN",            new EventOptions(5,   1, false));
+        updateEventOptions("DOYOUSEEME",            new EventOptions(10,  2, false));
+        updateEventOptions("UNDERGROUNDMINING",     new EventOptions(10,  0, false));
+        updateEventOptions("REDSKY",                new EventOptions(10,  1, false));
+        updateEventOptions("NOTEPAD",               new EventOptions(10,  1, true ));
+        updateEventOptions("SCREENOVERLAY",         new EventOptions(10,  1, false));
+        updateEventOptions("WHITESCREENOVERLAY",    new EventOptions(10,  0, false));
+        updateEventOptions("INVENTORYOVERLAY",      new EventOptions(10,  0, false));
+        updateEventOptions("THEOTHERSCREENSHOT",    new EventOptions(10,  1, false));
+        updateEventOptions("DESTROYCHUNK",          new EventOptions(10,  1, false));
+        updateEventOptions("FROZENSCREEN",          new EventOptions(10,  2, false));
+        updateEventOptions("HOUSE",                 new EventOptions(10,  1, false));
+        updateEventOptions("BEDROCKPILLAR",         new EventOptions(10,  0, false));
+        updateEventOptions("BILLY",                 new EventOptions(3,   0, true ));
+        updateEventOptions("FACE",                  new EventOptions(3,   1, false));
+        updateEventOptions("COMMAND",               new EventOptions(10,  1, false));
+        updateEventOptions("INVERT",                new EventOptions(10,  0, false));
+        updateEventOptions("EMERGENCY",             new EventOptions(10,  2, true ));
+        updateEventOptions("TNT",                   new EventOptions(0,   0, false));
+        updateEventOptions("IRONTRAP",              new EventOptions(10,  0, false));
+        updateEventOptions("BROWSER",               new EventOptions(3,   1, true ));
+        updateEventOptions("KICK",                  new EventOptions(5,   1, false));
+        updateEventOptions("SIGN",                  new EventOptions(10,  1, false));
+        updateEventOptions("SCALE",                 new EventOptions(10,  0, false));
+        updateEventOptions("FREEDOM",               new EventOptions(5,   2, false));
+        updateEventOptions("MINE",                  new EventOptions(10,  0, false));
+        updateEventOptions("DOOR",                  new EventOptions(10,  0, false));
+        updateEventOptions("SHRINK",                new EventOptions(10,  2, false));
+        updateEventOptions("PAUSE",                 new EventOptions(10,  1, false));
+        updateEventOptions("ITEM",                  new EventOptions(10,  0, false));
+        updateEventOptions("FRAME",                 new EventOptions(10,  1, false));
+        updateEventOptions("NAME",                  new EventOptions(10,  2, false));
+        updateEventOptions("WHISPER",               new EventOptions(10,  1, false));
+        updateEventOptions("ESCAPE",                new EventOptions(10,  2, false));
+        updateEventOptions("LIFT",                  new EventOptions(10,  1, false));
+        updateEventOptions("SURROUND",              new EventOptions(5,   3, true ));
+        updateEventOptions("LOGS",                  new EventOptions(10,  3, true ));
+        updateEventOptions("DISCONNECT",            new EventOptions(10,  2, false));
+        updateEventOptions("FORGOTTEN",             new EventOptions(5,   3, false));
+        updateEventOptions("EJECT",                 new EventOptions(10,  2, false));
+        updateEventOptions("FREEZE",                new EventOptions(10,  1, false));
+        updateEventOptions("BLU",                   new EventOptions(10,  3, true ));
+        updateEventOptions("MEMORY",                new EventOptions(10,  0, false));
+        for (EventManager.Events event : EventManager.Events.values()) {
+            if (!hasConfigValues(event)) { // Missing default event fallback
+                updateEventOptions(event.name(), new EventOptions(10, 0, false));
+            }
+        }
     }
-
-    public static Map<String, Integer> getDefaultEventWeights() {return new HashMap<>(eventWeights);}
-    public static int getDefaultEventWeight(String eventName) {return eventWeights.getOrDefault(eventName, 10);}
-
-    public static Map<String, Integer> getDefaultEventStages() {return new HashMap<>(eventStages);}
-    public static int getDefaultEventStage(String eventName) {return eventStages.getOrDefault(eventName, 0);}
-
-    public static Map<String, Boolean> getDefaultOneTimeEvents() {return new HashMap<>(oneTimeEvents);}
-    public static Boolean getDefaultOneTimeEvents(String eventName) {return oneTimeEvents.getOrDefault(eventName, false);}
 
 }

@@ -1,5 +1,6 @@
 package com.pryzmm.splitself.events;
 
+import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.screen.*;
 import com.pryzmm.splitself.sound.ModSounds;
 import net.minecraft.client.MinecraftClient;
@@ -78,24 +79,24 @@ public class ScreenOverlay {
         }).start();
     }
 
-    public static void executeFaceScreen(File image, PlayerEntity Player, Entity source) {
+    public static void executeFaceScreen(File image, PlayerEntity player, Entity source) {
         new Thread(() -> {
             EventManager.ACTIVE_EVENT = true;
-            Player.getWorld().playSound(source, Player.getBlockPos(), ModSounds.AMSTATIC, SoundCategory.MASTER, 1.0f, 1.0f);
+            FaceOverlayRenderer.setOverlayText("");
+            player.getWorld().playSound(source, player.getBlockPos(), ModSounds.AMSTATIC, SoundCategory.MASTER, 1.0f, 1.0f);
             FaceOverlayRenderer.toggleOverlay(image, 0.5f, 0.5f, 0.5f, 1.0f, 100, 133);
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+            try { Thread.sleep(3000); } catch (InterruptedException e) { throw new RuntimeException(e); }
+            FaceOverlayRenderer.setOverlayText(SplitSelf.translate("events.splitself.face.line1").getString());
+            try { Thread.sleep(4500); } catch (InterruptedException e) { throw new RuntimeException(e); }
+            FaceOverlayRenderer.setOverlayText(SplitSelf.translate("events.splitself.face.line2").getString());
+            try { Thread.sleep(4500); } catch (InterruptedException e) { throw new RuntimeException(e); }
+            FaceOverlayRenderer.setOverlayText(SplitSelf.translate("events.splitself.face.line3").getString());
+            try { Thread.sleep(6000); } catch (InterruptedException e) { throw new RuntimeException(e); }
             FaceOverlayRenderer.toggleOverlay(image, 0f, 0f, 0f, 0f, 0, 0);
-            Player.getWorld().playSound(source, Player.getBlockPos(), ModSounds.HUM, SoundCategory.MASTER, 1.0f, 1.0f);
-            FaceOverlayRenderer.toggleOverlay(image, 1f, 0.5f, 0.5f, 1.0f, 200, 266);
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+            MinecraftClient.getInstance().getSoundManager().stopAll();
+            player.getWorld().playSound(source, player.getBlockPos(), ModSounds.HUM, SoundCategory.MASTER, 1.0f, 1.0f);
+            FaceOverlayRenderer.toggleOverlay(image, 1f, 0.5f, 0.5f, 1.0f, 200, 320);
+            try { Thread.sleep(150); } catch (InterruptedException e) { throw new RuntimeException(e); }
             FaceOverlayRenderer.toggleOverlay(image, 0f, 0f, 0f, 0f, 0, 0);
             EventManager.ACTIVE_EVENT = false;
         }).start();

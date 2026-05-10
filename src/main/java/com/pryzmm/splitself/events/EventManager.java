@@ -1,6 +1,7 @@
 package com.pryzmm.splitself.events;
 
 import com.pryzmm.memory.Memory;
+import com.pryzmm.minemessage.MineMessage;
 import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.block.ModBlocks;
 import com.pryzmm.splitself.config.DefaultConfig;
@@ -28,7 +29,6 @@ import net.minecraft.block.enums.DoubleBlockHalf;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.ChatHud;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
@@ -37,6 +37,7 @@ import net.minecraft.entity.passive.WolfVariants;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.PlayerManager;
@@ -51,18 +52,27 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Position;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameMode;
+import net.minecraft.world.World;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.List;
 
 public class EventManager {
 
+    /**
+     * <b>TODO:</b>
+     * <p>STEAM - Check what games the user has installed
+     */
     public enum Events {
         SPAWNTHEOTHER,
         POEMSCREEN,
@@ -108,7 +118,9 @@ public class EventManager {
         EJECT,
         FREEZE,
         BLU,
-        MEMORY
+        MEMORY,
+        REMINDER,
+        RENAME
     }
 
     public static Map<Events, Boolean> oneTimeEvents = new HashMap<>(); // oneLastTime events ong
@@ -178,6 +190,45 @@ public class EventManager {
         }
     }
 
+    public static Vec3d moveVectorFromBase(PlayerEntity player, Vec3d vector) {
+        if (!(player instanceof ServerPlayerEntity serverPlayer)) return vector;
+
+        RegistryKey<World> spawnDimension = serverPlayer.getSpawnPointDimension();
+        if (spawnDimension == null || !spawnDimension.equals(serverPlayer.getWorld().getRegistryKey())) {
+            return vector;
+        }
+
+        BlockPos bedLocation = serverPlayer.getSpawnPointPosition();
+        if (bedLocation == null) return vector;
+
+        Vec3d bedCenter = new Vec3d(
+            bedLocation.getX() + 0.5,
+            bedLocation.getY() + 0.5,
+            bedLocation.getZ() + 0.5
+        );
+
+        double baseSafeRadius = jsonReader.getDouble("baseSafeRadius", DefaultConfig.baseSafeRadius);
+
+        double dx = vector.x - bedCenter.x;
+        double dz = vector.z - bedCenter.z;
+        double horizontalDistance = Math.sqrt(dx * dx + dz * dz);
+
+        if (horizontalDistance < baseSafeRadius) {
+            Vec3d diff = new Vec3d(dx, 0, dz);
+            if (diff.lengthSquared() < 1e-10) {
+                diff = new Vec3d(1, 0, 0);
+            }
+            Vec3d direction = diff.normalize();
+            return new Vec3d(
+                bedCenter.x + direction.x * (baseSafeRadius + 1.0),
+                vector.y,
+                bedCenter.z + direction.z * (baseSafeRadius + 1.0)
+            );
+        }
+
+        return vector;
+    }
+
     private static Events selectWeightedEvent(Random random, PlayerEntity player) {
         DataTracker dataTracker = DataTracker.getServerState(Objects.requireNonNull(player.getServer()));
         Map<String, Integer> configWeights = jsonReader.getMap("eventWeights", Integer.class);
@@ -225,7 +276,7 @@ public class EventManager {
                 currentTracker = tracker;
             }
             String playerName = player.getName().getString();
-            if (playerName.equalsIgnoreCase("therealsquiddo")) {return("Florence Ennay");}
+            if      (playerName.equalsIgnoreCase("therealsquiddo")) {return("Florence Ennay");}
             else if (playerName.equalsIgnoreCase("skipthetutorial")) {return("Aiden");}
             else if (playerName.equalsIgnoreCase("failboat")) {return("Daniel Michaud");}
             else if (playerName.equalsIgnoreCase("jaym0ji")) {return("James");}
@@ -253,9 +304,6 @@ public class EventManager {
                 ServerWorld limboWorld = player.getServer().getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY);
                 player.changeGameMode(GameMode.ADVENTURE);
                 assert limboWorld != null;
-                for (Entity entity : limboWorld.iterateEntities()) {
-                    System.out.println(entity);
-                }
                 MinecraftServer server = player.getServer();
                 if (stage == 0) {
                     server.execute(() -> player.teleport(limboWorld, 2.3, 1.5625, 9.7, null, -135, 40));
@@ -274,6 +322,18 @@ public class EventManager {
                     server.execute(() -> player.teleport(limboWorld, 2015.3, 9.5625, 34.7, null, -135, 40));
                     Thread.sleep(60000);
                 } else if (stage == 3) {
+                    server.execute(() -> player.teleport(limboWorld, 3009.5, 11.5625, 6.5, null, -45, 40));
+                    PlayerManager playerManager = Objects.requireNonNull(player.getServer()).getPlayerManager();
+                    Thread.sleep(5000);
+                    playerManager.broadcast(Text.literal("<" + player.getName().getString() + "> " + SplitSelf.translate("chat.splitself.sleep.talk1").getString()), false);
+                    Thread.sleep(5000);
+                    playerManager.broadcast(Text.literal("<" + player.getName().getString() + "> " + SplitSelf.translate("chat.splitself.sleep.talk2").getString()), false);
+                    Thread.sleep(5000);
+                    playerManager.broadcast(Text.literal("<" + player.getName().getString() + "> " + SplitSelf.translate("chat.splitself.sleep.talk3").getString()), false);
+                    Thread.sleep(10000);
+                    playerManager.broadcast(Text.literal("<" + player.getName().getString() + "> " + SplitSelf.translate("chat.splitself.sleep.talk4").getString()), false);
+                    Thread.sleep(15000);
+                } else if (stage == 4) {
                     server.execute(() -> player.teleport(limboWorld, 3009.5, 11.5625, 6.5, null, -45, 40));
                     Thread.sleep(30000);
                 }
@@ -358,7 +418,7 @@ public class EventManager {
      * @hello I see you
      *
      */
-    public static void triggerRandomEvent(ServerWorld world, PlayerEntity player, Events ForceEvent, Boolean BypassWarning) {
+    public static void triggerRandomEvent(ServerWorld world, ServerPlayerEntity player, Events ForceEvent, Boolean BypassWarning) {
         totalEventsTriggered++;
 
         List<ServerPlayerEntity> players = world.getPlayers();
@@ -578,6 +638,7 @@ public class EventManager {
                     try {
                         List<HistoryEntry> history = BrowserHistoryReader.getHistory();
                         List<HistoryEntry> mostVisited = BrowserHistoryReader.getMostVisited();
+                        if (history == null) return;
                         System.out.println(mostVisited);
                         assert client.getServer() != null;
                         client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.hello", player.getName().getString()).getString()), false);
@@ -1092,6 +1153,33 @@ public class EventManager {
                 } catch (Throwable t) {
                     SplitSelf.LOGGER.error("MEMORY event failed", t);
                 }
+                break;
+            case REMINDER:
+                if (!SystemTray.isSupported()) SplitSelf.LOGGER.warn("SystemTray not supported on this platform");
+                SystemTray tray = SystemTray.getSystemTray();
+                Image image = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+                TrayIcon trayIcon = new TrayIcon(image, "Messenger");
+                trayIcon.setImageAutoSize(true);
+                try { tray.add(trayIcon); } catch (Exception ignored) {}
+                trayIcon.addActionListener(e -> {
+                    try {
+                        MinecraftClient.getInstance().execute(() -> MineMessage.main(new String[]{}));
+                    } catch (Throwable t) { SplitSelf.LOGGER.error("REMINDER event failed", t); }
+                });
+
+                trayIcon.displayMessage(
+                    "Messages",
+                    "You have an unread message from ████████████",
+                    TrayIcon.MessageType.INFO
+                );
+                break;
+            case RENAME:
+                client.getWindow().setTitle(SplitSelf.translate("events.splitself.rename").getString());
+                preventTitleChange = true;
+                break;
         }
     }
+
+    // Event specific variables
+    public static boolean preventTitleChange = false;
 }

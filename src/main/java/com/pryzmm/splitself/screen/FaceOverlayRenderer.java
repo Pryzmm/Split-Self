@@ -7,6 +7,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.pryzmm.splitself.SplitSelf;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
@@ -23,16 +24,24 @@ import java.util.Objects;
 public class FaceOverlayRenderer {
     public static boolean overlayVisible = false;
     private static final Map<String, Identifier> loadedTextures = new HashMap<>();
+    private static DrawContext context;
 
     private static final Identifier FACE_IMAGE_TEXTURE = Identifier.of("splitself", "textures/misc/face.png");
 
     public static void toggleOverlay(File image, Float red, Float green, Float blue, Float alpha, int imageWidth, int imageHeight) {
         overlayVisible = !overlayVisible;
         HudRenderCallback.EVENT.register((drawContext, tickDelta) -> {
+            context = drawContext;
             if (overlayVisible) {
                 renderTopLayerOverlay(drawContext, image, red, green, blue, alpha, imageWidth, imageHeight);
             }
         });
+    }
+
+    private static String overheadText = "";
+
+    public static void setOverlayText(String text) {
+        overheadText = text;
     }
 
     public static void renderTopLayerOverlay(DrawContext drawContext, File image, Float red, Float green, Float blue, Float alpha, int faceImageWidth, int faceImageHeight) {
@@ -86,6 +95,12 @@ public class FaceOverlayRenderer {
         if (textureId != null) {
             drawContext.drawTexture(textureId, x, y, 0, 0, imageWidth, imageHeight, imageWidth, imageHeight);
         }
+
+        MinecraftClient client = MinecraftClient.getInstance();
+        TextRenderer renderer = client.textRenderer;
+        int screenWidth = client.getWindow().getScaledWidth();
+        int screenHeight = client.getWindow().getScaledHeight();
+        drawContext.drawText(renderer, overheadText, (screenWidth / 2) - (renderer.getWidth(overheadText) / 2), screenHeight / 10, 0x33FFFFFF, true);
 
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
         RenderSystem.disableBlend();
