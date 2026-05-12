@@ -43,6 +43,14 @@ public class ModItems {
                     .food(CIET_DOKE_COMPONENT))
     );
 
+    public static final Item MEMORY_BOOK = registerItem(
+        "memory_book",
+        new MemoryBookItem(new Item.Settings()
+            .maxCount(1)
+            .rarity(Rarity.RARE)
+            .fireproof())
+    );
+
     private static Item registerItem(String name, Item item) { 
         return Registry.register(Registries.ITEM, Identifier.of(SplitSelf.MOD_ID, name), item);
     }
@@ -51,6 +59,7 @@ public class ModItems {
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS).register(entries -> {
             entries.add(IN_MY_LIFE_MUSIC_DISC);
             entries.add(FREEDOM_MUSIC_DISC);
+            entries.add(MEMORY_BOOK);
         });
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.FOOD_AND_DRINK).register(entries -> {
             entries.add(CIET_DOKE);

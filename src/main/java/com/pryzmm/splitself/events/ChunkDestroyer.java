@@ -16,8 +16,9 @@ public class ChunkDestroyer {
     public static boolean liftChunkActive = false;
 
     public static void liftChunk(ServerPlayerEntity player, ServerWorld world, int LoopCount, int lift) {
-        double posX = player.getX();
-        double posZ = player.getZ();
+        Vec3d vec = EventManager.moveVectorFromBase(player, player.getPos());
+        double posX = vec.x;
+        double posZ = vec.z;
         for (int i = 0; i < LoopCount; i++) {
             double calcAngle = world.getRandom().nextDouble() * 2 * Math.PI;
             int centerX = Math.toIntExact(Math.round(posX + (Math.cos(calcAngle) * (20 + world.getRandom().nextDouble() * (40 - 20)))));

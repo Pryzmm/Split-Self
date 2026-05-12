@@ -29,17 +29,17 @@ public class WarningScreen extends Screen {
         }
 
         this.addDrawableChild(ButtonWidget.builder(
-                        Text.literal(SplitSelf.translate("warning.splitself.continue").getString()),
-                        button -> {
-                            DesktopFileUtil.createFileOnDesktop(SplitSelf.translate("files.splitself.begin.title").getString() + ".txt", SplitSelf.translate("files.splitself.begin.message").getString());
-                            if (tracker != null && this.client.player != null) {
-                                tracker.setPlayerReadWarning(this.client.player.getUuid(), true);
-                            }
-                            this.close();
-                        }
-                ).position(this.width / 2 - 105, this.height - 50)
-                .size(100, 20)
-                .build());
+            Text.literal(SplitSelf.translate("warning.splitself.continue").getString()),
+            button -> {
+                DesktopFileUtil.createFileOnDesktop(SplitSelf.translate("files.splitself.begin.title").getString() + ".txt", SplitSelf.translate("files.splitself.begin.message").getString());
+                if (tracker != null && this.client.player != null) {
+                    tracker.setPlayerReadWarning(this.client.player.getUuid(), true);
+                }
+                this.close();
+            }
+        ).position(this.width / 2 - 105, this.height - 50)
+        .size(100, 20)
+        .build());
 
         this.addDrawableChild(ButtonWidget.builder(
                         SplitSelf.translate("warning.splitself.PII.toggle"),

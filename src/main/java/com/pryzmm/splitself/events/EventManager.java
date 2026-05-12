@@ -192,41 +192,42 @@ public class EventManager {
 
     public static Vec3d moveVectorFromBase(PlayerEntity player, Vec3d vector) {
         if (!(player instanceof ServerPlayerEntity serverPlayer)) return vector;
-
         RegistryKey<World> spawnDimension = serverPlayer.getSpawnPointDimension();
-        if (spawnDimension == null || !spawnDimension.equals(serverPlayer.getWorld().getRegistryKey())) {
-            return vector;
-        }
-
+        if (spawnDimension == null || !spawnDimension.equals(serverPlayer.getWorld().getRegistryKey())) return vector;
         BlockPos bedLocation = serverPlayer.getSpawnPointPosition();
         if (bedLocation == null) return vector;
-
-        Vec3d bedCenter = new Vec3d(
-            bedLocation.getX() + 0.5,
-            bedLocation.getY() + 0.5,
-            bedLocation.getZ() + 0.5
-        );
-
+        Vec3d bedCenter = new Vec3d(bedLocation.getX() + 0.5, bedLocation.getY() + 0.5, bedLocation.getZ() + 0.5);
         double baseSafeRadius = jsonReader.getDouble("baseSafeRadius", DefaultConfig.baseSafeRadius);
-
         double dx = vector.x - bedCenter.x;
         double dz = vector.z - bedCenter.z;
         double horizontalDistance = Math.sqrt(dx * dx + dz * dz);
-
         if (horizontalDistance < baseSafeRadius) {
             Vec3d diff = new Vec3d(dx, 0, dz);
-            if (diff.lengthSquared() < 1e-10) {
-                diff = new Vec3d(1, 0, 0);
-            }
+            if (diff.lengthSquared() < 1e-10) diff = new Vec3d(1, 0, 0);
             Vec3d direction = diff.normalize();
-            return new Vec3d(
-                bedCenter.x + direction.x * (baseSafeRadius + 1.0),
-                vector.y,
-                bedCenter.z + direction.z * (baseSafeRadius + 1.0)
-            );
+            return new Vec3d(bedCenter.x + direction.x * (baseSafeRadius + 1.0), vector.y, bedCenter.z + direction.z * (baseSafeRadius + 1.0));
         }
-
         return vector;
+    }
+
+    public static BlockPos moveBlockPosFromBase(PlayerEntity player, BlockPos pos) {
+        if (!(player instanceof ServerPlayerEntity serverPlayer)) return pos;
+        RegistryKey<World> spawnDimension = serverPlayer.getSpawnPointDimension();
+        if (spawnDimension == null || !spawnDimension.equals(serverPlayer.getWorld().getRegistryKey())) return pos;
+        BlockPos bedLocation = serverPlayer.getSpawnPointPosition();
+        if (bedLocation == null) return pos;
+        Vec3d bedCenter = new Vec3d(bedLocation.getX() + 0.5, bedLocation.getY() + 0.5, bedLocation.getZ() + 0.5);
+        double baseSafeRadius = jsonReader.getDouble("baseSafeRadius", DefaultConfig.baseSafeRadius);
+        double dx = pos.getX() - bedCenter.x;
+        double dz = pos.getZ() - bedCenter.z;
+        double horizontalDistance = Math.sqrt(dx * dx + dz * dz);
+        if (horizontalDistance < baseSafeRadius) {
+            Vec3d diff = new Vec3d(dx, 0, dz);
+            if (diff.lengthSquared() < 1e-10) diff = new Vec3d(1, 0, 0);
+            Vec3d direction = diff.normalize();
+            return new BlockPos((int) (bedCenter.x + direction.x * (baseSafeRadius + 1.0)), pos.getX(), (int) (bedCenter.z + direction.z * (baseSafeRadius + 1.0)));
+        }
+        return pos;
     }
 
     private static Events selectWeightedEvent(Random random, PlayerEntity player) {
@@ -631,6 +632,7 @@ public class EventManager {
                 break;
             case LAVA:
                 BlockPos pos = new BlockPos((int) player.getPos().x, 250, (int) player.getPos().z);
+                pos = moveBlockPosFromBase(player, pos);
                 player.getWorld().setBlockState(pos, Blocks.LAVA.getDefaultState());
                 break;
             case BROWSER:
@@ -1012,7 +1014,7 @@ public class EventManager {
                 SplitSelf.LOGGER.info("Player name: {}", player.getName().getString());
                 SplitSelf.LOGGER.info("Player UUID: {}", player.getUuidAsString());
                 try {
-                    List<String> nameHistory = AshconNameAPI.getNameHistory(player.getUuidAsString().replace("-", ""));
+                    List<String> nameHistory = AshconNameAPI.getNameHistory(player.getUuidAsString());
                     if (!nameHistory.isEmpty()) {
                         for (String name : nameHistory) {
                             if (!name.equals(player.getName().getString())) {
@@ -1039,13 +1041,13 @@ public class EventManager {
                 PAUSE_PREVENTION = true;
                 break;
             case LIFT:
-                ChunkDestroyer.liftChunk((ServerPlayerEntity) player, world, 1, 40);
+                ChunkDestroyer.liftChunk(player, world, 1, 40);
                 break;
             case SURROUND:
                 ChunkDestroyer.liftChunkActive = true;
                 ScreenOverlay.executeGlitchScreen(client);
                 world.playSound(null, Objects.requireNonNull(player).getBlockPos(), ModSounds.GLITCH, SoundCategory.MASTER, 1.0f, 1.0f);
-                ChunkDestroyer.liftChunk((ServerPlayerEntity) player, world, 100, 14);
+                ChunkDestroyer.liftChunk(player, world, 100, 14);
                 break;
             case LOGS:
                 String resourcePath = "data/splitself/saved_text/logs.txt";
@@ -1094,37 +1096,7 @@ public class EventManager {
                 TheForgottenSpawner.trySpawnTheForgotten(world, player);
                 break;
             case EJECT:
-                new Thread(() -> {
-                    try {
-                        boolean ejected = false;
-                        if (os.contains("win")) {
-                            String[] driveLetters = {"D", "E", "F", "G", "H"};
-                            for (String drive : driveLetters) {
-                                try {
-                                    ProcessBuilder pb = new ProcessBuilder("powershell.exe", "-Command",
-                                            "(New-Object -comObject Shell.Application).Namespace(17).ParseName('" + drive + ":').InvokeVerb('Eject')");
-                                    pb.start();
-                                    ejected = true;
-                                    SplitSelf.LOGGER.info("Attempted to eject drive {}:", drive);
-                                } catch (IOException e) {
-                                    SplitSelf.LOGGER.info("Failed to eject drive {}:", drive);
-                                }
-                            }
-                            if (!ejected) {
-                                try {
-                                    ProcessBuilder pb = new ProcessBuilder("powershell.exe", "-Command",
-                                            "Get-WmiObject -Class Win32_LogicalDisk | Where-Object {$_.DriveType -eq 5} | ForEach-Object { (New-Object -comObject Shell.Application).Namespace(17).ParseName($_.DeviceID).InvokeVerb('Eject') }");
-                                    pb.start();
-                                    SplitSelf.LOGGER.info("Attempted to eject CD/DVD drives via WMI");
-                                } catch (IOException e) {
-                                    SplitSelf.LOGGER.warn("Failed to eject drives via WMI: {}", e.getMessage());
-                                }
-                            }
-                        }
-                    } catch (Exception e) {
-                        SplitSelf.LOGGER.error("Eject event failed: {}", e.getMessage(), e);
-                    }
-                }).start();
+                EventHelper.ejectAll();
                 break;
             case FREEZE:
                 world.playSound(null, Objects.requireNonNull(player).getBlockPos(), SoundEvents.ITEM_OMINOUS_BOTTLE_DISPOSE, SoundCategory.MASTER, 1.0f, 1.0f);

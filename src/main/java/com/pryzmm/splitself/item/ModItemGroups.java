@@ -19,6 +19,7 @@ public class ModItemGroups {
                         entries.add(ModItems.FREEDOM_MUSIC_DISC);
                         entries.add(ModItems.CIET_DOKE);
                         entries.add(ModBlocks.IMAGE_FRAME);
+                        entries.add(ModItems.MEMORY_BOOK);
                     })
                     .build());
 

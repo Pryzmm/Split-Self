@@ -218,8 +218,16 @@
   "item.splitself.freedom_music_disc.desc": "Freedom",
   "item.splitself.in_my_life_music_disc.subtitle": "Let me free",
   "item.splitself.ciet_doke": "Ciet Doke",
+  "item.splitself.memory_book": "Memory Book",
 
   "itemgroup.splitself.splitself_items": "Split Self Items",
+
+  "memory.splitself.house": "First Base",
+  "memory.splitself.house.desc": "This was the first base we had in this world. It wasn't too big but we had to make due for the time being. One of us would have to stay up for the night because we didn't have the materials to make two beds.",
+  "memory.splitself.blu": "Blu",
+  "memory.splitself.blu.desc": "We found a wolf running about. Figured that we should take her in. We gave her a blue collared than named her Blu. Not creative really, but we didn't care, she was ours to take care of.",
+  "memory.splitself.mines": "The Mines",
+  "memory.splitself.mines.desc": "We found a good place to start on some mining, coincidentally right by where we planted our place. I remember them spending hours just trying to find a single vein of diamonds.",
 
   "misc.splitself.featherClient": "<SplitSelf> Warning: Some of this mods features may not be fully functional running on Feather Client. Please switch to the Modrinth App, CurseForge, or the normal Minecraft Launcher.",
   "misc.splitself.windowsSupport": "<SplitSelf> ALERT! Only windows is fully supported for this version; some features of this mod may not properly work on your device!",

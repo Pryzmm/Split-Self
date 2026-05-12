@@ -2,19 +2,17 @@ package com.pryzmm.splitself.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.pryzmm.splitself.SplitSelf;
-import com.pryzmm.splitself.file.DesktopFileUtil;
+import com.pryzmm.splitself.events.EventManager;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-
 import java.util.Random;
 
 public class KickScreen extends Screen {
@@ -28,40 +26,41 @@ public class KickScreen extends Screen {
     @Override
     protected void init() {
         this.addDrawableChild(ButtonWidget.builder(
-                        Text.translatable("gui.toTitle"),
-                        button -> {
-                            ServerPlayerEntity Player = this.client.getServer().getPlayerManager().getPlayer(this.client.player.getUuid());
-                            Vec3d playerPos = new Vec3d(
-                                    Player.getPos().x,
-                                    Player.getPos().y,
-                                    Player.getPos().z
-                            );
-                            Vec3d pos1 = new Vec3d(
-                                    playerPos.x - 8,
-                                    playerPos.y - 8,
-                                    playerPos.z - 8
-                            );
-                            Vec3d pos2 = new Vec3d(
-                                    playerPos.x + 7,
-                                    playerPos.y + 7,
-                                    playerPos.z + 7
-                            );
-                            Random random = new Random();
-                            for (int y = (int) pos1.getY(); y <= (int) pos2.getY(); y++) {
-                                for (int x = (int) pos1.getX(); x <= (int) pos2.getX(); x++) {
-                                    for (int z = (int) pos1.getZ(); z <= (int) pos2.getZ(); z++) {
-                                        BlockPos pos = new BlockPos(x, y, z);
-                                        if (!Player.getWorld().getBlockState(pos).isAir() && random.nextBoolean()) {
-                                            Player.getWorld().setBlockState(pos, Blocks.AIR.getDefaultState());
-                                        }
-                                    }
-                                }
+            Text.translatable("gui.toTitle"),
+            button -> {
+                ServerPlayerEntity player = this.client.getServer().getPlayerManager().getPlayer(this.client.player.getUuid());
+                Vec3d playerPos = new Vec3d(
+                    player.getPos().x,
+                    player.getPos().y,
+                    player.getPos().z
+                );
+                playerPos = EventManager.moveVectorFromBase(player, playerPos);
+                Vec3d pos1 = new Vec3d(
+                    playerPos.x - 8,
+                    playerPos.y - 8,
+                    playerPos.z - 8
+                );
+                Vec3d pos2 = new Vec3d(
+                    playerPos.x + 7,
+                    playerPos.y + 7,
+                    playerPos.z + 7
+                );
+                Random random = new Random();
+                for (int y = (int) pos1.getY(); y <= (int) pos2.getY(); y++) {
+                    for (int x = (int) pos1.getX(); x <= (int) pos2.getX(); x++) {
+                        for (int z = (int) pos1.getZ(); z <= (int) pos2.getZ(); z++) {
+                            BlockPos pos = new BlockPos(x, y, z);
+                            if (!player.getWorld().getBlockState(pos).isAir() && random.nextBoolean()) {
+                                player.getWorld().setBlockState(pos, Blocks.AIR.getDefaultState());
                             }
-                            this.close();
                         }
-                ).position((this.width / 2) - 100, (this.height / 2) + 15)
-                .size(200, 20)
-                .build());
+                    }
+                }
+                this.close();
+            }
+        ).position((this.width / 2) - 100, (this.height / 2) + 15)
+        .size(200, 20)
+        .build());
     }
 
     @Override

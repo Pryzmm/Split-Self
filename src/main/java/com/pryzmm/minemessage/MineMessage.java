@@ -29,6 +29,7 @@ public class MineMessage extends JPanel implements Runnable {
     private static final BufferedImage avatar_OpticalGlass;
     private static final BufferedImage avatar_CloudySkies;
     private static final BufferedImage avatar_DuckyBlade_;
+    private static final BufferedImage avatar_CqllMeToxic;
     private static final BufferedImage avatar_Unknown;
 
     static {
@@ -44,6 +45,7 @@ public class MineMessage extends JPanel implements Runnable {
             avatar_OpticalGlass = readImage("/assets/minemessage/textures/ui/avatars/opticalglass.png");
             avatar_CloudySkies = readImage("/assets/minemessage/textures/ui/avatars/cloudyskies.png");
             avatar_DuckyBlade_ = readImage("/assets/minemessage/textures/ui/avatars/duckyblade.png");
+            avatar_CqllMeToxic = readImage("/assets/minemessage/textures/ui/avatars/cqllmetoxic.png");
             avatar_Unknown = readImage("/assets/minemessage/textures/ui/avatars/unknown.png");
         } catch (IOException e) {
             System.out.println(e.getMessage());
@@ -76,6 +78,7 @@ public class MineMessage extends JPanel implements Runnable {
         userListPanel.add(new UserObject("Reassembly",      avatar_Reassembly,    "I found an issue with one of your builds"));
         userListPanel.add(new UserObject("OpticalGlass",    avatar_OpticalGlass,  "We lost the boat :("));
         userListPanel.add(new UserObject("CloudySkies",     avatar_CloudySkies,   "I can't trust Vortex at all with ANYTHING."));
+        userListPanel.add(new UserObject("CqllMeToxic",     avatar_CqllMeToxic,   "play NullPointerEntity"));
         userListPanel.add(new UserObject("DuckyBlade_",     avatar_DuckyBlade_,   "did you know that by reading this message you're just wasting your time?"));
         userListPanel.add(new UserObject("████████",        avatar_Unknown,       "Umm... hope you're okay."));
         JScrollPane scrollPane = new JScrollPane(userListPanel, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
