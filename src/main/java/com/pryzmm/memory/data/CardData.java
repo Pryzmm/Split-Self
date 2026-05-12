@@ -2,6 +2,8 @@ package com.pryzmm.memory.data;
 
 import com.pryzmm.memory.Memory;
 import com.pryzmm.memory.util.ImageUtil;
+import com.pryzmm.splitself.data.WorldData;
+
 import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
@@ -18,12 +20,12 @@ public class CardData {
         flippedCards.clear();
 
         Card.ICardType[] cardTypes;
-        if (StageHandler.stage == 0) cardTypes = Card.CardTypeStage0.values();
-        else if (StageHandler.stage == 1) cardTypes = Card.CardTypeStage1.values();
+        if (WorldData.getMemoryStage() == 0) cardTypes = Card.CardTypeStage0.values();
+        else if (WorldData.getMemoryStage() == 1) cardTypes = Card.CardTypeStage1.values();
         else cardTypes = Card.CardTypeStage2.values();
         for (Card.ICardType type : cardTypes) {
             int count = 2;
-            if (StageHandler.stage == 2) count = 24;
+            if (WorldData.getMemoryStage() == 2) count = 24;
             for (int i = 0; i < count; i++) {
                 int posX, posY;
                 do {
@@ -79,7 +81,7 @@ public class CardData {
                             }
                         }
                     }
-                    if (StageHandler.stage == 2 && allFlippedCardsCount() == 7) {
+                    if (WorldData.getMemoryStage() == 2 && allFlippedCardsCount() == 7) {
                         Memory.instance.removeAll();
                         Memory.audioClip.stop();
                         Memory.audioClip.close();

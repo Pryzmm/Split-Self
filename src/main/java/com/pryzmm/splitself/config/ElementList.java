@@ -1,6 +1,6 @@
 package com.pryzmm.splitself.config;
 
-import com.pryzmm.splitself.file.JsonReader;
+import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.config.CustomConfigScreen.InputType;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -9,7 +9,6 @@ import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ElementListWidget;
 import net.minecraft.text.Text;
-
 import java.util.List;
 
 public class ElementList extends ElementListWidget<ElementList.Entry> {
@@ -56,17 +55,17 @@ public class ElementList extends ElementListWidget<ElementList.Entry> {
         private String getDisplayValue() {
             if (inputType == InputType.BOOLEAN) {
                 // Use the correct method for reading boolean from array
-                boolean value = JsonReader.getBooleanFromArray(arrayID, configKey);
+                boolean value = SplitSelf.CONFIG.getBooleanFromArray(arrayID, configKey);
                 return value ? "True" : "False";
             } else {
-                return String.valueOf(JsonReader.getValueFromArray(arrayID, configKey));
+                return String.valueOf(SplitSelf.CONFIG.getValueFromArray(arrayID, configKey));
             }
         }
 
         private int getDisplayColor() {
             if (inputType == InputType.BOOLEAN) {
                 // Use the correct method for reading boolean from array
-                boolean value = JsonReader.getBooleanFromArray(arrayID, configKey);
+                boolean value = SplitSelf.CONFIG.getBooleanFromArray(arrayID, configKey);
                 return value ? 0x00FF00 : 0xFF0000; // Green for true, red for false
             } else {
                 return 0xFFFF00; // Yellow for other types

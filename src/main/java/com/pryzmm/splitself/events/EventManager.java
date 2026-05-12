@@ -5,6 +5,7 @@ import com.pryzmm.minemessage.MineMessage;
 import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.block.ModBlocks;
 import com.pryzmm.splitself.config.DefaultConfig;
+import com.pryzmm.splitself.data.WorldData;
 import com.pryzmm.splitself.entity.client.TheForgottenSpawner;
 import com.pryzmm.splitself.entity.custom.TheForgottenEntity;
 import com.pryzmm.splitself.file.JsonReader;
@@ -19,7 +20,6 @@ import com.pryzmm.splitself.screen.KickScreen;
 import com.pryzmm.splitself.screen.PoemScreen;
 import com.pryzmm.splitself.screen.SkyImageRenderer;
 import com.pryzmm.splitself.sound.ModSounds;
-import com.pryzmm.splitself.world.DataTracker;
 import com.pryzmm.splitself.world.DimensionRegistry;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
@@ -126,14 +126,13 @@ public class EventManager {
     public static Map<Events, Boolean> oneTimeEvents = new HashMap<>(); // oneLastTime events ong
 
     private static int CURRENT_COOLDOWN = 0;
-    private static DataTracker tracker;
 
     public static boolean PAUSE_PREVENTION = false;
     public static boolean WINDOW_MANIPULATION_ACTIVE = false;
     public static boolean PAUSE_SHAKE = false;
     public static boolean ACTIVE_EVENT = false;
 
-    public static JsonReader jsonReader = new JsonReader("splitself.json5");
+    public static JsonReader jsonReader = new JsonReader("splitself.json5", true);
 
     public static Identifier CURRENT_FRAME_TEXTURE = null;
 
@@ -167,9 +166,6 @@ public class EventManager {
                 serverPlayer.sendMessageToClient(SplitSelf.translate("death.attack.outsideBorder", serverPlayer.getName().getString()), false);
             }
         } else if (world.getTime() > START_AFTER) {
-            if (tracker == null) {
-                tracker = DataTracker.getServerState(world.getServer());
-            }
 
             if (GUARANTEED_EVENT > 0) {GUARANTEED_EVENT--;}
 
@@ -183,7 +179,7 @@ public class EventManager {
             }
 
             if (world.getRandom().nextDouble() < EVENT_CHANCE || GUARANTEED_EVENT == 0) {
-                triggerRandomEvent(world, world.getRandomAlivePlayer(), null, false);
+                triggerRandomEvent(world, world.getRandomAlivePlayer(), null);
                 CURRENT_COOLDOWN = jsonReader.getInt("eventCooldown", DefaultConfig.eventCooldown);
                 GUARANTEED_EVENT = jsonReader.getInt("guaranteedEvent", DefaultConfig.guaranteedEvent);
             }
@@ -230,8 +226,7 @@ public class EventManager {
         return pos;
     }
 
-    private static Events selectWeightedEvent(Random random, PlayerEntity player) {
-        DataTracker dataTracker = DataTracker.getServerState(Objects.requireNonNull(player.getServer()));
+    private static Events selectWeightedEvent(Random random) {
         Map<String, Integer> configWeights = jsonReader.getMap("eventWeights", Integer.class);
         Map<String, Integer> configStages = jsonReader.getMap("eventStages", Integer.class);
 
@@ -243,7 +238,7 @@ public class EventManager {
             Integer lastTriggered = eventLastTriggered.get(event);
 
             if (weight != null && weight > 0
-                    && stage <= dataTracker.getPlayerSleepStage(player.getUuid())
+                    && stage <= WorldData.getSleepStage()
                     && !oneTimeEvents.containsKey(event)
                     && (lastTriggered == null || (totalEventsTriggered - lastTriggered) >= REPEAT_EVENTS_AFTER)) {
                 eventWeights.put(event, weight);
@@ -269,13 +264,6 @@ public class EventManager {
 
     public static String getName(ClientPlayerEntity player) {
         try {
-            DataTracker currentTracker = null;
-            MinecraftClient client = MinecraftClient.getInstance();
-            if (client.getServer() != null) {
-                currentTracker = DataTracker.getServerState(client.getServer());
-            } else if (tracker != null) {
-                currentTracker = tracker;
-            }
             String playerName = player.getName().getString();
             if      (playerName.equalsIgnoreCase("therealsquiddo")) {return("Florence Ennay");}
             else if (playerName.equalsIgnoreCase("skipthetutorial")) {return("Aiden");}
@@ -286,7 +274,7 @@ public class EventManager {
             else if (playerName.equalsIgnoreCase("dream")) {return("Clay");}
             else if (playerName.equalsIgnoreCase("itzmiai_21")) {return("M1keyz");}
             else if (playerName.equalsIgnoreCase("zachbealetv")) {return("Zach Beale");}
-            if (currentTracker != null && !currentTracker.getPlayerPII(player.getUuid())) {
+            if (!WorldData.getPII()) {
                 return(SplitSelf.translate("events.splitself.redacted_name").getString());
             } else {
                 return(System.getProperty("user.name"));
@@ -298,54 +286,56 @@ public class EventManager {
         }
     }
 
-    public static void runSleepEvent(ServerPlayerEntity player, Integer stage) {
-        Objects.requireNonNull(player.getServer()).execute(() -> new Thread(() -> {
+    @SuppressWarnings("DataFlowIssue")
+    public static void runSleepEvent(Integer stage) {
+        MinecraftServer server = MinecraftClient.getInstance().getServer();
+        server.execute(() -> new Thread(() -> {
+            List<ServerPlayerEntity> players = server.getPlayerManager().getPlayerList();
             try {
-                player.wakeUp();
-                ServerWorld limboWorld = player.getServer().getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY);
-                player.changeGameMode(GameMode.ADVENTURE);
+                ServerWorld limboWorld = server.getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY);
+                players.forEach(p -> p.changeGameMode(GameMode.ADVENTURE));
                 assert limboWorld != null;
-                MinecraftServer server = player.getServer();
                 if (stage == 0) {
-                    server.execute(() -> player.teleport(limboWorld, 2.3, 1.5625, 9.7, null, -135, 40));
+                    players.forEach(p -> p.teleport(limboWorld, 2.3, 1.5625, 9.7, null, -135, 40));
                     Thread.sleep(20000);
                 } else if (stage == 1) {
                     TheOtherEntity theOther = new TheOtherEntity(ModEntities.TheOther, limboWorld);
                     theOther.refreshPositionAndAngles(1006.5, 3, 33.5, -160F, -40F);
                     limboWorld.spawnEntity(theOther);
-                    server.execute(() -> player.teleport(limboWorld, 1015.3, 9.5625, 34.7, null, -135, 40));
+                    players.forEach(p -> p.teleport(limboWorld, 1015.3, 9.5625, 34.7, null, -135, 40));
                     Thread.sleep(60000);
                 } else if (stage == 2) {
                     TheOtherEntity theOther = new TheOtherEntity(ModEntities.TheOther, limboWorld);
                     theOther.refreshPositionAndAngles(2036.5, 4, 20.0, 49F, -14F);
                     limboWorld.spawnEntity(theOther);
                     theOther.setupGoals();
-                    server.execute(() -> player.teleport(limboWorld, 2015.3, 9.5625, 34.7, null, -135, 40));
+                    players.forEach(p -> p.teleport(limboWorld, 2015.3, 9.5625, 34.7, null, -135, 40));
                     Thread.sleep(60000);
                 } else if (stage == 3) {
-                    server.execute(() -> player.teleport(limboWorld, 3009.5, 11.5625, 6.5, null, -45, 40));
-                    PlayerManager playerManager = Objects.requireNonNull(player.getServer()).getPlayerManager();
+                    players.forEach(p -> p.teleport(limboWorld, 3009.5, 11.5625, 6.5, null, -45, 40));
                     Thread.sleep(5000);
-                    playerManager.broadcast(Text.literal("<" + player.getName().getString() + "> " + SplitSelf.translate("chat.splitself.sleep.talk1").getString()), false);
+                    players.forEach(p -> p.sendMessageToClient(Text.literal("<" + p.getName().getString() + "> " + SplitSelf.translate("chat.splitself.sleep.talk1").getString()), false));
                     Thread.sleep(5000);
-                    playerManager.broadcast(Text.literal("<" + player.getName().getString() + "> " + SplitSelf.translate("chat.splitself.sleep.talk2").getString()), false);
+                    players.forEach(p -> p.sendMessageToClient(Text.literal("<" + p.getName().getString() + "> " + SplitSelf.translate("chat.splitself.sleep.talk2").getString()), false));
                     Thread.sleep(5000);
-                    playerManager.broadcast(Text.literal("<" + player.getName().getString() + "> " + SplitSelf.translate("chat.splitself.sleep.talk3").getString()), false);
+                    players.forEach(p -> p.sendMessageToClient(Text.literal("<" + p.getName().getString() + "> " + SplitSelf.translate("chat.splitself.sleep.talk3").getString()), false));
                     Thread.sleep(10000);
-                    playerManager.broadcast(Text.literal("<" + player.getName().getString() + "> " + SplitSelf.translate("chat.splitself.sleep.talk4").getString()), false);
+                    players.forEach(p -> p.sendMessageToClient(Text.literal("<" + p.getName().getString() + "> " + SplitSelf.translate("chat.splitself.sleep.talk4").getString()), false));
                     Thread.sleep(15000);
                 } else if (stage == 4) {
-                    server.execute(() -> player.teleport(limboWorld, 3009.5, 11.5625, 6.5, null, -45, 40));
+                    players.forEach(p -> p.teleport(limboWorld, 3009.5, 11.5625, 6.5, null, -45, 40));
                     Thread.sleep(30000);
                 }
-                player.getServer().getOverworld().setTimeOfDay(0);
-                if (player.getWorld() == player.getServer().getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY)) {
-                    assert player.getSpawnPointPosition() != null;
-                    player.removeStatusEffect(StatusEffects.SLOW_FALLING);
-                    player.removeStatusEffect(StatusEffects.LEVITATION);
-                    server.execute(() -> player.teleport(player.getServer().getWorld(player.getSpawnPointDimension()), player.getSpawnPointPosition().getX(), player.getSpawnPointPosition().getY() + 0.5625, player.getSpawnPointPosition().getZ(), null, 0, 0));
-                }
-                player.changeGameMode(GameMode.SURVIVAL);
+                server.getOverworld().setTimeOfDay(0);
+                players.forEach(p -> {
+                    if (p.getWorld() == server.getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY)) {
+                        assert p.getSpawnPointPosition() != null;
+                        p.removeStatusEffect(StatusEffects.SLOW_FALLING);
+                        p.removeStatusEffect(StatusEffects.LEVITATION);
+                        p.teleport(server.getWorld(p.getSpawnPointDimension()), p.getSpawnPointPosition().getX(), p.getSpawnPointPosition().getY() + 0.5625, p.getSpawnPointPosition().getZ(), null, 0, 0);
+                    }
+                    p.changeGameMode(GameMode.SURVIVAL);
+                });
             } catch (Exception e) {
                 SplitSelf.LOGGER.error(e.getMessage(), e);
             }
@@ -415,11 +405,10 @@ public class EventManager {
      * @param world The world executed in
      * @param player The targeted player
      * @param ForceEvent If a specific event should play or be randomized
-     * @param BypassWarning For debugging purposes, bypasses if the player read the warning screen
      * @hello I see you
      *
      */
-    public static void triggerRandomEvent(ServerWorld world, ServerPlayerEntity player, Events ForceEvent, Boolean BypassWarning) {
+    public static void triggerRandomEvent(ServerWorld world, ServerPlayerEntity player, Events ForceEvent) {
         totalEventsTriggered++;
 
         List<ServerPlayerEntity> players = world.getPlayers();
@@ -427,15 +416,10 @@ public class EventManager {
 
         if (player.getWorld() == Objects.requireNonNull(player.getServer()).getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY)) {return;}
 
-        if (!BypassWarning && !tracker.getPlayerReadWarning(player.getUuid())) {
-            SplitSelf.LOGGER.warn("Tried executing an event, but {} did not read the warning!", player);
-            return;
-        }
-
         Events eventType;
         if (ForceEvent == null) {
             Random javaRandom = new Random(world.getRandom().nextLong());
-            eventType = selectWeightedEvent(javaRandom, player);
+            eventType = selectWeightedEvent(javaRandom);
         } else {
             eventType = ForceEvent;
         }
@@ -1147,11 +1131,10 @@ public class EventManager {
                 break;
             case RENAME:
                 client.getWindow().setTitle(SplitSelf.translate("events.splitself.rename").getString());
-                preventTitleChange = true;
+                EventHelper.preventTitleChange = true;
                 break;
         }
     }
 
     // Event specific variables
-    public static boolean preventTitleChange = false;
 }

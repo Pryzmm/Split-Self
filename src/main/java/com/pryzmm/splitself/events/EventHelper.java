@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 public class EventHelper {
 
     private static final String OS = System.getProperty("os.name").toLowerCase();
+    public static boolean preventTitleChange = false;
 
     public static List<String> detectDrives() {
         if (OS.contains("win")) {

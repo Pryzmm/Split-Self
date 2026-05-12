@@ -12,13 +12,14 @@ public class TheOtherOverlay {
     public static boolean overlayVisible = false;
     private static final Random random = new Random();
 
+    static {
+        HudRenderCallback.EVENT.register((drawContext, tickDelta) -> {
+            if (overlayVisible) renderTopLayerOverlay(drawContext);
+        });
+    }
+
     public static void toggleOverlay() {
         overlayVisible = !overlayVisible;
-        HudRenderCallback.EVENT.register((drawContext, tickDelta) -> {
-            if (overlayVisible) {
-                renderTopLayerOverlay(drawContext);
-            }
-        });
     }
 
     public static void renderTopLayerOverlay(DrawContext drawContext) {

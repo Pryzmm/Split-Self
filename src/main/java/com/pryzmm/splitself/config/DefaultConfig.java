@@ -61,7 +61,7 @@ public class DefaultConfig {
         updateEventOptions("SIGN",                  new EventOptions(10,  1, false));
         updateEventOptions("SCALE",                 new EventOptions(10,  0, false));
         updateEventOptions("FREEDOM",               new EventOptions(5,   2, false));
-        updateEventOptions("MINE",                  new EventOptions(10,  0, false));
+        updateEventOptions("MINE",                  new EventOptions(15,  0, false));
         updateEventOptions("DOOR",                  new EventOptions(10,  0, false));
         updateEventOptions("SHRINK",                new EventOptions(10,  2, false));
         updateEventOptions("PAUSE",                 new EventOptions(10,  1, false));

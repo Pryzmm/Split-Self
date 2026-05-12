@@ -2,6 +2,7 @@ package com.pryzmm.splitself.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.pryzmm.splitself.SplitSelf;
+import com.pryzmm.splitself.data.WorldData;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -9,11 +10,11 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class MemoryScreen extends Screen {
 
     private static final float sizeMulti = 1.3f;
+    private static long frameOffset = 0L;
 
     private static final List<Memory> memories = new ArrayList<>();
     static {
@@ -32,6 +33,7 @@ public class MemoryScreen extends Screen {
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         this.renderBackground(context, mouseX, mouseY, delta);
         super.render(context, mouseX, mouseY, delta);
+        frameOffset++;
 
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
@@ -65,7 +67,12 @@ public class MemoryScreen extends Screen {
         int drawY = yOffset + (int) (memory.y * sizeMulti);
         int endX  = xOffset + (int) ((memory.x + 76) * sizeMulti);
         int endY  = yOffset + (int) ((memory.y + 40) * sizeMulti);
-        if (memory.image == null || memories.stream().noneMatch(m -> Objects.equals(m.image, memory.image))) context.drawTexture(Identifier.of(SplitSelf.MOD_ID, "textures/gui/memories/missing_memory.png"), drawX, drawY, 0, 0, endX - drawX, endY - drawY, (int) (76 * sizeMulti), (int) (40 * sizeMulti));
+        if (memory.image == null || !WorldData.getUnlockedMemories().contains(memory.image)) {
+            context.drawTexture(Identifier.of(SplitSelf.MOD_ID, "textures/gui/memories/missing_memory.png"), drawX, drawY, 0, 0, endX - drawX, endY - drawY, (int) (76 * sizeMulti), (int) (40 * sizeMulti));
+            int hashOffset = memory.image != null ? memory.image.hashCode() % 256 : 0;
+            int timeOffset = Math.toIntExact((long) (frameOffset + (Math.random() * 20))) % 256;
+            context.drawTexture(Identifier.of(SplitSelf.MOD_ID, "textures/gui/memories/missing_memory_glitch.png"), drawX, drawY, hashOffset + timeOffset, hashOffset + timeOffset, endX - drawX, endY - drawY, (int) (76 * sizeMulti), (int) (40 * sizeMulti));
+        }
         else context.drawTexture(Identifier.of(SplitSelf.MOD_ID, "textures/gui/memories/" + memory.image + ".png"), drawX, drawY, 0, 0, endX - drawX, endY - drawY, (int) (76 * sizeMulti), (int) (40 * sizeMulti));
     }
 
@@ -75,7 +82,7 @@ public class MemoryScreen extends Screen {
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (button == 0) {
             for (Memory memory : memories) {
-                if (isClickingMemory(mouseX, mouseY, memory) && memory.image != null) {
+                if (isClickingMemory(mouseX, mouseY, memory) && memory.image != null && WorldData.getUnlockedMemories().contains(memory.image)) {
                     MinecraftClient.getInstance().setScreen(new MemoryImageScreen(memory, this));
                 }
             }

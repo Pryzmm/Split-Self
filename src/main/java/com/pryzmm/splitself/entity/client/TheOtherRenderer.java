@@ -8,11 +8,12 @@ import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.MobEntityRenderer;
 import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 
 public class TheOtherRenderer extends MobEntityRenderer<TheOtherEntity, EntityModel<TheOtherEntity>> {
     private static final Identifier DEFAULT_TEXTURE = Identifier.of(SplitSelf.MOD_ID, "textures/entity/the_other/the_other.png");
+
+    private static final MinecraftClient client = MinecraftClient.getInstance();
 
     private final TheOtherModel<TheOtherEntity> classicModel;
     private final TheOtherModel<TheOtherEntity> slimModel;
@@ -25,31 +26,15 @@ public class TheOtherRenderer extends MobEntityRenderer<TheOtherEntity, EntityMo
 
     @Override
     public Identifier getTexture(TheOtherEntity entity) {
-        PlayerEntity nearestPlayer = entity.getNearestPlayer();
-        if (nearestPlayer != null) {
-            // Get the player's skin texture
-            return MinecraftClient.getInstance().getSkinProvider().getSkinTextures(nearestPlayer.getGameProfile()).texture();
-        }
+        if (client.player != null) return MinecraftClient.getInstance().getSkinProvider().getSkinTextures(client.player.getGameProfile()).texture();
         return DEFAULT_TEXTURE;
-    }
-
-    private boolean isSlimModel(PlayerEntity player) {
-        if (player == null) return false;
-        return MinecraftClient.getInstance().getSkinProvider().getSkinTextures(player.getGameProfile()).model() == net.minecraft.client.util.SkinTextures.Model.SLIM;
     }
 
     @Override
     public void render(TheOtherEntity livingEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {
-        PlayerEntity nearestPlayer = livingEntity.getNearestPlayer();
-
-        // Switch the model based on the nearest player's skin type
-        if (isSlimModel(nearestPlayer)) {
-            // Use slim model
-            this.model = this.slimModel;
-        } else {
-            // Use classic model
-            this.model = this.classicModel;
-        }
+        if (client.player == null) return;
+        if (client.getSkinProvider().getSkinTextures(client.player.getGameProfile()).model() == net.minecraft.client.util.SkinTextures.Model.SLIM) this.model = this.slimModel;
+        else this.model = this.classicModel;
 
         matrixStack.scale(0.9375f, 0.9375f, 0.9375f);
         super.render(livingEntity, f, g, matrixStack, vertexConsumerProvider, i);

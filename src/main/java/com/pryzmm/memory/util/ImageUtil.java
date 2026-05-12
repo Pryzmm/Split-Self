@@ -1,7 +1,7 @@
 package com.pryzmm.memory.util;
 
 import com.pryzmm.memory.data.Card;
-import com.pryzmm.memory.data.StageHandler;
+import com.pryzmm.splitself.data.WorldData;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -13,10 +13,10 @@ public class ImageUtil {
 
     private static final Map<String, BufferedImage> imageCache = new HashMap<>();
     public static BufferedImage getCardImage(Card.ICardType cardType) {
-        String key = StageHandler.stage + "_" + cardType.name().toLowerCase();
+        String key = WorldData.getMemoryStage() + "_" + cardType.name().toLowerCase();
         return imageCache.computeIfAbsent(key, k -> {
             try {
-                return ImageIO.read(ImageUtil.class.getResourceAsStream("/assets/memory/textures/cards/stage_" + StageHandler.stage + "/" + cardType.name().toLowerCase() + ".png"));
+                return ImageIO.read(ImageUtil.class.getResourceAsStream("/assets/memory/textures/cards/stage_" + WorldData.getMemoryStage() + "/" + cardType.name().toLowerCase() + ".png"));
             } catch (Exception e) { throw new RuntimeException(e); }
         });
     }

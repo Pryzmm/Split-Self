@@ -2,7 +2,7 @@ package com.pryzmm.splitself.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.pryzmm.splitself.SplitSelf;
-import com.pryzmm.splitself.world.DataTracker;
+import com.pryzmm.splitself.data.WorldData;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
@@ -11,7 +11,6 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
-
 import java.text.DateFormat;
 import java.util.Date;
 
@@ -25,7 +24,6 @@ public class EmergencyOverlayRenderer {
     public static long lastShakeUpdate = 0;
     static int shakeX;
     static int shakeY;
-    static DataTracker tracker;
 
     public static final Identifier OVERLAY_IMAGE = Identifier.of(SplitSelf.MOD_ID, "textures/screen/overlay.png");
 
@@ -36,8 +34,6 @@ public class EmergencyOverlayRenderer {
         if (overlayVisible) {
             startTime = System.currentTimeMillis();
         }
-
-        tracker = DataTracker.getServerState(player.getServer());
 
         if (!callbackRegistered) {
             HudRenderCallback.EVENT.register(EmergencyOverlayRenderer::renderHud);
@@ -100,7 +96,7 @@ public class EmergencyOverlayRenderer {
         drawContext.drawTextWithShadow(textRenderer, overlayText, titleX, scaledTitleY, 0xFFFFFF);
         matrices.pop();
 
-        if (!tracker.getPlayerPII(client.player.getUuid())) {
+        if (!WorldData.getPII()) {
             city = SplitSelf.translate("events.splitself.redacted_name").getString();
         }
         String smallerText = SplitSelf.translate("events.splitself.emergency.message", city, (DateFormat.getTimeInstance().format(new Date(System.currentTimeMillis()))), city).getString();

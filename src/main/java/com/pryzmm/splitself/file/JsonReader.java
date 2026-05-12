@@ -1,6 +1,7 @@
 package com.pryzmm.splitself.file;
 
 import com.google.gson.*;
+import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.config.DefaultConfig;
 import net.fabricmc.loader.api.FabricLoader;
 import java.io.*;
@@ -13,34 +14,54 @@ import java.util.*;
 public class JsonReader {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private final Path configPath;
-    private static JsonObject jsonObject;
+    private JsonObject jsonObject;
+    private final boolean loadData;
 
-    public JsonReader(String fileName) {
+    public JsonReader(String fileName, boolean loadData) {
         this.configPath = FabricLoader.getInstance().getConfigDir().resolve(fileName);
-        loadOrCreateConfig();
+        this.loadData = loadData;
+        loadOrCreateData();
     }
 
-    private void loadOrCreateConfig() {
-        if (Files.exists(configPath)) {
-            try (FileReader reader = new FileReader(configPath.toFile())) {
-                JsonElement element = JsonParser.parseReader(reader);
-                if (element.isJsonObject()) {
-                    jsonObject = element.getAsJsonObject();
-                    fillMissingDefaults();
-                    removeNonDefaultKeys();
-                } else {
-                    createDefaultConfig();
-                }
-            } catch (Exception e) {
-                System.err.println("Error reading config file, creating new one: " + e.getMessage());
-                createDefaultConfig();
-            }
-        } else {
-            createDefaultConfig();
+    public JsonReader(File file) {
+        this.configPath = file.toPath();
+        this.loadData = false;
+        try {
+            JsonElement element = JsonParser.parseReader(new FileReader(configPath.toFile()));
+            if (element.isJsonObject()) jsonObject = element.getAsJsonObject();
+            else jsonObject = new JsonObject();
+        } catch (FileNotFoundException e) {
+            SplitSelf.LOGGER.warn("Could not find data file?");
         }
     }
 
-    public static Set<String> getKeysFromObject(String objectKey) {
+    public JsonReader(File file, boolean loadData) {
+        this.configPath = file.toPath();
+        this.loadData = loadData;
+        loadOrCreateData();
+    }
+
+    private void loadOrCreateData() {
+        if (Files.exists(configPath)) {
+            try (FileReader reader = new FileReader(configPath.toFile())) {
+                JsonElement element = JsonParser.parseReader(reader);
+                jsonObject = element.getAsJsonObject();
+                if (loadData) {
+                    if (element.isJsonObject()) {
+                        fillMissingDefaults();
+                        removeNonDefaultKeys();
+                    } else createDefaultConfig();
+                }
+            } catch (Exception e) {
+                System.err.println("Error reading config file, creating new one: " + e.getMessage());
+                if (loadData) createDefaultConfig();
+            }
+        } else {
+            if (loadData) createDefaultConfig();
+        }
+    }
+
+    public Set<String> getKeysFromObject(String objectKey) {
         if (jsonObject.has(objectKey) && jsonObject.get(objectKey).isJsonObject()) {
             return jsonObject.getAsJsonObject(objectKey).keySet();
         }
@@ -50,7 +71,7 @@ public class JsonReader {
     private void createDefaultConfig() {
         jsonObject = new JsonObject();
         copyDefaultsToJson();
-        saveConfig();
+        save();
     }
 
     private void fillMissingDefaults() {
@@ -83,7 +104,7 @@ public class JsonReader {
             }
         }
         if (hasChanges) {
-            saveConfig();
+            save();
         }
     }
 
@@ -92,7 +113,7 @@ public class JsonReader {
         Set<String> validKeys = new HashSet<>();
         Field[] fields = DefaultConfig.class.getDeclaredFields();
         for (Field field : fields) {
-            if (java.lang.reflect.Modifier.isStatic(field.getModifiers())) {
+            if (Modifier.isStatic(field.getModifiers())) {
                 validKeys.add(field.getName());
             }
         }
@@ -108,7 +129,7 @@ public class JsonReader {
             System.out.println("Removed invalid config key: " + key);
         }
         for (Field field : fields) {
-            if (java.lang.reflect.Modifier.isStatic(field.getModifiers())) {
+            if (Modifier.isStatic(field.getModifiers())) {
                 field.setAccessible(true);
                 try {
                     String fieldName = field.getName();
@@ -137,7 +158,7 @@ public class JsonReader {
             }
         }
         if (hasChanges) {
-            saveConfig();
+            save();
             System.out.println("Config cleaned up - removed non-default keys");
         }
     }
@@ -162,29 +183,29 @@ public class JsonReader {
         addValueToJson(jsonObject, key, value);
     }
 
+    @SuppressWarnings("unchecked")
     private void addValueToJson(JsonObject target, String key, Object value) {
-        if (value == null) {
-            target.add(key, JsonNull.INSTANCE);
-        } else if (value instanceof String) {
-            target.addProperty(key, (String) value);
-        } else if (value instanceof Number) {
-            target.addProperty(key, (Number) value);
-        } else if (value instanceof Boolean) {
-            target.addProperty(key, (Boolean) value);
-        } else if (value instanceof Map) {
-            JsonObject mapObject = new JsonObject();
-            @SuppressWarnings("unchecked")
-            Map<String, Object> map = (Map<String, Object>) value;
-            for (Map.Entry<String, Object> entry : map.entrySet()) {
-                addValueToJson(mapObject, entry.getKey(), entry.getValue());
+        switch (value) {
+            case null -> target.add(key, JsonNull.INSTANCE);
+            case String s -> target.addProperty(key, s);
+            case Number n -> target.addProperty(key, n);
+            case Boolean b -> target.addProperty(key, b);
+            case Map<?, ?> m -> {
+                JsonObject mapObject = new JsonObject();
+                Map<String, Object> map = (Map<String, Object>) m;
+                for (Map.Entry<String, Object> entry : map.entrySet()) addValueToJson(mapObject, entry.getKey(), entry.getValue());
+                target.add(key, mapObject);
             }
-            target.add(key, mapObject);
-        } else {
-            target.add(key, GSON.toJsonTree(value));
+            case List<?> l -> {
+                JsonArray array = new JsonArray();
+                for (Object item : l) array.add(GSON.toJsonTree(item));
+                target.add(key, array);
+            }
+            default -> target.add(key, GSON.toJsonTree(value));
         }
     }
 
-    public void saveConfig() {
+    public void save() {
         try {
             Files.createDirectories(configPath.getParent());
             try (FileWriter writer = new FileWriter(configPath.toFile())) {
@@ -253,7 +274,7 @@ public class JsonReader {
         return new HashMap<>();
     }
 
-    public static Object getValueFromArray(String arrayID, String configKey) {
+    public Object getValueFromArray(String arrayID, String configKey) {
         if (jsonObject.has(arrayID) && jsonObject.get(arrayID).isJsonObject()) {
             JsonObject array = jsonObject.getAsJsonObject(arrayID);
             if (array.has(configKey)) {
@@ -263,7 +284,7 @@ public class JsonReader {
         return 0;
     }
 
-    public static Boolean getBooleanFromArray(String arrayID, String configKey) {
+    public Boolean getBooleanFromArray(String arrayID, String configKey) {
         if (jsonObject.has(arrayID) && jsonObject.get(arrayID).isJsonObject()) {
             JsonObject array = jsonObject.getAsJsonObject(arrayID);
             if (array.has(configKey)) {
@@ -271,6 +292,28 @@ public class JsonReader {
             }
         }
         return false;
+    }
+
+    public List<String> getStringList(String key) {
+        if (jsonObject.has(key) && jsonObject.get(key).isJsonArray()) {
+            List<String> result = new ArrayList<>();
+            for (JsonElement element : jsonObject.getAsJsonArray(key)) {
+                result.add(element.getAsString());
+            }
+            return result;
+        }
+        return new ArrayList<>();
+    }
+
+    public List<UUID> getUUIDList(String key) {
+        if (jsonObject.has(key) && jsonObject.get(key).isJsonArray()) {
+            List<UUID> result = new ArrayList<>();
+            for (JsonElement element : jsonObject.getAsJsonArray(key)) {
+                result.add(UUID.fromString(element.getAsString()));
+            }
+            return result;
+        }
+        return new ArrayList<>();
     }
 
     public void setInt(String key, int value) {
@@ -302,6 +345,18 @@ public class JsonReader {
     public void setBooleanInObject(String arrayKey, String configKey, boolean value) {
         JsonObject object = getOrCreateObject(arrayKey);
         object.addProperty(configKey, value);
+    }
+
+    public void setStringList(String key, List<String> values) {
+        JsonArray array = new JsonArray();
+        for (String value : values) array.add(value);
+        jsonObject.add(key, array);
+    }
+
+    public void setUUIDList(String key, List<UUID> values) {
+        JsonArray array = new JsonArray();
+        for (UUID value : values) array.add(value.toString());
+        jsonObject.add(key, array);
     }
 
     private JsonObject getOrCreateObject(String key) {

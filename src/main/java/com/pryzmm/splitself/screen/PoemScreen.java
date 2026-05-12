@@ -2,13 +2,10 @@ package com.pryzmm.splitself.screen;
 
 import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.events.EventManager;
-import com.pryzmm.splitself.world.DataTracker;
-import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
-
 import java.util.ArrayList;
 
 public class PoemScreen extends Screen {
@@ -16,7 +13,6 @@ public class PoemScreen extends Screen {
     public PoemScreen() {
         super(Text.literal(""));
     }
-    private static DataTracker tracker;
 
     @Override
     protected void init() {
@@ -30,10 +26,6 @@ public class PoemScreen extends Screen {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-
-        if (tracker == null) {
-            tracker = DataTracker.getServerState(client.getServer());
-        }
 
         assert client != null;
         this.renderBackground(context, mouseX, mouseY, delta);

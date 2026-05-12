@@ -5,11 +5,10 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.pryzmm.splitself.SplitSelf;
+import com.pryzmm.splitself.data.WorldData;
 import com.pryzmm.splitself.events.*;
 import com.pryzmm.splitself.screen.WarningScreen;
-import com.pryzmm.splitself.world.DataTracker;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.server.command.CommandManager;
@@ -55,15 +54,6 @@ public class SplitSelfCommands {
                     return 1;
                 })
             )
-            .then(CommandManager.literal("debugToggleEvents")
-                .requires(source -> source.hasPermissionLevel(2))
-                .executes(context -> {
-                    DataTracker tracker = DataTracker.getServerState(client.getServer());
-                    tracker.setPlayerReadWarning(client.player.getUuid(), !tracker.getPlayerReadWarning(client.player.getUuid()));
-                    context.getSource().sendFeedback(() -> Text.literal(SplitSelf.translate("command.splitself.debug_toggle_warning", tracker.getPlayerReadWarning(client.player.getUuid())).getString()), false);
-                    return 1;
-                })
-            )
             .then(CommandManager.literal("debugSendVec3d")
                 .requires(source -> source.hasPermissionLevel(2))
                 .executes(context -> {
@@ -75,21 +65,32 @@ public class SplitSelfCommands {
                     return 1;
                 })
             )
+            .then(CommandManager.literal("debugMemories")
+                .requires(source -> source.hasPermissionLevel(2))
+                .executes(context -> {
+                    context.getSource().sendFeedback(() -> Text.literal(String.valueOf(WorldData.getUnlockedMemories())), false);
+                    return 1;
+                })
+                .then(CommandManager.argument("memory", StringArgumentType.string())
+                    .executes(context -> {
+                        String memory = StringArgumentType.getString(context, "memory");
+                        WorldData.addUnlockedMemory(memory);
+                        context.getSource().sendFeedback(() -> Text.literal("Updated Memory List"), false);
+                        return 1;
+                    })
+                )
+            )
             .then(CommandManager.literal("debugSleepStage")
                 .requires(source -> source.hasPermissionLevel(2))
                 .executes(context -> {
-                    DataTracker tracker = DataTracker.getServerState(client.getServer());
-                    context.getSource().sendFeedback(() -> Text.literal(String.valueOf(tracker.getPlayerSleepStage(client.player.getUuid()))), false);
+                    context.getSource().sendFeedback(() -> Text.literal(String.valueOf(WorldData.getSleepStage())), false);
                     return 1;
                 })
                 .then(CommandManager.argument("stage", IntegerArgumentType.integer(0))
                     .executes(context -> {
                         int stage = IntegerArgumentType.getInteger(context, "stage");
-                        ServerWorld world = context.getSource().getWorld();
-                        PlayerEntity player = context.getSource().getPlayer();
-                        DataTracker tracker = DataTracker.getServerState(world.getServer());
-                        tracker.setPlayerSleepStage(player.getUuid(), stage);
-                        context.getSource().sendFeedback(() -> Text.literal(String.valueOf(tracker.getPlayerSleepStage(client.player.getUuid()))), false);
+                        WorldData.setSleepStage(stage);
+                        context.getSource().sendFeedback(() -> Text.literal(String.valueOf(WorldData.getSleepStage())), false);
                         return 1;
                     })
                 )
@@ -104,11 +105,11 @@ public class SplitSelfCommands {
                         ServerPlayerEntity player = context.getSource().getPlayer();
 
                         if (eventArg.equalsIgnoreCase("random")) {
-                            EventManager.triggerRandomEvent(world, player, null, true);
+                            EventManager.triggerRandomEvent(world, player, null);
                         } else {
                             try {
                                 EventManager.Events event = EventManager.Events.valueOf(eventArg.toUpperCase());
-                                EventManager.triggerRandomEvent(world, player, event, true);
+                                EventManager.triggerRandomEvent(world, player, event);
                             } catch (IllegalArgumentException e) {
                                 context.getSource().sendFeedback(() -> Text.literal("<" + context.getSource().getName() + "> " + SplitSelf.translate("command.splitself.invalid_value").getString()), false);
                             }

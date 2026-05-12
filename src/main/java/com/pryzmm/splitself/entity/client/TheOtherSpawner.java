@@ -2,6 +2,7 @@ package com.pryzmm.splitself.entity.client;
 
 import com.pryzmm.splitself.entity.ModEntities;
 import com.pryzmm.splitself.entity.custom.TheOtherEntity;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
@@ -11,7 +12,6 @@ import net.minecraft.util.math.Position;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.entity.player.PlayerEntity;
-
 import java.util.List;
 
 public class TheOtherSpawner {
@@ -32,17 +32,17 @@ public class TheOtherSpawner {
             BlockPos spawnPos = new BlockPos((int) spawnX, (int) spawnY, (int) spawnZ);
             if (isValidSpawnLocation(world, spawnPos, player)) {
                 List<? extends TheOtherEntity> entities = world.getEntitiesByType(ModEntities.TheOther, entity -> true);
-                for (TheOtherEntity entity : entities) {
-                    entity.discard();
-                }
+                for (TheOtherEntity entity : entities) entity.discard();
                 TheOtherEntity theOther = new TheOtherEntity(ModEntities.TheOther, world);
                 theOther.refreshPositionAndAngles(spawnPos.getX() + 0.5, spawnPos.getY(), spawnPos.getZ() + 0.5, random.nextFloat() * 360.0F, 0.0F);
+                theOther.initialize(
+                    world,
+                    world.getLocalDifficulty(theOther.getBlockPos()),
+                    SpawnReason.TRIGGERED,
+                    null
+                );
                 world.spawnEntity(theOther);
-                System.out.println(player);
-                System.out.println(theOther.getBlockPos());
-                if (!silentSpawn) {
-                    world.playSound(null, theOther.getBlockPos(), SoundEvents.BLOCK_BELL_RESONATE, SoundCategory.MASTER, 1000.0f, 1.0f);
-                }
+                if (!silentSpawn) world.playSound(null, theOther.getBlockPos(), SoundEvents.BLOCK_BELL_RESONATE, SoundCategory.MASTER, 1000.0f, 1.0f);
                 break;
             }
         }

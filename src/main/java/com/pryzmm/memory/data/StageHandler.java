@@ -1,12 +1,12 @@
 package com.pryzmm.memory.data;
 
+import com.pryzmm.splitself.data.WorldData;
+
 public class StageHandler {
 
-    public static int stage = 0;
-
     public static void advanceStage() {
-        stage++;
-        if (stage > 2) stage = -1;
+        WorldData.setMemoryStage(WorldData.getMemoryStage() + 1);
+        if (WorldData.getMemoryStage() > 2) WorldData.setMemoryStage(-1);
     }
 
 }

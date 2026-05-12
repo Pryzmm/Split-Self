@@ -2,8 +2,8 @@ package com.pryzmm.memory;
 
 import com.pryzmm.memory.data.Card;
 import com.pryzmm.memory.data.CardData;
-import com.pryzmm.memory.data.StageHandler;
 import com.pryzmm.memory.util.ImageUtil;
+import com.pryzmm.splitself.data.WorldData;
 import javax.imageio.ImageIO;
 import javax.sound.sampled.*;
 import javax.swing.*;
@@ -95,7 +95,7 @@ public class Memory extends JPanel implements Runnable {
     }
 
     public static void main(String[] args) {
-        if (StageHandler.stage == -1) return;
+        if (WorldData.getMemoryStage() == -1) return;
 
         SwingUtilities.invokeLater(() -> {
 
@@ -122,13 +122,13 @@ public class Memory extends JPanel implements Runnable {
             frame.addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosing(WindowEvent e) {
-                    if (StageHandler.stage != 2) JOptionPane.showMessageDialog(frame, "Finish the game.");
+                    if (WorldData.getMemoryStage() != 2) JOptionPane.showMessageDialog(frame, "Finish the game.");
                 }
             });
             frame.setVisible(true);
 
             try {
-                AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(Memory.class.getResourceAsStream("/assets/memory/sounds/lobby_music_stage_" + StageHandler.stage + ".wav"));
+                AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(Memory.class.getResourceAsStream("/assets/memory/sounds/lobby_music_stage_" + WorldData.getMemoryStage() + ".wav"));
                 audioClip = AudioSystem.getClip();
                 audioClip.open(audioInputStream);
                 audioClip.loop(Clip.LOOP_CONTINUOUSLY);
@@ -149,14 +149,14 @@ public class Memory extends JPanel implements Runnable {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        if (StageHandler.stage == 2) g.drawImage(backgroundBrightnessShifted, 0, 0, getWidth(), getHeight(), null);
-        else if (StageHandler.stage == 1 && Math.random() * 100 < 2) g.drawImage(backgroundHueShifted, 0, 0, getWidth(), getHeight(), null);
+        if (WorldData.getMemoryStage() == 2) g.drawImage(backgroundBrightnessShifted, 0, 0, getWidth(), getHeight(), null);
+        else if (WorldData.getMemoryStage() == 1 && Math.random() * 100 < 2) g.drawImage(backgroundHueShifted, 0, 0, getWidth(), getHeight(), null);
         else g.drawImage(background, 0, 0, getWidth(), getHeight(), null);
 
         offsetX += 1;
         offsetY += 1;
 
-        if (StageHandler.stage >= 1 && Math.random() * 100 < 2) {
+        if (WorldData.getMemoryStage() >= 1 && Math.random() * 100 < 2) {
             offsetX += (int) (Math.random() * 40 - 20);
             offsetY += (int) (Math.random() * 40 - 20);
         }
@@ -173,7 +173,7 @@ public class Memory extends JPanel implements Runnable {
             for (int i = 0; i < cardButtons.size(); i++) {
 
                 int offsetX, offsetY;
-                if (StageHandler.stage >= 1 && Math.random() * 100 < 2) {
+                if (WorldData.getMemoryStage() >= 1 && Math.random() * 100 < 2) {
                     offsetX = (int) (Math.random() * 4 - 2);
                     offsetY = (int) (Math.random() * 4 - 2);
                 } else {
@@ -188,7 +188,7 @@ public class Memory extends JPanel implements Runnable {
 
         for (int x = startX; x < getWidth(); x += imgW) {
             for (int y = startY; y < getHeight(); y += imgH) {
-                if (StageHandler.stage == 2) {
+                if (WorldData.getMemoryStage() == 2) {
                     g.drawImage(polkadotsStage2, x, y, null);
                 }
                 else g.drawImage(polkadots, x, y, null);
@@ -198,7 +198,7 @@ public class Memory extends JPanel implements Runnable {
         if (textLabel != null) textLabel.setBounds(0, 0, Memory.instance.getWidth(), Memory.instance.getHeight());
 
         double rotationOffset;
-        if (StageHandler.stage >= 1 && Math.random() * 100 < 2) rotationOffset = Math.random() * 2;
+        if (WorldData.getMemoryStage() >= 1 && Math.random() * 100 < 2) rotationOffset = Math.random() * 2;
         else rotationOffset = 0;
 
         double rotation = Math.sin((double) System.currentTimeMillis() / 400 + rotationOffset) * 10;

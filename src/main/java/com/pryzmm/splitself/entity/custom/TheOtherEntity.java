@@ -2,6 +2,7 @@ package com.pryzmm.splitself.entity.custom;
 
 import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.SplitSelfClient;
+import com.pryzmm.splitself.data.WorldData;
 import com.pryzmm.splitself.events.ScreenOverlay;
 import com.pryzmm.splitself.sound.ModSounds;
 import com.pryzmm.splitself.world.DimensionRegistry;
@@ -38,7 +39,6 @@ public class TheOtherEntity extends HostileEntity {
 
     public final AnimationState idleAnimationState = new AnimationState();
 
-    private PlayerEntity cachedNearestPlayer = null;
     private int playerUpdateTimer = 0;
     private static final int PLAYER_UPDATE_INTERVAL = 20;
     public static Map<Entity, Integer> toBeDiscarded = new HashMap<>();
@@ -89,20 +89,13 @@ public class TheOtherEntity extends HostileEntity {
         }
     }
 
-    public PlayerEntity getNearestPlayer() {
-        return this.cachedNearestPlayer;
-    }
-
+    @SuppressWarnings("DataFlowIssue")
     public void tick() {
         super.tick();
         if (this.getWorld().isClient()) {
             this.idleAnimationState.startIfNotRunning(this.age);
-            if (this.playerUpdateTimer <= 0) {
-                this.cachedNearestPlayer = this.getWorld().getClosestPlayer(this, -1.0);
-                this.playerUpdateTimer = PLAYER_UPDATE_INTERVAL;
-            } else {
-                --this.playerUpdateTimer;
-            }
+            if (this.playerUpdateTimer <= 0) this.playerUpdateTimer = PLAYER_UPDATE_INTERVAL;
+            else --this.playerUpdateTimer;
         }
 
         List<PlayerEntity> nearbyPlayers = this.getWorld().getEntitiesByClass(
@@ -193,9 +186,8 @@ public class TheOtherEntity extends HostileEntity {
 
     @Override
     public @Nullable EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData) {
-        com.pryzmm.splitself.world.DataTracker dataTracker = com.pryzmm.splitself.world.DataTracker.getServerState(Objects.requireNonNull(world.getServer()));
         assert SplitSelfClient.player != null;
-        if (dataTracker.getPlayerSleepStage(SplitSelfClient.player.getUuid()) >= 2) {
+        if (WorldData.getSleepStage() >= 2) {
             setTypeVariant(TheOtherVariant.TWITCHING);
         } else {
             setTypeVariant(TheOtherVariant.DEFAULT);

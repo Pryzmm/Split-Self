@@ -38,7 +38,7 @@ public class CustomConfigScreen extends Screen {
         Parent = parent;
 
         if (configReader == null) {
-            configReader = new JsonReader("splitself.json5");
+            configReader = new JsonReader("splitself.json5", true);
         }
 
     }
@@ -62,7 +62,7 @@ public class CustomConfigScreen extends Screen {
     }
 
     public static void applyConfig() {
-        configReader.saveConfig();
+        configReader.save();
         EventManager.EVENTS_ENABLED = configReader.getBoolean("eventsEnabled", DefaultConfig.eventsEnabled);
         EventManager.TICK_INTERVAL = configReader.getInt("eventTickInterval", DefaultConfig.eventTickInterval);
         EventManager.EVENT_CHANCE = configReader.getDouble("eventChance", DefaultConfig.eventChance);
@@ -108,9 +108,7 @@ public class CustomConfigScreen extends Screen {
                 () -> String.valueOf(configReader.getDouble(configKey, defaultValue)),
                 () -> 0xFFFF00,
                 translationKey + ".description",
-                button -> {
-                    createNumericValueWidget(5, this.height - 25, minimum, maximum, configKey, InputType.DOUBLE);
-                }
+                button -> createNumericValueWidget(5, this.height - 25, minimum, maximum, configKey, InputType.DOUBLE)
         ));
     }
 
@@ -124,7 +122,7 @@ public class CustomConfigScreen extends Screen {
                 button -> {
                     boolean newValue = !configReader.getBoolean(configKey, defaultValue);
                     configReader.setBoolean(configKey, newValue);
-                    configReader.saveConfig();
+                    configReader.save();
                 }
         ));
     }
@@ -190,9 +188,7 @@ public class CustomConfigScreen extends Screen {
                 x + 100, y, 50, 20,
                 Text.literal("Submit"),
                 null,
-                button -> {
-                    submitNumericPrompt(textFieldWidget, minimum, maximum, inputType, configKey);
-                }
+                button -> submitNumericPrompt(textFieldWidget, minimum, maximum, inputType, configKey)
         ));
     }
 
@@ -217,9 +213,7 @@ public class CustomConfigScreen extends Screen {
                 x + 100, y, 50, 20,
                 Text.literal("Submit"),
                 null,
-                button -> {
-                    submitVoskPrompt(textFieldWidget);
-                }
+                button -> submitVoskPrompt(textFieldWidget)
         ));
     }
 
@@ -233,7 +227,7 @@ public class CustomConfigScreen extends Screen {
                     if (newValue >= minimum && newValue <= maximum) {
                         textFieldHeaderWidget.setTextColor(0xFFFFFF);
                         configReader.setInt(configValue, newValue);
-                        configReader.saveConfig();
+                        configReader.save();
                     } else {
                         throw new NumberFormatException("Invalid value! (Not Within Bounds!)");
                     }
@@ -242,7 +236,7 @@ public class CustomConfigScreen extends Screen {
                     if (newValue >= minimum && newValue <= maximum) {
                         textFieldHeaderWidget.setTextColor(0xFFFFFF);
                         configReader.setDouble(configValue, newValue);
-                        configReader.saveConfig();
+                        configReader.save();
                     } else {
                         throw new NumberFormatException("Invalid value! (Not Within Bounds!)");
                     }
@@ -262,7 +256,7 @@ public class CustomConfigScreen extends Screen {
             } else {
                 textFieldHeaderWidget.setTextColor(0xFFFFFF);
                 configReader.setString("voskModel", textFieldWidget.getText().replace(" ", "").replace(".zip", ""));
-                configReader.saveConfig();
+                configReader.save();
                 Toast restartToast = new Toast() {
                     @Override
                     public Visibility draw(DrawContext context, ToastManager manager, long startTime) {

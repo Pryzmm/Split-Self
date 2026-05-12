@@ -1,5 +1,6 @@
 package com.pryzmm.splitself.mixin;
 
+import com.pryzmm.splitself.events.EventHelper;
 import com.pryzmm.splitself.events.EventManager;
 import net.minecraft.client.util.Window;
 import org.spongepowered.asm.mixin.Mixin;
@@ -19,7 +20,7 @@ public class WindowMixin {
 
     @Inject(method = "setTitle", at = @At("HEAD"), cancellable = true)
     private void onChangeTitle(String title, CallbackInfo ci) {
-        if (EventManager.preventTitleChange) ci.cancel();
+        if (EventHelper.preventTitleChange) ci.cancel();
     }
 
 }

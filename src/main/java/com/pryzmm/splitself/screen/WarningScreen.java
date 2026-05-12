@@ -1,8 +1,8 @@
 package com.pryzmm.splitself.screen;
 
 import com.pryzmm.splitself.SplitSelf;
+import com.pryzmm.splitself.data.WorldData;
 import com.pryzmm.splitself.file.DesktopFileUtil;
-import com.pryzmm.splitself.world.DataTracker;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -12,7 +12,6 @@ import net.minecraft.util.Formatting;
 
 public class WarningScreen extends Screen {
     private static boolean localPII = false;
-    private DataTracker tracker;
 
     public WarningScreen() {
         super(SplitSelf.translate("warning.splitself.title"));
@@ -20,21 +19,16 @@ public class WarningScreen extends Screen {
 
     @Override
     protected void init() {
+        assert this.client != null;
         MinecraftServer server = this.client.getServer();
         if (server != null) {
-            tracker = DataTracker.getServerState(server);
-            if (this.client.player != null) {
-                localPII = tracker.getPlayerPII(this.client.player.getUuid());
-            }
+            localPII = WorldData.getPII();
         }
 
         this.addDrawableChild(ButtonWidget.builder(
             Text.literal(SplitSelf.translate("warning.splitself.continue").getString()),
             button -> {
                 DesktopFileUtil.createFileOnDesktop(SplitSelf.translate("files.splitself.begin.title").getString() + ".txt", SplitSelf.translate("files.splitself.begin.message").getString());
-                if (tracker != null && this.client.player != null) {
-                    tracker.setPlayerReadWarning(this.client.player.getUuid(), true);
-                }
                 this.close();
             }
         ).position(this.width / 2 - 105, this.height - 50)
@@ -45,9 +39,7 @@ public class WarningScreen extends Screen {
                         SplitSelf.translate("warning.splitself.PII.toggle"),
                         button -> {
                             localPII = !localPII;
-                            if (tracker != null && this.client.player != null) {
-                                tracker.setPlayerPII(this.client.player.getUuid(), localPII);
-                            }
+                            WorldData.setPII(localPII);
                         }
                 ).position(this.width / 2 + 5, this.height - 50)
                 .size(100, 20)

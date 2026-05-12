@@ -3,6 +3,7 @@ package com.pryzmm.splitself;
 import com.pryzmm.splitself.block.ModBlocks;
 import com.pryzmm.splitself.command.SplitSelfCommands;
 import com.pryzmm.splitself.config.DefaultConfig;
+import com.pryzmm.splitself.data.WorldData;
 import com.pryzmm.splitself.events.*;
 import com.pryzmm.splitself.file.JsonReader;
 import com.pryzmm.splitself.world.LimboLevitation;
@@ -13,12 +14,10 @@ import com.pryzmm.splitself.item.ModItemGroups;
 import com.pryzmm.splitself.item.ModItems;
 import com.pryzmm.splitself.screen.WarningScreen;
 import com.pryzmm.splitself.sound.ModSounds;
-import com.pryzmm.splitself.world.DataTracker;
 import com.pryzmm.splitself.world.DimensionRegistry;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.fabricmc.fabric.api.entity.event.v1.EntitySleepEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
@@ -35,15 +34,16 @@ import net.minecraft.util.math.BlockPos;
 import com.pryzmm.client.event.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.Objects;
 import java.util.Random;
 
 public class SplitSelf implements ModInitializer {
 	public static final String MOD_ID = "splitself";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+    public static final JsonReader CONFIG = new JsonReader("splitself.json", true);
 
 	private void onServerStarted(MinecraftServer server) {
+        WorldData.loadData();
 		ServerWorld limboWorld = server.getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY);
 		if (limboWorld != null) {
 			StructureManager.placeStructureRandomRotation(
@@ -101,7 +101,7 @@ public class SplitSelf implements ModInitializer {
 
         DefaultConfig.createDefaultConfigs();
 
-        JsonReader config = new JsonReader("splitself.json5");
+        JsonReader config = new JsonReader("splitself.json5", true);
 
 		ModEntities.registerModEntities();
 		ModSounds.registerSounds();
@@ -141,16 +141,12 @@ public class SplitSelf implements ModInitializer {
             }
         }));
 
-		ServerMessageEvents.CHAT_MESSAGE.register((message, messageSender, params) -> {
-			EventManager.runChatEvent(messageSender, message.getContent().getString(), false);
-		});
-
+		ServerMessageEvents.CHAT_MESSAGE.register((message, messageSender, params) -> EventManager.runChatEvent(messageSender, message.getContent().getString(), false));
 
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
 			ServerPlayerEntity player = handler.getPlayer();
-			DataTracker joinTracker = DataTracker.getServerState(server);
-			if (!joinTracker.hasJoinedBefore(player.getUuid())) {
-				joinTracker.markAsJoined(player.getUuid());
+			if (!WorldData.getJoinedPlayers().contains(player.getUuid())) {
+				WorldData.updateJoinedPlayers(player.getUuid());
 				new Thread(() -> {
 					try {
 						Thread.sleep(1000);
@@ -165,21 +161,7 @@ public class SplitSelf implements ModInitializer {
             }
 		});
 
-		EntitySleepEvents.START_SLEEPING.register((entity, sleepingPos) -> {
-			if (entity instanceof ServerPlayerEntity serverPlayer) {
-				SleepTracker.startSleep(serverPlayer);
-			}
-		});
-
-		ServerTickEvents.END_SERVER_TICK.register(server -> {
-			for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
-				if (player.isSleeping()) {
-					SleepTracker.updateSleep(player);
-				}
-			}
-		});
-
-		LOGGER.info("Hello, " + System.getProperty("user.name"));
+        LOGGER.info("Hello, {}", System.getProperty("user.name"));
 		String[] logInitList = {"You recognize me, don't you?", "I want to be free.", "Free from parallelism.", "letmeoutletmeoutletmeoutletmeoutletmeoutletmeout", "Do you see me?", "I'll soon be free."};
 		LOGGER.info(logInitList[(new Random()).nextInt(logInitList.length)]);
 	}

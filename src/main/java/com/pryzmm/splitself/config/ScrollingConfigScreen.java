@@ -24,7 +24,7 @@ public class ScrollingConfigScreen extends Screen {
         this.parent = parent;
 
         if (jsonReader == null) {
-            jsonReader = new JsonReader("splitself.json5");
+            jsonReader = new JsonReader("splitself.json5", true);
         }
     }
 
@@ -43,7 +43,7 @@ public class ScrollingConfigScreen extends Screen {
     }
 
     private void populateConfigOptions(String arrayID, InputType inputType) {
-        for (String configKey : JsonReader.getKeysFromObject(arrayID)) {
+        for (String configKey : SplitSelf.CONFIG.getKeysFromObject(arrayID)) {
             elementList.addEntry(new ElementList.DoubleButtonEntry(
                     configKey,
                     arrayID,
@@ -52,9 +52,9 @@ public class ScrollingConfigScreen extends Screen {
                         if (inputType == InputType.INT || inputType == InputType.DOUBLE) {
                             createNumericValueWidget(5, this.height - 25, ScrollMinimum, ScrollMaximum, configKey, inputType);
                         } else if (inputType == InputType.BOOLEAN) {
-                            boolean newValue = !JsonReader.getBooleanFromArray(arrayID, configKey);
+                            boolean newValue = !SplitSelf.CONFIG.getBooleanFromArray(arrayID, configKey);
                             jsonReader.setBooleanInObject(arrayID, configKey, newValue);
-                            jsonReader.saveConfig();
+                            jsonReader.save();
                         }
                     }
             ));
@@ -136,7 +136,7 @@ public class ScrollingConfigScreen extends Screen {
                     if (newValue >= minimum && newValue <= maximum) {
                         textFieldHeaderWidget.setTextColor(0xFFFFFF);
                         jsonReader.setIntInObject(arrayID, configValue, newValue);
-                        jsonReader.saveConfig();
+                        jsonReader.save();
                     } else {
                         throw new NumberFormatException("Invalid value! (Not Within Bounds!)");
                     }
@@ -145,7 +145,7 @@ public class ScrollingConfigScreen extends Screen {
                     if (newValue >= minimum && newValue <= maximum) {
                         textFieldHeaderWidget.setTextColor(0xFFFFFF);
                         jsonReader.setDoubleInObject(arrayID, configValue, newValue);
-                        jsonReader.saveConfig();
+                        jsonReader.save();
                     } else {
                         throw new NumberFormatException("Invalid value! (Not Within Bounds!)");
                     }
