@@ -1,0 +1,6 @@
+{
+  "type": "splitself:es_pillar",
+  "biomes": "#splitself:is_empty",
+  "step": "surface_structures",
+  "spawn_overrides": {}
+}

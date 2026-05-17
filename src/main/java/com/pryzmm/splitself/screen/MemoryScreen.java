@@ -21,8 +21,8 @@ public class MemoryScreen extends Screen {
         memories.add(new Memory("house", 24, 23));
         memories.add(new Memory("blu", 53, 72));
         memories.add(new Memory("mines", 27, 121));
-        memories.add(new Memory(null, 184, 32));
-        memories.add(new Memory(null, 161, 102));
+        memories.add(new Memory("pillar", 184, 32));
+        memories.add(new Memory("creeper", 161, 102));
     }
 
     public MemoryScreen() {

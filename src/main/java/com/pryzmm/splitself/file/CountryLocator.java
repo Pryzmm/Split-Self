@@ -3,11 +3,10 @@ package com.pryzmm.splitself.file;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.URI;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-
 
 // Okay... I tested the previews version of my implementation and realised that it wouldn't work for everyone
 // Considering that some people use OS in english, besides playing in their language.
@@ -46,7 +45,7 @@ public final class CountryLocator {
         HttpURLConnection conn = null;
         BufferedReader br = null;
         try {
-            conn = (HttpURLConnection) new URL(url).openConnection();
+            conn = (HttpURLConnection) new URI(url).toURL().openConnection();
             conn.setConnectTimeout(3000);
             conn.setReadTimeout(3000);
             conn.setRequestMethod("GET");

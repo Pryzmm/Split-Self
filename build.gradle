@@ -39,6 +39,9 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.10.1'
     include 'com.google.code.gson:gson:2.10.1'
 
+    modImplementation files("libs/videolib-1.0.0.jar")
+    include files("libs/videolib-1.0.0.jar")
+
     modImplementation "maven.modrinth:architectury-api:13.0.6+fabric"
     modImplementation "maven.modrinth:shriek:1.1.1+fabric"
 

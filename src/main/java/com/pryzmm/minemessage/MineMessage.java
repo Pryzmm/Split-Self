@@ -3,7 +3,6 @@ package com.pryzmm.minemessage;
 import com.pryzmm.memory.Memory;
 import com.pryzmm.minemessage.ui.MessageLoader;
 import com.pryzmm.minemessage.ui.UserObject;
-
 import javax.imageio.ImageIO;
 import javax.sound.sampled.*;
 import javax.swing.*;
@@ -69,18 +68,18 @@ public class MineMessage extends JPanel implements Runnable {
 
         JPanel userListPanel = new JPanel();
         userListPanel.setLayout(new BoxLayout(userListPanel, BoxLayout.PAGE_AXIS));
-        userListPanel.add(new UserObject("Pryzmm",          avatar_Pryzmm,        "When is the final release coming out?"));
-        userListPanel.add(new UserObject("AquaLoco",        avatar_AquaLoco,      "Eu gosto de homens"));
-        userListPanel.add(new UserObject("Vortexify",       avatar_Vortexify,     "diamonds are in the chest for you later."));
-        userListPanel.add(new UserObject("oTexasHuntero",   avatar_oTexasHuntero, "That really was all Split Self."));
-        userListPanel.add(new UserObject("Billy",           avatar_Billy,         "I DON'T BELONG HERE"));
-        userListPanel.add(new UserObject("QwertyKeys",      avatar_QwertyKeys,    "Hey ^_^"));
-        userListPanel.add(new UserObject("Reassembly",      avatar_Reassembly,    "I found an issue with one of your builds"));
-        userListPanel.add(new UserObject("OpticalGlass",    avatar_OpticalGlass,  "We lost the boat :("));
-        userListPanel.add(new UserObject("CloudySkies",     avatar_CloudySkies,   "I can't trust Vortex at all with ANYTHING."));
-        userListPanel.add(new UserObject("CqllMeToxic",     avatar_CqllMeToxic,   "play NullPointerEntity"));
-        userListPanel.add(new UserObject("DuckyBlade_",     avatar_DuckyBlade_,   "did you know that by reading this message you're just wasting your time?"));
-        userListPanel.add(new UserObject("████████",        avatar_Unknown,       "Umm... hope you're okay."));
+        userListPanel.add(new UserObject("Pryzmm",          avatar_Pryzmm,        "game.splitself.minemessage.last.pryzmm"));
+        userListPanel.add(new UserObject("AquaLoco",        avatar_AquaLoco,      "game.splitself.minemessage.last.aqualoco"));
+        userListPanel.add(new UserObject("Vortexify",       avatar_Vortexify,     "game.splitself.minemessage.last.vortexify"));
+        userListPanel.add(new UserObject("oTexasHuntero",   avatar_oTexasHuntero, "game.splitself.minemessage.last.otexashuntero"));
+        userListPanel.add(new UserObject("Billy",           avatar_Billy,         "game.splitself.minemessage.last.billy"));
+        userListPanel.add(new UserObject("QwertyKeys",      avatar_QwertyKeys,    "game.splitself.minemessage.last.qwertykeys"));
+        userListPanel.add(new UserObject("Reassembly",      avatar_Reassembly,    "game.splitself.minemessage.last.reassembly"));
+        userListPanel.add(new UserObject("OpticalGlass",    avatar_OpticalGlass,  "game.splitself.minemessage.last.opticalglass"));
+        userListPanel.add(new UserObject("CloudySkies",     avatar_CloudySkies,   "game.splitself.minemessage.last.cloudyskies"));
+        userListPanel.add(new UserObject("CqllMeToxic",     avatar_CqllMeToxic,   "game.splitself.minemessage.last.cqllmetoxic"));
+        userListPanel.add(new UserObject("DuckyBlade_",     avatar_DuckyBlade_,   "game.splitself.minemessage.last.duckyblade"));
+        userListPanel.add(new UserObject("████████",        avatar_Unknown,       "game.splitself.minemessage.last.unknown"));
         JScrollPane scrollPane = new JScrollPane(userListPanel, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setOpaque(false);
         scrollPane.setBorder(null);

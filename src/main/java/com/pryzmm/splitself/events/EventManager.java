@@ -30,6 +30,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.ChatHud;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.passive.WolfEntity;
@@ -87,7 +88,7 @@ public class EventManager {
         DESTROYCHUNK,
         FROZENSCREEN,
         HOUSE,
-        BEDROCKPILLAR,
+        PILLAR,
         BILLY,
         FACE,
         COMMAND,
@@ -343,6 +344,7 @@ public class EventManager {
     }
     public static void runChatEvent(PlayerEntity player, String rawMessage, boolean SkipWait) {
         if (player.getWorld() == Objects.requireNonNull(player.getServer()).getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY)) {return;}
+        if (player.getWorld() == Objects.requireNonNull(player.getServer()).getWorld(DimensionRegistry.EMPTINESS_DIMENSION_KEY)) {return;}
         new Thread(() -> {
             try {
                 if (!SkipWait) {
@@ -414,7 +416,8 @@ public class EventManager {
         List<ServerPlayerEntity> players = world.getPlayers();
         if (players.isEmpty()) return;
 
-        if (player.getWorld() == Objects.requireNonNull(player.getServer()).getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY)) {return;}
+        if (world == world.getServer().getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY)) { return; }
+        if (world == world.getServer().getWorld(DimensionRegistry.EMPTINESS_DIMENSION_KEY)) { return; }
 
         Events eventType;
         if (ForceEvent == null) {
@@ -524,9 +527,10 @@ public class EventManager {
                 // omg dr house reference guys !!!
                 StructureManager.placeStructureRandomRotation(world, player, "house", 50, 80, -5, false, 1f, true);
                 break;
-            case BEDROCKPILLAR:
+            case PILLAR:
+                StructureManager.placeStructureRandomRotation(world, player, "pillarmemory", 50, 50, 0, false, 1f, true);
                 for (int i = 0; i <= 30; i++) {
-                    StructureManager.placeStructureRandomRotation(world, player, "bedrockpillar", 50, 80, 0, false, 1f, true);
+                    StructureManager.placeStructureRandomRotation(world, player, "pillar", 50, 80, 0, false, 1f, true);
                 }
                 break;
             case BILLY:
@@ -1102,12 +1106,16 @@ public class EventManager {
                 wolf.setCustomName(Text.of("Blu"));
                 wolf.refreshPositionAndAngles(player.getX(), player.getY(), player.getZ(), 0F, 0F);
                 world.spawnEntity(wolf);
+                ItemEntity item = new ItemEntity(EntityType.ITEM, player.getWorld());
+                item.setStack(new ItemStack(ModItems.MEMORY_BLU, 1));
+                item.refreshPositionAndAngles(player.getX(), player.getY(), player.getZ(), 0F, 0F);
+                world.spawnEntity(item);
                 break;
             case MEMORY:
                 try {
                     MinecraftClient.getInstance().execute(() -> Memory.main(new String[]{}));
                 } catch (Throwable t) {
-                    SplitSelf.LOGGER.error("MEMORY event failed", t);
+                    SplitSelf.LOGGER.error("MEMORY_HOUSE event failed", t);
                 }
                 break;
             case REMINDER:

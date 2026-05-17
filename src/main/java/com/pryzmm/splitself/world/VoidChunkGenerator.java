@@ -7,7 +7,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.ChunkRegion;
 import net.minecraft.world.HeightLimitView;
 import net.minecraft.world.Heightmap;
@@ -21,18 +20,17 @@ import net.minecraft.world.gen.chunk.Blender;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.chunk.VerticalBlockSample;
 import net.minecraft.world.gen.noise.NoiseConfig;
-
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public class BuildOnlyChunkGenerator extends ChunkGenerator {
-    public static final MapCodec<BuildOnlyChunkGenerator> CODEC = RecordCodecBuilder.mapCodec(instance ->
-            instance.group(
-                    Codec.STRING.fieldOf("structure_name").forGetter(generator -> generator.structureName),
-                    Codec.INT.fieldOf("structure_x").forGetter(generator -> generator.structureX),
-                    Codec.INT.fieldOf("structure_z").forGetter(generator -> generator.structureZ),
-                    Biome.REGISTRY_CODEC.fieldOf("biome").forGetter(generator -> generator.biome)
-            ).apply(instance, BuildOnlyChunkGenerator::new)
+public class VoidChunkGenerator extends ChunkGenerator {
+    public static final MapCodec<VoidChunkGenerator> CODEC = RecordCodecBuilder.mapCodec(instance ->
+        instance.group(
+            Codec.STRING.fieldOf("structure_name").forGetter(generator -> generator.structureName),
+            Codec.INT.fieldOf("structure_x").forGetter(generator -> generator.structureX),
+            Codec.INT.fieldOf("structure_z").forGetter(generator -> generator.structureZ),
+            Biome.REGISTRY_CODEC.fieldOf("biome").forGetter(generator -> generator.biome)
+        ).apply(instance, VoidChunkGenerator::new)
     );
 
     private final String structureName;
@@ -40,7 +38,7 @@ public class BuildOnlyChunkGenerator extends ChunkGenerator {
     private final int structureZ;
     private final RegistryEntry<Biome> biome;
 
-    public BuildOnlyChunkGenerator(String structureName, int structureX, int structureZ, RegistryEntry<Biome> biome) {
+    public VoidChunkGenerator(String structureName, int structureX, int structureZ, RegistryEntry<Biome> biome) {
         super(new FixedBiomeSource(biome));
         this.structureName = structureName;
         this.structureX = structureX;
@@ -99,7 +97,6 @@ public class BuildOnlyChunkGenerator extends ChunkGenerator {
     @Override
     public VerticalBlockSample getColumnSample(int x, int z, HeightLimitView world, NoiseConfig noiseConfig) {
         BlockState[] states = new BlockState[world.getHeight()];
-        // Fill with air
         for (int i = 0; i < states.length; i++) {
             states[i] = Blocks.AIR.getDefaultState();
         }
@@ -108,7 +105,7 @@ public class BuildOnlyChunkGenerator extends ChunkGenerator {
 
     @Override
     public void getDebugHudText(List<String> text, NoiseConfig noiseConfig, BlockPos pos) {
-        text.add("BuildOnly Generator");
+        text.add("Void Generator");
         text.add("Structure: " + structureName);
         text.add("At: " + structureX + ", " + structureZ);
     }

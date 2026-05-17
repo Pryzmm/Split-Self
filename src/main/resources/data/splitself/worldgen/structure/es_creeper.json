@@ -1,0 +1,6 @@
+{
+  "type": "splitself:es_creeper",
+  "biomes": "#splitself:is_empty",
+  "step": "surface_structures",
+  "spawn_overrides": {}
+}

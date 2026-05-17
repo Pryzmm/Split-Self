@@ -4,6 +4,7 @@ import com.pryzmm.splitself.block.ModBlocks;
 import com.pryzmm.splitself.command.SplitSelfCommands;
 import com.pryzmm.splitself.config.DefaultConfig;
 import com.pryzmm.splitself.data.WorldData;
+import com.pryzmm.splitself.entity.TheForgottenFunc;
 import com.pryzmm.splitself.events.*;
 import com.pryzmm.splitself.file.JsonReader;
 import com.pryzmm.splitself.world.LimboLevitation;
@@ -15,8 +16,11 @@ import com.pryzmm.splitself.item.ModItems;
 import com.pryzmm.splitself.screen.WarningScreen;
 import com.pryzmm.splitself.sound.ModSounds;
 import com.pryzmm.splitself.world.DimensionRegistry;
+import com.pryzmm.splitself.world.structure.StructurePieces;
+import com.pryzmm.splitself.world.structure.Structures;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
@@ -25,7 +29,7 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.network.message.SignedMessage;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -43,7 +47,7 @@ public class SplitSelf implements ModInitializer {
     public static final JsonReader CONFIG = new JsonReader("splitself.json", true);
 
 	private void onServerStarted(MinecraftServer server) {
-        WorldData.loadData();
+        WorldData.loadData(server.getOverworld());
 		ServerWorld limboWorld = server.getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY);
 		if (limboWorld != null) {
 			StructureManager.placeStructureRandomRotation(
@@ -94,6 +98,8 @@ public class SplitSelf implements ModInitializer {
 	}
     public static boolean ShriekInstalled = false;
 
+    private static int nextForgottenSpawn = 600;
+
 	@Override
 	public void onInitialize() {
 
@@ -109,9 +115,12 @@ public class SplitSelf implements ModInitializer {
 		ModItems.registerModItems();
 		ModItemGroups.registerItemGroups();
 		DimensionRegistry.register();
+		Structures.register();
+		StructurePieces.register();
 		ServerLifecycleEvents.SERVER_STARTED.register(this::onServerStarted);
 
 		ServerTickEvents.END_SERVER_TICK.register(EventManager::onTick);
+        ServerTickEvents.END_SERVER_TICK.register(TheForgottenFunc::removeIfRayCasted);
         ServerTickEvents.END_SERVER_TICK.register(LimboLevitation::onTick);
         if (FabricLoader.getInstance().isModLoaded("shriek") && FabricLoader.getInstance().isModLoaded("architectury")) {
             EventHandler.loadVoskModel(config.getString("voskModel"));
@@ -143,21 +152,34 @@ public class SplitSelf implements ModInitializer {
 
 		ServerMessageEvents.CHAT_MESSAGE.register((message, messageSender, params) -> EventManager.runChatEvent(messageSender, message.getContent().getString(), false));
 
+        ServerTickEvents.END_WORLD_TICK.register(world -> {
+            if (world == world.getServer().getWorld(DimensionRegistry.EMPTINESS_DIMENSION_KEY)) {
+                nextForgottenSpawn--;
+                if (nextForgottenSpawn == 0) {
+                    TheForgottenFunc.tryRandomSpawn(world);
+                    nextForgottenSpawn = 600;
+                }
+            }
+        });
+
+        ClientPlayConnectionEvents.JOIN.register((handler, sender, mc) -> {
+            ClientPlayerEntity player = mc.player;
+            assert player != null;
+            if (!WorldData.getJoinedPlayers().contains(player.getUuid())) {
+                WorldData.updateJoinedPlayers(player.getUuid());
+                client.execute(() -> client.setScreen(new WarningScreen()));
+            }
+        });
+
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
 			ServerPlayerEntity player = handler.getPlayer();
-			if (!WorldData.getJoinedPlayers().contains(player.getUuid())) {
-				WorldData.updateJoinedPlayers(player.getUuid());
-				new Thread(() -> {
-					try {
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
-						throw new RuntimeException(e);
-					}
-					client.execute(() -> client.setScreen(new WarningScreen()));
-				}).start();
-			}
-            if (player.getWorld() == player.getServer().getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY)) {
-                player.teleport(player.getServer().getWorld(player.getSpawnPointDimension()), player.getSpawnPointPosition().getX(), player.getSpawnPointPosition().getY() + 0.5625, player.getSpawnPointPosition().getZ(), null, 0, 0);
+            if (player.getWorld() == server.getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY)) {
+                if (player.getSpawnPointPosition() == null) {
+                    ServerWorld world = server.getOverworld();
+                    player.teleport(world, world.getSpawnPos().getX(), world.getSpawnPos().getY(), world.getSpawnPos().getZ(), 0, 0);
+                } else {
+                    player.teleport(server.getWorld(player.getSpawnPointDimension()), player.getSpawnPointPosition().getX(), player.getSpawnPointPosition().getY() + 0.5625, player.getSpawnPointPosition().getZ(), null, 0, 0);
+                }
             }
 		});
 
@@ -166,11 +188,4 @@ public class SplitSelf implements ModInitializer {
 		LOGGER.info(logInitList[(new Random()).nextInt(logInitList.length)]);
 	}
 
-    public static boolean isNumeric(String str) {
-        return str.matches("-?\\d+(\\.\\d+)?");
-    }
-
-	private static String getString(SignedMessage message) {
-		return message.getContent().getString();
-	}
 }

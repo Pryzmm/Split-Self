@@ -4,6 +4,8 @@ import com.pryzmm.memory.data.Card;
 import com.pryzmm.memory.data.CardData;
 import com.pryzmm.memory.util.ImageUtil;
 import com.pryzmm.splitself.data.WorldData;
+import net.minecraft.text.Text;
+
 import javax.imageio.ImageIO;
 import javax.sound.sampled.*;
 import javax.swing.*;
@@ -70,7 +72,7 @@ public class Memory extends JPanel implements Runnable {
     public Memory() {
         CardData.populateCards();
         setLayout(null);
-        startButton = new JButton("Start Game");
+        startButton = new JButton(Text.translatable("game.splitself.memory.start").getString());
         startButton.setBounds(getWidth() / 2, getHeight() / 2, 200, 50);
         startButton.addActionListener(e -> {
             startButton.setVisible(false);
@@ -114,7 +116,7 @@ public class Memory extends JPanel implements Runnable {
             cardButtons.clear();
             instance = new Memory();
 
-            JFrame frame = new JFrame("Memory");
+            JFrame frame = new JFrame(Text.translatable("game.splitself.memory.title").getString());
             jFrame = frame;
             frame.add(instance);
             frame.setSize(800, 800);
@@ -122,7 +124,7 @@ public class Memory extends JPanel implements Runnable {
             frame.addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosing(WindowEvent e) {
-                    if (WorldData.getMemoryStage() != 2) JOptionPane.showMessageDialog(frame, "Finish the game.");
+                    if (WorldData.getMemoryStage() != 2) JOptionPane.showMessageDialog(frame, Text.translatable("game.splitself.memory.finish").getString());
                 }
             });
             frame.setVisible(true);

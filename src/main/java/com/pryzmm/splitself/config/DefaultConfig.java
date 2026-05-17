@@ -48,7 +48,7 @@ public class DefaultConfig {
         updateEventOptions("DESTROYCHUNK",          new EventOptions(10,  1, false));
         updateEventOptions("FROZENSCREEN",          new EventOptions(10,  2, false));
         updateEventOptions("HOUSE",                 new EventOptions(10,  1, false));
-        updateEventOptions("BEDROCKPILLAR",         new EventOptions(10,  0, false));
+        updateEventOptions("PILLAR",                new EventOptions(10,  0, false));
         updateEventOptions("BILLY",                 new EventOptions(3,   0, true ));
         updateEventOptions("FACE",                  new EventOptions(3,   1, false));
         updateEventOptions("COMMAND",               new EventOptions(10,  1, false));

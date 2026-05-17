@@ -14,15 +14,13 @@ import net.minecraft.structure.StructureTemplate;
 import net.minecraft.structure.processor.BlockIgnoreStructureProcessor;
 import net.minecraft.util.BlockMirror;
 import net.minecraft.util.BlockRotation;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.WorldSavePath;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Position;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Heightmap;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 
@@ -45,25 +43,6 @@ public class StructureManager {
         }
     }
 
-    public static Optional<StructureTemplate> loadStructure(ServerWorld world, String fileName) {
-        try {
-            Path structuresPath = getStructuresDirectory(world);
-            Path filePath = structuresPath.resolve(fileName + ".nbt");
-            if (Files.exists(filePath)) {
-                try (FileInputStream fis = new FileInputStream(filePath.toFile())) {
-                    NbtCompound nbt = NbtIo.readCompressed(fis, NbtSizeTracker.ofUnlimitedBytes());
-                    StructureTemplate template = new StructureTemplate();
-                    template.readNbt(world.getRegistryManager().getWrapperOrThrow(RegistryKeys.BLOCK), nbt);
-                    return Optional.of(template);
-                }
-            }
-            return loadStructureFromResource(world, fileName);
-        } catch (Exception e) {
-            SplitSelf.LOGGER.error("Error loading structure {}: {}", fileName, e.getMessage());
-            return Optional.empty();
-        }
-    }
-
     private static Optional<StructureTemplate> loadStructureFromResource(ServerWorld world, String fileName) {
         try {
             String resourcePath = "/data/" + SplitSelf.MOD_ID + "/structures/" + fileName + ".nbt";
@@ -83,7 +62,7 @@ public class StructureManager {
     }
 
     public static boolean placeStructure(ServerWorld world, BlockPos pos, String fileName, BlockRotation rotation, BlockMirror mirror, Float Integrity, boolean ignoreEntities) {
-        Optional<StructureTemplate> templateOpt = loadStructure(world, fileName);
+        Optional<StructureTemplate> templateOpt = loadStructureFromResource(world, fileName);
         if (templateOpt.isEmpty()) {
             SplitSelf.LOGGER.warn("Could not load structure: {}", fileName);
             return false;
@@ -111,13 +90,6 @@ public class StructureManager {
                 rotation = BlockRotation.values()[world.getRandom().nextInt(4)];
             } else {
                 rotation = BlockRotation.NONE;
-            }
-            var templateManager = world.getStructureTemplateManager();
-            Identifier structureId = Identifier.of(SplitSelf.MOD_ID, structureName);
-            var template = templateManager.getTemplate(structureId);
-            if (template.isPresent()) {
-                placeTemplate(world, spawnPos, template.get(), rotation, BlockMirror.NONE, Integrity, ignoreEntities);
-                return;
             }
             placeStructure(world, spawnPos, structureName, rotation, BlockMirror.NONE, Integrity, ignoreEntities);
         } catch (Exception e) {
@@ -156,14 +128,6 @@ public class StructureManager {
             } else {
                 rotation = BlockRotation.NONE;
             }
-            var templateManager = world.getStructureTemplateManager();
-            Identifier structureId = Identifier.of(SplitSelf.MOD_ID, structureName);
-            var template = templateManager.getTemplate(structureId);
-
-            if (template.isPresent()) {
-                placeTemplate(world, finalSpawnPos, template.get(), rotation, BlockMirror.NONE, Integrity, ignoreEntities);
-                return finalSpawnPos;
-            }
             if (placeStructure(world, finalSpawnPos, structureName, rotation, BlockMirror.NONE, Integrity, ignoreEntities)) {
                 return finalSpawnPos;
             }
@@ -186,7 +150,8 @@ public class StructureManager {
     }
 
     private static Path getStructuresDirectory(ServerWorld world) {
-        Path worldDir = world.getServer().getSavePath(net.minecraft.util.WorldSavePath.ROOT);
-        return worldDir.resolve("generated/minecraft/structures");
+        Path worldDir = world.getServer().getSavePath(WorldSavePath.GENERATED).getParent();
+        return worldDir.resolve("generated/" + SplitSelf.MOD_ID + "/structures");
     }
+
 }

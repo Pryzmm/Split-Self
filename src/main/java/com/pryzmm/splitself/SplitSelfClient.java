@@ -1,5 +1,8 @@
 package com.pryzmm.splitself;
 
+import com.igrium.videolib.VideoLib;
+import com.igrium.videolib.api.VideoManager;
+import com.igrium.videolib.api.VideoPlayer;
 import com.pryzmm.splitself.block.entity.ModBlockEntities;
 import com.pryzmm.splitself.client.ClientDetector;
 import com.pryzmm.splitself.client.lang.LangToaster;
@@ -13,6 +16,7 @@ import com.pryzmm.splitself.file.BrowserHistoryReader;
 import com.pryzmm.splitself.file.CountryLocator;
 import com.pryzmm.splitself.screen.SkyImageRenderer;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
@@ -26,6 +30,7 @@ import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 
 import java.util.List;
@@ -33,9 +38,23 @@ import java.util.List;
 public class SplitSelfClient implements ClientModInitializer {
 
     public static PlayerEntity player;
+    public static VideoManager videoManager;
+    public static VideoPlayer videoPlayer;
 
     @Override
     public void onInitializeClient() {
+
+        if (System.getProperty("os.name").toLowerCase().contains("win")) {
+            String vlcPath = "C:\\Program Files\\VideoLAN\\VLC";
+            System.setProperty("jna.library.path", vlcPath);
+            System.setProperty("VLC_PLUGIN_PATH", vlcPath + "\\plugins");
+        }
+
+        ClientLifecycleEvents.CLIENT_STARTED.register(client -> {
+            videoManager = VideoLib.getInstance().getVideoManager();
+            videoPlayer = videoManager.getOrCreate(Identifier.of(SplitSelf.MOD_ID, "my_video_player"));
+        });
+
 
         System.setProperty("java.awt.headless", "false");
 

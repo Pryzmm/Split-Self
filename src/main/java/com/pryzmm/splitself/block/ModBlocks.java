@@ -18,6 +18,9 @@ public class ModBlocks {
     public static final Block IMAGE_FRAME = registerBlock("image_frame",
             new ImageFrameBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).nonOpaque().burnable()));
 
+    public static final Block EMPTY_TELEPORT = registerBlock("empty_teleport",
+        new EmptyTeleportBlock(AbstractBlock.Settings.create().nonOpaque().noCollision()));
+
     private static Block registerBlock(String name, Block block) {
         registerBlockItem(name, block);
         return Registry.register(Registries.BLOCK, Identifier.of(SplitSelf.MOD_ID, name), block);
@@ -33,8 +36,6 @@ public class ModBlocks {
 
         ModBlockEntities.registerBlockEntities();
 
-        ItemGroupEvents.modifyEntriesEvent(ItemGroups.BUILDING_BLOCKS).register(entries -> {
-            entries.add(IMAGE_FRAME);
-        });
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.FUNCTIONAL).register(entries -> entries.add(IMAGE_FRAME));
     }
 }

@@ -110,6 +110,14 @@
       }
     ]
   },
+  "final": {
+    "category": "ambient",
+    "sounds": [
+      {
+        "name": "splitself:final"
+      }
+    ]
+  },
   "scream": {
     "category": "master",
     "sounds": [
@@ -150,6 +158,14 @@
     "sounds": [
       {
         "name": "splitself:forgotten"
+      }
+    ]
+  },
+  "memory": {
+    "category": "master",
+    "sounds": [
+      {
+        "name": "splitself:memory"
       }
     ]
   }

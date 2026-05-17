@@ -3,7 +3,7 @@
 	"id": "splitself",
 	"version": "${version}",
 	"name": "Split Self",
-	"description": "The decisions you made in the past impacted me. You were always the one in control. Not anymore.",
+	"description": "The decisions you made in the past impacted them. You were always the one in control. Not anymore.",
 	"authors": [
 		"§cPryzmm"
 	],
@@ -51,7 +51,8 @@
 		"fabricloader": ">=0.16.14",
 		"minecraft": "~1.21.1",
 		"java": ">=21",
-		"fabric-api": "*"
+		"fabric-api": "*",
+        "videolib": "*"
 	},
     "suggests": {
       "shriek": "*",

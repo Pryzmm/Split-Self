@@ -1,6 +1,7 @@
 package com.pryzmm.minemessage.ui;
 
 import com.pryzmm.minemessage.MineMessage;
+import net.minecraft.text.Text;
 
 import javax.swing.*;
 import java.awt.*;
@@ -34,7 +35,7 @@ public class UserObject extends JComponent {
     public UserObject(String username, BufferedImage avatar, String lastMessage) {
         this.username = username;
         this.avatar = avatar;
-        this.lastMessage = lastMessage;
+        this.lastMessage = Text.translatable(lastMessage).getString();
         this.instance = this;
         setPreferredSize(new Dimension(250, 75));
 

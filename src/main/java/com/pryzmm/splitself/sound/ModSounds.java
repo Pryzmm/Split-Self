@@ -11,7 +11,6 @@ import net.minecraft.util.Identifier;
 
 public class ModSounds {
 
-    public static final SoundEvent IN_MY_LIFE = registerSoundEvent("in_my_life");
     public static final SoundEvent REDSKY = registerSoundEvent("redsky");
     public static final SoundEvent STATIC = registerSoundEvent("static");
     public static final SoundEvent SCREECH = registerSoundEvent("screech");
@@ -21,14 +20,20 @@ public class ModSounds {
     public static final SoundEvent HUM = registerSoundEvent("hum");
     public static final SoundEvent AMBER = registerSoundEvent("amber");
     public static final SoundEvent BUZZ = registerSoundEvent("buzz");
-    public static final SoundEvent RUMBLE = registerSoundEvent("rumble");
     public static final SoundEvent RUMBLE2 = registerSoundEvent("rumble2");
     public static final SoundEvent SCREAM = registerSoundEvent("scream");
     public static final SoundEvent DISAPPEAR = registerSoundEvent("disappear");
     public static final SoundEvent WHISPER = registerSoundEvent("whisper");
     public static final SoundEvent GLITCH = registerSoundEvent("glitch");
     public static final SoundEvent FORGOTTEN = registerSoundEvent("forgotten");
-    public static final SoundEvent FREEDOM = registerSoundEvent("freedom");
+    public static final SoundEvent MEMORY = registerSoundEvent("memory");
+
+    static {
+        registerSoundEvent("in_my_life");
+        registerSoundEvent("rumble");
+        registerSoundEvent("final");
+        registerSoundEvent("freedom");
+    }
 
     public static final RegistryKey<JukeboxSong> IN_MY_LIFE_KEY =
             RegistryKey.of(RegistryKeys.JUKEBOX_SONG, Identifier.of(SplitSelf.MOD_ID, "in_my_life"));

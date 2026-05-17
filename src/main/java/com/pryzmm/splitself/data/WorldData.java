@@ -3,6 +3,7 @@ package com.pryzmm.splitself.data;
 import com.pryzmm.splitself.file.JsonReader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.WorldSavePath;
 import org.jetbrains.annotations.Nullable;
 import java.io.File;
@@ -16,6 +17,7 @@ public class WorldData {
     private static boolean PII;
     private static int sleepStage;
     private static int memoryStage;
+    private static long seed;
     static { clearData(); }
 
     private static JsonReader reader = null;
@@ -25,6 +27,7 @@ public class WorldData {
     public static int getSleepStage() { return sleepStage; }
     public static List<String> getUnlockedMemories() { return unlockedMemories; }
     public static List<UUID> getJoinedPlayers() { return joinedPlayers; }
+    public static long getSeed() { return seed; }
 
     public static void setPII(boolean value) {
         PII = value;
@@ -74,7 +77,7 @@ public class WorldData {
         memoryStage = 0;
     }
 
-    public static void loadData() {
+    public static void loadData(ServerWorld world) {
         File data = getCurrentData();
         if (data == null) return;
         reader = new JsonReader(data);
@@ -83,6 +86,7 @@ public class WorldData {
         PII = reader.getBoolean("pii", false);
         sleepStage = reader.getInt("sleepStage", 0);
         memoryStage = reader.getInt("memoryStage", 0);
+        seed = world.getSeed();
         reader.save();
     }
 

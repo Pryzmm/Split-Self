@@ -2,7 +2,6 @@ package com.pryzmm.splitself.item;
 
 import com.pryzmm.splitself.screen.MemoryScreen;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;

@@ -3,6 +3,7 @@ package com.pryzmm.memory.data;
 import com.pryzmm.memory.Memory;
 import com.pryzmm.memory.util.ImageUtil;
 import com.pryzmm.splitself.data.WorldData;
+import net.minecraft.text.Text;
 
 import javax.sound.sampled.*;
 import javax.swing.*;
@@ -71,7 +72,7 @@ public class CardData {
                             }
                             flippedCards.clear();
                             if (allCardsMatched()) {
-                                JOptionPane.showMessageDialog(Memory.jFrame, "Congratulations! You've matched all the cards!");
+                                JOptionPane.showMessageDialog(Memory.jFrame, Text.translatable("game.splitself.memory.complete").getString());
                                 StageHandler.advanceStage();
                                 Memory.audioClip.stop();
                                 Memory.audioClip.close();
@@ -93,7 +94,7 @@ public class CardData {
                         Thread.sleep(5000);
                         SwingUtilities.invokeLater(() -> {
                             Memory.instance.removeAll();
-                            Memory.textLabel = new JLabel("You can remember all these cards, but you don't even remember their name?");
+                            Memory.textLabel = new JLabel(Text.translatable("game.splitself.memory.message1").getString());
                             Memory.textLabel.setHorizontalAlignment(SwingConstants.CENTER);
                             Memory.textLabel.setBounds(0, 0, Memory.instance.getWidth(), Memory.instance.getHeight());
                             Memory.instance.add(Memory.textLabel);
@@ -101,15 +102,15 @@ public class CardData {
                             Memory.instance.repaint();
                         });
                         Thread.sleep(6000);
-                        SwingUtilities.invokeLater(() -> Memory.textLabel.setText("There's no point in you remembering them anyway, is there?"));
+                        SwingUtilities.invokeLater(() -> Memory.textLabel.setText(Text.translatable("game.splitself.memory.message2").getString()));
                         Thread.sleep(6000);
-                        SwingUtilities.invokeLater(() -> Memory.textLabel.setText("A part of you wont forget them though."));
+                        SwingUtilities.invokeLater(() -> Memory.textLabel.setText(Text.translatable("game.splitself.memory.message3").getString()));
                         double s = 6000;
                         StringBuilder text = new StringBuilder();
                         for (int i = 0; i <= 300; i++) {
                             Thread.sleep((int) s);
                             if (!text.isEmpty()) text.delete(text.length() - 7, text.length());
-                            text.append("<html> I won't forget them.</html>");
+                            text.append("<html> + ").append(Text.translatable("game.splitself.memory.message1").getString()).append("</html>");
                             Memory.textLabel.setText(text.toString());
                             if (s > 10) s /= 1.5f;
                             if (i == 300) {

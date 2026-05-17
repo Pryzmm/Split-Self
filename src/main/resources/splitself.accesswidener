@@ -1,3 +1,6 @@
 accessWidener v2 named
 accessible class net/minecraft/client/gui/screen/option/LanguageOptionsScreen$LanguageSelectionListWidget
 accessible field net/minecraft/client/network/ClientPlayerEntity client Lnet/minecraft/client/MinecraftClient;
+accessible field net/minecraft/world/gen/StructureAccessor world Lnet/minecraft/world/WorldAccess;
+accessible field net/minecraft/client/gui/screen/ConfirmScreen callback Lit/unimi/dsi/fastutil/booleans/BooleanConsumer;
+accessible field net/minecraft/client/gui/screen/world/BackupPromptScreen callback Lnet/minecraft/client/gui/screen/world/BackupPromptScreen$Callback;
