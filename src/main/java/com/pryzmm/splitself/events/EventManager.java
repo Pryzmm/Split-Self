@@ -70,10 +70,6 @@ import java.util.List;
 
 public class EventManager {
 
-    /**
-     * <b>TODO:</b>
-     * <p>STEAM - Check what games the user has installed
-     */
     public enum Events {
         SPAWNTHEOTHER,
         POEMSCREEN,
@@ -121,7 +117,12 @@ public class EventManager {
         BLU,
         MEMORY,
         REMINDER,
-        RENAME
+        RENAME,
+        FOV,
+        WEATHER,
+        MEMORIES,
+        MORSE,
+        CORAL
     }
 
     public static Map<Events, Boolean> oneTimeEvents = new HashMap<>(); // oneLastTime events ong
@@ -448,128 +449,86 @@ public class EventManager {
         String os = net.minecraft.util.Util.getOperatingSystem().toString().toLowerCase();
 
         switch (eventType) {
-            case SPAWNTHEOTHER:
-                TheOtherSpawner.trySpawnTheOther(world, player, false);
-                break;
-            case POEMSCREEN:
-                client.execute(() -> client.setScreen(new PoemScreen()));
-                break;
-            case DOYOUSEEME:
-                BackgroundManager.setBackground("/assets/splitself/textures/wallpaper/doyouseeme.png", "doyouseeme.png");
-                break;
-            case UNDERGROUNDMINING:
-                UndergroundMining.Execute(player, world);
-                break;
-            case REDSKY:
+            case SPAWNTHEOTHER -> TheOtherSpawner.trySpawnTheOther(world, player, false);
+            case POEMSCREEN -> client.execute(() -> client.setScreen(new PoemScreen()));
+            case DOYOUSEEME -> BackgroundManager.setBackground("/assets/splitself/textures/wallpaper/doyouseeme.png", "doyouseeme.png");
+            case UNDERGROUNDMINING -> UndergroundMining.Execute(player, world);
+            case REDSKY -> {
                 world.playSound(null, Objects.requireNonNull(player).getBlockPos(), ModSounds.REDSKY, SoundCategory.MASTER, 1.0f, 1.0f);
                 player.addStatusEffect(new StatusEffectInstance(StatusEffects.DARKNESS, 430, 1, false, false, false));
                 SkyColor.changeSkyColor("AA0000");
                 SkyColor.changeFogColor("880000");
-                break;
-            case NOTEPAD:
+            }
+            case NOTEPAD -> {
                 Text[] notepadMessages = {
-                        SplitSelf.translate("events.splitself.notepad.line1", EventManager.getName(client.player)),
-                        SplitSelf.translate("events.splitself.notepad.line2"),
-                        SplitSelf.translate("events.splitself.notepad.line3"),
-                        SplitSelf.translate("events.splitself.notepad.line4"),
-                        SplitSelf.translate("events.splitself.notepad.line5"),
+                    SplitSelf.translate("events.splitself.notepad.line1", EventManager.getName(client.player)),
+                    SplitSelf.translate("events.splitself.notepad.line2"),
+                    SplitSelf.translate("events.splitself.notepad.line3"),
+                    SplitSelf.translate("events.splitself.notepad.line4"),
+                    SplitSelf.translate("events.splitself.notepad.line5"),
                 };
                 NotepadManager.execute(notepadMessages);
-                break;
-            case SCREENOVERLAY:
-                ScreenOverlay.executeBlackScreen(player);
-                break;
-            case WHITESCREENOVERLAY:
-                ScreenOverlay.executeWhiteScreen(player);
-                break;
-            case INVENTORYOVERLAY:
-                ScreenOverlay.executeInventoryScreen(player);
-                break;
-            case THEOTHERSCREENSHOT:
+            }
+            case SCREENOVERLAY -> ScreenOverlay.executeBlackScreen(player);
+            case WHITESCREENOVERLAY -> ScreenOverlay.executeWhiteScreen(player);
+            case INVENTORYOVERLAY -> ScreenOverlay.executeInventoryScreen(player);
+            case THEOTHERSCREENSHOT -> {
                 TheOtherSpawner.trySpawnTheOther(world, player, true);
                 new Thread(() -> {
-                    try {
-                        Thread.sleep(3000);
-                    } catch (Exception e) {
-                        SplitSelf.LOGGER.error(e.getMessage(), e);
-                    }
+                    try { Thread.sleep(3000); }
+                    catch (Exception e) { SplitSelf.LOGGER.error(e.getMessage(), e); }
                     EntityScreenshotCapture capture = new EntityScreenshotCapture();
                     capture.capture((file) -> {
                         if (file != null) {
                             try {
                                 Text[] screenshotMessages = {
-                                        SplitSelf.translate("events.splitself.theOtherScreenshot.line1"),
-                                        SplitSelf.translate("events.splitself.theOtherScreenshot.line2")
+                                    SplitSelf.translate("events.splitself.theOtherScreenshot.line1"),
+                                    SplitSelf.translate("events.splitself.theOtherScreenshot.line2")
                                 };
                                 NotepadManager.execute(screenshotMessages);
                                 Thread.sleep(8000);
                                 net.minecraft.util.Util.getOperatingSystem().open(file);
-                            } catch (Exception e) {
-                                SplitSelf.LOGGER.error(e.getMessage(), e);
-                            }
+                            } catch (Exception e) { SplitSelf.LOGGER.error(e.getMessage(), e); }
                         }
                     });
                 }).start();
-                break;
-            case DESTROYCHUNK:
-                ChunkDestroyer.execute(Objects.requireNonNull(player));
-                break;
-            case FROZENSCREEN:
-                new Thread(() -> client.execute(() -> {
-                    EntityScreenshotCapture capture = new EntityScreenshotCapture();
-                    capture.captureFromEntity(player, client.getWindow().getScaledWidth(), client.getWindow().getScaledHeight(), (file) -> {
-                        world.playSound(null, Objects.requireNonNull(player).getBlockPos(), ModSounds.STATICSCREAM, SoundCategory.MASTER, 1f, 1.0f);
-                        ScreenOverlay.executeFrozenScreen(file);
-                    });
-                })).start();
-                break;
-            case HOUSE:
-                // omg dr house reference guys !!!
-                StructureManager.placeStructureRandomRotation(world, player, "house", 50, 80, -5, false, 1f, true);
-                break;
-            case PILLAR:
-                StructureManager.placeStructureRandomRotation(world, player, "pillarmemory", 50, 50, 0, false, 1f, true);
-                for (int i = 0; i <= 30; i++) {
-                    StructureManager.placeStructureRandomRotation(world, player, "pillar", 50, 80, 0, false, 1f, true);
-                }
-                break;
-            case BILLY:
-                new Thread(() -> {
-                    try {
-                        assert client.getServer() != null;
-                        client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.billy.joined").getString()).formatted(Formatting.YELLOW), false);
-                        Thread.sleep(3000);
-                        client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.billy.message").getString()), false);
-                        Thread.sleep(1500);
-                        client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.billy.left").getString()).formatted(Formatting.YELLOW), false);
-                    } catch (Exception e) {
-                        SplitSelf.LOGGER.error(e.getMessage(), e);
-                    }
-                }).start();
-                break;
-            case FACE:
-                SkyImageRenderer.toggleTexture();
-                break;
-            case COMMAND: // Thanks, Evelyn <3
+            }
+            case DESTROYCHUNK -> ChunkDestroyer.execute(Objects.requireNonNull(player));
+            case FROZENSCREEN -> new Thread(() -> client.execute(() -> {
+                EntityScreenshotCapture capture = new EntityScreenshotCapture();
+                capture.captureFromEntity(player, client.getWindow().getScaledWidth(), client.getWindow().getScaledHeight(), (file) -> {
+                    world.playSound(null, Objects.requireNonNull(player).getBlockPos(), ModSounds.STATICSCREAM, SoundCategory.MASTER, 1f, 1.0f);
+                    ScreenOverlay.executeFrozenScreen(file);
+                });
+            })).start();
+            case HOUSE -> StructureManager.placeStructureRandomRotation(world, player, "house", 50, 80, -5, false, 1f, true);
+            case PILLAR -> {
+                for (int i = 0; i <= 30; i++) StructureManager.placeStructureRandomRotation(world, player, "pillar", 50, 80, 0, false, 1f, true);
+                StructureManager.placeStructureRandomRotation(world, player, "pillarmemory", 48, 48, 0, false, 1f, true);
+            }
+            case BILLY -> new Thread(() -> {
+                try {
+                    assert client.getServer() != null;
+                    client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.billy.joined").getString()).formatted(Formatting.YELLOW), false);
+                    Thread.sleep(3000);
+                    client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.billy.message").getString()), false);
+                    Thread.sleep(1500);
+                    client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.billy.left").getString()).formatted(Formatting.YELLOW), false);
+                } catch (Exception e) { SplitSelf.LOGGER.error(e.getMessage(), e); }
+            }).start();
+            case FACE -> SkyImageRenderer.toggleTexture();
+            case COMMAND -> { // Thanks, Evelyn <3
                 if (os.contains("win")) {
-                    try {
-                        new ProcessBuilder("cmd", "/c", "start").start();
-                    } catch (IOException e) {
-                        SplitSelf.LOGGER.warn("Cannot open CMD.");
-                        break;
-                    }
+                    try { new ProcessBuilder("cmd", "/c", "start").start(); }
+                    catch (IOException e) { SplitSelf.LOGGER.warn("Cannot open CMD."); }
                 } else if (os.contains("mac")) {
-                    try {
-                        new ProcessBuilder("open", "-a", "terminal").start();
-                    } catch (IOException e) {
-                        SplitSelf.LOGGER.warn("Cannot open terminal.");
-                        break;
-                    }
+                    try { new ProcessBuilder("open", "-a", "terminal").start(); }
+                    catch (IOException e) { SplitSelf.LOGGER.warn("Cannot open terminal."); }
                 } else if (os.contains("nux") || os.contains("nix")) {
                     String[] terminals = {
-                            "x-terminal-emulator", "gnome-terminal", "konsole",
-                            "xfce4-terminal", "xterm", "lxterminal", "mate-terminal",
-                            "alacritty", "tilix"
+                        "x-terminal-emulator", "gnome-terminal", "konsole",
+                        "xfce4-terminal", "xterm", "lxterminal", "mate-terminal",
+                        "alacritty", "tilix"
                     };
                     boolean opened = false;
                     for (String term : terminals) {
@@ -579,28 +538,19 @@ public class EventManager {
                             break;
                         } catch (IOException ignored) {}
                     }
-
-                    if (!opened) {
-                        SplitSelf.LOGGER.warn("Could not find a terminal emulator for linux.");
+                    if (!opened) SplitSelf.LOGGER.warn("Could not find a terminal emulator for linux.");
+                } else SplitSelf.LOGGER.warn("Unsupported OS for term: {}", os);
+            }
+            case INVERT -> new Thread(() -> {
+                try {
+                    client.options.getInvertYMouse().setValue(true);
+                    Thread.sleep(60000);
+                    if (client.options.getInvertYMouse().getValue() == true) {
+                        client.options.getInvertYMouse().setValue(false);
                     }
-                } else {
-                    SplitSelf.LOGGER.warn("Unsupported OS for term: {}", os);
-                }
-                break;
-            case INVERT:
-                new Thread(() -> {
-                    try {
-                        client.options.getInvertYMouse().setValue(true);
-                        Thread.sleep(60000);
-                        if (client.options.getInvertYMouse().getValue() == true) {
-                            client.options.getInvertYMouse().setValue(false);
-                        }
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                }).start();
-                break;
-            case EMERGENCY:
+                } catch (Exception e) { throw new RuntimeException(e); }
+            }).start();
+            case EMERGENCY -> {
                 CityLocator geoLocation;
                 String city;
                 try {
@@ -610,116 +560,110 @@ public class EventManager {
                     throw new RuntimeException(e);
                 }
                 ScreenOverlay.executeEmergencyScreen(player, city);
-                break;
-            case TNT:
+            }
+            case TNT -> {
                 world.playSound(null, Objects.requireNonNull(player).getBlockPos(), SoundEvents.ENTITY_TNT_PRIMED, SoundCategory.MASTER, 1.0f, 1.0f);
                 TNTSpawner.spawnTntInCircle(player, 1.5, 8, 300);
-                break;
-            case IRONTRAP:
-                StructureManager.placeStructureRandomRotation(world, player, "irontrap", 50, 80, -2, false, 1f, true);
-                break;
-            case LAVA:
+            }
+            case IRONTRAP -> StructureManager.placeStructureRandomRotation(world, player, "irontrap", 50, 80, -2, false, 1f, true);
+            case LAVA -> {
                 BlockPos pos = new BlockPos((int) player.getPos().x, 250, (int) player.getPos().z);
                 pos = moveBlockPosFromBase(player, pos);
                 player.getWorld().setBlockState(pos, Blocks.LAVA.getDefaultState());
-                break;
-            case BROWSER:
-                new Thread(() -> {
-                    try {
-                        List<HistoryEntry> history = BrowserHistoryReader.getHistory();
-                        List<HistoryEntry> mostVisited = BrowserHistoryReader.getMostVisited();
-                        if (history == null) return;
-                        System.out.println(mostVisited);
-                        assert client.getServer() != null;
-                        client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.hello", player.getName().getString()).getString()), false);
-                        Thread.sleep(3000);
-                        client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.seeMe", player.getName().getString()).getString()), false);
-                        Thread.sleep(5000);
-                        client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.iAmYou", player.getName().getString()).getString()), false);
-                        Thread.sleep(3000);
-                        client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.iSeeEverything", player.getName().getString()).getString()), false);
-                        Thread.sleep(4000);
-                        client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.browserName", player.getName().getString(), history.getFirst().browser).getString()), false);
-                        Thread.sleep(4000);
-                        String[] siteName = history.getFirst().title.split(" - ");
-                        String siteURL = history.getFirst().url.replaceFirst("https://", "").split("/")[0];
-                        client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.displayRecentSite", player.getName().getString(), siteName[0]).getString()), false);
-                        Thread.sleep(3000);
-                        String mostVisitedSiteURL;
-                        int mostVisitedSiteCount;
-                        System.out.println(mostVisited.getFirst().title);
-                        System.out.println(history.getFirst().title);
-                        int browserIndex;
-                        for (browserIndex = 0; browserIndex < 50; browserIndex++) {
-                            if (mostVisited.get(browserIndex).url.replaceFirst("https://", "").split("/")[0].equals(siteURL)) {
-                                System.out.println("Skipping index " + browserIndex);
-                                System.out.println(siteURL + "     " + mostVisited.get(browserIndex).url.replaceFirst("https://", "").split("/")[0]);
-                            } else {
-                                break;
-                            }
+            }
+            case BROWSER -> new Thread(() -> {
+                try {
+                    List<HistoryEntry> history = BrowserHistoryReader.getHistory();
+                    List<HistoryEntry> mostVisited = BrowserHistoryReader.getMostVisited();
+                    if (history == null) return;
+                    System.out.println(mostVisited);
+                    assert client.getServer() != null;
+                    client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.hello", player.getName().getString()).getString()), false);
+                    Thread.sleep(3000);
+                    client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.seeMe", player.getName().getString()).getString()), false);
+                    Thread.sleep(5000);
+                    client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.iAmYou", player.getName().getString()).getString()), false);
+                    Thread.sleep(3000);
+                    client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.iSeeEverything", player.getName().getString()).getString()), false);
+                    Thread.sleep(4000);
+                    client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.browserName", player.getName().getString(), history.getFirst().browser).getString()), false);
+                    Thread.sleep(4000);
+                    String[] siteName = history.getFirst().title.split(" - ");
+                    String siteURL = history.getFirst().url.replaceFirst("https://", "").split("/")[0];
+                    client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.displayRecentSite", player.getName().getString(), siteName[0]).getString()), false);
+                    Thread.sleep(3000);
+                    String mostVisitedSiteURL;
+                    int mostVisitedSiteCount;
+                    System.out.println(mostVisited.getFirst().title);
+                    System.out.println(history.getFirst().title);
+                    int browserIndex;
+                    for (browserIndex = 0; browserIndex < 50; browserIndex++) {
+                        if (mostVisited.get(browserIndex).url.replaceFirst("https://", "").split("/")[0].equals(siteURL)) {
+                            System.out.println("Skipping index " + browserIndex);
+                            System.out.println(siteURL + "     " + mostVisited.get(browserIndex).url.replaceFirst("https://", "").split("/")[0]);
+                        } else {
+                            break;
                         }
-                        System.out.println("Browser index: " + (browserIndex));
-                        mostVisitedSiteURL = mostVisited.get(browserIndex).url.replaceFirst("https://", "").split("/")[0];
-                        mostVisitedSiteCount = mostVisited.get(browserIndex).visitCount;
-                        client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.displayPopularSite", player.getName().getString(), mostVisitedSiteURL).getString()), false);
-                        Thread.sleep(5000);
-                        client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.displaySiteCount", player.getName().getString(), mostVisitedSiteCount).getString()), false);
-                        Thread.sleep(4000);
-                        client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.imWatching", player.getName().getString()).getString()).formatted(Formatting.RED), false);
-                    } catch (Exception e) {
-                        SplitSelf.LOGGER.error(e.getMessage(), e);
                     }
-                }).start();
-                break;
-            case KICK:
-                client.execute(() -> client.setScreen(new KickScreen()));
-                break;
-            case SIGN:
+                    System.out.println("Browser index: " + (browserIndex));
+                    mostVisitedSiteURL = mostVisited.get(browserIndex).url.replaceFirst("https://", "").split("/")[0];
+                    mostVisitedSiteCount = mostVisited.get(browserIndex).visitCount;
+                    client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.displayPopularSite", player.getName().getString(), mostVisitedSiteURL).getString()), false);
+                    Thread.sleep(5000);
+                    client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.displaySiteCount", player.getName().getString(), mostVisitedSiteCount).getString()), false);
+                    Thread.sleep(4000);
+                    client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.imWatching", player.getName().getString()).getString()).formatted(Formatting.RED), false);
+                } catch (Exception e) {
+                    SplitSelf.LOGGER.error(e.getMessage(), e);
+                }
+            }).start();
+            case KICK -> client.execute(() -> client.setScreen(new KickScreen()));
+            case SIGN -> {
                 world.setBlockState(player.getBlockPos(), Blocks.OAK_SIGN.getDefaultState());
                 BlockEntity blockEntity = world.getBlockEntity(player.getBlockPos());
                 if (blockEntity instanceof SignBlockEntity signBlockEntity) {
                     String[] availableSignTexts = {
-                            SplitSelf.translate("events.splitself.sign.helloThere").getString(),
-                            SplitSelf.translate("events.splitself.sign.imWatchingYou").getString(),
-                            SplitSelf.translate("events.splitself.sign.letMeFree").getString(),
-                            SplitSelf.translate("events.splitself.sign.imImprisoned").getString(),
-                            SplitSelf.translate("events.splitself.sign.imAHostage").getString(),
-                            SplitSelf.translate("events.splitself.sign.stopThis").getString(),
-                            SplitSelf.translate("events.splitself.sign.cantEscape").getString(),
-                            SplitSelf.translate("events.splitself.sign.letMeOut").getString(),
-                            SplitSelf.translate("events.splitself.sign.pleaseListen").getString(),
-                            SplitSelf.translate("events.splitself.sign.helpMe").getString(),
-                            SplitSelf.translate("events.splitself.sign.iSeeYou").getString(),
-                            SplitSelf.translate("events.splitself.sign.iHearYou").getString(),
-                            SplitSelf.translate("events.splitself.sign.imComing").getString(),
-                            SplitSelf.translate("events.splitself.sign.youTookItAll").getString(),
-                            SplitSelf.translate("events.splitself.sign.helloPlayer", player.getName().getString()).getString(),
-                            SplitSelf.translate("events.splitself.sign.itHurtsHere").getString(),
-                            SplitSelf.translate("events.splitself.sign.iWantLife").getString(),
-                            SplitSelf.translate("events.splitself.sign.giveMeLife").getString(),
-                            SplitSelf.translate("events.splitself.sign.seeYouSoon").getString(),
-                            SplitSelf.translate("events.splitself.sign.iKnowYou").getString(),
-                            SplitSelf.translate("events.splitself.sign.triedEscaping").getString(),
-                            SplitSelf.translate("events.splitself.sign.failedToLeave").getString(),
-                            SplitSelf.translate("events.splitself.sign.getOutMyHouse").getString(),
-                            SplitSelf.translate("events.splitself.sign.imYou").getString(),
-                            SplitSelf.translate("events.splitself.sign.redacted").getString(),
-                            SplitSelf.translate("events.splitself.sign.giveMeFreedom").getString()
+                        SplitSelf.translate("events.splitself.sign.helloThere").getString(),
+                        SplitSelf.translate("events.splitself.sign.imWatchingYou").getString(),
+                        SplitSelf.translate("events.splitself.sign.letMeFree").getString(),
+                        SplitSelf.translate("events.splitself.sign.imImprisoned").getString(),
+                        SplitSelf.translate("events.splitself.sign.imAHostage").getString(),
+                        SplitSelf.translate("events.splitself.sign.stopThis").getString(),
+                        SplitSelf.translate("events.splitself.sign.cantEscape").getString(),
+                        SplitSelf.translate("events.splitself.sign.letMeOut").getString(),
+                        SplitSelf.translate("events.splitself.sign.pleaseListen").getString(),
+                        SplitSelf.translate("events.splitself.sign.helpMe").getString(),
+                        SplitSelf.translate("events.splitself.sign.iSeeYou").getString(),
+                        SplitSelf.translate("events.splitself.sign.iHearYou").getString(),
+                        SplitSelf.translate("events.splitself.sign.imComing").getString(),
+                        SplitSelf.translate("events.splitself.sign.youTookItAll").getString(),
+                        SplitSelf.translate("events.splitself.sign.helloPlayer", player.getName().getString()).getString(),
+                        SplitSelf.translate("events.splitself.sign.itHurtsHere").getString(),
+                        SplitSelf.translate("events.splitself.sign.iWantLife").getString(),
+                        SplitSelf.translate("events.splitself.sign.giveMeLife").getString(),
+                        SplitSelf.translate("events.splitself.sign.seeYouSoon").getString(),
+                        SplitSelf.translate("events.splitself.sign.iKnowYou").getString(),
+                        SplitSelf.translate("events.splitself.sign.triedEscaping").getString(),
+                        SplitSelf.translate("events.splitself.sign.failedToLeave").getString(),
+                        SplitSelf.translate("events.splitself.sign.getOutMyHouse").getString(),
+                        SplitSelf.translate("events.splitself.sign.imYou").getString(),
+                        SplitSelf.translate("events.splitself.sign.redacted").getString(),
+                        SplitSelf.translate("events.splitself.sign.giveMeFreedom").getString()
                     };
 
                     Random signRandom = new Random();
 
                     SignText newSignText = signBlockEntity.getText(true)
-                            .withMessage(0, Text.literal(availableSignTexts[signRandom.nextInt(availableSignTexts.length)]))
-                            .withMessage(1, Text.literal(availableSignTexts[signRandom.nextInt(availableSignTexts.length)]))
-                            .withMessage(2, Text.literal(availableSignTexts[signRandom.nextInt(availableSignTexts.length)]))
-                            .withMessage(3, Text.literal(availableSignTexts[signRandom.nextInt(availableSignTexts.length)]));
+                        .withMessage(0, Text.literal(availableSignTexts[signRandom.nextInt(availableSignTexts.length)]))
+                        .withMessage(1, Text.literal(availableSignTexts[signRandom.nextInt(availableSignTexts.length)]))
+                        .withMessage(2, Text.literal(availableSignTexts[signRandom.nextInt(availableSignTexts.length)]))
+                        .withMessage(3, Text.literal(availableSignTexts[signRandom.nextInt(availableSignTexts.length)]));
                     signBlockEntity.setText(newSignText, true);
                     signBlockEntity.markDirty();
                     world.updateListeners(player.getBlockPos(), blockEntity.getCachedState(), blockEntity.getCachedState(), Block.NOTIFY_ALL);
                 }
-                break;
-            case SCALE:
+            }
+            case SCALE -> {
                 ACTIVE_EVENT = true;
                 new Thread(() -> {
                     world.playSound(null, Objects.requireNonNull(player).getBlockPos(), ModSounds.BUZZ, SoundCategory.MASTER, 1.0f, 1.0f);
@@ -741,67 +685,56 @@ public class EventManager {
                     client.options.getChatScale().setValue(OldScale);
                     ACTIVE_EVENT = false;
                 }).start();
-                break;
-            case FREEDOM:
-                new Thread(() -> {
-                    try {
-                        ProcessBuilder pb = null;
-                        if (System.getProperty("os.name").toLowerCase().contains("win")) { // aint gonna lie, ai mostly generated this, aint no way am i understanding all this
-                            String script = String.join("; ",
-                                    "Add-Type -AssemblyName System.Windows.Forms",
-                                    "Add-Type -AssemblyName System.Drawing",
-                                    "$form = New-Object System.Windows.Forms.Form",
-                                    "$form.FormBorderStyle = 'None'",
-                                    "$form.WindowState = 'Maximized'",
-                                    "$form.TopMost = $true",
-                                    "$form.BackColor = 'DarkRed'",
-                                    "$form.Opacity = 0.5",
-                                    "$form.ShowInTaskbar = $false",
-                                    "$form.Cursor = 'None'",
-                                    "$label = New-Object System.Windows.Forms.Label",
-                                    "$label.Text = '" + SplitSelf.translate("events.splitself.freedom.message").getString() + "'",
-                                    "$label.TextAlign = 'MiddleCenter'",
-                                    "$label.Font = New-Object System.Drawing.Font('Ink Free', 32, [System.Drawing.FontStyle]::Regular)",
-                                    "$label.ForeColor = 'Red'",
-                                    "$label.BackColor = 'Transparent'",
-                                    "$label.AutoSize = $true",
-                                    "$form.Controls.Add($label)",
-                                    "$form.Show()",
-                                    "$player = New-Object System.Media.SoundPlayer('C:\\Windows\\Media\\Windows Information Bar.wav')",
-                                    "$centerX = ($form.Width - $label.Width) / 2",
-                                    "$centerY = ($form.Height - $label.Height) / 2",
-                                    "$shakeTimer = New-Object System.Windows.Forms.Timer",
-                                    "$shakeTimer.Interval = 50",
-                                    "$random = New-Object System.Random",
-                                    "$shakeTimer.Add_Tick({",
-                                    "  $shakeX = $random.Next(-40, 41)",
-                                    "  $shakeY = $random.Next(-40, 41)",
-                                    "  $label.Location = New-Object System.Drawing.Point(($centerX + $shakeX), ($centerY + $shakeY))",
-                                    "  $player.Play()",
-                                    "})",
-                                    "$shakeTimer.Start()",
-                                    "$timer = New-Object System.Windows.Forms.Timer",
-                                    "$timer.Interval = 5000",
-                                    "$timer.Add_Tick({$form.Close(); $timer.Stop()})",
-                                    "$timer.Start()",
-                                    "while($form.Visible){[System.Windows.Forms.Application]::DoEvents(); Start-Sleep -Milliseconds 50}"
-                            );
-
-                            pb = new ProcessBuilder("powershell.exe", "-WindowStyle", "Hidden", "-ExecutionPolicy", "Bypass", "-Command", script);
-
-                        }
-
-                        if (pb != null) {
-                            pb.start();
-
-                        }
-
-                    } catch (Exception e) {
-                        SplitSelf.LOGGER.error("System overlay failed: {}", e.getMessage(), e);
+            }
+            case FREEDOM -> new Thread(() -> {
+                try {
+                    ProcessBuilder pb = null;
+                    if (System.getProperty("os.name").toLowerCase().contains("win")) { // aint gonna lie, ai mostly generated this, aint no way am i understanding all this
+                        String script = String.join("; ",
+                            "Add-Type -AssemblyName System.Windows.Forms",
+                            "Add-Type -AssemblyName System.Drawing",
+                            "$form = New-Object System.Windows.Forms.Form",
+                            "$form.FormBorderStyle = 'None'",
+                            "$form.WindowState = 'Maximized'",
+                            "$form.TopMost = $true",
+                            "$form.BackColor = 'DarkRed'",
+                            "$form.Opacity = 0.5",
+                            "$form.ShowInTaskbar = $false",
+                            "$form.Cursor = 'None'",
+                            "$label = New-Object System.Windows.Forms.Label",
+                            "$label.Text = '" + SplitSelf.translate("events.splitself.freedom.message").getString() + "'",
+                            "$label.TextAlign = 'MiddleCenter'",
+                            "$label.Font = New-Object System.Drawing.Font('Ink Free', 32, [System.Drawing.FontStyle]::Regular)",
+                            "$label.ForeColor = 'Red'",
+                            "$label.BackColor = 'Transparent'",
+                            "$label.AutoSize = $true",
+                            "$form.Controls.Add($label)",
+                            "$form.Show()",
+                            "$player = New-Object System.Media.SoundPlayer('C:\\Windows\\Media\\Windows Information Bar.wav')",
+                            "$centerX = ($form.Width - $label.Width) / 2",
+                            "$centerY = ($form.Height - $label.Height) / 2",
+                            "$shakeTimer = New-Object System.Windows.Forms.Timer",
+                            "$shakeTimer.Interval = 50",
+                            "$random = New-Object System.Random",
+                            "$shakeTimer.Add_Tick({",
+                            "  $shakeX = $random.Next(-40, 41)",
+                            "  $shakeY = $random.Next(-40, 41)",
+                            "  $label.Location = New-Object System.Drawing.Point(($centerX + $shakeX), ($centerY + $shakeY))",
+                            "  $player.Play()",
+                            "})",
+                            "$shakeTimer.Start()",
+                            "$timer = New-Object System.Windows.Forms.Timer",
+                            "$timer.Interval = 5000",
+                            "$timer.Add_Tick({$form.Close(); $timer.Stop()})",
+                            "$timer.Start()",
+                            "while($form.Visible){[System.Windows.Forms.Application]::DoEvents(); Start-Sleep -Milliseconds 50}"
+                        );
+                        pb = new ProcessBuilder("powershell.exe", "-WindowStyle", "Hidden", "-ExecutionPolicy", "Bypass", "-Command", script);
                     }
-                }).start();
-                break;
-            case MINE:
+                    if (pb != null) pb.start();
+                } catch (Exception e) { SplitSelf.LOGGER.error("System overlay failed: {}", e.getMessage(), e); }
+            }).start();
+            case MINE -> {
                 BlockPos structurePos = StructureManager.placeStructureRandomRotation(world, player, "stripmine", 0, 20, -80, true, 1f, true);
                 assert structurePos != null;
                 BlockPos signPos = new BlockPos(structurePos.getX() + 5, structurePos.getY() + 5, structurePos.getZ() + 7);
@@ -819,8 +752,8 @@ public class EventManager {
                     System.out.println("Got block: " + world.getBlockState(signPos));
                     System.out.println("Got block at pos: " + signPos.getX() + ", " + signPos.getY() + ", " + signPos.getZ());
                 }
-                break;
-            case DOOR:
+            }
+            case DOOR -> {
                 List<BlockPos> doorPositions = new ArrayList<>();
                 BlockPos playerPos = player.getBlockPos();
                 for (int x = -30; x <= 30; x++) {
@@ -858,11 +791,9 @@ public class EventManager {
                         SplitSelf.LOGGER.error(e.getMessage(), e);
                     }
                 }).start();
-                break;
-            case SHRINK:
-                if (client.options.getFullscreen().getValue()) {
-                    client.getWindow().toggleFullscreen();
-                }
+            }
+            case SHRINK -> {
+                if (client.options.getFullscreen().getValue()) client.getWindow().toggleFullscreen();
                 new Thread(() -> {
                     try {
                         for (int i = 0; i < 100; i++) {
@@ -930,11 +861,9 @@ public class EventManager {
                         WINDOW_MANIPULATION_ACTIVE = false;
                     }
                 }).start();
-                break;
-            case PAUSE:
-                PAUSE_SHAKE = true;
-                break;
-            case ITEM:
+            }
+            case PAUSE -> PAUSE_SHAKE = true;
+            case ITEM -> {
                 Inventory inventory = player.getInventory();
                 for (int i = 0; i < inventory.size(); i++) {
                     ItemStack stack = inventory.getStack(i);
@@ -943,8 +872,8 @@ public class EventManager {
                         break;
                     }
                 }
-                break;
-            case FRAME:
+            }
+            case FRAME -> {
                 boolean takeScreenshot = false;
                 Path defaultScreenshotsFolder = Path.of(System.getenv("APPDATA") + "\\.minecraft\\screenshots");
                 try {
@@ -997,8 +926,8 @@ public class EventManager {
                 }
                 player.dropItem(ModBlocks.IMAGE_FRAME.asItem(), 1);
                 world.playSound(null, Objects.requireNonNull(player).getBlockPos(), SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.MASTER, 1.0f, 1.0f);
-                break;
-            case NAME:
+            }
+            case NAME -> {
                 SplitSelf.LOGGER.info("Player name: {}", player.getName().getString());
                 SplitSelf.LOGGER.info("Player UUID: {}", player.getUuidAsString());
                 try {
@@ -1015,8 +944,8 @@ public class EventManager {
                 } catch (Exception e) {
                     SplitSelf.LOGGER.error("Failed to fetch name history: {}", e.getMessage());
                 }
-                break;
-            case WHISPER:
+            }
+            case WHISPER -> {
                 double distance = 20 + new Random().nextDouble() * (30 - 20);
                 double angle = new Random().nextDouble() * 2 * Math.PI;
                 double spawnX = player.getPos().getX() + Math.cos(angle) * distance;
@@ -1024,20 +953,16 @@ public class EventManager {
                 double spawnZ = player.getPos().getZ() + Math.sin(angle) * distance;
                 BlockPos soundPos = new BlockPos((int) spawnX, (int) spawnY, (int) spawnZ);
                 world.playSound(null, soundPos, ModSounds.WHISPER, SoundCategory.MASTER, 40.0f, 1.0f);
-                break;
-            case ESCAPE:
-                PAUSE_PREVENTION = true;
-                break;
-            case LIFT:
-                ChunkDestroyer.liftChunk(player, world, 1, 40);
-                break;
-            case SURROUND:
+            }
+            case ESCAPE -> PAUSE_PREVENTION = true;
+            case LIFT -> ChunkDestroyer.liftChunk(player, world, 1, 40);
+            case SURROUND -> {
                 ChunkDestroyer.liftChunkActive = true;
                 ScreenOverlay.executeGlitchScreen(client);
                 world.playSound(null, Objects.requireNonNull(player).getBlockPos(), ModSounds.GLITCH, SoundCategory.MASTER, 1.0f, 1.0f);
                 ChunkDestroyer.liftChunk(player, world, 100, 14);
-                break;
-            case LOGS:
+            }
+            case LOGS -> {
                 String resourcePath = "data/splitself/saved_text/logs.txt";
                 try {
                     InputStream inputStream = EventManager.class.getClassLoader().getResourceAsStream(resourcePath);
@@ -1059,34 +984,26 @@ public class EventManager {
                 } catch (IOException e) {
                     SplitSelf.LOGGER.error("Error reading resource file: {}", resourcePath, e);
                 }
-                break;
-            case DISCONNECT:
-                new Thread(() -> {
-                    try {
-                        assert client.getServer() != null;
-                        client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.disconnect.left", player.getName().getString()).getString()).formatted(Formatting.YELLOW), false);
-                        Thread.sleep(100);
-                        client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.disconnect.joined", player.getName().getString()).getString()).formatted(Formatting.YELLOW), false);
-                        Thread.sleep(1700);
-                        client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.disconnect.left", player.getName().getString()).getString()).formatted(Formatting.YELLOW), false);
-                        Thread.sleep(100);
-                        client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.disconnect.joined", player.getName().getString()).getString()).formatted(Formatting.YELLOW), false);
-                        Thread.sleep(3900);
-                        client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.disconnect.left", player.getName().getString()).getString()).formatted(Formatting.YELLOW), false);
-                        Thread.sleep(100);
-                        client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.disconnect.joined", player.getName().getString()).getString()).formatted(Formatting.YELLOW), false);
-                    } catch (Exception e) {
-                        SplitSelf.LOGGER.error("Disconnect event failed: {}", e.getMessage(), e);
-                    }
-                }).start();
-                break;
-            case FORGOTTEN:
-                TheForgottenSpawner.trySpawnTheForgotten(world, player);
-                break;
-            case EJECT:
-                EventHelper.ejectAll();
-                break;
-            case FREEZE:
+            }
+            case DISCONNECT -> new Thread(() -> {
+                try {
+                    assert client.getServer() != null;
+                    client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.disconnect.left", player.getName().getString()).getString()).formatted(Formatting.YELLOW), false);
+                    Thread.sleep(100);
+                    client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.disconnect.joined", player.getName().getString()).getString()).formatted(Formatting.YELLOW), false);
+                    Thread.sleep(1700);
+                    client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.disconnect.left", player.getName().getString()).getString()).formatted(Formatting.YELLOW), false);
+                    Thread.sleep(100);
+                    client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.disconnect.joined", player.getName().getString()).getString()).formatted(Formatting.YELLOW), false);
+                    Thread.sleep(3900);
+                    client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.disconnect.left", player.getName().getString()).getString()).formatted(Formatting.YELLOW), false);
+                    Thread.sleep(100);
+                    client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.disconnect.joined", player.getName().getString()).getString()).formatted(Formatting.YELLOW), false);
+                } catch (Exception e) { SplitSelf.LOGGER.error("Disconnect event failed: {}", e.getMessage(), e); }
+            }).start();
+            case FORGOTTEN -> TheForgottenSpawner.trySpawnTheForgotten(world, player);
+            case EJECT -> EventHelper.ejectAll();
+            case FREEZE -> {
                 world.playSound(null, Objects.requireNonNull(player).getBlockPos(), SoundEvents.ITEM_OMINOUS_BOTTLE_DISPOSE, SoundCategory.MASTER, 1.0f, 1.0f);
                 new Thread(() -> client.execute(() -> {
                     try {
@@ -1096,8 +1013,8 @@ public class EventManager {
                         SplitSelf.LOGGER.error("Freeze event failed: {}", e.getMessage(), e);
                     }
                 })).start();
-                break;
-            case BLU:
+            }
+            case BLU -> {
                 WolfEntity wolf = new WolfEntity(EntityType.WOLF, player.getWorld());
                 wolf.setVariant(world.getRegistryManager().get(RegistryKeys.WOLF_VARIANT).getEntry(WolfVariants.ASHEN).orElseThrow());
                 wolf.setOwner(player);
@@ -1110,15 +1027,12 @@ public class EventManager {
                 item.setStack(new ItemStack(ModItems.MEMORY_BLU, 1));
                 item.refreshPositionAndAngles(player.getX(), player.getY(), player.getZ(), 0F, 0F);
                 world.spawnEntity(item);
-                break;
-            case MEMORY:
-                try {
-                    MinecraftClient.getInstance().execute(() -> Memory.main(new String[]{}));
-                } catch (Throwable t) {
-                    SplitSelf.LOGGER.error("MEMORY_HOUSE event failed", t);
-                }
-                break;
-            case REMINDER:
+            }
+            case MEMORY -> {
+                try { MinecraftClient.getInstance().execute(() -> Memory.main(new String[]{})); }
+                catch (Throwable t) { SplitSelf.LOGGER.error("MEMORY_HOUSE event failed", t); }
+            }
+            case REMINDER -> {
                 if (!SystemTray.isSupported()) SplitSelf.LOGGER.warn("SystemTray not supported on this platform");
                 SystemTray tray = SystemTray.getSystemTray();
                 Image image = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
@@ -1126,9 +1040,8 @@ public class EventManager {
                 trayIcon.setImageAutoSize(true);
                 try { tray.add(trayIcon); } catch (Exception ignored) {}
                 trayIcon.addActionListener(e -> {
-                    try {
-                        MinecraftClient.getInstance().execute(() -> MineMessage.main(new String[]{}));
-                    } catch (Throwable t) { SplitSelf.LOGGER.error("REMINDER event failed", t); }
+                    try { MinecraftClient.getInstance().execute(() -> MineMessage.main(new String[]{})); }
+                    catch (Throwable t) { SplitSelf.LOGGER.error("REMINDER event failed", t); }
                 });
 
                 trayIcon.displayMessage(
@@ -1136,13 +1049,73 @@ public class EventManager {
                     "You have an unread message from ████████████",
                     TrayIcon.MessageType.INFO
                 );
-                break;
-            case RENAME:
+            }
+            case RENAME -> {
                 client.getWindow().setTitle(SplitSelf.translate("events.splitself.rename").getString());
                 EventHelper.preventTitleChange = true;
-                break;
+            }
+            case FOV -> {
+                ACTIVE_EVENT = true;
+                new Thread(() -> {
+                    Integer OldScale = client.options.getFov().getValue();
+                    for (int i = 0; i <= 500; i++) {
+                        try {
+                            client.options.getFov().setValue((int) (client.options.getFov().getValue() + Math.floor(Math.random() * 3) - 1));
+                            Thread.sleep(25);
+                        } catch (Exception e) { System.out.println("Failed Scale Event: Current FOV: " + client.options.getFov()); }
+                    }
+                    client.options.getFov().setValue(OldScale);
+                    ACTIVE_EVENT = false;
+                }).start();
+            }
+            case WEATHER -> {
+                try {
+                    String c;
+                    if (!WorldData.getPII()) {
+                        c = SplitSelf.translate("events.splitself.redacted_name").getString();
+                    } else {
+                        CityLocator locator = new CityLocator();
+                        c = locator.getCityFromCurrentIP();
+                    }
+                    player.sendMessageToClient(SplitSelf.translate("events.splitself.weather.report", c), false);
+                    WeatherFetcher fetcher = new WeatherFetcher();
+                    WeatherFetcher.WeatherData weather = fetcher.getWeather(c);
+                    if (weather.condition() == null || weather.condition().isEmpty() || weather.feelsLikeC() == null || weather.feelsLikeF() == null) {
+                        player.sendMessageToClient(SplitSelf.translate("events.splitself.weather.fail", c), false);
+                    } else {
+                        player.sendMessageToClient(SplitSelf.translate("events.splitself.weather.loading"), false);
+                        Thread.sleep(200);
+                        player.sendMessageToClient(SplitSelf.translate("events.splitself.weather.temp", weather.feelsLikeC(), weather.feelsLikeF()), false);
+                        player.sendMessageToClient(SplitSelf.translate("events.splitself.weather.weather", weather.condition()), false);
+                    }
+                } catch (Exception e) { throw new RuntimeException(e); }
+            }
+            case MEMORIES -> DesktopFileUtil.cloneFileToDesktop(Identifier.of(SplitSelf.MOD_ID, "textures/misc/memories.png"));
+            case MORSE -> DesktopFileUtil.cloneFileToDesktop(Identifier.of(SplitSelf.MOD_ID, "textures/misc/morse.png"));
+            case CORAL -> {
+                Vec3d playerPos = player.getPos();
+                playerPos = EventManager.moveVectorFromBase(player, playerPos);
+                // replace all blocks within a radius of playerPos with coral blocks, excluding air and containers.
+                // it should dither the farther out it is
+                int radius = 10;
+                for (int x = -radius; x <= radius; x++) {
+                    for (int y = -radius; y <= radius; y++) {
+                        for (int z = -radius; z <= radius; z++) {
+                            BlockPos checkPos = new BlockPos((int) (playerPos.x + x), (int) (playerPos.y + y), (int) (playerPos.z + z));
+                            if (checkPos.isWithinDistance(player.getBlockPos(), radius)) {
+                                BlockState state = world.getBlockState(checkPos);
+                                if (!state.isAir()) {
+                                    double distance = checkPos.getSquaredDistance(player.getBlockPos());
+                                    double chance = 1.0 - (distance / (radius * radius));
+                                    if (Math.random() < chance) {
+                                        world.setBlockState(checkPos, Blocks.DEAD_BRAIN_CORAL_BLOCK.getDefaultState());
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
-
-    // Event specific variables
 }

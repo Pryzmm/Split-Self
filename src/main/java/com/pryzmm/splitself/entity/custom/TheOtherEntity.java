@@ -1,7 +1,7 @@
 package com.pryzmm.splitself.entity.custom;
 
 import com.pryzmm.splitself.SplitSelf;
-import com.pryzmm.splitself.SplitSelfClient;
+import com.pryzmm.splitself.client.SplitSelfClient;
 import com.pryzmm.splitself.data.WorldData;
 import com.pryzmm.splitself.events.ScreenOverlay;
 import com.pryzmm.splitself.sound.ModSounds;

@@ -106,13 +106,13 @@ public class ScreenOverlay {
         new Thread(() -> {
             EventManager.ACTIVE_EVENT = true;
             player.getWorld().playSound(null, player.getBlockPos(), ModSounds.AMBER, SoundCategory.MASTER, 1.0f, 1.0f);
-            EmergencyOverlayRenderer.toggleOverlay(player, city);
+            EmergencyOverlayRenderer.toggleOverlay(city);
             try {
                 Thread.sleep(13000);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            EmergencyOverlayRenderer.toggleOverlay(player, city);
+            EmergencyOverlayRenderer.toggleOverlay(city);
             EventManager.ACTIVE_EVENT = false;
         }).start();
     }

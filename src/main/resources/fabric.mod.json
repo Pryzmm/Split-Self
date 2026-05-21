@@ -38,7 +38,7 @@
 			"com.pryzmm.splitself.SplitSelf"
 		],
 		"client": [
-			"com.pryzmm.splitself.SplitSelfClient"
+          "com.pryzmm.splitself.client.SplitSelfClient"
 		],
 		"modmenu": [
           "com.pryzmm.splitself.config.ModMenuApiImpl"

@@ -1,7 +1,7 @@
 package com.pryzmm.splitself.mixin;
 
 import com.pryzmm.splitself.SplitSelf;
-import com.pryzmm.splitself.SplitSelfClient;
+import com.pryzmm.splitself.client.SplitSelfClient;
 import com.pryzmm.splitself.config.CustomConfigScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.option.OptionsScreen;

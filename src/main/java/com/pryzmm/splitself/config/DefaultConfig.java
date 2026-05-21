@@ -79,6 +79,11 @@ public class DefaultConfig {
         updateEventOptions("FREEZE",                new EventOptions(10,  1, false));
         updateEventOptions("BLU",                   new EventOptions(10,  3, true ));
         updateEventOptions("MEMORY",                new EventOptions(10,  0, false));
+        updateEventOptions("FOV",                   new EventOptions(10,  1, false));
+        updateEventOptions("WEATHER",               new EventOptions(10,  1, false));
+        updateEventOptions("MEMORIES",              new EventOptions(10,  0, true ));
+        updateEventOptions("MORSE",                 new EventOptions(10,  1, true ));
+        updateEventOptions("CORAL",                 new EventOptions(10,  2, true ));
         for (EventManager.Events event : EventManager.Events.values()) {
             if (!hasConfigValues(event)) { // Missing default event fallback
                 updateEventOptions(event.name(), new EventOptions(10, 0, false));

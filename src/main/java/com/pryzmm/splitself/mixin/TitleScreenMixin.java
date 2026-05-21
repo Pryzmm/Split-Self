@@ -1,6 +1,9 @@
 package com.pryzmm.splitself.mixin;
 
 import com.pryzmm.splitself.SplitSelf;
+import com.pryzmm.splitself.file.ZipFunc;
+import com.pryzmm.splitself.screen.LoadingResourcesScreen;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ButtonTextures;
 import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
@@ -17,12 +20,18 @@ class TitleScreenMixin {
 
     @Inject(method = "init", at = @At("TAIL"))
     private void onInit(CallbackInfo ci) {
+
+        if (ZipFunc.needsVideoDownloads()) {
+            MinecraftClient.getInstance().setScreen(new LoadingResourcesScreen());
+        }
+
         if (!SplitSelf.ShriekInstalled) {
             System.out.println("Shriek not installed, adding Shriek button");
             addShriekButton();
         } else {
             System.out.println("Shriek installed, skipping Shriek button");
         }
+
     }
 
     @Unique
@@ -30,14 +39,12 @@ class TitleScreenMixin {
         TitleScreen screen = (TitleScreen) (Object) this;
         try {
             TexturedButtonWidget ShriekButton = new TexturedButtonWidget(
-                    10, 10, 30, 30,
-                    new ButtonTextures(
-                            Identifier.of(SplitSelf.MOD_ID, "widget/shriek"),
-                            Identifier.of(SplitSelf.MOD_ID, "widget/shriek_focused")
-                    ),
-                    button -> {
-                        Util.getOperatingSystem().open("https://modrinth.com/mod/shriek");
-                    }
+                10, 10, 30, 30,
+                new ButtonTextures(
+                    Identifier.of(SplitSelf.MOD_ID, "widget/shriek"),
+                    Identifier.of(SplitSelf.MOD_ID, "widget/shriek_focused")
+                ),
+                button -> Util.getOperatingSystem().open("https://modrinth.com/mod/shriek")
             );
 
             ((ScreenAccessor) screen).invokeAddDrawableChild(ShriekButton);

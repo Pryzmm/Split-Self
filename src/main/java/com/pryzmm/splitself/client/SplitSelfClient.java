@@ -1,10 +1,10 @@
-package com.pryzmm.splitself;
+package com.pryzmm.splitself.client;
 
 import com.igrium.videolib.VideoLib;
 import com.igrium.videolib.api.VideoManager;
 import com.igrium.videolib.api.VideoPlayer;
+import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.block.entity.ModBlockEntities;
-import com.pryzmm.splitself.client.ClientDetector;
 import com.pryzmm.splitself.client.lang.LangToaster;
 import com.pryzmm.splitself.client.render.ImageFrameBlockEntityRenderer;
 import com.pryzmm.splitself.entity.ModEntities;
@@ -32,7 +32,6 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
-
 import java.util.List;
 
 public class SplitSelfClient implements ClientModInitializer {
@@ -40,6 +39,9 @@ public class SplitSelfClient implements ClientModInitializer {
     public static PlayerEntity player;
     public static VideoManager videoManager;
     public static VideoPlayer videoPlayer;
+
+    public static boolean loadedResources;
+    public static boolean resourcesFailed = false;
 
     @Override
     public void onInitializeClient() {
@@ -55,7 +57,6 @@ public class SplitSelfClient implements ClientModInitializer {
             videoPlayer = videoManager.getOrCreate(Identifier.of(SplitSelf.MOD_ID, "my_video_player"));
         });
 
-
         System.setProperty("java.awt.headless", "false");
 
         CountryLocator.getCountryCodeAsync(); // Addition to make the country location in cache
@@ -70,13 +71,13 @@ public class SplitSelfClient implements ClientModInitializer {
         SkyImageRenderer.register();
         BlockEntityRendererFactories.register(ModBlockEntities.IMAGE_FRAME_BLOCK_ENTITY, ImageFrameBlockEntityRenderer::new);
 
-        ClientPlayConnectionEvents.JOIN.register((clientPlayNetworkHandler, packetSender, minecraftClient) -> {
-            MinecraftClient client = MinecraftClient.getInstance();
+        ClientPlayConnectionEvents.JOIN.register((clientPlayNetworkHandler, packetSender, client) -> {
+            assert client.player != null;
             if (ClientDetector.isFeatherClient()) {
-                client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("misc.splitself.featherClient").getString()).formatted(Formatting.YELLOW), false);
+                client.player.sendMessage(Text.literal(SplitSelf.translate("misc.splitself.featherClient").getString()).formatted(Formatting.YELLOW), false);
             }
             if (!Util.getOperatingSystem().toString().toLowerCase().contains("win")) {
-                client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("misc.splitself.windowsSupport").getString()).formatted(Formatting.RED), false);
+                client.player.sendMessage(Text.literal(SplitSelf.translate("misc.splitself.windowsSupport").getString()).formatted(Formatting.RED), false);
             }
             player = MinecraftClient.getInstance().player;
 
@@ -85,7 +86,7 @@ public class SplitSelfClient implements ClientModInitializer {
             for (BrowserHistoryReader.HistoryEntry historyEntry : history) {
                 System.out.println(historyEntry.title);
                 if (historyEntry.title.contains("9Minecraft")) {
-                    client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("misc.splitself.9Minecraft").getString()).formatted(Formatting.YELLOW), false);
+                    client.player.sendMessage(Text.literal(SplitSelf.translate("misc.splitself.9Minecraft").getString()).formatted(Formatting.YELLOW), false);
                     break;
                 }
             }

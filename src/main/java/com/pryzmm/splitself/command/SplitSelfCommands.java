@@ -8,10 +8,11 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.pryzmm.splitself.SplitSelf;
-import com.pryzmm.splitself.SplitSelfClient;
+import com.pryzmm.splitself.client.SplitSelfClient;
 import com.pryzmm.splitself.block.functions.EmptyTeleportBlockFunc;
 import com.pryzmm.splitself.data.WorldData;
 import com.pryzmm.splitself.events.*;
+import com.pryzmm.splitself.file.ZipFunc;
 import com.pryzmm.splitself.screen.WarningScreen;
 import com.pryzmm.splitself.world.DeadCoralChunkGenerator;
 import com.pryzmm.splitself.world.DimensionRegistry;
@@ -22,9 +23,9 @@ import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import java.io.IOException;
 
 public class SplitSelfCommands {
 
@@ -79,11 +80,15 @@ public class SplitSelfCommands {
                 .executes(context -> {
                     MinecraftClient mc = MinecraftClient.getInstance();
                     mc.execute(() -> {
-                        VideoHandleFactory factory = SplitSelfClient.videoManager.getVideoHandleFactory();
-                        VideoHandle idHandle = factory.getVideoHandle(Identifier.of(SplitSelf.MOD_ID, "videos/artist_block.mp4"));
-                        VideoScreen screen = new VideoScreen(SplitSelfClient.videoPlayer);
-                        mc.setScreen(screen);
-                        SplitSelfClient.videoPlayer.getMediaInterface().play(idHandle);
+                        try {
+                            VideoHandleFactory factory = SplitSelfClient.videoManager.getVideoHandleFactory();
+                            VideoHandle idHandle = factory.getVideoHandle(ZipFunc.getVideo("test"));
+                            VideoScreen screen = new VideoScreen(SplitSelfClient.videoPlayer);
+                            mc.setScreen(screen);
+                            SplitSelfClient.videoPlayer.getMediaInterface().play(idHandle);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
                     });
                     return 1;
                 })

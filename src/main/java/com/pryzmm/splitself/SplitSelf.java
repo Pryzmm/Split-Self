@@ -127,9 +127,7 @@ public class SplitSelf implements ModInitializer {
             MicrophoneReader.register();
             System.out.println("Registered MicrophoneReader...");
             ShriekInstalled = true;
-        } else {
-            System.out.println("Cannot register microphone reader, missing shriek or architectury");
-        }
+        } else System.out.println("Cannot register microphone reader, missing shriek or architectury");
 
 		FabricDefaultAttributeRegistry.register(ModEntities.TheOther, TheOtherEntity.createAttributes());
         FabricDefaultAttributeRegistry.register(ModEntities.TheForgotten, TheOtherEntity.createAttributes());

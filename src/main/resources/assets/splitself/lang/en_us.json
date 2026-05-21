@@ -176,6 +176,11 @@
   "events.splitself.sleep.remember": "Do you remember?",
   "events.splitself.theOtherScreenshot.line1": "I see you.",
   "events.splitself.theOtherScreenshot.line2": "Looks familiar, doesn't it.",
+  "events.splitself.weather.report": "[SYSTEM] Weather report for %s requested by system administrator...",
+  "events.splitself.weather.loading": "[SYSTEM] Finalizing report...",
+  "events.splitself.weather.fail": "[SYSTEM] Failed to retrieve weather data for %s",
+  "events.splitself.weather.temp": "[SYSTEM] Temperature: %s°C (%s°F)",
+  "events.splitself.weather.weather": "[SYSTEM] Weather: %s",
 
   "files.splitself.begin.title": "begin",
   "files.splitself.begin.message": "Can't you see yourself?",

@@ -9,7 +9,6 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import java.text.DateFormat;
 import java.util.Date;
@@ -27,7 +26,7 @@ public class EmergencyOverlayRenderer {
 
     public static final Identifier OVERLAY_IMAGE = Identifier.of(SplitSelf.MOD_ID, "textures/screen/overlay.png");
 
-    public static void toggleOverlay(PlayerEntity player, String city) {
+    public static void toggleOverlay(String city) {
         overlayVisible = !overlayVisible;
         currentCity = city;
 

@@ -110,7 +110,7 @@ public class CardData {
                         for (int i = 0; i <= 300; i++) {
                             Thread.sleep((int) s);
                             if (!text.isEmpty()) text.delete(text.length() - 7, text.length());
-                            text.append("<html> + ").append(Text.translatable("game.splitself.memory.message1").getString()).append("</html>");
+                            text.append("<html>").append(Text.translatable("game.splitself.memory.message4").getString()).append("</html>");
                             Memory.textLabel.setText(text.toString());
                             if (s > 10) s /= 1.5f;
                             if (i == 300) {
