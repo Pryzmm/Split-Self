@@ -1,4 +1,4 @@
-package com.pryzmm.splitself.events;
+package com.pryzmm.splitself.events.helper;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;

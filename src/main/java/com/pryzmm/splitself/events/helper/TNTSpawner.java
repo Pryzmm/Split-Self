@@ -1,5 +1,6 @@
-package com.pryzmm.splitself.events;
+package com.pryzmm.splitself.events.helper;
 
+import com.pryzmm.splitself.events.EventManager;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.TntEntity;
 import net.minecraft.entity.player.PlayerEntity;

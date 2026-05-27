@@ -13,6 +13,7 @@ public class ModSounds {
 
     public static final SoundEvent REDSKY = registerSoundEvent("redsky");
     public static final SoundEvent STATIC = registerSoundEvent("static");
+    public static final SoundEvent STATIC2 = registerSoundEvent("static2");
     public static final SoundEvent SCREECH = registerSoundEvent("screech");
     public static final SoundEvent HORN = registerSoundEvent("horn");
     public static final SoundEvent STATICSCREAM = registerSoundEvent("staticscream");

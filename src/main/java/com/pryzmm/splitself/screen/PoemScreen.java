@@ -17,11 +17,11 @@ public class PoemScreen extends Screen {
     @Override
     protected void init() {
         this.addDrawableChild(ButtonWidget.builder(
-                        Text.literal("..."),
-                        button -> this.close()
-                ).position(this.width / 2 - 50, this.height - 50)
-                .size(100, 20)
-                .build());
+            Text.literal("..."),
+            button -> this.close()
+        ).position(this.width / 2 - 50, this.height - 50)
+        .size(100, 20)
+        .build());
     }
 
     @Override

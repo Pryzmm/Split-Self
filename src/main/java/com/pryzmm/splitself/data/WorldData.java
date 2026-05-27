@@ -18,6 +18,7 @@ public class WorldData {
     private static int sleepStage;
     private static int memoryStage;
     private static long seed;
+    private static Location theForgottenLocation;
     static { clearData(); }
 
     private static JsonReader reader = null;
@@ -28,6 +29,7 @@ public class WorldData {
     public static List<String> getUnlockedMemories() { return unlockedMemories; }
     public static List<UUID> getJoinedPlayers() { return joinedPlayers; }
     public static long getSeed() { return seed; }
+    public static Location getTheForgottenLocation() { return theForgottenLocation; }
 
     public static void setPII(boolean value) {
         PII = value;
@@ -59,6 +61,12 @@ public class WorldData {
         reader.save();
     }
 
+    public static void setTheForgottenLocation(Location value) {
+        theForgottenLocation = value;
+        reader.setLocation("theForgottenLocation", value);
+        reader.save();
+    }
+
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public static @Nullable File getCurrentData() {
         MinecraftServer server = MinecraftClient.getInstance().getServer();
@@ -75,6 +83,7 @@ public class WorldData {
         PII = false;
         sleepStage = 0;
         memoryStage = 0;
+        theForgottenLocation = null;
     }
 
     public static void loadData(ServerWorld world) {
@@ -87,6 +96,7 @@ public class WorldData {
         sleepStage = reader.getInt("sleepStage", 0);
         memoryStage = reader.getInt("memoryStage", 0);
         seed = world.getSeed();
+        theForgottenLocation = reader.getLocation("theForgottenLocation", null);
         reader.save();
     }
 

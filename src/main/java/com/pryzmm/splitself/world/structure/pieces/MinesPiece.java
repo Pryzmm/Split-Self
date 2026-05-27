@@ -1,7 +1,7 @@
 package com.pryzmm.splitself.world.structure.pieces;
 
 import com.pryzmm.splitself.SplitSelf;
-import com.pryzmm.splitself.events.StructureManager;
+import com.pryzmm.splitself.events.helper.StructureManager;
 import com.pryzmm.splitself.world.structure.StructurePieces;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtIo;

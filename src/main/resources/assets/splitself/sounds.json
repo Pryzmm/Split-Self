@@ -36,6 +36,14 @@
       }
     ]
   },
+  "static2": {
+    "category": "master",
+    "sounds": [
+      {
+        "name": "splitself:static2"
+      }
+    ]
+  },
   "staticscream": {
     "category": "master",
     "sounds": [

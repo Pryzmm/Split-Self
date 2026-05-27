@@ -1,7 +1,6 @@
 package com.pryzmm.splitself.entity;
 
 import com.pryzmm.splitself.entity.custom.TheForgottenEntity;
-import com.pryzmm.splitself.world.DimensionRegistry;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.server.MinecraftServer;
@@ -29,7 +28,7 @@ public class TheForgottenFunc {
                 List<? extends TheForgottenEntity> entities = world.getEntitiesByType(ModEntities.TheForgotten, entity -> true);
                 entities.forEach(Entity::discard);
                 BlockPos pos = new BlockPos(x, y, z);
-                TheForgottenEntity theForgotten = new TheForgottenEntity(ModEntities.TheForgotten, world);
+                TheForgottenEntity theForgotten = new TheForgottenEntity(ModEntities.TheForgotten, world, TheForgottenEntity.Type.DISAPPEAR);
                 theForgotten.refreshPositionAndAngles(pos, 0, 0);
                 world.spawnEntity(theForgotten);
                 break;
@@ -38,10 +37,8 @@ public class TheForgottenFunc {
     }
 
     public static void removeIfRayCasted(MinecraftServer server) {
-        ServerWorld world = server.getWorld(DimensionRegistry.EMPTINESS_DIMENSION_KEY);
-        if (world == null) return;
 
-        for (ServerPlayerEntity player : world.getPlayers()) {
+        for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
             Vec3d start = player.getEyePos();
             Vec3d direction = player.getRotationVec(1.0f);
             double reach = 10000.0;
@@ -55,10 +52,10 @@ public class TheForgottenFunc {
                 end,
                 player.getBoundingBox().stretch(direction.multiply(reach)).expand(1.0),
                 e -> !e.isSpectator() && e.isAlive(),
-                7.0f
+                4.0f
             );
 
-            if (hit != null && hit.getEntity() instanceof TheForgottenEntity) {
+            if (hit != null && hit.getEntity() instanceof TheForgottenEntity forgotten && forgotten.type == TheForgottenEntity.Type.DISAPPEAR) {
                 hit.getEntity().discard();
             }
         }

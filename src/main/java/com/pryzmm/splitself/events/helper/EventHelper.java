@@ -1,4 +1,4 @@
-package com.pryzmm.splitself.events;
+package com.pryzmm.splitself.events.helper;
 
 import java.io.IOException;
 import java.util.ArrayList;

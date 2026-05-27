@@ -3,10 +3,13 @@ package com.pryzmm.splitself;
 import com.pryzmm.splitself.block.ModBlocks;
 import com.pryzmm.splitself.command.SplitSelfCommands;
 import com.pryzmm.splitself.config.DefaultConfig;
+import com.pryzmm.splitself.data.PersistentData;
 import com.pryzmm.splitself.data.WorldData;
 import com.pryzmm.splitself.entity.TheForgottenFunc;
 import com.pryzmm.splitself.events.*;
+import com.pryzmm.splitself.events.helper.StructureManager;
 import com.pryzmm.splitself.file.JsonReader;
+import com.pryzmm.splitself.func.StripMine;
 import com.pryzmm.splitself.world.LimboLevitation;
 import com.pryzmm.splitself.entity.ModEntities;
 import com.pryzmm.splitself.entity.custom.TheOtherEntity;
@@ -118,9 +121,11 @@ public class SplitSelf implements ModInitializer {
 		Structures.register();
 		StructurePieces.register();
 		ServerLifecycleEvents.SERVER_STARTED.register(this::onServerStarted);
+        PersistentData.loadData();
 
 		ServerTickEvents.END_SERVER_TICK.register(EventManager::onTick);
         ServerTickEvents.END_SERVER_TICK.register(TheForgottenFunc::removeIfRayCasted);
+        ServerTickEvents.END_SERVER_TICK.register(StripMine::trySpawnAttempt);
         ServerTickEvents.END_SERVER_TICK.register(LimboLevitation::onTick);
         if (FabricLoader.getInstance().isModLoaded("shriek") && FabricLoader.getInstance().isModLoaded("architectury")) {
             EventHandler.loadVoskModel(config.getString("voskModel"));

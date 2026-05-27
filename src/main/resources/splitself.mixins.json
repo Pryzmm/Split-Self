@@ -8,6 +8,7 @@
     "GameMenuMixin",
     "LanguageEntryMixin",
     "OptionsScreenMixin",
+    "PanoramaMixin",
     "PauseMixin",
     "ScreenAccessor",
     "SignMixin",

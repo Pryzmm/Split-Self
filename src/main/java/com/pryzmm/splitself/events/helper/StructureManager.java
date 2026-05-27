@@ -1,7 +1,8 @@
-package com.pryzmm.splitself.events;
+package com.pryzmm.splitself.events.helper;
 
 import com.pryzmm.splitself.SplitSelf;
-import com.pryzmm.splitself.entity.client.TheForgottenSpawner;
+import com.pryzmm.splitself.data.Location;
+import com.pryzmm.splitself.data.WorldData;
 import com.pryzmm.splitself.world.IntegrityProcessor;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -109,25 +110,11 @@ public class StructureManager {
             int surfaceY = Player.getWorld().getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, spawnPos.getX(), spawnPos.getZ()) + YOffset;
             BlockPos finalSpawnPos = new BlockPos((int) spawnX, surfaceY, (int) spawnZ);
             if (structureName.equals("house")) { // The forgotten
-                BlockPos[] newPositions;
-                int arrayLength;
-                try {
-                    newPositions = new BlockPos[TheForgottenSpawner.spawnPositions.length + 1];
-                    arrayLength = TheForgottenSpawner.spawnPositions.length;
-                    System.arraycopy(TheForgottenSpawner.spawnPositions, 0, newPositions, 0, arrayLength);
-                } catch (Exception e) {
-                    newPositions = new BlockPos[1];
-                    arrayLength = 0;
-                }
-                newPositions[arrayLength] = finalSpawnPos;
-                TheForgottenSpawner.spawnPositions = newPositions;
+                WorldData.setTheForgottenLocation(new Location(world, finalSpawnPos, 0, 0));
             }
             BlockRotation rotation;
-            if (!DisableRotation) {
-                rotation = BlockRotation.values()[world.getRandom().nextInt(4)];
-            } else {
-                rotation = BlockRotation.NONE;
-            }
+            if (!DisableRotation) rotation = BlockRotation.values()[world.getRandom().nextInt(4)];
+            else rotation = BlockRotation.NONE;
             if (placeStructure(world, finalSpawnPos, structureName, rotation, BlockMirror.NONE, Integrity, ignoreEntities)) {
                 return finalSpawnPos;
             }

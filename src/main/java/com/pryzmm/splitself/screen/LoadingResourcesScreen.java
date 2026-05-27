@@ -3,6 +3,7 @@ package com.pryzmm.splitself.screen;
 import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.client.SplitSelfClient;
 import com.pryzmm.splitself.file.ZipFunc;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.LogoDrawer;
 import net.minecraft.client.gui.screen.Screen;
@@ -41,7 +42,7 @@ public class LoadingResourcesScreen extends Screen {
             context.drawText(textRenderer, Text.literal(text), (context.getScaledWindowWidth() / 2) - (textRenderer.getWidth(text) / 2), context.getScaledWindowHeight() / 2, 0xFFFFFFFF, false);
             context.drawBorder((context.getScaledWindowWidth() / 2) - 100, context.getScaledWindowHeight() / 2 + 10, 200, 10, 0xFFFFFFFF);
             context.fill((context.getScaledWindowWidth() / 2) - 98, context.getScaledWindowHeight() / 2 + 12, ((context.getScaledWindowWidth() / 2) - 98) + (int) ((ZipFunc.getDownloadProgress() >= 0 ? ZipFunc.getDownloadProgress() : 0) * 196), context.getScaledWindowHeight() / 2 + 18, 0xFFFFFFFF);
-        } else this.close();
+        } else MinecraftClient.getInstance().setScreen(new PreMainScreen());
 
     }
 

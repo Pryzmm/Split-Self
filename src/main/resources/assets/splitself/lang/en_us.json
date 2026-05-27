@@ -295,6 +295,10 @@
   "misc.splitself.multiplayer": "Come back to me... don't retreat to our friends... you coward.",
   "misc.splitself.realms": "Who even plays Realms?",
   "misc.splitself.9Minecraft": "<SplitSelf> Looks like you visited 9Minecraft, you didn't download anything from there, right? Downloading mods from there might not be safe, and it also doesn't properly support the mod creators! Please try to download from sites like Modrinth next time! You wouldn't want malware on your computer now, would you?",
+  "misc.splitself.best_experience": "For the best experience, please have:",
+  "misc.splitself.best_experience.shriek": "Shriek installed",
+  "misc.splitself.best_experience.internet": "An active internet connection",
+  "misc.splitself.best_experience.externals": "Downloaded external resources",
 
   "sign.splitself.allFake": "was this all fake?",
   "sign.splitself.almostFree": "im almost free.",

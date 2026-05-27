@@ -17,6 +17,11 @@ import java.util.stream.Stream;
 
 public class ZipFunc {
 
+    public static boolean downloadedFiles = false;
+    static {
+        if (!needsVideoDownloads()) downloadedFiles = true;
+    }
+
     private static final AtomicLong totalBytes = new AtomicLong(-1);
     private static final AtomicLong downloadedBytes = new AtomicLong(0);
 
@@ -83,6 +88,7 @@ public class ZipFunc {
                 }
 
                 SplitSelf.LOGGER.info("Done.");
+                downloadedFiles = true;
                 future.complete(null);
             } catch (Exception e) {
                 future.completeExceptionally(e);

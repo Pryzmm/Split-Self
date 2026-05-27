@@ -1,6 +1,6 @@
 package com.pryzmm.splitself.mixin;
 
-import com.pryzmm.splitself.events.EventHelper;
+import com.pryzmm.splitself.events.helper.EventHelper;
 import com.pryzmm.splitself.events.EventManager;
 import net.minecraft.client.util.Window;
 import org.spongepowered.asm.mixin.Mixin;

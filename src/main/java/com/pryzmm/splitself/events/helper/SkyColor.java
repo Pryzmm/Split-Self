@@ -1,4 +1,4 @@
-package com.pryzmm.splitself.events;
+package com.pryzmm.splitself.events.helper;
 
 public class SkyColor {
     private static Integer currentSkyColor = null;

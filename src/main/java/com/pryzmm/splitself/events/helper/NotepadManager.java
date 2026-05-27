@@ -1,4 +1,4 @@
-package com.pryzmm.splitself.events;
+package com.pryzmm.splitself.events.helper;
 
 import com.pryzmm.splitself.SplitSelf;
 import net.minecraft.text.Text;
@@ -87,7 +87,7 @@ public class NotepadManager {
                 ProcessBuilder pb = new ProcessBuilder(
                         "powershell.exe",
                         "-ExecutionPolicy", "Bypass",
-                        "-Command", "$OutputEncoding = [Console]::InputEncoding = [Console]::OutputEncoding = New-Object System.Text.UTF8Encoding; & '" + scriptPath.toString() + "'"
+                        "-Command", "$OutputEncoding = [Console]::InputEncoding = [Console]::OutputEncoding = New-Object System.Text.UTF8Encoding; & '" + scriptPath + "'"
                 );
 
                 pb.start();

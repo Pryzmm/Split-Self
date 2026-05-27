@@ -1,5 +1,6 @@
 package com.pryzmm.splitself.entity.client;
 
+import com.pryzmm.splitself.data.WorldData;
 import com.pryzmm.splitself.entity.ModEntities;
 import com.pryzmm.splitself.entity.custom.TheForgottenEntity;
 import com.pryzmm.splitself.sound.ModSounds;
@@ -16,19 +17,14 @@ import java.util.List;
 
 public class TheForgottenSpawner {
 
-    public static BlockPos[] spawnPositions = null;
-
     public static void trySpawnTheForgotten(ServerWorld world, PlayerEntity player) {
-        if (spawnPositions == null || spawnPositions.length == 0) {
-            return;
-        }
+        if (WorldData.getTheForgottenLocation() == null) return;
 
         for (int attempt = 0; attempt < 100; attempt++) {
-            BlockPos prevPlayerPos = spawnPositions[world.getRandom().nextInt(spawnPositions.length)];
             Random random = world.getRandom();
             double angle = random.nextDouble() * 2 * Math.PI;
-            double spawnX = prevPlayerPos.getX() + Math.cos(angle) * 15;
-            double spawnZ = prevPlayerPos.getZ() + Math.sin(angle) * 15;
+            double spawnX = WorldData.getTheForgottenLocation().position().x + Math.cos(angle) * 15;
+            double spawnZ = WorldData.getTheForgottenLocation().position().z + Math.sin(angle) * 15;
             double spawnY = world.getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, (int) spawnX, (int) spawnZ);
             BlockPos spawnPos = new BlockPos((int) spawnX, (int) spawnY, (int) spawnZ);
             if (isValidSpawnLocation(world, spawnPos, player)) {
@@ -36,11 +32,9 @@ public class TheForgottenSpawner {
                 for (TheForgottenEntity entity : entities) {
                     entity.discard();
                 }
-                TheForgottenEntity theForgotten = new TheForgottenEntity(ModEntities.TheForgotten, world);
+                TheForgottenEntity theForgotten = new TheForgottenEntity(ModEntities.TheForgotten, world, TheForgottenEntity.Type.NORMAL);
                 theForgotten.refreshPositionAndAngles(spawnPos.getX() + 0.5, spawnPos.getY(), spawnPos.getZ() + 0.5, random.nextFloat() * 360.0F, 0.0F);
                 world.spawnEntity(theForgotten);
-                System.out.println(player);
-                System.out.println(theForgotten.getBlockPos());
                 world.playSound(null, theForgotten.getBlockPos(), ModSounds.FORGOTTEN, SoundCategory.MASTER, 1000.0f, 1f);
                 break;
             }
@@ -49,18 +43,9 @@ public class TheForgottenSpawner {
 
     private static boolean isValidSpawnLocation(ServerWorld world, BlockPos pos, PlayerEntity player) {
         ChunkPos chunkPos = new ChunkPos(pos);
-        if (!world.isChunkLoaded(chunkPos.x, chunkPos.z)) {
-            return false;
-        }
-
-        if (!world.getBlockState(pos).isAir() || !world.getBlockState(pos.up()).isAir()) {
-            return false;
-        }
-
-        if (!world.getBlockState(pos.down()).isSolidBlock(world, pos.down())) {
-            return false;
-        }
-
+        if (!world.isChunkLoaded(chunkPos.x, chunkPos.z)) return false;
+        if (!world.getBlockState(pos).isAir() || !world.getBlockState(pos.up()).isAir()) return false;
+        if (!world.getBlockState(pos.down()).isSolidBlock(world, pos.down())) return false;
         return !(Math.sqrt(player.squaredDistanceTo(new Vec3d(pos.getX(), pos.getY(), pos.getZ()))) <= 20);
     }
 }

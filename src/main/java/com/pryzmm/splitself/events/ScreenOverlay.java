@@ -1,11 +1,13 @@
 package com.pryzmm.splitself.events;
 
 import com.pryzmm.splitself.SplitSelf;
+import com.pryzmm.splitself.events.helper.ChunkDestroyer;
 import com.pryzmm.splitself.screen.*;
 import com.pryzmm.splitself.sound.ModSounds;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 
 import java.io.File;
@@ -134,4 +136,17 @@ public class ScreenOverlay {
             EventManager.ACTIVE_EVENT = false;
         }).start();
     }
+
+    public static void executeStaticScreen(ServerPlayerEntity player) {
+        EventManager.ACTIVE_EVENT = true;
+        new Thread(() -> {
+            StaticOverlay.toggleOverlay();
+            player.getWorld().playSound(null, player.getBlockPos(), ModSounds.STATIC2, SoundCategory.MASTER, 1.0f, 1.0f);
+            try { Thread.sleep(30000); } catch (InterruptedException ignored) {}
+            MinecraftClient.getInstance().getSoundManager().stopSounds(ModSounds.STATIC2.getId(), SoundCategory.MASTER);
+            StaticOverlay.toggleOverlay();
+            EventManager.ACTIVE_EVENT = false;
+        }).start();
+    }
+
 }

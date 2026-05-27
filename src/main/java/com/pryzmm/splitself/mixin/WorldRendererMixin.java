@@ -1,7 +1,7 @@
 package com.pryzmm.splitself.mixin;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.pryzmm.splitself.events.SkyColor;
+import com.pryzmm.splitself.events.helper.SkyColor;
 import net.minecraft.client.render.*;
 import net.minecraft.util.math.Vec3d;
 import org.spongepowered.asm.mixin.Mixin;

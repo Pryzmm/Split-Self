@@ -10,6 +10,7 @@ import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
+import net.minecraft.world.World;
 
 public class ModEntities {
 
@@ -24,7 +25,7 @@ public class ModEntities {
 
     public static final EntityType<TheForgottenEntity> TheForgotten = Registry.register(Registries.ENTITY_TYPE,
             Identifier.of(SplitSelf.MOD_ID, "the_forgotten"),
-            EntityType.Builder.create(TheForgottenEntity::new, SpawnGroup.CREATURE).dimensions(0.6f, 1.8f).build());
+            EntityType.Builder.create((EntityType<TheForgottenEntity> entityType, World world) -> new TheForgottenEntity(entityType, world), SpawnGroup.CREATURE).dimensions(0.6f, 1.8f).build());
 
     public static void registerModEntities() {
         SplitSelf.LOGGER.info("Loading and registering entities...");

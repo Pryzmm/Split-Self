@@ -1,4 +1,4 @@
-package com.pryzmm.splitself.events;
+package com.pryzmm.splitself.events.helper;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;

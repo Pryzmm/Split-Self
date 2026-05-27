@@ -1,6 +1,7 @@
 package com.pryzmm.splitself.screen;
 
 import com.pryzmm.splitself.SplitSelf;
+import com.pryzmm.splitself.data.PersistentData;
 import com.pryzmm.splitself.data.WorldData;
 import com.pryzmm.splitself.file.DesktopFileUtil;
 import net.minecraft.client.gui.DrawContext;
@@ -29,6 +30,7 @@ public class WarningScreen extends Screen {
             Text.literal(SplitSelf.translate("warning.splitself.continue").getString()),
             button -> {
                 DesktopFileUtil.createFileOnDesktop(SplitSelf.translate("files.splitself.begin.title").getString() + ".txt", SplitSelf.translate("files.splitself.begin.message").getString());
+                PersistentData.setPanoramaStage("main");
                 this.close();
             }
         ).position(this.width / 2 - 105, this.height - 50)

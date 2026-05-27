@@ -18,10 +18,18 @@ public class TheForgottenEntity extends HostileEntity {
 
     public final AnimationState idleAnimationState = new AnimationState();
 
+    public static TheForgottenEntity existingEntity = null;
+
+    public final Type type;
+
     private int playerUpdateTimer = 0;
     private static final int PLAYER_UPDATE_INTERVAL = 20;
 
     public void setupGoals() {
+        if (!this.getWorld().isClient()) {
+            if (existingEntity != null && existingEntity != this) existingEntity.remove(RemovalReason.DISCARDED);
+            existingEntity = this;
+        }
         this.goalSelector.add(3, new LookAtEntityGoal(this, PlayerEntity.class, 100.0F, 1F));
     }
 
@@ -51,14 +59,25 @@ public class TheForgottenEntity extends HostileEntity {
         return false;
     }
 
+    public enum Type {
+        NORMAL, DISAPPEAR
+    }
+
     public TheForgottenEntity(EntityType<? extends HostileEntity> entityType, World world) {
         super(entityType, world);
+        this.type = Type.NORMAL;
+        setupGoals();
+    }
+
+    public TheForgottenEntity(EntityType<? extends HostileEntity> entityType, World world, Type type) {
+        super(entityType, world);
+        this.type = type;
         setupGoals();
     }
 
     @Override
     public @Nullable EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData) {
-        setupGoals();
         return super.initialize(world, difficulty, spawnReason, entityData);
     }
+
 }

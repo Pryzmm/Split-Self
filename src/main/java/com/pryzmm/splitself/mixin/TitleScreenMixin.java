@@ -1,8 +1,11 @@
 package com.pryzmm.splitself.mixin;
 
 import com.pryzmm.splitself.SplitSelf;
+import com.pryzmm.splitself.client.SplitSelfClient;
+import com.pryzmm.splitself.data.PersistentData;
 import com.pryzmm.splitself.file.ZipFunc;
 import com.pryzmm.splitself.screen.LoadingResourcesScreen;
+import com.pryzmm.splitself.screen.PreMainScreen;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ButtonTextures;
 import net.minecraft.client.gui.screen.TitleScreen;
@@ -21,9 +24,10 @@ class TitleScreenMixin {
     @Inject(method = "init", at = @At("TAIL"))
     private void onInit(CallbackInfo ci) {
 
-        if (ZipFunc.needsVideoDownloads()) {
-            MinecraftClient.getInstance().setScreen(new LoadingResourcesScreen());
-        }
+        if (ZipFunc.needsVideoDownloads()) MinecraftClient.getInstance().setScreen(new LoadingResourcesScreen());
+        else if (!PreMainScreen.viewedScreen) MinecraftClient.getInstance().setScreen(new PreMainScreen());
+
+        SplitSelfClient.panorama = PersistentData.getPanoramaStage();
 
         if (!SplitSelf.ShriekInstalled) {
             System.out.println("Shriek not installed, adding Shriek button");

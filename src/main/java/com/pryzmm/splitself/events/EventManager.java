@@ -8,6 +8,7 @@ import com.pryzmm.splitself.config.DefaultConfig;
 import com.pryzmm.splitself.data.WorldData;
 import com.pryzmm.splitself.entity.client.TheForgottenSpawner;
 import com.pryzmm.splitself.entity.custom.TheForgottenEntity;
+import com.pryzmm.splitself.events.helper.*;
 import com.pryzmm.splitself.file.JsonReader;
 import com.pryzmm.splitself.entity.ModEntities;
 import com.pryzmm.splitself.entity.client.TheOtherSpawner;
@@ -122,7 +123,8 @@ public class EventManager {
         WEATHER,
         MEMORIES,
         MORSE,
-        CORAL
+        CORAL,
+        STATIC
     }
 
     public static Map<Events, Boolean> oneTimeEvents = new HashMap<>(); // oneLastTime events ong
@@ -1116,6 +1118,7 @@ public class EventManager {
                     }
                 }
             }
+            case STATIC -> ScreenOverlay.executeStaticScreen(player);
         }
     }
 }

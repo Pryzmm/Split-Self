@@ -3,7 +3,17 @@ package com.pryzmm.splitself.file;
 import com.google.gson.*;
 import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.config.DefaultConfig;
+import com.pryzmm.splitself.data.Location;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
+
 import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -248,6 +258,28 @@ public class JsonReader {
         return defaultValue;
     }
 
+    public Location getLocation(String key, Location defaultValue) {
+        if (jsonObject.has(key) && !jsonObject.get(key).isJsonNull()) {
+            List<String> values = Arrays.stream(jsonObject.get(key).getAsString().split(";")).toList();
+            MinecraftServer server = MinecraftClient.getInstance().getServer();
+            if (server != null) {
+                RegistryKey<World> worldKey = RegistryKey.of(RegistryKeys.WORLD, Identifier.of(values.get(0)));
+                ServerWorld world = server.getWorld(worldKey);
+                if (world != null) {
+                    Vec3d pos = new Vec3d(
+                        Double.parseDouble(values.get(1)),
+                        Double.parseDouble(values.get(2)),
+                        Double.parseDouble(values.get(3))
+                    );
+                    float yaw   = Float.parseFloat(values.get(4));
+                    float pitch = Float.parseFloat(values.get(5));
+                    return new Location(world, pos, yaw, pitch);
+                }
+            }
+        }
+        return defaultValue;
+    }
+
     @SuppressWarnings("unchecked")
     public <T> Map<String, T> getMap(String key, Class<T> valueType) {
         if (jsonObject.has(key) && jsonObject.get(key).isJsonObject()) {
@@ -330,6 +362,10 @@ public class JsonReader {
 
     public void setBoolean(String key, boolean value) {
         jsonObject.addProperty(key, value);
+    }
+
+    public void setLocation(String key, Location value) {
+        jsonObject.addProperty(key, value.toString());
     }
 
     public void setIntInObject(String arrayKey, String configKey, int value) {
