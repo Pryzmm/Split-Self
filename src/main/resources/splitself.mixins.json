@@ -21,6 +21,7 @@
   },
   "mixins": [
     "CoralMixin",
+    "PlayerChangeWorldMixin",
     "SleepMixin",
     "WolfMixin"
   ]

@@ -14,13 +14,15 @@ import com.pryzmm.splitself.entity.client.TheOtherModel;
 import com.pryzmm.splitself.entity.client.TheOtherRenderer;
 import com.pryzmm.splitself.file.BrowserHistoryReader;
 import com.pryzmm.splitself.file.CountryLocator;
-import com.pryzmm.splitself.screen.SkyImageRenderer;
-import com.pryzmm.splitself.screen.StaticOverlay;
+import com.pryzmm.splitself.screen.misc.BlendManager;
+import com.pryzmm.splitself.screen.misc.SkyImageRenderer;
+import com.pryzmm.splitself.screen.overlay.StaticOverlay;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
@@ -95,6 +97,8 @@ public class SplitSelfClient implements ClientModInitializer {
                 }
             }
         });
+
+        HudRenderCallback.EVENT.register(BlendManager::render);
 
         ScreenEvents.AFTER_INIT.register((client, screen, scaledWidth, scaledHeight) -> {
             if (screen instanceof TitleScreen titleScreen) {

@@ -28,6 +28,7 @@ public class ModSounds {
     public static final SoundEvent GLITCH = registerSoundEvent("glitch");
     public static final SoundEvent FORGOTTEN = registerSoundEvent("forgotten");
     public static final SoundEvent MEMORY = registerSoundEvent("memory");
+    public static final SoundEvent TONE = registerSoundEvent("tone");
 
     static {
         registerSoundEvent("in_my_life");

@@ -18,6 +18,7 @@ import com.pryzmm.splitself.events.*;
 import com.pryzmm.splitself.file.ZipFunc;
 import com.pryzmm.splitself.func.StripMine;
 import com.pryzmm.splitself.screen.WarningScreen;
+import com.pryzmm.splitself.screen.misc.BlendManager;
 import com.pryzmm.splitself.world.DeadCoralChunkGenerator;
 import com.pryzmm.splitself.world.DimensionRegistry;
 import net.minecraft.client.MinecraftClient;
@@ -100,6 +101,14 @@ public class SplitSelfCommands {
                             Vec3d vec3d = new Vec3d(player.getPos().x, 319, player.getPos().z);
                             player.sendMessageToClient(Text.literal(EventManager.moveVectorFromBase(player, vec3d).toString()), false);
                         }
+                        return 1;
+                    })
+                )
+                .then(CommandManager.literal("debugInvert")
+                    .requires(source -> source.hasPermissionLevel(2))
+                    .executes(context -> {
+                        ServerPlayerEntity player = context.getSource().getPlayer();
+                        if (player != null) BlendManager.modifyBlend = !BlendManager.modifyBlend;
                         return 1;
                     })
                 )

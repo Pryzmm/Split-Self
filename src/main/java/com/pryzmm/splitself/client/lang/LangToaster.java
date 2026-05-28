@@ -1,6 +1,6 @@
 package com.pryzmm.splitself.client.lang;
 
-import com.pryzmm.splitself.screen.Lang_Toaster_Overlay;
+import com.pryzmm.splitself.screen.misc.Lang_Toaster_Overlay;
 import net.fabricmc.fabric.api.client.screen.v1.Screens;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.TitleScreen;

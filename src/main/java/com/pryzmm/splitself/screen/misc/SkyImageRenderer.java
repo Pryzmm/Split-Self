@@ -1,4 +1,4 @@
-package com.pryzmm.splitself.screen;
+package com.pryzmm.splitself.screen.misc;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.pryzmm.splitself.data.WorldData;

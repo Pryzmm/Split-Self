@@ -1,4 +1,4 @@
-package com.pryzmm.splitself.screen;
+package com.pryzmm.splitself.screen.misc;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;

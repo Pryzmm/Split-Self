@@ -1,11 +1,11 @@
-package com.pryzmm.splitself.screen;
+package com.pryzmm.splitself.screen.overlay;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
-import java.awt.*;
+
 import java.util.Random;
 
 public class TheOtherOverlay {

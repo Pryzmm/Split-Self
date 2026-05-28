@@ -19,7 +19,8 @@ import com.pryzmm.splitself.item.ModItems;
 import com.pryzmm.splitself.mixin.WolfMixin;
 import com.pryzmm.splitself.screen.KickScreen;
 import com.pryzmm.splitself.screen.PoemScreen;
-import com.pryzmm.splitself.screen.SkyImageRenderer;
+import com.pryzmm.splitself.screen.misc.BlendManager;
+import com.pryzmm.splitself.screen.misc.SkyImageRenderer;
 import com.pryzmm.splitself.sound.ModSounds;
 import com.pryzmm.splitself.world.DimensionRegistry;
 import net.minecraft.block.*;
@@ -124,7 +125,8 @@ public class EventManager {
         MEMORIES,
         MORSE,
         CORAL,
-        STATIC
+        STATIC,
+        INVERTCOLOR
     }
 
     public static Map<Events, Boolean> oneTimeEvents = new HashMap<>(); // oneLastTime events ong
@@ -1119,6 +1121,15 @@ public class EventManager {
                 }
             }
             case STATIC -> ScreenOverlay.executeStaticScreen(player);
+            case INVERTCOLOR -> new Thread(() -> {
+                try {
+                    world.playSound(null, Objects.requireNonNull(player).getBlockPos(), ModSounds.TONE, SoundCategory.MASTER, 1.0f, 0.5f);
+                    BlendManager.invertBlend = true;
+                    Thread.sleep(20000);
+                    BlendManager.invertBlend = false;
+                    client.getSoundManager().stopSounds(ModSounds.TONE.getId(), SoundCategory.MASTER);
+                } catch (Exception ignored) {}
+            }).start();
         }
     }
 }

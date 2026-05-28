@@ -176,5 +176,13 @@
         "name": "splitself:memory"
       }
     ]
+  },
+  "tone": {
+    "category": "master",
+    "sounds": [
+      {
+        "name": "splitself:tone"
+      }
+    ]
   }
 }

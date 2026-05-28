@@ -1,24 +1,21 @@
-package com.pryzmm.splitself.screen;
+package com.pryzmm.splitself.screen.overlay;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.pryzmm.splitself.SplitSelf;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 
-public class ScreenOverlayRenderer {
+public class TheOtherWhiteOverlay {
     public static boolean overlayVisible = false;
     public static long lastShakeUpdate = 0;
-    public static long lastShakeUpdate2 = 0;
     static int shakeX;
     static int shakeY;
-    static int shakeX2;
-    static int shakeY2;
 
-    public static final Identifier OVERLAY_IMAGE = Identifier.of(SplitSelf.MOD_ID, "textures/screen/overlay.png");
+    public static final Identifier OVERLAY_IMAGE = Identifier.of(SplitSelf.MOD_ID, "textures/screen/overlay_white.png");
+    public static final Identifier OVERLAY_PLAYER_IMAGE = Identifier.of(SplitSelf.MOD_ID, "textures/screen/player.png");
 
     public static void toggleOverlay() {
         overlayVisible = !overlayVisible;
@@ -46,7 +43,6 @@ public class ScreenOverlayRenderer {
 
         RenderSystem.polygonOffset(-1.0f, -1.0f);
         RenderSystem.enablePolygonOffset();
-
         drawContext.fill(0, 0, screenWidth, screenHeight, 0x80000000);
 
         renderOverlayContent(drawContext, screenWidth, screenHeight);
@@ -59,39 +55,44 @@ public class ScreenOverlayRenderer {
     }
 
     public static void renderOverlayContent(DrawContext drawContext, int screenWidth, int screenHeight) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        TextRenderer textRenderer = client.textRenderer;
-
-        renderImageOverlay(drawContext, screenWidth, screenHeight);
-
-        String overlayText = SplitSelf.translate("events.splitself.screenOverlay.message").getString();
-        int textWidth = textRenderer.getWidth(overlayText);
-        int textX = ((screenWidth - textWidth) / 2) + 100;
-        int textY = (screenHeight / 2) + 100;
-
         long currentTime = System.currentTimeMillis();
-        if (currentTime - lastShakeUpdate >= 50) {
+        if (currentTime - lastShakeUpdate >= 10) {
             shakeX = -(int) (Math.random() * 200);
             shakeY = -(int) (Math.random() * 200);
+            lastShakeUpdate = currentTime;
         }
 
-        drawContext.drawTextWithShadow(textRenderer, overlayText, textX+shakeX, textY+shakeY, 0xFFFFFF);
+        renderOverlayImage(drawContext, screenWidth + 200, screenHeight + 200, OVERLAY_IMAGE, shakeX, shakeY, true);
+
+        renderCenteredPlayerImage(drawContext, screenWidth, screenHeight, OVERLAY_PLAYER_IMAGE, 102, 153);
     }
 
-    public static void renderImageOverlay(DrawContext drawContext, int screenWidth, int screenHeight) {
+    public static void renderOverlayImage(DrawContext drawContext, int imageWidth, int imageHeight, Identifier image, int offsetX, int offsetY, boolean randomColor) {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
-        RenderSystem.setShaderColor((float) Math.random(), (float) Math.random(), (float) Math.random(), 1.0f);
-        long currentTime2 = System.currentTimeMillis();
-        if (currentTime2 - lastShakeUpdate2 >= 10) {
-            shakeX2 = -(int) (Math.random() * 20);
-            shakeY2 = -(int) (Math.random() * 20);
-            lastShakeUpdate2 = currentTime2;
+
+        if (randomColor) {
+            RenderSystem.setShaderColor((float) (Math.random()/5 + 0.8), (float) (Math.random()/5 + 0.8), (float) (Math.random()/5 + 0.8), 1.0f);
+        } else {
+            RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
         }
 
-        drawContext.drawTexture(OVERLAY_IMAGE, shakeX2, shakeY2, 0, 0,
-                screenWidth + 20, screenHeight + 20,
-                screenWidth, screenHeight);
+        drawContext.drawTexture(image, offsetX, offsetY, 0, 0, imageWidth, imageHeight, imageWidth, imageHeight);
+
+        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+        RenderSystem.disableBlend();
+    }
+
+    public static void renderCenteredPlayerImage(DrawContext drawContext, int screenWidth, int screenHeight, Identifier image, int imageWidth, int imageHeight) {
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+
+        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+
+        int centerX = (screenWidth - imageWidth) / 2;
+        int centerY = (screenHeight - imageHeight) / 2;
+
+        drawContext.drawTexture(image, centerX, centerY, 0, 0, imageWidth, imageHeight, imageWidth, imageHeight);
 
         RenderSystem.disableBlend();
     }

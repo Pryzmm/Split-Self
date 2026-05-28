@@ -1,4 +1,4 @@
-package com.pryzmm.splitself.screen;
+package com.pryzmm.splitself.screen.overlay;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.pryzmm.splitself.SplitSelf;

@@ -2,7 +2,7 @@ package com.pryzmm.splitself.events;
 
 import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.events.helper.ChunkDestroyer;
-import com.pryzmm.splitself.screen.*;
+import com.pryzmm.splitself.screen.overlay.*;
 import com.pryzmm.splitself.sound.ModSounds;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
