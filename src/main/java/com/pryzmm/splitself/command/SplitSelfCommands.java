@@ -113,22 +113,24 @@ public class SplitSelfCommands {
                     })
                 )
                 .then(CommandManager.literal("debugVideo")
-                    .requires(source -> source.hasPermissionLevel(2))
-                    .executes(context -> {
-                        MinecraftClient mc = MinecraftClient.getInstance();
-                        mc.execute(() -> {
-                            try {
-                                VideoHandleFactory factory = SplitSelfClient.videoManager.getVideoHandleFactory();
-                                VideoHandle idHandle = factory.getVideoHandle(ZipFunc.getVideo("test"));
-                                VideoScreen screen = new VideoScreen(SplitSelfClient.videoPlayer);
-                                mc.setScreen(screen);
-                                SplitSelfClient.videoPlayer.getMediaInterface().play(idHandle);
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
-                            }
-                        });
-                        return 1;
-                    })
+                    .then(CommandManager.argument("video", StringArgumentType.greedyString())
+                        .requires(source -> source.hasPermissionLevel(2))
+                        .executes(context -> {
+                            MinecraftClient mc = MinecraftClient.getInstance();
+                            mc.execute(() -> {
+                                try {
+                                    VideoHandleFactory factory = SplitSelfClient.videoManager.getVideoHandleFactory();
+                                    VideoHandle idHandle = factory.getVideoHandle(ZipFunc.getVideo(StringArgumentType.getString(context, "video")).toURI().toURL());
+                                    VideoScreen screen = new VideoScreen(SplitSelfClient.videoPlayer);
+                                    mc.setScreen(screen);
+                                    SplitSelfClient.videoPlayer.getMediaInterface().play(idHandle);
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            });
+                            return 1;
+                        })
+                    )
                 )
                 .then(CommandManager.literal("debugEmpty")
                     .requires(source -> source.hasPermissionLevel(2))

@@ -19,6 +19,10 @@ repositories {
         name = "Modrinth"
         url = "https://api.modrinth.com/maven"
     }
+	maven {
+		name = "FDD Maven"
+		url = "https://maven.firstdark.dev/releases"
+	}
 }
 
 loom {
@@ -38,6 +42,9 @@ dependencies {
 
     implementation 'com.google.code.gson:gson:2.10.1'
     include 'com.google.code.gson:gson:2.10.1'
+
+	implementation 'dev.firstdark.discordrpc:discord-rpc:1.0.3'
+	include 'dev.firstdark.discordrpc:discord-rpc:1.0.3'
 
     modImplementation files("libs/videolib-1.0.0.jar")
     include files("libs/videolib-1.0.0.jar")

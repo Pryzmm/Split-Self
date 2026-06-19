@@ -16,7 +16,12 @@ import com.pryzmm.splitself.file.BrowserHistoryReader;
 import com.pryzmm.splitself.file.CountryLocator;
 import com.pryzmm.splitself.screen.misc.BlendManager;
 import com.pryzmm.splitself.screen.misc.SkyImageRenderer;
+import com.pryzmm.splitself.screen.overlay.RecursiveRenderer;
 import com.pryzmm.splitself.screen.overlay.StaticOverlay;
+import dev.firstdark.rpc.DiscordRpc;
+import dev.firstdark.rpc.exceptions.UnsupportedOsType;
+import dev.firstdark.rpc.handlers.RPCEventHandler;
+import dev.firstdark.rpc.models.User;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
@@ -48,6 +53,21 @@ public class SplitSelfClient implements ClientModInitializer {
 
     public static String panorama = "main";
 
+    public static boolean RPCInitialized = false;
+    public static DiscordRpc RPC = new DiscordRpc();
+    public static String discordUsername = null;
+    static {
+        try {
+            RPC.init("1512578067590152192", new RPCEventHandler() {
+                @Override
+                public void ready(User user) {
+                    discordUsername = user.getUsername();
+                }
+            }, false);
+            RPCInitialized = true;
+        } catch (UnsupportedOsType e) { SplitSelf.LOGGER.error("Could not initialize RPC functionality due to an unsupported OS ({})", e.getMessage()); }
+    }
+
     @Override
     public void onInitializeClient() {
 
@@ -64,6 +84,8 @@ public class SplitSelfClient implements ClientModInitializer {
 
         System.setProperty("java.awt.headless", "false");
         StaticOverlay.register();
+
+        RecursiveRenderer.init();
 
         CountryLocator.getCountryCodeAsync(); // Addition to make the country location in cache
 

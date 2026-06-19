@@ -149,4 +149,18 @@ public class ScreenOverlay {
         }).start();
     }
 
+
+
+    public static void executeRecursiveScreen(ServerPlayerEntity player) {
+        EventManager.ACTIVE_EVENT = true;
+        new Thread(() -> {
+            RecursiveRenderer.toggleOverlay();
+            player.getWorld().playSound(null, player.getBlockPos(), ModSounds.GLITCH2, SoundCategory.MASTER, 1.0f, 1.0f);
+            try { Thread.sleep(2000); } catch (InterruptedException ignored) {}
+            MinecraftClient.getInstance().getSoundManager().stopSounds(ModSounds.GLITCH2.getId(), SoundCategory.MASTER);
+            RecursiveRenderer.toggleOverlay();
+            EventManager.ACTIVE_EVENT = false;
+        }).start();
+    }
+
 }

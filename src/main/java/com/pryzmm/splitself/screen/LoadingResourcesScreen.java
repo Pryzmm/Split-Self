@@ -18,12 +18,13 @@ public class LoadingResourcesScreen extends Screen {
             SplitSelf.LOGGER.info("Performing one-time video download");
             // The link below downloads all necessary files for the mod to function as intended.
             // If it cannot be successfully downloaded, it will try to work around wherever downloaded files are used via streaming or other methods.
-            ZipFunc.downloadAndExtract("https://www.dropbox.com/scl/fi/w3qs1xvl44oy62en9nj6s/Split-Self-Videos.zip?rlkey=3y928tg8cyqh6l84rrtrfrk1t&st=yduk2ype&dl=1", ZipFunc.getDest())
+            ZipFunc.downloadAndExtract("https://www.dropbox.com/scl/fo/zbc2w6xo70rluzd0t8g50/AIx7n0e8yuQqTpw9G1-bhUI?rlkey=0j7fos8c24tckpxo5vtj50rj4&st=9wv05gpz&dl=1", ZipFunc.getDest())
                 .thenAccept(v -> SplitSelfClient.loadedResources = true)
                 .whenComplete((result, e) -> {
                     if (e != null) {
                         SplitSelf.LOGGER.error("Download failed: {}", e.getMessage());
                         SplitSelfClient.resourcesFailed = true;
+                        SplitSelfClient.loadedResources = true;
                     }
                 });
         } else {

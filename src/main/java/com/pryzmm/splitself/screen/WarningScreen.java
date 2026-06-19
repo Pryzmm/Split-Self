@@ -1,9 +1,14 @@
 package com.pryzmm.splitself.screen;
 
+import com.igrium.videolib.api.VideoHandle;
+import com.igrium.videolib.api.VideoHandleFactory;
+import com.igrium.videolib.render.VideoScreen;
 import com.pryzmm.splitself.SplitSelf;
+import com.pryzmm.splitself.client.SplitSelfClient;
 import com.pryzmm.splitself.data.PersistentData;
 import com.pryzmm.splitself.data.WorldData;
 import com.pryzmm.splitself.file.DesktopFileUtil;
+import com.pryzmm.splitself.file.ZipFunc;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -31,21 +36,28 @@ public class WarningScreen extends Screen {
             button -> {
                 DesktopFileUtil.createFileOnDesktop(SplitSelf.translate("files.splitself.begin.title").getString() + ".txt", SplitSelf.translate("files.splitself.begin.message").getString());
                 PersistentData.setPanoramaStage("main");
-                this.close();
+                try {
+                    VideoHandleFactory factory = SplitSelfClient.videoManager.getVideoHandleFactory();
+                    VideoHandle idHandle = factory.getVideoHandle(ZipFunc.getVideo("house").toURI().toURL());
+                    VideoScreen screen = new VideoScreen(SplitSelfClient.videoPlayer);
+                    client.setScreen(screen);
+                    SplitSelfClient.videoPlayer.getMediaInterface().play(idHandle);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
             }
         ).position(this.width / 2 - 105, this.height - 50)
         .size(100, 20)
         .build());
-
         this.addDrawableChild(ButtonWidget.builder(
-                        SplitSelf.translate("warning.splitself.PII.toggle"),
-                        button -> {
-                            localPII = !localPII;
-                            WorldData.setPII(localPII);
-                        }
-                ).position(this.width / 2 + 5, this.height - 50)
-                .size(100, 20)
-                .build());
+            SplitSelf.translate("warning.splitself.PII.toggle"),
+            button -> {
+                localPII = !localPII;
+                WorldData.setPII(localPII);
+            }
+        ).position(this.width / 2 + 5, this.height - 50)
+        .size(100, 20)
+        .build());
     }
 
     @Override

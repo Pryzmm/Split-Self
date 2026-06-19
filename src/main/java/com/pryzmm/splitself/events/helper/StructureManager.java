@@ -45,16 +45,28 @@ public class StructureManager {
     }
 
     private static Optional<StructureTemplate> loadStructureFromResource(ServerWorld world, String fileName) {
+        // 1. Try disk (runtime-saved structures like "clone")
+        Path diskPath = getStructuresDirectory(world).resolve(fileName + ".nbt");
+        if (Files.exists(diskPath)) {
+            try (InputStream is = new FileInputStream(diskPath.toFile())) {
+                NbtCompound nbt = NbtIo.readCompressed(is, NbtSizeTracker.ofUnlimitedBytes());
+                StructureTemplate template = new StructureTemplate();
+                template.readNbt(world.getRegistryManager().getWrapperOrThrow(RegistryKeys.BLOCK), nbt);
+                return Optional.of(template);
+            } catch (Exception e) {
+                SplitSelf.LOGGER.error("Error loading structure from disk {}: {}", fileName, e.getMessage());
+            }
+        }
+
+        // 2. Fall back to classpath (bundled structures)
         try {
             String resourcePath = "/data/" + SplitSelf.MOD_ID + "/structures/" + fileName + ".nbt";
-            InputStream inputStream = StructureManager.class.getResourceAsStream(resourcePath);
-            if (inputStream == null) {
-                return Optional.empty();
-            }
-            NbtCompound nbtCompound = NbtIo.readCompressed(inputStream, NbtSizeTracker.ofUnlimitedBytes());
-            inputStream.close();
+            InputStream is = StructureManager.class.getResourceAsStream(resourcePath);
+            if (is == null) return Optional.empty();
+            NbtCompound nbt = NbtIo.readCompressed(is, NbtSizeTracker.ofUnlimitedBytes());
+            is.close();
             StructureTemplate template = new StructureTemplate();
-            template.readNbt(world.getRegistryManager().getWrapperOrThrow(RegistryKeys.BLOCK), nbtCompound);
+            template.readNbt(world.getRegistryManager().getWrapperOrThrow(RegistryKeys.BLOCK), nbt);
             return Optional.of(template);
         } catch (Exception e) {
             SplitSelf.LOGGER.error("Error loading structure from resource {}: {}", fileName, e.getMessage());

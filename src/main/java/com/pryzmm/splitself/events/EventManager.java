@@ -4,6 +4,7 @@ import com.pryzmm.memory.Memory;
 import com.pryzmm.minemessage.MineMessage;
 import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.block.ModBlocks;
+import com.pryzmm.splitself.client.SplitSelfClient;
 import com.pryzmm.splitself.config.DefaultConfig;
 import com.pryzmm.splitself.data.WorldData;
 import com.pryzmm.splitself.entity.client.TheForgottenSpawner;
@@ -23,6 +24,7 @@ import com.pryzmm.splitself.screen.misc.BlendManager;
 import com.pryzmm.splitself.screen.misc.SkyImageRenderer;
 import com.pryzmm.splitself.sound.ModSounds;
 import com.pryzmm.splitself.world.DimensionRegistry;
+import dev.firstdark.rpc.models.DiscordRichPresence;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.SignBlockEntity;
@@ -61,6 +63,8 @@ import net.minecraft.world.World;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -126,7 +130,13 @@ public class EventManager {
         MORSE,
         CORAL,
         STATIC,
-        INVERTCOLOR
+        INVERTCOLOR,
+        CLIPBOARD,
+        RPC,
+        RECORD,
+        DISCORDNAME,
+        DEADCHUNK,
+        RECURSIVE
     }
 
     public static Map<Events, Boolean> oneTimeEvents = new HashMap<>(); // oneLastTime events ong
@@ -416,13 +426,16 @@ public class EventManager {
      *
      */
     public static void triggerRandomEvent(ServerWorld world, ServerPlayerEntity player, Events ForceEvent) {
+
+        MinecraftServer server = world.getServer();
+
         totalEventsTriggered++;
 
         List<ServerPlayerEntity> players = world.getPlayers();
         if (players.isEmpty()) return;
 
-        if (world == world.getServer().getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY)) { return; }
-        if (world == world.getServer().getWorld(DimensionRegistry.EMPTINESS_DIMENSION_KEY)) { return; }
+        if (world == server.getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY)) { return; }
+        if (world == server.getWorld(DimensionRegistry.EMPTINESS_DIMENSION_KEY)) { return; }
 
         Events eventType;
         if (ForceEvent == null) {
@@ -512,12 +525,11 @@ public class EventManager {
             }
             case BILLY -> new Thread(() -> {
                 try {
-                    assert client.getServer() != null;
-                    client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.billy.joined").getString()).formatted(Formatting.YELLOW), false);
+                    server.getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.billy.joined").getString()).formatted(Formatting.YELLOW), false);
                     Thread.sleep(3000);
-                    client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.billy.message").getString()), false);
+                    server.getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.billy.message").getString()), false);
                     Thread.sleep(1500);
-                    client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.billy.left").getString()).formatted(Formatting.YELLOW), false);
+                    server.getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.billy.left").getString()).formatted(Formatting.YELLOW), false);
                 } catch (Exception e) { SplitSelf.LOGGER.error(e.getMessage(), e); }
             }).start();
             case FACE -> SkyImageRenderer.toggleTexture();
@@ -579,22 +591,20 @@ public class EventManager {
                 try {
                     List<HistoryEntry> history = BrowserHistoryReader.getHistory();
                     List<HistoryEntry> mostVisited = BrowserHistoryReader.getMostVisited();
-                    if (history == null) return;
-                    System.out.println(mostVisited);
-                    assert client.getServer() != null;
-                    client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.hello", player.getName().getString()).getString()), false);
+                    if (history == null || history.isEmpty()) return;
+                    server.getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.hello", player.getName().getString()).getString()), false);
                     Thread.sleep(3000);
-                    client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.seeMe", player.getName().getString()).getString()), false);
+                    server.getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.seeMe", player.getName().getString()).getString()), false);
                     Thread.sleep(5000);
-                    client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.iAmYou", player.getName().getString()).getString()), false);
+                    server.getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.iAmYou", player.getName().getString()).getString()), false);
                     Thread.sleep(3000);
-                    client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.iSeeEverything", player.getName().getString()).getString()), false);
+                    server.getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.iSeeEverything", player.getName().getString()).getString()), false);
                     Thread.sleep(4000);
-                    client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.browserName", player.getName().getString(), history.getFirst().browser).getString()), false);
+                    server.getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.browserName", player.getName().getString(), history.getFirst().browser).getString()), false);
                     Thread.sleep(4000);
                     String[] siteName = history.getFirst().title.split(" - ");
                     String siteURL = history.getFirst().url.replaceFirst("https://", "").split("/")[0];
-                    client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.displayRecentSite", player.getName().getString(), siteName[0]).getString()), false);
+                    server.getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.displayRecentSite", player.getName().getString(), siteName[0]).getString()), false);
                     Thread.sleep(3000);
                     String mostVisitedSiteURL;
                     int mostVisitedSiteCount;
@@ -612,11 +622,11 @@ public class EventManager {
                     System.out.println("Browser index: " + (browserIndex));
                     mostVisitedSiteURL = mostVisited.get(browserIndex).url.replaceFirst("https://", "").split("/")[0];
                     mostVisitedSiteCount = mostVisited.get(browserIndex).visitCount;
-                    client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.displayPopularSite", player.getName().getString(), mostVisitedSiteURL).getString()), false);
+                    server.getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.displayPopularSite", player.getName().getString(), mostVisitedSiteURL).getString()), false);
                     Thread.sleep(5000);
-                    client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.displaySiteCount", player.getName().getString(), mostVisitedSiteCount).getString()), false);
+                    server.getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.displaySiteCount", player.getName().getString(), mostVisitedSiteCount).getString()), false);
                     Thread.sleep(4000);
-                    client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.imWatching", player.getName().getString()).getString()).formatted(Formatting.RED), false);
+                    server.getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.browser.imWatching", player.getName().getString()).getString()).formatted(Formatting.RED), false);
                 } catch (Exception e) {
                     SplitSelf.LOGGER.error(e.getMessage(), e);
                 }
@@ -674,8 +684,7 @@ public class EventManager {
                     Double OldScale = client.options.getChatScale().getValue();
                     for (int i = 0; i <= 200; i++) {
                         if (i % 5 == 0) {
-                            assert client.getServer() != null;
-                            client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> " + SplitSelf.translate("events.splitself.scale.message").getString()), false);
+                            server.getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> " + SplitSelf.translate("events.splitself.scale.message").getString()), false);
                         }
                         try {
                             client.options.getChatScale().setValue(Math.random());
@@ -810,8 +819,7 @@ public class EventManager {
                         if (!client.getWindow().isFullscreen()) {
                             assert client.player != null;
                             world.playSound(null, Objects.requireNonNull(player).getBlockPos(), ModSounds.RUMBLE2, SoundCategory.MASTER, 1.0f, 1.0f);
-                            assert client.getServer() != null;
-                            client.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> " + SplitSelf.translate("events.splitself.shrink.message").getString()), false);
+                            server.getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> " + SplitSelf.translate("events.splitself.shrink.message").getString()), false);
                             WINDOW_MANIPULATION_ACTIVE = true;
                             long glfwWindow = client.getWindow().getHandle();
                             int[] width = new int[1];
@@ -939,8 +947,7 @@ public class EventManager {
                     if (!nameHistory.isEmpty()) {
                         for (String name : nameHistory) {
                             if (!name.equals(player.getName().getString())) {
-                                assert client.getServer() != null;
-                                client.getServer().getPlayerManager().broadcast(Text.literal("<" + name + "> " + SplitSelf.translate("events.splitself.sign.imWatchingYou").getString()), false);
+                                server.getPlayerManager().broadcast(Text.literal("<" + name + "> " + SplitSelf.translate("events.splitself.sign.imWatchingYou").getString()), false);
                                 break;
                             }
                         }
@@ -991,18 +998,17 @@ public class EventManager {
             }
             case DISCONNECT -> new Thread(() -> {
                 try {
-                    assert client.getServer() != null;
-                    client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.disconnect.left", player.getName().getString()).getString()).formatted(Formatting.YELLOW), false);
+                    server.getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.disconnect.left", player.getName().getString()).getString()).formatted(Formatting.YELLOW), false);
                     Thread.sleep(100);
-                    client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.disconnect.joined", player.getName().getString()).getString()).formatted(Formatting.YELLOW), false);
+                    server.getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.disconnect.joined", player.getName().getString()).getString()).formatted(Formatting.YELLOW), false);
                     Thread.sleep(1700);
-                    client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.disconnect.left", player.getName().getString()).getString()).formatted(Formatting.YELLOW), false);
+                    server.getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.disconnect.left", player.getName().getString()).getString()).formatted(Formatting.YELLOW), false);
                     Thread.sleep(100);
-                    client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.disconnect.joined", player.getName().getString()).getString()).formatted(Formatting.YELLOW), false);
+                    server.getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.disconnect.joined", player.getName().getString()).getString()).formatted(Formatting.YELLOW), false);
                     Thread.sleep(3900);
-                    client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.disconnect.left", player.getName().getString()).getString()).formatted(Formatting.YELLOW), false);
+                    server.getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.disconnect.left", player.getName().getString()).getString()).formatted(Formatting.YELLOW), false);
                     Thread.sleep(100);
-                    client.getServer().getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.disconnect.joined", player.getName().getString()).getString()).formatted(Formatting.YELLOW), false);
+                    server.getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.disconnect.joined", player.getName().getString()).getString()).formatted(Formatting.YELLOW), false);
                 } catch (Exception e) { SplitSelf.LOGGER.error("Disconnect event failed: {}", e.getMessage(), e); }
             }).start();
             case FORGOTTEN -> TheForgottenSpawner.trySpawnTheForgotten(world, player);
@@ -1130,6 +1136,36 @@ public class EventManager {
                     client.getSoundManager().stopSounds(ModSounds.TONE.getId(), SoundCategory.MASTER);
                 } catch (Exception ignored) {}
             }).start();
+            case CLIPBOARD -> {
+                StringSelection stringSelection = new StringSelection(Text.translatable("events.splitself.clipboard").getString());
+                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                clipboard.setContents(stringSelection, null);
+            }
+            case RPC -> {
+                if (SplitSelfClient.RPCInitialized)
+                    SplitSelfClient.RPC.updatePresence(DiscordRichPresence.builder()
+                        .details(Text.translatable("events.splitself.rpc.desc").getString())
+                        .state(Text.translatable("events.splitself.rpc.state").getString())
+                        .largeImageKey("noise")
+                        .build());
+            }
+            case RECORD -> new Thread(() -> {
+                try {
+                    String process = Processes.getScreenRecordingSoftware();
+                    if (process != null) {
+                        server.getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.record.detection", process).getString()).formatted(Formatting.RED), false);
+                        Thread.sleep(5000);
+                        server.getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.record.fail", process).getString()).formatted(Formatting.RED), false);
+                    }
+                } catch (Exception ignored) {}
+            }).start();
+            case DISCORDNAME -> {
+                if (SplitSelfClient.discordUsername != null) {
+                    server.getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.discordName.friend", SplitSelfClient.discordUsername).getString()).withColor(7506394), false);
+                }
+            }
+            case DEADCHUNK -> ChunkDestroyer.deadChunk(player, world);
+            case RECURSIVE -> ScreenOverlay.executeRecursiveScreen(player);
         }
     }
 }

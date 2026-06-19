@@ -16,6 +16,7 @@ public class DefaultConfig {
     public static int repeatEventsAfter = 5;
     public static int baseSafeRadius = 15;
 
+    // I can't remember why, but this variable CANNOT be deleted or renamed without breaking the mod. Don't ask why, just don't do it.
     public static String voskModel = "vosk-model-small-en-us-0.15";
 
     public static Map<String, Integer> eventWeights = new HashMap<>();
@@ -84,6 +85,14 @@ public class DefaultConfig {
         updateEventOptions("MEMORIES",              new EventOptions(10,  0, true ));
         updateEventOptions("MORSE",                 new EventOptions(10,  1, true ));
         updateEventOptions("CORAL",                 new EventOptions(10,  2, true ));
+        updateEventOptions("STATIC",                new EventOptions(10,  1, false));
+        updateEventOptions("INVERTCOLOR",           new EventOptions(10,  2, false));
+        updateEventOptions("CLIPBOARD",             new EventOptions(10,  0, true ));
+        updateEventOptions("RPC",                   new EventOptions(10,  1, true ));
+        updateEventOptions("RECORD",                new EventOptions(10,  2, true ));
+        updateEventOptions("DISCORDNAME",           new EventOptions(10,  2, true ));
+        updateEventOptions("DEADCHUNK",             new EventOptions(10,  2, false));
+        updateEventOptions("RECURSIVE",             new EventOptions(10,  3, false));
         for (EventManager.Events event : EventManager.Events.values()) {
             if (!hasConfigValues(event)) { // Missing default event fallback
                 updateEventOptions(event.name(), new EventOptions(10, 0, false));

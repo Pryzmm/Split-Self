@@ -161,6 +161,14 @@
       }
     ]
   },
+  "glitch2": {
+    "category": "master",
+    "sounds": [
+      {
+        "name": "splitself:glitch2"
+      }
+    ]
+  },
   "forgotten": {
     "category": "master",
     "sounds": [

@@ -1,6 +1,7 @@
 package com.pryzmm.splitself.events.helper;
 
 import com.pryzmm.splitself.events.EventManager;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -81,6 +82,37 @@ public class ChunkDestroyer {
                     Thread.currentThread().interrupt();
                     return;
                 }
+            }
+        }).start();
+    }
+
+    public static void deadChunk(ServerPlayerEntity player, ServerWorld world) {
+        Vec3d vec = EventManager.moveVectorFromBase(player, player.getPos());
+        Random random = new Random();
+        double angle = random.nextDouble() * 2 * Math.PI;
+        double distance = 20 + random.nextDouble() * 30;
+        int centerX = (int)(vec.x + Math.cos(angle) * distance);
+        int centerZ = (int)(vec.z + Math.sin(angle) * distance);
+        int chunkX = Math.floorDiv(centerX, 16) * 16;
+        int chunkZ = Math.floorDiv(centerZ, 16) * 16;
+        int bottomY = world.getBottomY();
+        int topY = world.getTopY();
+        new Thread(() -> {
+            for (int y = bottomY; y < topY; y++) {
+                final int finalY = y;
+                world.getServer().execute(() -> {
+                    for (int x = chunkX; x < chunkX + 16; x++) {
+                        for (int z = chunkZ; z < chunkZ + 16; z++) {
+                            BlockPos pos = new BlockPos(x, finalY, z);
+                            BlockState state = world.getBlockState(pos);
+                            if (!state.isAir() && state.isSolidBlock(world, pos)) {
+                                world.setBlockState(pos, Blocks.DEAD_BRAIN_CORAL_BLOCK.getDefaultState());
+                            }
+                        }
+                    }
+                });
+                try { Thread.sleep(10); }
+                catch (InterruptedException e) { Thread.currentThread().interrupt(); return; }
             }
         }).start();
     }
