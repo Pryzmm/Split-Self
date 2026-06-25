@@ -20,6 +20,9 @@ public class ModItemGroups {
                     entries.add(ModItems.FREEDOM_MUSIC_DISC);
                     entries.add(ModItems.CIET_DOKE);
                     entries.add(ModBlocks.IMAGE_FRAME);
+                    entries.add(ModBlocks.BRAIN);
+                    entries.add(ModBlocks.BRAINS);
+                    entries.add(ModBlocks.DEAD_BRAINS);
                     entries.add(ModItems.MEMORY_BOOK);
                     entries.add(ModItems.MEMORY_HOUSE);
                     entries.add(ModItems.MEMORY_BLU);

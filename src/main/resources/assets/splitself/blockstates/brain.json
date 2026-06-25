@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "has_book=false,facing=north": {
+      "model": "splitself:block/brain"
+    },
+    "has_book=false,facing=south": {
+      "model": "splitself:block/brain",
+      "y": 180
+    },
+    "has_book=false,facing=east": {
+      "model": "splitself:block/brain",
+      "y": 90
+    },
+    "has_book=false,facing=west": {
+      "model": "splitself:block/brain",
+      "y": 270
+    },
+    "has_book=true,facing=north": {
+      "model": "splitself:block/brain_book"
+    },
+    "has_book=true,facing=south": {
+      "model": "splitself:block/brain_book",
+      "y": 180
+    },
+    "has_book=true,facing=east": {
+      "model": "splitself:block/brain_book",
+      "y": 90
+    },
+    "has_book=true,facing=west": {
+      "model": "splitself:block/brain_book",
+      "y": 270
+    }
+  }
+}

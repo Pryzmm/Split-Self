@@ -14,6 +14,7 @@ import com.pryzmm.splitself.entity.client.TheOtherModel;
 import com.pryzmm.splitself.entity.client.TheOtherRenderer;
 import com.pryzmm.splitself.file.BrowserHistoryReader;
 import com.pryzmm.splitself.file.CountryLocator;
+import com.pryzmm.splitself.packet.ClientPacketHandler;
 import com.pryzmm.splitself.screen.misc.BlendManager;
 import com.pryzmm.splitself.screen.misc.SkyImageRenderer;
 import com.pryzmm.splitself.screen.overlay.RecursiveRenderer;
@@ -84,6 +85,8 @@ public class SplitSelfClient implements ClientModInitializer {
 
         System.setProperty("java.awt.headless", "false");
         StaticOverlay.register();
+
+        ClientPacketHandler.register();
 
         RecursiveRenderer.init();
 

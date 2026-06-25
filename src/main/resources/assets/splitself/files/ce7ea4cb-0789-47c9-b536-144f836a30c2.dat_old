@@ -1,0 +1,231 @@
+"": {
+	Brain: {
+		memories: {}
+	}
+	HurtByTimestamp: 0
+	SleepTimer: 0S
+	SpawnForced: 0B
+	Invulnerable: 0B
+	FallFlying: 0B
+	PortalCooldown: 0
+	AbsorptionAmount: 0.0F
+	abilities: {
+		invulnerable: 1B
+		mayfly: 1B
+		instabuild: 1B
+		walkSpeed: 0.1F
+		mayBuild: 1B
+		flying: 0B
+		flySpeed: 0.05F
+	}
+	FallDistance: 0.0F
+	recipeBook: {
+		recipes: [ "minecraft:mangrove_boat", "minecraft:pink_stained_glass_pane_from_glass_pane", "minecraft:chest", "minecraft:orange_stained_glass_pane_from_glass_pane", "minecraft:wooden_pickaxe", "minecraft:fermented_spider_eye", "minecraft:torch", "minecraft:charcoal", "minecraft:acacia_boat", "minecraft:stone_hoe", "minecraft:diamond_sword", "minecraft:jungle_boat", "minecraft:diamond_hoe", "minecraft:white_banner", "minecraft:lever", "minecraft:magenta_stained_glass_pane_from_glass_pane", "minecraft:loom", "minecraft:oak_stairs", "minecraft:smoker", "minecraft:stone_pickaxe", "minecraft:diamond_leggings", "minecraft:cooked_mutton_from_campfire_cooking", "minecraft:dark_oak_boat", "minecraft:wooden_axe", "minecraft:bone_block", "minecraft:iron_ingot_from_smelting_raw_iron", "minecraft:iron_door", "minecraft:oak_fence_gate", "minecraft:shield", "minecraft:iron_nugget", "minecraft:melon", "minecraft:white_carpet", "minecraft:iron_ingot_from_nuggets", "minecraft:bamboo_raft", "minecraft:cooked_mutton_from_smoking", "minecraft:cyan_stained_glass_pane_from_glass_pane", "minecraft:black_stained_glass_pane_from_glass_pane", "minecraft:light_gray_stained_glass_pane_from_glass_pane", "minecraft:melon_seeds", "minecraft:black_banner", "minecraft:cobblestone_stairs_from_cobblestone_stonecutting", "minecraft:painting", "minecraft:iron_shovel", "minecraft:ladder", "minecraft:tripwire_hook", "minecraft:hopper", "minecraft:chain", "minecraft:crafting_table", "minecraft:lantern", "minecraft:fishing_rod", "minecraft:cobblestone_wall", "minecraft:iron_leggings", "minecraft:green_stained_glass_pane_from_glass_pane", "minecraft:oak_fence", "minecraft:iron_bars", "minecraft:iron_boots", "minecraft:diamond_boots", "minecraft:coal_block", "minecraft:iron_trapdoor", "minecraft:cake", "minecraft:red_stained_glass_pane_from_glass_pane", "minecraft:diamond_chestplate", "minecraft:iron_helmet", "minecraft:diamond_axe", "minecraft:cherry_boat", "minecraft:stick", "minecraft:iron_nugget_from_smelting", "minecraft:raw_gold_block", "minecraft:oak_sign", "minecraft:furnace", "minecraft:iron_block", "minecraft:gray_stained_glass_pane_from_glass_pane", "minecraft:white_stained_glass_pane_from_glass_pane", "minecraft:oak_trapdoor", "minecraft:birch_wood", "minecraft:oak_door", "minecraft:stone_axe", "minecraft:oak_wood", "minecraft:barrel", "minecraft:diamond_pickaxe", "minecraft:stone", "minecraft:light_blue_stained_glass_pane_from_glass_pane", "minecraft:wooden_sword", "minecraft:oak_planks", "minecraft:bone_meal", "minecraft:black_bed", "minecraft:gold_ingot_from_blasting_raw_gold", "minecraft:diamond_block", "minecraft:iron_nugget_from_blasting", "minecraft:blue_stained_glass_pane_from_glass_pane", "minecraft:lime_stained_glass_pane_from_glass_pane", "minecraft:iron_sword", "minecraft:crossbow", "minecraft:iron_chestplate", "minecraft:iron_pickaxe", "minecraft:wooden_shovel", "minecraft:smithing_table", "minecraft:white_wool_from_string", "minecraft:cooked_mutton", "minecraft:cauldron", "minecraft:heavy_weighted_pressure_plate", "minecraft:birch_planks", "minecraft:stone_shovel", "minecraft:cobblestone_stairs", "minecraft:cobblestone_wall_from_cobblestone_stonecutting", "minecraft:purple_stained_glass_pane_from_glass_pane", "minecraft:iron_ingot_from_blasting_raw_iron", "minecraft:raw_iron_block", "minecraft:candle", "minecraft:oak_button", "minecraft:brown_stained_glass_pane_from_glass_pane", "minecraft:birch_boat", "minecraft:spruce_boat", "minecraft:wooden_hoe", "minecraft:diamond_shovel", "minecraft:shears", "minecraft:oak_pressure_plate", "minecraft:stone_sword", "minecraft:campfire", "minecraft:black_carpet", "minecraft:iron_axe", "minecraft:cobblestone_slab", "minecraft:yellow_stained_glass_pane_from_glass_pane", "minecraft:gold_ingot_from_smelting_raw_gold", "minecraft:composter", "minecraft:oak_slab", "minecraft:jukebox", "minecraft:white_bed", "minecraft:glistering_melon_slice", "minecraft:diamond_helmet", "minecraft:iron_hoe", "minecraft:bow", "minecraft:minecart", "minecraft:oak_boat", "minecraft:cobblestone_slab_from_cobblestone_stonecutting", "minecraft:bucket", "minecraft:white_dye", ]
+		isBlastingFurnaceFilteringCraftable: 0B
+		isSmokerGuiOpen: 0B
+		isFilteringCraftable: 0B
+		toBeDisplayed: [ "minecraft:mangrove_boat", "minecraft:pink_stained_glass_pane_from_glass_pane", "minecraft:chest", "minecraft:orange_stained_glass_pane_from_glass_pane", "minecraft:wooden_pickaxe", "minecraft:fermented_spider_eye", "minecraft:torch", "minecraft:charcoal", "minecraft:acacia_boat", "minecraft:stone_hoe", "minecraft:diamond_sword", "minecraft:jungle_boat", "minecraft:diamond_hoe", "minecraft:white_banner", "minecraft:lever", "minecraft:magenta_stained_glass_pane_from_glass_pane", "minecraft:loom", "minecraft:oak_stairs", "minecraft:smoker", "minecraft:stone_pickaxe", "minecraft:diamond_leggings", "minecraft:cooked_mutton_from_campfire_cooking", "minecraft:dark_oak_boat", "minecraft:wooden_axe", "minecraft:bone_block", "minecraft:iron_ingot_from_smelting_raw_iron", "minecraft:iron_door", "minecraft:oak_fence_gate", "minecraft:shield", "minecraft:iron_nugget", "minecraft:melon", "minecraft:white_carpet", "minecraft:iron_ingot_from_nuggets", "minecraft:bamboo_raft", "minecraft:cooked_mutton_from_smoking", "minecraft:cyan_stained_glass_pane_from_glass_pane", "minecraft:black_stained_glass_pane_from_glass_pane", "minecraft:light_gray_stained_glass_pane_from_glass_pane", "minecraft:melon_seeds", "minecraft:black_banner", "minecraft:cobblestone_stairs_from_cobblestone_stonecutting", "minecraft:painting", "minecraft:iron_shovel", "minecraft:ladder", "minecraft:tripwire_hook", "minecraft:hopper", "minecraft:chain", "minecraft:crafting_table", "minecraft:lantern", "minecraft:fishing_rod", "minecraft:cobblestone_wall", "minecraft:iron_leggings", "minecraft:green_stained_glass_pane_from_glass_pane", "minecraft:oak_fence", "minecraft:iron_bars", "minecraft:iron_boots", "minecraft:diamond_boots", "minecraft:coal_block", "minecraft:iron_trapdoor", "minecraft:cake", "minecraft:red_stained_glass_pane_from_glass_pane", "minecraft:diamond_chestplate", "minecraft:iron_helmet", "minecraft:diamond_axe", "minecraft:cherry_boat", "minecraft:stick", "minecraft:iron_nugget_from_smelting", "minecraft:raw_gold_block", "minecraft:oak_sign", "minecraft:furnace", "minecraft:iron_block", "minecraft:gray_stained_glass_pane_from_glass_pane", "minecraft:white_stained_glass_pane_from_glass_pane", "minecraft:oak_trapdoor", "minecraft:birch_wood", "minecraft:oak_door", "minecraft:stone_axe", "minecraft:oak_wood", "minecraft:barrel", "minecraft:diamond_pickaxe", "minecraft:stone", "minecraft:light_blue_stained_glass_pane_from_glass_pane", "minecraft:wooden_sword", "minecraft:oak_planks", "minecraft:bone_meal", "minecraft:black_bed", "minecraft:gold_ingot_from_blasting_raw_gold", "minecraft:diamond_block", "minecraft:iron_nugget_from_blasting", "minecraft:blue_stained_glass_pane_from_glass_pane", "minecraft:lime_stained_glass_pane_from_glass_pane", "minecraft:iron_sword", "minecraft:crossbow", "minecraft:iron_chestplate", "minecraft:iron_pickaxe", "minecraft:wooden_shovel", "minecraft:smithing_table", "minecraft:white_wool_from_string", "minecraft:cooked_mutton", "minecraft:cauldron", "minecraft:heavy_weighted_pressure_plate", "minecraft:birch_planks", "minecraft:stone_shovel", "minecraft:cobblestone_stairs", "minecraft:cobblestone_wall_from_cobblestone_stonecutting", "minecraft:purple_stained_glass_pane_from_glass_pane", "minecraft:iron_ingot_from_blasting_raw_iron", "minecraft:raw_iron_block", "minecraft:candle", "minecraft:oak_button", "minecraft:brown_stained_glass_pane_from_glass_pane", "minecraft:birch_boat", "minecraft:spruce_boat", "minecraft:wooden_hoe", "minecraft:diamond_shovel", "minecraft:shears", "minecraft:oak_pressure_plate", "minecraft:stone_sword", "minecraft:campfire", "minecraft:black_carpet", "minecraft:iron_axe", "minecraft:cobblestone_slab", "minecraft:yellow_stained_glass_pane_from_glass_pane", "minecraft:gold_ingot_from_smelting_raw_gold", "minecraft:composter", "minecraft:oak_slab", "minecraft:jukebox", "minecraft:white_bed", "minecraft:glistering_melon_slice", "minecraft:diamond_helmet", "minecraft:iron_hoe", "minecraft:bow", "minecraft:minecart", "minecraft:oak_boat", "minecraft:cobblestone_slab_from_cobblestone_stonecutting", "minecraft:bucket", "minecraft:white_dye", ]
+		isFurnaceGuiOpen: 0B
+		isGuiOpen: 0B
+		isFurnaceFilteringCraftable: 0B
+		isBlastingFurnaceGuiOpen: 0B
+		isSmokerFilteringCraftable: 0B
+	}
+	DeathTime: 0S
+	XpSeed: -69154871
+	XpTotal: 102
+	UUID: ints(-2003376326, -1360580242, -2023163066, -120214297)
+	playerGameType: 1
+	SpawnDimension: "minecraft:overworld"
+	seenCredits: 0B
+	Motion: [ 0.0, -0.0784000015258789, 0.0, ]
+	SpawnY: 68
+	Health: 20.0F
+	SpawnZ: 428
+	foodSaturationLevel: 5.0F
+	SpawnX: 951
+	ignore_fall_damage_from_current_explosion: 0B
+	Air: 300S
+	OnGround: 1B
+	Dimension: "minecraft:overworld"
+	SpawnAngle: 109.498474F
+	Rotation: [ -7.2015686F, 9.299874F, ]
+	XpLevel: 7
+	current_impulse_context_reset_grace_time: 0
+	warden_spawn_tracker: {
+		warning_level: 0
+		ticks_since_last_warning: 9948
+		cooldown_ticks: 0
+	}
+	Score: 102
+	Pos: [ 943.1947134699285, 67.0, 443.5451078223392, ]
+	Fire: -20S
+	XpP: 0.52380955F
+	EnderItems: []
+	attributes: [
+		{
+			id: "minecraft:generic.movement_speed"
+			base: 0.10000000149011612
+		},
+		{
+			id: "minecraft:generic.armor"
+			base: 0.0
+		},
+		{
+			id: "minecraft:player.block_interaction_range"
+			base: 4.5
+		},
+		{
+			id: "minecraft:generic.armor_toughness"
+			base: 0.0
+		},
+		{
+			id: "minecraft:player.entity_interaction_range"
+			base: 3.0
+		},
+	]
+	DataVersion: 3955
+	foodLevel: 20
+	foodExhaustionLevel: 0.0F
+	spawn_extra_particles_on_fall: 0B
+	HurtTime: 0S
+	SelectedItemSlot: 3
+	Inventory: [
+		{
+			count: 1
+			Slot: 0B
+			id: "minecraft:iron_sword"
+		},
+		{
+			count: 1
+			Slot: 1B
+			id: "minecraft:stone_pickaxe"
+		},
+		{
+			count: 64
+			Slot: 2B
+			id: "minecraft:dirt"
+		},
+		{
+			count: 49
+			Slot: 3B
+			id: "minecraft:dirt"
+		},
+		{
+			count: 41
+			Slot: 4B
+			id: "minecraft:cobblestone"
+		},
+		{
+			count: 1
+			Slot: 5B
+			id: "minecraft:bucket"
+		},
+		{
+			count: 2
+			Slot: 7B
+			id: "minecraft:golden_apple"
+		},
+		{
+			count: 14
+			Slot: 8B
+			id: "minecraft:cooked_beef"
+		},
+		{
+			count: 4
+			Slot: 9B
+			id: "minecraft:bone"
+		},
+		{
+			count: 3
+			Slot: 10B
+			id: "minecraft:rotten_flesh"
+		},
+		{
+			count: 6
+			Slot: 11B
+			id: "minecraft:string"
+		},
+		{
+			count: 1
+			Slot: 12B
+			id: "minecraft:spider_eye"
+		},
+		{
+			count: 6
+			Slot: 13B
+			id: "minecraft:raw_iron"
+		},
+		{
+			count: 1
+			Slot: 14B
+			id: "minecraft:iron_ingot"
+		},
+		{
+			count: 6
+			Slot: 15B
+			id: "minecraft:coal"
+		},
+		{
+			count: 4
+			Slot: 16B
+			id: "minecraft:raw_gold"
+		},
+		{
+			count: 3
+			Slot: 18B
+			id: "minecraft:wheat_seeds"
+		},
+		{
+			count: 1
+			Slot: 19B
+			id: "splitself:memory_book"
+		},
+		{
+			count: 64
+			Slot: 27B
+			id: "minecraft:oak_planks"
+		},
+		{
+			count: 36
+			Slot: 28B
+			id: "minecraft:oak_planks"
+		},
+		{
+			count: 2
+			Slot: 34B
+			id: "minecraft:furnace"
+		},
+		{
+			count: 1
+			Slot: 35B
+			id: "minecraft:crafting_table"
+		},
+		{
+			count: 1
+			Slot: 100B
+			id: "minecraft:iron_boots"
+		},
+		{
+			count: 1
+			Slot: 101B
+			id: "minecraft:iron_leggings"
+		},
+		{
+			count: 1
+			Slot: 102B
+			id: "minecraft:iron_chestplate"
+		},
+		{
+			count: 1
+			Slot: 103B
+			id: "minecraft:iron_helmet"
+		},
+		{
+			count: 1
+			Slot: -106B
+			id: "minecraft:shield"
+		},
+	]
+	foodTickTimer: 0
+}

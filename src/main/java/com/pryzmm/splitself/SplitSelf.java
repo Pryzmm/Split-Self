@@ -10,6 +10,7 @@ import com.pryzmm.splitself.events.*;
 import com.pryzmm.splitself.events.helper.StructureManager;
 import com.pryzmm.splitself.file.JsonReader;
 import com.pryzmm.splitself.func.StripMine;
+import com.pryzmm.splitself.packet.ServerPacketHandler;
 import com.pryzmm.splitself.world.LimboLevitation;
 import com.pryzmm.splitself.entity.ModEntities;
 import com.pryzmm.splitself.entity.custom.TheOtherEntity;
@@ -122,6 +123,8 @@ public class SplitSelf implements ModInitializer {
 		StructurePieces.register();
 		ServerLifecycleEvents.SERVER_STARTED.register(this::onServerStarted);
         PersistentData.loadData();
+
+        ServerPacketHandler.register();
 
 		ServerTickEvents.END_SERVER_TICK.register(EventManager::onTick);
         ServerTickEvents.END_SERVER_TICK.register(TheForgottenFunc::removeIfRayCasted);

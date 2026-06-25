@@ -7,6 +7,7 @@
     "ExperimentalMixin",
     "GameMenuMixin",
     "LanguageEntryMixin",
+    "LevelLoadMixin",
     "OptionsScreenMixin",
     "PanoramaMixin",
     "PauseMixin",

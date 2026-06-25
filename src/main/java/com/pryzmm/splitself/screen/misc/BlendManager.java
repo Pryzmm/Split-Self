@@ -3,11 +3,13 @@ package com.pryzmm.splitself.screen.misc;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.pryzmm.splitself.sound.ModSounds;
+import com.pryzmm.splitself.world.DimensionRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.*;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.util.Window;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import java.util.List;
 
@@ -28,6 +30,8 @@ public class BlendManager {
     private static Blend activeBlend = null;
     public static void render(DrawContext context, RenderTickCounter tickDelta) {
         if (modifyBlend && activeBlend == null && timePassed(lastDisableBlend) >= 30 && Math.random() * 20 < 1) {
+            PlayerEntity player = MinecraftClient.getInstance().player;
+            if (player != null && player.getWorld().getRegistryKey() == DimensionRegistry.EMPTINESS_DIMENSION_KEY) return;
             activeBlend = blends.get((int) (Math.random() * blends.size()));
             lastChangeBlend = System.nanoTime();
             MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(ModSounds.TONE, (float) ((Math.random() / 2) + 0.5f)));

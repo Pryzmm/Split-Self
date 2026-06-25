@@ -1,0 +1,21 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "splitself:block/dead_brains"
+      },
+      {
+        "model": "splitself:block/dead_brains",
+        "y": 90
+      },
+      {
+        "model": "splitself:block/dead_brains",
+        "y": 180
+      },
+      {
+        "model": "splitself:block/dead_brains",
+        "y": 270
+      }
+    ]
+  }
+}

@@ -1,5 +1,9 @@
 {
   "block.splitself.image_frame": "Image Frame",
+  "block.splitself.brain": "Brain",
+  "block.splitself.brains": "Brains",
+  "block.splitself.dead_brains": "Dead Brains",
+  "block.splitself.brain.not_enough_memories": "I don't have enough memories yet...",
 
   "chat.splitself.prompt.absence": "absence",
   "chat.splitself.prompt.control": "control",
@@ -144,6 +148,9 @@
   "events.splitself.poemScreen.line7": "Don't be afraid, for your time is nigh.",
   "events.splitself.poemScreen.line8": "My time to be free, your final night.",
   "events.splitself.poemScreen.line9": "I make the choices now, %s",
+  "events.splitself.playerData.1": "<%s> Their playerdata is still here, in this world.",
+  "events.splitself.playerData.2": "<%s> I can see it, all that they contributed.",
+  "events.splitself.playerData.3": "<%s> And what have you done in return? Nothing. You abandoned them.",
   "events.splitself.record.detection": "Administrator initialized file deletion for %s.",
   "events.splitself.record.fail": "0x80070020: The process cannot access the file '%s' because it is being used by another process.",
   "events.splitself.redacted_name": "[REDACTED]",

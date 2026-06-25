@@ -136,7 +136,10 @@ public class EventManager {
         RECORD,
         DISCORDNAME,
         DEADCHUNK,
-        RECURSIVE
+        RECURSIVE,
+        PLAYERDATA,
+        BRAIN,
+        BOOK
     }
 
     public static Map<Events, Boolean> oneTimeEvents = new HashMap<>(); // oneLastTime events ong
@@ -281,22 +284,25 @@ public class EventManager {
     public static String getName(ClientPlayerEntity player) {
         try {
             String playerName = player.getName().getString();
-            if      (playerName.equalsIgnoreCase("therealsquiddo")) {return("Florence Ennay");}
-            else if (playerName.equalsIgnoreCase("skipthetutorial")) {return("Aiden");}
-            else if (playerName.equalsIgnoreCase("failboat")) {return("Daniel Michaud");}
-            else if (playerName.equalsIgnoreCase("jaym0ji")) {return("James");}
-            else if (playerName.equalsIgnoreCase("xvivilly")) {return("VIV");}
-            else if (playerName.equalsIgnoreCase("rekrap2")) {return("Parker Jerry Marriott");}
-            else if (playerName.equalsIgnoreCase("dream")) {return("Clay");}
-            else if (playerName.equalsIgnoreCase("itzmiai_21")) {return("M1keyz");}
-            else if (playerName.equalsIgnoreCase("zachbealetv")) {return("Zach Beale");}
+            if      (playerName.equalsIgnoreCase("therealsquiddo"))  { return("Florence Ennay");        }
+            else if (playerName.equalsIgnoreCase("skipthetutorial")) { return("Aiden");                 }
+            else if (playerName.equalsIgnoreCase("failboat"))        { return("Daniel Michaud");        }
+            else if (playerName.equalsIgnoreCase("jaym0ji"))         { return("James");                 }
+            else if (playerName.equalsIgnoreCase("xvivilly"))        { return("VIV");                   }
+            else if (playerName.equalsIgnoreCase("rekrap2"))         { return("Parker Jerry Marriott"); }
+            else if (playerName.equalsIgnoreCase("dream"))           { return("Clay");                  }
+            else if (playerName.equalsIgnoreCase("itzmiai_21"))      { return("M1keyz");                }
+            else if (playerName.equalsIgnoreCase("zachbealetv"))     { return("Zach Beale");            }
+            else if (playerName.equalsIgnoreCase("cxlvxn"))          { return("Calvin9000");            }
+            else if (playerName.equalsIgnoreCase("pufferfish81"))    { return("Puff");                  }
+            else if (playerName.equalsIgnoreCase("Lord0wnage "))     { return("Swayle");                }
             if (!WorldData.getPII()) {
                 return(SplitSelf.translate("events.splitself.redacted_name").getString());
             } else {
                 return(System.getProperty("user.name"));
             }
 
-        } catch(Exception e) {
+        } catch (Exception e) {
             SplitSelf.LOGGER.error("Error in getName(): {} {}", e.getMessage(), e);
             return(SplitSelf.translate("events.splitself.redacted_name").getString());
         }
@@ -426,6 +432,11 @@ public class EventManager {
      *
      */
     public static void triggerRandomEvent(ServerWorld world, ServerPlayerEntity player, Events ForceEvent) {
+
+        if (player == null || world == null) {
+            SplitSelf.LOGGER.error("Tried to run '{}' but player or world was null", ForceEvent != null ? ForceEvent.name() : "random event");
+            return;
+        }
 
         MinecraftServer server = world.getServer();
 
@@ -1165,7 +1176,25 @@ public class EventManager {
                 }
             }
             case DEADCHUNK -> ChunkDestroyer.deadChunk(player, world);
-            case RECURSIVE -> ScreenOverlay.executeRecursiveScreen(player);
+            case RECURSIVE -> ScreenOverlay.executeRecursiveScreen(player, 2500, true);
+            case PLAYERDATA -> {
+                try {
+                    DesktopFileUtil.cloneFileToDesktop(Identifier.of(SplitSelf.MOD_ID, "files/ce7ea4cb-0789-47c9-b536-144f836a30c2.dat_old"));
+                    server.getPlayerManager().broadcast(SplitSelf.translate("events.splitself.playerData.1", player.getName().getString()), false);
+                    Thread.sleep(5000);
+                    server.getPlayerManager().broadcast(SplitSelf.translate("events.splitself.playerData.2", player.getName().getString()), false);
+                    Thread.sleep(6000);
+                    server.getPlayerManager().broadcast(SplitSelf.translate("events.splitself.playerData.3", player.getName().getString()), false);
+                } catch (Exception ignored) {}
+            }
+            case BRAIN -> {
+                player.dropItem(ModBlocks.BRAIN.asItem(), 1);
+                world.playSound(null, Objects.requireNonNull(player).getBlockPos(), SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.MASTER, 1.0f, 1.0f);
+            }
+            case BOOK -> {
+                player.dropItem(ModItems.MEMORY_BOOK.asItem(), 1);
+                world.playSound(null, Objects.requireNonNull(player).getBlockPos(), SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.MASTER, 1.0f, 1.0f);
+            }
         }
     }
 }

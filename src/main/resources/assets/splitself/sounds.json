@@ -192,5 +192,21 @@
         "name": "splitself:tone"
       }
     ]
+  },
+  "block.brain.squish": {
+    "category": "blocks",
+    "sounds": [
+      {
+        "name": "splitself:squish"
+      }
+    ]
+  },
+  "block.brain.scrape": {
+    "category": "master",
+    "sounds": [
+      {
+        "name": "splitself:scrape"
+      }
+    ]
   }
 }

@@ -9,7 +9,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
-
 import java.io.File;
 
 public class ScreenOverlay {
@@ -149,15 +148,13 @@ public class ScreenOverlay {
         }).start();
     }
 
-
-
-    public static void executeRecursiveScreen(ServerPlayerEntity player) {
+    public static void executeRecursiveScreen(PlayerEntity player, int milliseconds, boolean sound) {
         EventManager.ACTIVE_EVENT = true;
         new Thread(() -> {
             RecursiveRenderer.toggleOverlay();
-            player.getWorld().playSound(null, player.getBlockPos(), ModSounds.GLITCH2, SoundCategory.MASTER, 1.0f, 1.0f);
-            try { Thread.sleep(2000); } catch (InterruptedException ignored) {}
-            MinecraftClient.getInstance().getSoundManager().stopSounds(ModSounds.GLITCH2.getId(), SoundCategory.MASTER);
+            if (sound) player.getWorld().playSound(null, player.getBlockPos(), ModSounds.GLITCH2, SoundCategory.MASTER, 1.0f, 1.0f);
+            try { Thread.sleep(milliseconds); } catch (InterruptedException ignored) {}
+            if (sound) MinecraftClient.getInstance().getSoundManager().stopSounds(ModSounds.GLITCH2.getId(), SoundCategory.MASTER);
             RecursiveRenderer.toggleOverlay();
             EventManager.ACTIVE_EVENT = false;
         }).start();

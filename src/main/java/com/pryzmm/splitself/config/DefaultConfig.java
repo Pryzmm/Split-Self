@@ -93,6 +93,8 @@ public class DefaultConfig {
         updateEventOptions("DISCORDNAME",           new EventOptions(10,  2, true ));
         updateEventOptions("DEADCHUNK",             new EventOptions(10,  2, false));
         updateEventOptions("RECURSIVE",             new EventOptions(10,  3, false));
+        updateEventOptions("BRAIN",                 new EventOptions(15,  3, false));
+        updateEventOptions("BOOK",                  new EventOptions(10,  0, false));
         for (EventManager.Events event : EventManager.Events.values()) {
             if (!hasConfigValues(event)) { // Missing default event fallback
                 updateEventOptions(event.name(), new EventOptions(10, 0, false));

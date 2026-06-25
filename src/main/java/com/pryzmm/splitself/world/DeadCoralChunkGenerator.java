@@ -3,6 +3,7 @@ package com.pryzmm.splitself.world;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.pryzmm.splitself.block.ModBlocks;
 import com.pryzmm.splitself.data.WorldData;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -87,7 +88,7 @@ public class DeadCoralChunkGenerator extends ChunkGenerator {
                         state = Blocks.BEDROCK.getDefaultState();
                         chunk.setBlockState(mutable.set(x, -64, z), Blocks.BARRIER.getDefaultState(), false);
                     } else {
-                        state = Blocks.DEAD_BRAIN_CORAL_BLOCK.getDefaultState();
+                        state = ModBlocks.DEAD_BRAINS.getDefaultState();
                     }
                     chunk.setBlockState(mutable.set(x, y, z), state, false);
                     heightmapOcean.trackUpdate(x, y, z, state);

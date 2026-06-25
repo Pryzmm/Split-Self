@@ -16,10 +16,19 @@ import net.minecraft.util.Identifier;
 public class ModBlocks {
 
     public static final Block IMAGE_FRAME = registerBlock("image_frame",
-            new ImageFrameBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).nonOpaque().burnable()));
+        new ImageFrameBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).nonOpaque().burnable()));
 
     public static final Block EMPTY_TELEPORT = registerBlock("empty_teleport",
         new EmptyTeleportBlock(AbstractBlock.Settings.create().nonOpaque().noCollision()));
+
+    public static final Block BRAIN = registerBlock("brain",
+        new BrainBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.HONEY)));
+
+    public static final Block BRAINS = registerBlock("brains",
+            new BrainsBlock(AbstractBlock.Settings.create().sounds(BlockSoundGroup.HONEY).hardness(3.0f).resistance(3.0f)));
+
+    public static final Block DEAD_BRAINS = registerBlock("dead_brains",
+            new DeadBrainsBlock(AbstractBlock.Settings.create().sounds(BlockSoundGroup.HONEY).hardness(3.0f).resistance(3.0f)));
 
     private static Block registerBlock(String name, Block block) {
         registerBlockItem(name, block);
@@ -27,12 +36,11 @@ public class ModBlocks {
     }
 
     private static void registerBlockItem(String name, Block block) {
-        Registry.register(Registries.ITEM, Identifier.of(SplitSelf.MOD_ID, name),
-                new BlockItem(block, new Item.Settings()));
+        Registry.register(Registries.ITEM, Identifier.of(SplitSelf.MOD_ID, name), new BlockItem(block, new Item.Settings()));
     }
 
     public static void registerModBlocks() {
-        SplitSelf.LOGGER.info("Registering frame block...");
+        SplitSelf.LOGGER.info("Registering blocks...");
 
         ModBlockEntities.registerBlockEntities();
 
