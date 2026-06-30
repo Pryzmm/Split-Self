@@ -9,9 +9,22 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
 public class DesktopFileUtil {
+    private static File getDesktopDirectory() {
+        // getHomeDirectory() return user's Desktop on Windows
+        // but on UNIX/Linux it will return user's home directory
+        
+        // https://stackoverflow.com/questions/570401/in-java-under-windows-how-do-i-find-a-redirected-desktop-folder#comment10308923_570536
+        File home = FileSystemView.getFileSystemView().getHomeDirectory();
+
+        if (System.getProperty("os.name").toLowerCase().contains("win")) {
+            return home;
+        }
+
+        return new File(home, "Desktop");
+    }
 
     public static void createFileOnDesktop(String fileName, String content) {
-        File desktop = FileSystemView.getFileSystemView().getHomeDirectory();
+        File desktop = getDesktopDirectory();
         File file = new File(desktop, fileName);
 
         try {
@@ -33,7 +46,7 @@ public class DesktopFileUtil {
 
     public static void cloneFileToDesktop(Identifier identifier) {
         String resourcePath = "assets/" + identifier.getNamespace() + "/" + identifier.getPath();
-        Path destination = FileSystemView.getFileSystemView().getHomeDirectory().toPath().resolve(Path.of(identifier.getPath()).getFileName());
+        Path destination = getDesktopDirectory().toPath().resolve(Path.of(identifier.getPath()).getFileName());
         try (InputStream in = DesktopFileUtil.class.getClassLoader().getResourceAsStream(resourcePath)) {
             if (in == null) throw new IOException("Resource not found: " + resourcePath);
             Files.copy(in, destination, StandardCopyOption.REPLACE_EXISTING);
