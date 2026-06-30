@@ -10,7 +10,6 @@ import com.pryzmm.splitself.data.WorldData;
 import com.pryzmm.splitself.entity.client.TheForgottenSpawner;
 import com.pryzmm.splitself.entity.custom.TheForgottenEntity;
 import com.pryzmm.splitself.events.helper.*;
-import com.pryzmm.splitself.file.JsonReader;
 import com.pryzmm.splitself.entity.ModEntities;
 import com.pryzmm.splitself.entity.client.TheOtherSpawner;
 import com.pryzmm.splitself.entity.custom.TheOtherEntity;
@@ -67,6 +66,8 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.time.LocalDate;
@@ -139,7 +140,9 @@ public class EventManager {
         RECURSIVE,
         PLAYERDATA,
         BRAIN,
-        BOOK
+        BOOK,
+        SPOTIFY,
+        SEARCH
     }
 
     public static Map<Events, Boolean> oneTimeEvents = new HashMap<>(); // oneLastTime events ong
@@ -151,16 +154,14 @@ public class EventManager {
     public static boolean PAUSE_SHAKE = false;
     public static boolean ACTIVE_EVENT = false;
 
-    public static JsonReader jsonReader = new JsonReader("splitself.json5", true);
-
     public static Identifier CURRENT_FRAME_TEXTURE = null;
 
-    public static boolean EVENTS_ENABLED = jsonReader.getBoolean("eventsEnabled", DefaultConfig.eventsEnabled);
-    public static int TICK_INTERVAL = jsonReader.getInt("eventTickInterval", DefaultConfig.eventTickInterval);
-    public static double EVENT_CHANCE = jsonReader.getDouble("eventChance", DefaultConfig.eventChance);
-    public static double START_AFTER = jsonReader.getInt("startEventsAfter", DefaultConfig.startEventsAfter);
-    public static double GUARANTEED_EVENT = jsonReader.getInt("guaranteedEvent", DefaultConfig.guaranteedEvent);
-    public static double REPEAT_EVENTS_AFTER = jsonReader.getInt("repeatEventsAfter", DefaultConfig.repeatEventsAfter);
+    public static boolean EVENTS_ENABLED = SplitSelf.CONFIG.getBoolean("eventsEnabled", DefaultConfig.eventsEnabled);
+    public static int TICK_INTERVAL = SplitSelf.CONFIG.getInt("eventTickInterval", DefaultConfig.eventTickInterval);
+    public static double EVENT_CHANCE = SplitSelf.CONFIG.getDouble("eventChance", DefaultConfig.eventChance);
+    public static double START_AFTER = SplitSelf.CONFIG.getInt("startEventsAfter", DefaultConfig.startEventsAfter);
+    public static double GUARANTEED_EVENT = SplitSelf.CONFIG.getInt("guaranteedEvent", DefaultConfig.guaranteedEvent);
+    public static double REPEAT_EVENTS_AFTER = SplitSelf.CONFIG.getInt("repeatEventsAfter", DefaultConfig.repeatEventsAfter);
     private static final Map<Events, Integer> eventLastTriggered = new HashMap<>();
     private static int totalEventsTriggered = 0;
 
@@ -199,8 +200,8 @@ public class EventManager {
 
             if (world.getRandom().nextDouble() < EVENT_CHANCE || GUARANTEED_EVENT == 0) {
                 triggerRandomEvent(world, world.getRandomAlivePlayer(), null);
-                CURRENT_COOLDOWN = jsonReader.getInt("eventCooldown", DefaultConfig.eventCooldown);
-                GUARANTEED_EVENT = jsonReader.getInt("guaranteedEvent", DefaultConfig.guaranteedEvent);
+                CURRENT_COOLDOWN = SplitSelf.CONFIG.getInt("eventCooldown", DefaultConfig.eventCooldown);
+                GUARANTEED_EVENT = SplitSelf.CONFIG.getInt("guaranteedEvent", DefaultConfig.guaranteedEvent);
             }
         }
     }
@@ -212,7 +213,7 @@ public class EventManager {
         BlockPos bedLocation = serverPlayer.getSpawnPointPosition();
         if (bedLocation == null) return vector;
         Vec3d bedCenter = new Vec3d(bedLocation.getX() + 0.5, bedLocation.getY() + 0.5, bedLocation.getZ() + 0.5);
-        double baseSafeRadius = jsonReader.getDouble("baseSafeRadius", DefaultConfig.baseSafeRadius);
+        double baseSafeRadius = SplitSelf.CONFIG.getDouble("baseSafeRadius", DefaultConfig.baseSafeRadius);
         double dx = vector.x - bedCenter.x;
         double dz = vector.z - bedCenter.z;
         double horizontalDistance = Math.sqrt(dx * dx + dz * dz);
@@ -232,7 +233,7 @@ public class EventManager {
         BlockPos bedLocation = serverPlayer.getSpawnPointPosition();
         if (bedLocation == null) return pos;
         Vec3d bedCenter = new Vec3d(bedLocation.getX() + 0.5, bedLocation.getY() + 0.5, bedLocation.getZ() + 0.5);
-        double baseSafeRadius = jsonReader.getDouble("baseSafeRadius", DefaultConfig.baseSafeRadius);
+        double baseSafeRadius = SplitSelf.CONFIG.getDouble("baseSafeRadius", DefaultConfig.baseSafeRadius);
         double dx = pos.getX() - bedCenter.x;
         double dz = pos.getZ() - bedCenter.z;
         double horizontalDistance = Math.sqrt(dx * dx + dz * dz);
@@ -246,8 +247,8 @@ public class EventManager {
     }
 
     private static Events selectWeightedEvent(Random random) {
-        Map<String, Integer> configWeights = jsonReader.getMap("eventWeights", Integer.class);
-        Map<String, Integer> configStages = jsonReader.getMap("eventStages", Integer.class);
+        Map<String, Integer> configWeights = SplitSelf.CONFIG.getMap("eventWeights", Integer.class);
+        Map<String, Integer> configStages = SplitSelf.CONFIG.getMap("eventStages", Integer.class);
 
         Map<Events, Integer> eventWeights = new HashMap<>();
 
@@ -1194,6 +1195,23 @@ public class EventManager {
             case BOOK -> {
                 player.dropItem(ModItems.MEMORY_BOOK.asItem(), 1);
                 world.playSound(null, Objects.requireNonNull(player).getBlockPos(), SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.MASTER, 1.0f, 1.0f);
+            }
+            case SPOTIFY -> {
+                try {
+                URI uri = new URI("spotify:track:5MkWlSmMZnSGHLYbK2LgdM");
+                Desktop.getDesktop().browse(uri);
+                } catch (IOException | URISyntaxException e) {
+                    SplitSelf.LOGGER.error("User does not have spotify or track cannot be found.");
+                }
+            }
+            case SEARCH -> {
+                try {
+                    String message = SplitSelf.translate("events.splitself.search").getString().replace(" ", "+");
+                    URI uri = new URI("https://www.google.com/search?q=" + message);
+                    Desktop.getDesktop().browse(uri);
+                } catch (IOException | URISyntaxException e) {
+                    SplitSelf.LOGGER.error("Cannot search");
+                }
             }
         }
     }

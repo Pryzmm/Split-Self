@@ -95,11 +95,8 @@ public class DefaultConfig {
         updateEventOptions("RECURSIVE",             new EventOptions(10,  3, false));
         updateEventOptions("BRAIN",                 new EventOptions(15,  3, false));
         updateEventOptions("BOOK",                  new EventOptions(10,  0, false));
-        for (EventManager.Events event : EventManager.Events.values()) {
-            if (!hasConfigValues(event)) { // Missing default event fallback
-                updateEventOptions(event.name(), new EventOptions(10, 0, false));
-            }
-        }
+        updateEventOptions("SPOTIFY",               new EventOptions(10,  3, true ));
+        updateEventOptions("SEARCH",                new EventOptions(10,  2, true ));
     }
 
 }

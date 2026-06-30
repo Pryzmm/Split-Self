@@ -48,7 +48,7 @@ import java.util.Random;
 public class SplitSelf implements ModInitializer {
 	public static final String MOD_ID = "splitself";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
-    public static final JsonReader CONFIG = new JsonReader("splitself.json", true);
+    public static JsonReader CONFIG = null;
 
 	private void onServerStarted(MinecraftServer server) {
         WorldData.loadData(server.getOverworld());
@@ -110,8 +110,7 @@ public class SplitSelf implements ModInitializer {
         MinecraftClient client = MinecraftClient.getInstance();
 
         DefaultConfig.createDefaultConfigs();
-
-        JsonReader config = new JsonReader("splitself.json5", true);
+        CONFIG = new JsonReader("splitself.json5", true);
 
 		ModEntities.registerModEntities();
 		ModSounds.registerSounds();
@@ -131,11 +130,11 @@ public class SplitSelf implements ModInitializer {
         ServerTickEvents.END_SERVER_TICK.register(StripMine::trySpawnAttempt);
         ServerTickEvents.END_SERVER_TICK.register(LimboLevitation::onTick);
         if (FabricLoader.getInstance().isModLoaded("shriek") && FabricLoader.getInstance().isModLoaded("architectury")) {
-            EventHandler.loadVoskModel(config.getString("voskModel"));
+            EventHandler.loadVoskModel(CONFIG.getString("voskModel"));
             MicrophoneReader.register();
-            System.out.println("Registered MicrophoneReader...");
+            SplitSelf.LOGGER.info("Registered MicrophoneReader...");
             ShriekInstalled = true;
-        } else System.out.println("Cannot register microphone reader, missing shriek or architectury");
+        } else SplitSelf.LOGGER.warn("Cannot register microphone reader, missing shriek or architectury");
 
 		FabricDefaultAttributeRegistry.register(ModEntities.TheOther, TheOtherEntity.createAttributes());
         FabricDefaultAttributeRegistry.register(ModEntities.TheForgotten, TheOtherEntity.createAttributes());

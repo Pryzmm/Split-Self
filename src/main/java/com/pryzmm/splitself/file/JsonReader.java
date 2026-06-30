@@ -63,7 +63,7 @@ public class JsonReader {
                     } else createDefaultConfig();
                 }
             } catch (Exception e) {
-                System.err.println("Error reading config file, creating new one: " + e.getMessage());
+                SplitSelf.LOGGER.error("Error reading config file, creating new one: {}", e.getMessage());
                 if (loadData) createDefaultConfig();
             }
         } else {
@@ -109,7 +109,7 @@ public class JsonReader {
                         }
                     }
                 } catch (IllegalAccessException e) {
-                    System.err.println("Could not access field: " + field.getName());
+                    SplitSelf.LOGGER.error("Could not access field: {}", field.getName());
                 }
             }
         }
@@ -136,7 +136,7 @@ public class JsonReader {
         }
         for (String key : keysToRemove) {
             jsonObject.remove(key);
-            System.out.println("Removed invalid config key: " + key);
+            SplitSelf.LOGGER.warn("Removed invalid config key: {}", key);
         }
         for (Field field : fields) {
             if (Modifier.isStatic(field.getModifiers())) {
@@ -144,8 +144,7 @@ public class JsonReader {
                 try {
                     String fieldName = field.getName();
                     Object defaultValue = field.get(null);
-                    if (defaultValue instanceof Map && jsonObject.has(fieldName)
-                            && jsonObject.get(fieldName).isJsonObject()) {
+                    if (defaultValue instanceof Map && jsonObject.has(fieldName) && jsonObject.get(fieldName).isJsonObject()) {
                         @SuppressWarnings("unchecked")
                         Map<String, Object> defaultMap = (Map<String, Object>) defaultValue;
                         JsonObject configMapJson = jsonObject.getAsJsonObject(fieldName);
@@ -158,18 +157,17 @@ public class JsonReader {
                         }
                         for (String invalidKey : invalidMapKeys) {
                             configMapJson.remove(invalidKey);
-                            System.out.println("Removed invalid key '" + invalidKey
-                                    + "' from " + fieldName);
+                            SplitSelf.LOGGER.warn("Removed invalid key '{}' from {}", invalidKey, fieldName);
                         }
                     }
                 } catch (IllegalAccessException e) {
-                    System.err.println("Could not access field: " + field.getName());
+                    SplitSelf.LOGGER.error("Could not access field: {}", field.getName());
                 }
             }
         }
         if (hasChanges) {
             save();
-            System.out.println("Config cleaned up - removed non-default keys");
+            SplitSelf.LOGGER.info("Config cleaned up - removed non-default keys");
         }
     }
 
@@ -183,7 +181,7 @@ public class JsonReader {
                     Object value = field.get(null);
                     addValueToJson(fieldName, value);
                 } catch (IllegalAccessException e) {
-                    System.err.println("Could not access field: " + field.getName());
+                    SplitSelf.LOGGER.error("Could not access field {} when copying defaults to JSON", field.getName());
                 }
             }
         }
@@ -222,7 +220,7 @@ public class JsonReader {
                 GSON.toJson(jsonObject, writer);
             }
         } catch (IOException e) {
-            System.err.println("Error saving config file: " + e.getMessage());
+            SplitSelf.LOGGER.error("Error saving config file: {}", e.getMessage());
         }
     }
 

@@ -2,30 +2,22 @@ package com.pryzmm.splitself.config;
 
 import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.config.CustomConfigScreen.InputType;
-import com.pryzmm.splitself.file.JsonReader;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.*;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-
 import static com.pryzmm.splitself.config.CustomConfigScreen.*;
 
 public class ScrollingConfigScreen extends Screen {
 
     public static final Identifier CONFIG_IMAGE = Identifier.of(SplitSelf.MOD_ID, "textures/gui/title/config_title.png");
-    private static JsonReader jsonReader;
     private final Screen parent;
     private ElementList elementList;
 
     public ScrollingConfigScreen(Screen parent) {
         super(Text.literal(""));
-
         this.parent = parent;
-
-        if (jsonReader == null) {
-            jsonReader = new JsonReader("splitself.json5", true);
-        }
     }
 
     @Override
@@ -36,41 +28,39 @@ public class ScrollingConfigScreen extends Screen {
     }
 
     public void createElementListWidget() {
-        this.elementList = this.addDrawableChild(new ElementList(
-                client, 0, 60, this.width, this.height - 110
-        ));
+        this.elementList = this.addDrawableChild(new ElementList(client, 0, 60, this.width, this.height - 110));
         this.elementList.getRowWidth();
     }
 
     private void populateConfigOptions(String arrayID, InputType inputType) {
         for (String configKey : SplitSelf.CONFIG.getKeysFromObject(arrayID)) {
             elementList.addEntry(new ElementList.DoubleButtonEntry(
-                    configKey,
-                    arrayID,
-                    inputType,
-                    button -> {
-                        if (inputType == InputType.INT || inputType == InputType.DOUBLE) {
-                            createNumericValueWidget(5, this.height - 25, ScrollMinimum, ScrollMaximum, configKey, inputType);
-                        } else if (inputType == InputType.BOOLEAN) {
-                            boolean newValue = !SplitSelf.CONFIG.getBooleanFromArray(arrayID, configKey);
-                            jsonReader.setBooleanInObject(arrayID, configKey, newValue);
-                            jsonReader.save();
-                        }
+                configKey,
+                arrayID,
+                inputType,
+                button -> {
+                    if (inputType == InputType.INT || inputType == InputType.DOUBLE) {
+                        createNumericValueWidget(5, this.height - 25, ScrollMinimum, ScrollMaximum, configKey, inputType);
+                    } else if (inputType == InputType.BOOLEAN) {
+                        boolean newValue = !SplitSelf.CONFIG.getBooleanFromArray(arrayID, configKey);
+                        SplitSelf.CONFIG.setBooleanInObject(arrayID, configKey, newValue);
+                        SplitSelf.CONFIG.save();
                     }
+                }
             ));
         }
     }
 
     public void createDoneButton() {
         this.addDrawableChild(ButtonWidget.builder(
-                        Text.translatable("gui.done"), button -> {
-                            assert this.client != null;
-                            CustomConfigScreen.applyConfig();
-                            this.client.setScreen(parent);
-                        }
-                ).position(this.width - 155, this.height - 25)
-                .size(150, 20)
-                .build());
+            Text.translatable("gui.done"), button -> {
+                assert this.client != null;
+                CustomConfigScreen.applyConfig();
+                this.client.setScreen(parent);
+            })
+        .position(this.width - 155, this.height - 25)
+        .size(150, 20)
+        .build());
     }
 
     @Override
@@ -135,8 +125,8 @@ public class ScrollingConfigScreen extends Screen {
                     int newValue = Integer.parseInt(textFieldWidget.getText());
                     if (newValue >= minimum && newValue <= maximum) {
                         textFieldHeaderWidget.setTextColor(0xFFFFFF);
-                        jsonReader.setIntInObject(arrayID, configValue, newValue);
-                        jsonReader.save();
+                        SplitSelf.CONFIG.setIntInObject(arrayID, configValue, newValue);
+                        SplitSelf.CONFIG.save();
                     } else {
                         throw new NumberFormatException("Invalid value! (Not Within Bounds!)");
                     }
@@ -144,8 +134,8 @@ public class ScrollingConfigScreen extends Screen {
                     double newValue = Double.parseDouble(textFieldWidget.getText());
                     if (newValue >= minimum && newValue <= maximum) {
                         textFieldHeaderWidget.setTextColor(0xFFFFFF);
-                        jsonReader.setDoubleInObject(arrayID, configValue, newValue);
-                        jsonReader.save();
+                        SplitSelf.CONFIG.setDoubleInObject(arrayID, configValue, newValue);
+                        SplitSelf.CONFIG.save();
                     } else {
                         throw new NumberFormatException("Invalid value! (Not Within Bounds!)");
                     }

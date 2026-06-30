@@ -2,7 +2,6 @@ package com.pryzmm.splitself.config;
 
 import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.events.EventManager;
-import com.pryzmm.splitself.file.JsonReader;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -14,12 +13,9 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 
-import java.awt.*;
-
 public class CustomConfigScreen extends Screen {
 
     public static final Identifier CONFIG_IMAGE = Identifier.of(SplitSelf.MOD_ID, "textures/gui/title/config_title.png");
-    private static JsonReader configReader;
     public static Screen Parent;
 
     // for scrolling menus
@@ -34,13 +30,7 @@ public class CustomConfigScreen extends Screen {
 
     public CustomConfigScreen(Screen parent) {
         super(Text.literal(""));
-
         Parent = parent;
-
-        if (configReader == null) {
-            configReader = new JsonReader("splitself.json5", true);
-        }
-
     }
 
     @Override
@@ -62,12 +52,12 @@ public class CustomConfigScreen extends Screen {
     }
 
     public static void applyConfig() {
-        configReader.save();
-        EventManager.EVENTS_ENABLED = configReader.getBoolean("eventsEnabled", DefaultConfig.eventsEnabled);
-        EventManager.TICK_INTERVAL = configReader.getInt("eventTickInterval", DefaultConfig.eventTickInterval);
-        EventManager.EVENT_CHANCE = configReader.getDouble("eventChance", DefaultConfig.eventChance);
-        EventManager.START_AFTER = configReader.getDouble("startEventsAfter", DefaultConfig.startEventsAfter);
-        EventManager.GUARANTEED_EVENT = configReader.getDouble("guaranteedEvent", DefaultConfig.guaranteedEvent);
+        SplitSelf.CONFIG.save();
+        EventManager.EVENTS_ENABLED = SplitSelf.CONFIG.getBoolean("eventsEnabled", DefaultConfig.eventsEnabled);
+        EventManager.TICK_INTERVAL = SplitSelf.CONFIG.getInt("eventTickInterval", DefaultConfig.eventTickInterval);
+        EventManager.EVENT_CHANCE = SplitSelf.CONFIG.getDouble("eventChance", DefaultConfig.eventChance);
+        EventManager.START_AFTER = SplitSelf.CONFIG.getDouble("startEventsAfter", DefaultConfig.startEventsAfter);
+        EventManager.GUARANTEED_EVENT = SplitSelf.CONFIG.getDouble("guaranteedEvent", DefaultConfig.guaranteedEvent);
     }
 
     public void createConfigButtons() {
@@ -92,66 +82,66 @@ public class CustomConfigScreen extends Screen {
 
     public void createIntConfigButton(int x, int y, String configKey, int defaultValue, int minimum, int maximum, String translationKey) {
         this.addDrawableChild(new DoubleTextButtonWidget(
-                x, y, 150, 20,
-                SplitSelf.translate(translationKey),
-                () -> String.valueOf(configReader.getInt(configKey, defaultValue)),
-                () -> 0xFFFF00,
-                translationKey + ".description",
-                button -> createNumericValueWidget(5, this.height - 25, minimum, maximum, configKey, InputType.INT)
+            x, y, 150, 20,
+            SplitSelf.translate(translationKey),
+            () -> String.valueOf(SplitSelf.CONFIG.getInt(configKey, defaultValue)),
+            () -> 0xFFFF00,
+            translationKey + ".description",
+            button -> createNumericValueWidget(5, this.height - 25, minimum, maximum, configKey, InputType.INT)
         ));
     }
 
     public void createDoubleConfigButton(int x, int y, String configKey, double defaultValue, double minimum, double maximum, String translationKey) {
         this.addDrawableChild(new DoubleTextButtonWidget(
-                x, y, 150, 20,
-                SplitSelf.translate(translationKey),
-                () -> String.valueOf(configReader.getDouble(configKey, defaultValue)),
-                () -> 0xFFFF00,
-                translationKey + ".description",
-                button -> createNumericValueWidget(5, this.height - 25, minimum, maximum, configKey, InputType.DOUBLE)
+            x, y, 150, 20,
+            SplitSelf.translate(translationKey),
+            () -> String.valueOf(SplitSelf.CONFIG.getDouble(configKey, defaultValue)),
+            () -> 0xFFFF00,
+            translationKey + ".description",
+            button -> createNumericValueWidget(5, this.height - 25, minimum, maximum, configKey, InputType.DOUBLE)
         ));
     }
 
     public void createBooleanConfigButton(int x, int y, String configKey, boolean defaultValue, String translationKey) {
         this.addDrawableChild(new DoubleTextButtonWidget(
-                x, y, 150, 20,
-                SplitSelf.translate(translationKey),
-                () -> configReader.getBoolean(configKey, defaultValue) ? "True" : "False",
-                () -> configReader.getBoolean(configKey,defaultValue) ? 0x00FF00 : 0xFF0000,
-                translationKey + ".description",
-                button -> {
-                    boolean newValue = !configReader.getBoolean(configKey, defaultValue);
-                    configReader.setBoolean(configKey, newValue);
-                    configReader.save();
-                }
+            x, y, 150, 20,
+            SplitSelf.translate(translationKey),
+            () -> SplitSelf.CONFIG.getBoolean(configKey, defaultValue) ? "True" : "False",
+            () -> SplitSelf.CONFIG.getBoolean(configKey,defaultValue) ? 0x00FF00 : 0xFF0000,
+            translationKey + ".description",
+            button -> {
+                boolean newValue = !SplitSelf.CONFIG.getBoolean(configKey, defaultValue);
+                SplitSelf.CONFIG.setBoolean(configKey, newValue);
+                SplitSelf.CONFIG.save();
+            }
         ));
     }
 
     public void createVoskConfigButton(int x, int y, String link, String translationKey) {
         this.addDrawableChild(new SingleTextButtonWidget(
-                x, y, 150, 20,
-                SplitSelf.translate(translationKey),
-                SplitSelf.translate(translationKey + ".description", configReader.getString("voskModel")).getString(),
-                button -> {
-                    Util.getOperatingSystem().open(link);
-                    createVoskValueWidget(5, this.height - 25);
-                }
+            x, y, 150, 20,
+            SplitSelf.translate(translationKey),
+            SplitSelf.translate(translationKey + ".description", SplitSelf.CONFIG.getString("voskModel")).getString(),
+            button -> {
+                Util.getOperatingSystem().open(link);
+                createVoskValueWidget(5, this.height - 25);
+            }
         ));
     }
 
     public void createMenuConfigButton(int x, int y, String translationKey, double minimum, double maximum, String menuID, InputType inputType) {
         this.addDrawableChild(new SingleTextButtonWidget(
-                x, y, 150, 20,
-                SplitSelf.translate(translationKey),
-                SplitSelf.translate(translationKey + ".description").getString(),
-                button -> {
-                    assert client != null;
-                    arrayID = menuID;
-                    ScrollInputType = inputType;
-                    ScrollMinimum = minimum;
-                    ScrollMaximum = maximum;
-                    client.setScreen(new ScrollingConfigScreen(this));
-                }
+            x, y, 150, 20,
+            SplitSelf.translate(translationKey),
+            SplitSelf.translate(translationKey + ".description").getString(),
+            button -> {
+                assert client != null;
+                arrayID = menuID;
+                ScrollInputType = inputType;
+                ScrollMinimum = minimum;
+                ScrollMaximum = maximum;
+                client.setScreen(new ScrollingConfigScreen(this));
+            }
         ));
     }
 
@@ -165,30 +155,30 @@ public class CustomConfigScreen extends Screen {
             this.remove(submitButtonWidget);
         }
         textFieldWidget = this.addDrawableChild(new TextFieldWidget(
-                this.textRenderer,
-                x, y, 100, 20,
-                Text.empty() // nothing renders here for some reason :(
+            this.textRenderer,
+            x, y, 100, 20,
+            Text.empty() // nothing renders here for some reason :(
         ));
         if (inputType == InputType.INT) {
             int textWidth = textRenderer.getWidth(SplitSelf.translate("config.splitself.numeric_value", (int) minimum, (int) maximum));
             textFieldHeaderWidget = this.addDrawableChild(new TextWidget(
-                    x, y - 15, textWidth, 20,
-                    SplitSelf.translate("config.splitself.numeric_value", (int) minimum, (int) maximum),
-                    this.textRenderer
+                x, y - 15, textWidth, 20,
+                SplitSelf.translate("config.splitself.numeric_value", (int) minimum, (int) maximum),
+                this.textRenderer
             ));
         } else if (inputType == InputType.DOUBLE) {
             int textWidth = textRenderer.getWidth(SplitSelf.translate("config.splitself.numeric_value", minimum, maximum));
             textFieldHeaderWidget = this.addDrawableChild(new TextWidget(
-                    x, y - 15, textWidth, 20,
-                    SplitSelf.translate("config.splitself.numeric_value", minimum, maximum),
-                    this.textRenderer
+                x, y - 15, textWidth, 20,
+                SplitSelf.translate("config.splitself.numeric_value", minimum, maximum),
+                this.textRenderer
             ));
         }
         submitButtonWidget = this.addDrawableChild(new SingleTextButtonWidget(
-                x + 100, y, 50, 20,
-                Text.literal("Submit"),
-                null,
-                button -> submitNumericPrompt(textFieldWidget, minimum, maximum, inputType, configKey)
+            x + 100, y, 50, 20,
+            Text.literal("Submit"),
+            null,
+            button -> submitNumericPrompt(textFieldWidget, minimum, maximum, inputType, configKey)
         ));
     }
 
@@ -199,21 +189,21 @@ public class CustomConfigScreen extends Screen {
             this.remove(submitButtonWidget);
         }
         textFieldWidget = this.addDrawableChild(new TextFieldWidget(
-                this.textRenderer,
-                x, y, 100, 20,
-                Text.empty() // nothing renders here for some reason :(
+            this.textRenderer,
+            x, y, 100, 20,
+            Text.empty() // nothing renders here for some reason :(
         ));
         int textWidth = textRenderer.getWidth(SplitSelf.translate("config.splitself.string_value"));
         textFieldHeaderWidget = this.addDrawableChild(new TextWidget(
-                x, y - 15, textWidth, 20,
-                SplitSelf.translate("config.splitself.string_value"),
-                this.textRenderer
+            x, y - 15, textWidth, 20,
+            SplitSelf.translate("config.splitself.string_value"),
+            this.textRenderer
         ));
         submitButtonWidget = this.addDrawableChild(new SingleTextButtonWidget(
-                x + 100, y, 50, 20,
-                Text.literal("Submit"),
-                null,
-                button -> submitVoskPrompt(textFieldWidget)
+            x + 100, y, 50, 20,
+            Text.literal("Submit"),
+            null,
+            button -> submitVoskPrompt(textFieldWidget)
         ));
     }
 
@@ -226,8 +216,8 @@ public class CustomConfigScreen extends Screen {
                     int newValue = Integer.parseInt(textFieldWidget.getText());
                     if (newValue >= minimum && newValue <= maximum) {
                         textFieldHeaderWidget.setTextColor(0xFFFFFF);
-                        configReader.setInt(configValue, newValue);
-                        configReader.save();
+                        SplitSelf.CONFIG.setInt(configValue, newValue);
+                        SplitSelf.CONFIG.save();
                     } else {
                         throw new NumberFormatException("Invalid value! (Not Within Bounds!)");
                     }
@@ -235,8 +225,8 @@ public class CustomConfigScreen extends Screen {
                     double newValue = Double.parseDouble(textFieldWidget.getText());
                     if (newValue >= minimum && newValue <= maximum) {
                         textFieldHeaderWidget.setTextColor(0xFFFFFF);
-                        configReader.setDouble(configValue, newValue);
-                        configReader.save();
+                        SplitSelf.CONFIG.setDouble(configValue, newValue);
+                        SplitSelf.CONFIG.save();
                     } else {
                         throw new NumberFormatException("Invalid value! (Not Within Bounds!)");
                     }
@@ -255,8 +245,8 @@ public class CustomConfigScreen extends Screen {
                 throw new NumberFormatException("Input a model starting with `vosk-model-`!");
             } else {
                 textFieldHeaderWidget.setTextColor(0xFFFFFF);
-                configReader.setString("voskModel", textFieldWidget.getText().replace(" ", "").replace(".zip", ""));
-                configReader.save();
+                SplitSelf.CONFIG.setString("voskModel", textFieldWidget.getText().replace(" ", "").replace(".zip", ""));
+                SplitSelf.CONFIG.save();
                 Toast restartToast = new Toast() {
                     @Override
                     public Visibility draw(DrawContext context, ToastManager manager, long startTime) {
