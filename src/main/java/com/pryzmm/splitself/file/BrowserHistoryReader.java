@@ -54,12 +54,6 @@ public class BrowserHistoryReader {
         history.addAll(firefoxEntries);
         history.addAll(operaEntries);
 
-        if (!history.isEmpty()) {
-            for (int i = 0; i < Math.min(5, history.size()); i++) {
-                HistoryEntry entry = history.get(i);
-            }
-        }
-
         history.sort((a, b) -> Integer.compare(b.visitCount, a.visitCount));
 
         System.out.println("Debug - Top entries after sorting:");
@@ -257,18 +251,18 @@ public class BrowserHistoryReader {
         String userHome = System.getProperty("user.home");
 
         if (os.contains("win")) {
-            return userHome + "/AppData/Roaming/Opera Software/Opera GX Stable/History";
+            return userHome + "/AppData/Roaming/Opera Software/Opera GX Stable/Default/History";
         } else if (os.contains("mac")) {
-            return userHome + "/Library/Application Support/com.operasoftware.OperaGX/History";
+            return userHome + "/Library/Application Support/com.operasoftware.OperaGX/Default/History";
         } else {
-            return userHome + "/.config/opera-gx/History";
+            return userHome + "/.config/opera-gx/Default/History";
         }
     }
 
     private String getFirefoxHistoryPath() {
         String os = System.getProperty("os.name").toLowerCase();
         String userHome = System.getProperty("user.home");
-        String profilesPath = "";
+        String profilesPath;
 
         if (os.contains("win")) {
             profilesPath = userHome + "/AppData/Roaming/Mozilla/Firefox/Profiles";

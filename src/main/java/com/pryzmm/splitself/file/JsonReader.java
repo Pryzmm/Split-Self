@@ -30,25 +30,34 @@ public class JsonReader {
     public JsonReader(String fileName, boolean loadData) {
         this.configPath = FabricLoader.getInstance().getConfigDir().resolve(fileName);
         this.loadData = loadData;
-        loadOrCreateData();
+        safeLoad(configPath.toFile());
     }
 
     public JsonReader(File file) {
         this.configPath = file.toPath();
         this.loadData = false;
-        try {
-            JsonElement element = JsonParser.parseReader(new FileReader(configPath.toFile()));
-            if (element.isJsonObject()) jsonObject = element.getAsJsonObject();
-            else jsonObject = new JsonObject();
-        } catch (FileNotFoundException e) {
-            SplitSelf.LOGGER.warn("Could not find data file?");
-        }
+        safeLoad(file);
     }
 
     public JsonReader(File file, boolean loadData) {
         this.configPath = file.toPath();
         this.loadData = loadData;
-        loadOrCreateData();
+        safeLoad(file);
+    }
+
+    private void safeLoad(File file) {
+        try {
+            if (!file.exists() || file.length() == 0) {
+                file.getParentFile().mkdirs();
+                try (FileWriter w = new FileWriter(file)) { w.write("{}"); }
+            }
+            JsonElement element = JsonParser.parseReader(new FileReader(file));
+            if (element != null && element.isJsonObject()) jsonObject = element.getAsJsonObject();
+            else jsonObject = new JsonObject();
+        } catch (Exception e) {
+            SplitSelf.LOGGER.warn("Json load failed, using empty object: {}", e.getMessage());
+            jsonObject = new JsonObject();
+        }
     }
 
     private void loadOrCreateData() {
@@ -336,6 +345,7 @@ public class JsonReader {
     }
 
     public List<UUID> getUUIDList(String key) {
+        if (jsonObject == null) jsonObject = new JsonObject();
         if (jsonObject.has(key) && jsonObject.get(key).isJsonArray()) {
             List<UUID> result = new ArrayList<>();
             for (JsonElement element : jsonObject.getAsJsonArray(key)) {

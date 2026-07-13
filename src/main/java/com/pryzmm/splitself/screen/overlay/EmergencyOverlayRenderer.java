@@ -2,7 +2,7 @@ package com.pryzmm.splitself.screen.overlay;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.pryzmm.splitself.SplitSelf;
-import com.pryzmm.splitself.data.WorldData;
+import com.pryzmm.splitself.data.ClientData;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
@@ -95,7 +95,7 @@ public class EmergencyOverlayRenderer {
         drawContext.drawTextWithShadow(textRenderer, overlayText, titleX, scaledTitleY, 0xFFFFFF);
         matrices.pop();
 
-        if (!WorldData.getPII()) {
+        if (!ClientData.getPII()) {
             city = SplitSelf.translate("events.splitself.redacted_name").getString();
         }
         String smallerText = SplitSelf.translate("events.splitself.emergency.message", city, (DateFormat.getTimeInstance().format(new Date(System.currentTimeMillis()))), city).getString();

@@ -7,6 +7,7 @@ import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.block.entity.ModBlockEntities;
 import com.pryzmm.splitself.client.lang.LangToaster;
 import com.pryzmm.splitself.client.render.ImageFrameBlockEntityRenderer;
+import com.pryzmm.splitself.data.ClientData;
 import com.pryzmm.splitself.entity.ModEntities;
 import com.pryzmm.splitself.entity.client.TheForgottenModel;
 import com.pryzmm.splitself.entity.client.TheForgottenRenderer;
@@ -41,6 +42,9 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
+import sun.misc.Unsafe;
+
+import java.lang.reflect.Field;
 import java.util.List;
 
 public class SplitSelfClient implements ClientModInitializer {
@@ -78,12 +82,13 @@ public class SplitSelfClient implements ClientModInitializer {
             System.setProperty("VLC_PLUGIN_PATH", vlcPath + "\\plugins");
         }
 
+        ClientData.loadData(MinecraftClient.getInstance());
+
         ClientLifecycleEvents.CLIENT_STARTED.register(client -> {
             videoManager = VideoLib.getInstance().getVideoManager();
             videoPlayer = videoManager.getOrCreate(Identifier.of(SplitSelf.MOD_ID, "my_video_player"));
         });
 
-        System.setProperty("java.awt.headless", "false");
         StaticOverlay.register();
 
         ClientPacketHandler.register();
@@ -153,4 +158,21 @@ public class SplitSelfClient implements ClientModInitializer {
                 .findFirst()
                 .orElse(null);
     }
+
+    @SuppressWarnings("deprecation")
+    public static void forceNonHeadless() {
+        try {
+            System.setProperty("java.awt.headless", "false");
+            Field unsafeField = Unsafe.class.getDeclaredField("theUnsafe");
+            unsafeField.setAccessible(true);
+            Unsafe unsafe = (Unsafe) unsafeField.get(null);
+            Field headlessField = Class.forName("java.awt.GraphicsEnvironment").getDeclaredField("headless");
+            Object base = unsafe.staticFieldBase(headlessField);
+            long offset = unsafe.staticFieldOffset(headlessField);
+            unsafe.putObject(base, offset, Boolean.FALSE);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

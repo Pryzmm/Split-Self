@@ -2,13 +2,8 @@ package com.pryzmm.memory.data;
 
 import com.pryzmm.memory.Memory;
 import com.pryzmm.memory.util.ImageUtil;
-import com.pryzmm.splitself.data.WorldData;
-import net.minecraft.text.Text;
-
-import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,12 +16,12 @@ public class CardData {
         flippedCards.clear();
 
         Card.ICardType[] cardTypes;
-        if (WorldData.getMemoryStage() == 0) cardTypes = Card.CardTypeStage0.values();
-        else if (WorldData.getMemoryStage() == 1) cardTypes = Card.CardTypeStage1.values();
+        if (Memory.memoryStage() == 0) cardTypes = Card.CardTypeStage0.values();
+        else if (Memory.memoryStage() == 1) cardTypes = Card.CardTypeStage1.values();
         else cardTypes = Card.CardTypeStage2.values();
         for (Card.ICardType type : cardTypes) {
             int count = 2;
-            if (WorldData.getMemoryStage() == 2) count = 24;
+            if (Memory.memoryStage() == 2) count = 24;
             for (int i = 0; i < count; i++) {
                 int posX, posY;
                 do {
@@ -72,29 +67,31 @@ public class CardData {
                             }
                             flippedCards.clear();
                             if (allCardsMatched()) {
-                                JOptionPane.showMessageDialog(Memory.jFrame, Text.translatable("game.splitself.memory.complete").getString());
-                                StageHandler.advanceStage();
-                                Memory.audioClip.stop();
-                                Memory.audioClip.close();
+                                JOptionPane.showMessageDialog(Memory.jFrame, Memory.completeText());
+                                Memory.requestAdvanceStage();
+                                if (Memory.audioClip != null) {
+                                    Memory.audioClip.stop();
+                                    Memory.audioClip.close();
+                                    Memory.audioClip = null;
+                                }
                                 Memory.jFrame.removeAll();
                                 Memory.jFrame.invalidate();
                                 Memory.jFrame.dispose();
                             }
                         }
                     }
-                    if (WorldData.getMemoryStage() == 2 && allFlippedCardsCount() == 7) {
+                    if (Memory.memoryStage() == 2 && allFlippedCardsCount() == 7) {
                         Memory.instance.removeAll();
-                        Memory.audioClip.stop();
-                        Memory.audioClip.close();
-                        try {
-                            @SuppressWarnings("DataFlowIssue") AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(Memory.class.getResourceAsStream("/assets/memory/sounds/static.wav"));
-                            Memory.audioClip.open(audioInputStream);
-                            Memory.audioClip.start();
-                        } catch (UnsupportedAudioFileException | LineUnavailableException | IOException ignored) {}
+                        if (Memory.audioClip != null) {
+                            Memory.audioClip.stop();
+                            Memory.audioClip.close();
+                            Memory.audioClip = null;
+                        }
+                        Memory.playAudioOnce("/assets/memory/sounds/static.wav");
                         Thread.sleep(5000);
                         SwingUtilities.invokeLater(() -> {
                             Memory.instance.removeAll();
-                            Memory.textLabel = new JLabel(Text.translatable("game.splitself.memory.message1").getString());
+                            Memory.textLabel = new JLabel(Memory.message1());
                             Memory.textLabel.setHorizontalAlignment(SwingConstants.CENTER);
                             Memory.textLabel.setBounds(0, 0, Memory.instance.getWidth(), Memory.instance.getHeight());
                             Memory.instance.add(Memory.textLabel);
@@ -102,21 +99,24 @@ public class CardData {
                             Memory.instance.repaint();
                         });
                         Thread.sleep(6000);
-                        SwingUtilities.invokeLater(() -> Memory.textLabel.setText(Text.translatable("game.splitself.memory.message2").getString()));
+                        SwingUtilities.invokeLater(() -> Memory.textLabel.setText(Memory.message2()));
                         Thread.sleep(6000);
-                        SwingUtilities.invokeLater(() -> Memory.textLabel.setText(Text.translatable("game.splitself.memory.message3").getString()));
+                        SwingUtilities.invokeLater(() -> Memory.textLabel.setText(Memory.message3()));
                         double s = 6000;
                         StringBuilder text = new StringBuilder();
                         for (int i = 0; i <= 300; i++) {
                             Thread.sleep((int) s);
                             if (!text.isEmpty()) text.delete(text.length() - 7, text.length());
-                            text.append("<html>").append(Text.translatable("game.splitself.memory.message4").getString()).append("</html>");
+                            text.append("<html>").append(Memory.message4()).append("</html>");
                             Memory.textLabel.setText(text.toString());
                             if (s > 10) s /= 1.5f;
                             if (i == 300) {
-                                StageHandler.advanceStage();
-                                Memory.audioClip.stop();
-                                Memory.audioClip.close();
+                                Memory.requestAdvanceStage();
+                                if (Memory.audioClip != null) {
+                                    Memory.audioClip.stop();
+                                    Memory.audioClip.close();
+                                    Memory.audioClip = null;
+                                }
                                 Memory.jFrame.dispose();
                             }
                         }

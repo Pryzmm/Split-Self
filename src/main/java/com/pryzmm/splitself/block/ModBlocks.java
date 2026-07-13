@@ -18,9 +18,6 @@ public class ModBlocks {
     public static final Block IMAGE_FRAME = registerBlock("image_frame",
         new ImageFrameBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).nonOpaque().burnable()));
 
-    public static final Block EMPTY_TELEPORT = registerBlock("empty_teleport",
-        new EmptyTeleportBlock(AbstractBlock.Settings.create().nonOpaque().noCollision()));
-
     public static final Block BRAIN = registerBlock("brain",
         new BrainBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.HONEY)));
 

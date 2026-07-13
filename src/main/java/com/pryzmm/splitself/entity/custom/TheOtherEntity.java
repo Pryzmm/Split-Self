@@ -3,9 +3,10 @@ package com.pryzmm.splitself.entity.custom;
 import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.client.SplitSelfClient;
 import com.pryzmm.splitself.data.WorldData;
-import com.pryzmm.splitself.events.ScreenOverlay;
+import com.pryzmm.splitself.packet.packets.TheOtherOverlayPacket;
 import com.pryzmm.splitself.sound.ModSounds;
 import com.pryzmm.splitself.world.DimensionRegistry;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
@@ -21,6 +22,7 @@ import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.text.Text;
 import net.minecraft.world.LocalDifficulty;
@@ -98,8 +100,8 @@ public class TheOtherEntity extends HostileEntity {
             else --this.playerUpdateTimer;
         }
 
-        List<PlayerEntity> nearbyPlayers = this.getWorld().getEntitiesByClass(
-                PlayerEntity.class,
+        List<ServerPlayerEntity> nearbyPlayers = this.getWorld().getEntitiesByClass(
+                ServerPlayerEntity.class,
                 this.getBoundingBox().expand(10.0),
                 LivingEntity::isAlive
         );
@@ -116,7 +118,7 @@ public class TheOtherEntity extends HostileEntity {
                 }
             }
         } else if (!this.getWorld().isClient && this.getWorld() != this.getWorld().getServer().getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY)) {
-            for (PlayerEntity player : nearbyPlayers) {
+            for (ServerPlayerEntity player : nearbyPlayers) {
                 double distance = this.distanceTo(player);
                 double distanceMax;
                 if (this.getVariant() == TheOtherVariant.TWITCHING) {
@@ -126,7 +128,7 @@ public class TheOtherEntity extends HostileEntity {
                 }
                 if (distance < distanceMax && !toBeDiscarded.containsKey(this)) {
                     toBeDiscarded.put(this, 1);
-                    ScreenOverlay.executeTheOtherScreen(player);
+                    ServerPlayNetworking.send(player, new TheOtherOverlayPacket());
                     player.addStatusEffect(new StatusEffectInstance(StatusEffects.WITHER, 100, 1, false, false, false));
                     new Thread(() -> {
                         try {

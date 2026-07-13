@@ -1,7 +1,6 @@
 package com.pryzmm.memory.util;
-
+import com.pryzmm.memory.Memory;
 import com.pryzmm.memory.data.Card;
-import com.pryzmm.splitself.data.WorldData;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -13,10 +12,11 @@ public class ImageUtil {
 
     private static final Map<String, BufferedImage> imageCache = new HashMap<>();
     public static BufferedImage getCardImage(Card.ICardType cardType) {
-        String key = WorldData.getMemoryStage() + "_" + cardType.name().toLowerCase();
+        int stage = Memory.memoryStage();
+        String key = stage + "_" + cardType.name().toLowerCase();
         return imageCache.computeIfAbsent(key, k -> {
             try {
-                return ImageIO.read(ImageUtil.class.getResourceAsStream("/assets/memory/textures/cards/stage_" + WorldData.getMemoryStage() + "/" + cardType.name().toLowerCase() + ".png"));
+                return ImageIO.read(ImageUtil.class.getResourceAsStream("/assets/memory/textures/cards/stage_" + stage + "/" + cardType.name().toLowerCase() + ".png"));
             } catch (Exception e) { throw new RuntimeException(e); }
         });
     }
@@ -32,7 +32,7 @@ public class ImageUtil {
         int newH = (int) Math.floor(h * cos + w * sin);
         long key = ((long) newW << 32) | (newH & 0xFFFFFFFFL);
         BufferedImage rotated = rotationBufferCache.computeIfAbsent(key, k ->
-            new BufferedImage(newW, newH, original.getType())
+                new BufferedImage(newW, newH, original.getType())
         );
 
         Graphics2D g2d = rotated.createGraphics();

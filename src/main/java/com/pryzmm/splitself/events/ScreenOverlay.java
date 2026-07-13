@@ -5,17 +5,17 @@ import com.pryzmm.splitself.events.helper.ChunkDestroyer;
 import com.pryzmm.splitself.screen.overlay.*;
 import com.pryzmm.splitself.sound.ModSounds;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import java.io.File;
 
 public class ScreenOverlay {
-    public static void executeBlackScreen(PlayerEntity Player) {
+    public static void executeBlackScreen(PlayerEntity player) {
         EventManager.ACTIVE_EVENT = true;
         new Thread(() -> {
-            Player.getWorld().playSound(null, Player.getBlockPos(), ModSounds.STATIC, SoundCategory.MASTER, 1.0f, 1.0f);
+            player.playSound(ModSounds.STATIC, 1.0f, 1.0f);
             ScreenOverlayRenderer.toggleOverlay();
             try {
                 Thread.sleep(3877);
@@ -27,9 +27,9 @@ public class ScreenOverlay {
         }).start();
     }
 
-    public static void executeWhiteScreen(PlayerEntity Player) {
+    public static void executeWhiteScreen(PlayerEntity player) {
         new Thread(() -> {
-            Player.getWorld().playSound(null, Player.getBlockPos(), ModSounds.SCREECH, SoundCategory.MASTER, 1.0f, 1.0f);
+            player.playSound(ModSounds.SCREECH, 1.0f, 1.0f);
             TheOtherWhiteOverlay.toggleOverlay();
             try {
                 Thread.sleep(200);
@@ -40,9 +40,9 @@ public class ScreenOverlay {
         }).start();
     }
 
-    public static void executeTheOtherScreen(PlayerEntity Player) {
+    public static void executeTheOtherScreen(PlayerEntity player) {
         new Thread(() -> {
-            Player.getWorld().playSound(null, Player.getBlockPos(), ModSounds.SCREAM, SoundCategory.MASTER, 1.0f, 1.0f);
+            player.playSound(ModSounds.SCREAM, 1.0f, 1.0f);
             TheOtherOverlay.toggleOverlay();
             try {
                 Thread.sleep(5000);
@@ -53,9 +53,9 @@ public class ScreenOverlay {
         }).start();
     }
 
-    public static void executeInventoryScreen(PlayerEntity Player) {
+    public static void executeInventoryScreen(PlayerEntity player) {
         new Thread(() -> {
-            Player.getWorld().playSound(null, Player.getBlockPos(), ModSounds.HORN, SoundCategory.MASTER, 1.0f, 1.0f);
+            player.playSound(ModSounds.HORN, 1.0f, 1.0f);
             InventoryOverlayRenderer.toggleOverlay();
             try {
                 Thread.sleep(1000);
@@ -106,7 +106,7 @@ public class ScreenOverlay {
     public static void executeEmergencyScreen(PlayerEntity player, String city) {
         new Thread(() -> {
             EventManager.ACTIVE_EVENT = true;
-            player.getWorld().playSound(null, player.getBlockPos(), ModSounds.AMBER, SoundCategory.MASTER, 1.0f, 1.0f);
+            player.playSound(ModSounds.AMBER, 1.0f, 1.0f);
             EmergencyOverlayRenderer.toggleOverlay(city);
             try {
                 Thread.sleep(13000);
@@ -130,19 +130,19 @@ public class ScreenOverlay {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            client.getSoundManager().stopSounds(ModSounds.GLITCH.getId(), SoundCategory.MASTER);
+            client.getSoundManager().stopSounds(ModSounds.GLITCH.getId(), null);
             GlitchOverlay.toggleOverlay();
             EventManager.ACTIVE_EVENT = false;
         }).start();
     }
 
-    public static void executeStaticScreen(ServerPlayerEntity player) {
+    public static void executeStaticScreen(ClientPlayerEntity player) {
         EventManager.ACTIVE_EVENT = true;
         new Thread(() -> {
             StaticOverlay.toggleOverlay();
-            player.getWorld().playSound(null, player.getBlockPos(), ModSounds.STATIC2, SoundCategory.MASTER, 1.0f, 1.0f);
+            player.playSound(ModSounds.STATIC2, 1.0f, 1.0f);
             try { Thread.sleep(30000); } catch (InterruptedException ignored) {}
-            MinecraftClient.getInstance().getSoundManager().stopSounds(ModSounds.STATIC2.getId(), SoundCategory.MASTER);
+            MinecraftClient.getInstance().getSoundManager().stopSounds(ModSounds.STATIC2.getId(), null);
             StaticOverlay.toggleOverlay();
             EventManager.ACTIVE_EVENT = false;
         }).start();
@@ -152,9 +152,9 @@ public class ScreenOverlay {
         EventManager.ACTIVE_EVENT = true;
         new Thread(() -> {
             RecursiveRenderer.toggleOverlay();
-            if (sound) player.getWorld().playSound(null, player.getBlockPos(), ModSounds.GLITCH2, SoundCategory.MASTER, 1.0f, 1.0f);
+            if (sound) player.playSound(ModSounds.GLITCH2, 1.0f, 1.0f);
             try { Thread.sleep(milliseconds); } catch (InterruptedException ignored) {}
-            if (sound) MinecraftClient.getInstance().getSoundManager().stopSounds(ModSounds.GLITCH2.getId(), SoundCategory.MASTER);
+            if (sound) MinecraftClient.getInstance().getSoundManager().stopSounds(ModSounds.GLITCH2.getId(), null);
             RecursiveRenderer.toggleOverlay();
             EventManager.ACTIVE_EVENT = false;
         }).start();

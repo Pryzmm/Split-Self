@@ -29,7 +29,6 @@ public class ModItemGroups {
                     entries.add(ModItems.MEMORY_MINES);
                     entries.add(ModItems.MEMORY_PILLAR);
                     entries.add(ModItems.MEMORY_CREEPER);
-                    entries.add(ModItems.EMPTY_TELEPORT);
                 })
                 .build());
     }

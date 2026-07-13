@@ -44,6 +44,9 @@
           "com.pryzmm.splitself.config.ModMenuApiImpl"
 		]
 	},
+	"jars": [
+		{ "file": "META-INF/jars/videolib.jar" }
+	],
 	"mixins": [
 		"splitself.mixins.json"
 	],

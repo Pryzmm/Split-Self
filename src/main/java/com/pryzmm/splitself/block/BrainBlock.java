@@ -3,6 +3,7 @@ package com.pryzmm.splitself.block;
 import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.data.WorldData;
 import com.pryzmm.splitself.events.ScreenOverlay;
+import com.pryzmm.splitself.events.helper.SkyColor;
 import com.pryzmm.splitself.item.ModItems;
 import com.pryzmm.splitself.packet.packets.BrokenEffectPacket;
 import com.pryzmm.splitself.packet.packets.EndBrokenEffectPacket;
@@ -101,7 +102,11 @@ public class BrainBlock extends Block {
                 Thread.sleep(300);
                 client.execute(() -> client.setScreen(new BrokenScreen()));
                 Thread.sleep(5000);
-                client.execute(() -> ClientPlayNetworking.send(new EndBrokenEffectPacket()));
+                client.execute(() -> {
+                    SkyColor.changeFogColor(null);
+                    SkyColor.changeSkyColor(null);
+                    ClientPlayNetworking.send(new EndBrokenEffectPacket());
+                });
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

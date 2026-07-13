@@ -42,6 +42,7 @@ public class ChunkDestroyer {
                 for (int z = minimumPos.getZ(); z <= maximumPos.getZ(); z++) {
                     BlockPos pos = new BlockPos(x, y, z);
                     if (!world.getBlockState(pos).isAir()) {
+                        world.removeBlockEntity(pos);
                         world.setBlockState(pos, Blocks.AIR.getDefaultState());
                     }
                 }

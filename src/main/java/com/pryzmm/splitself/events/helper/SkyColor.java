@@ -5,6 +5,10 @@ public class SkyColor {
     private static Integer currentFogColor = null;
 
     public static void changeFogColor(String hex) {
+        if (hex == null) {
+            currentFogColor = null;
+            return;
+        }
         try {
             if (hex.startsWith("#")) {
                 hex = hex.substring(1);
@@ -17,6 +21,10 @@ public class SkyColor {
     }
 
     public static void changeSkyColor(String hex) {
+        if (hex == null) {
+            currentSkyColor = null;
+            return;
+        }
         try {
             if (hex.startsWith("#")) {
                 hex = hex.substring(1);

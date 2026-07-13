@@ -115,7 +115,7 @@ public class BackgroundManager {
             }
 
         } catch (Exception e) {
-            SplitSelf.LOGGER.error("Failed to get current background, " + e.getMessage());
+            SplitSelf.LOGGER.error("Failed to get current background: {}", String.valueOf(e));
         }
 
         return null;

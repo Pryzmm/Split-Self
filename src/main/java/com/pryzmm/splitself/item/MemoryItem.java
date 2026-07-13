@@ -49,6 +49,20 @@ public class MemoryItem extends Item {
         return TypedActionResult.success(itemStack, world.isClient());
     }
 
+    public static int getMemoryBitMask(MinecraftServer ignored) {
+        int bitMask = 0;
+        for (String memory : WorldData.getUnlockedMemories()) {
+            switch (memory) {
+                case "house"   -> bitMask |= 1;
+                case "blu"     -> bitMask |= 2;
+                case "mines"   -> bitMask |= 4;
+                case "pillar"  -> bitMask |= 8;
+                case "creeper" -> bitMask |= 16;
+            }
+        }
+        return bitMask;
+    }
+
     @Override
     public Text getName(ItemStack stack) {
         return SplitSelf.translate("item.splitself.memory");

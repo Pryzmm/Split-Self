@@ -3,6 +3,7 @@ package com.pryzmm.splitself.entity.client;
 import com.pryzmm.splitself.entity.ModEntities;
 import com.pryzmm.splitself.entity.custom.TheOtherEntity;
 import net.minecraft.entity.SpawnReason;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
@@ -18,7 +19,7 @@ public class TheOtherSpawner {
 
     public static Position[] spawnPositions = null;
 
-    public static void trySpawnTheOther(ServerWorld world, PlayerEntity player, boolean silentSpawn) {
+    public static void trySpawnTheOther(ServerWorld world, ServerPlayerEntity player, boolean silentSpawn) {
         if (spawnPositions == null || spawnPositions.length == 0) {
             return;
         }

@@ -2,18 +2,14 @@ package com.pryzmm.splitself.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.pryzmm.splitself.SplitSelf;
-import com.pryzmm.splitself.events.EventManager;
-import net.minecraft.block.Blocks;
+import com.pryzmm.splitself.packet.packets.KickScreenPacket;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import java.util.Random;
 
 public class KickScreen extends Screen {
 
@@ -28,34 +24,7 @@ public class KickScreen extends Screen {
         this.addDrawableChild(ButtonWidget.builder(
             Text.translatable("gui.toTitle"),
             button -> {
-                ServerPlayerEntity player = this.client.getServer().getPlayerManager().getPlayer(this.client.player.getUuid());
-                Vec3d playerPos = new Vec3d(
-                    player.getPos().x,
-                    player.getPos().y,
-                    player.getPos().z
-                );
-                playerPos = EventManager.moveVectorFromBase(player, playerPos);
-                Vec3d pos1 = new Vec3d(
-                    playerPos.x - 8,
-                    playerPos.y - 8,
-                    playerPos.z - 8
-                );
-                Vec3d pos2 = new Vec3d(
-                    playerPos.x + 7,
-                    playerPos.y + 7,
-                    playerPos.z + 7
-                );
-                Random random = new Random();
-                for (int y = (int) pos1.getY(); y <= (int) pos2.getY(); y++) {
-                    for (int x = (int) pos1.getX(); x <= (int) pos2.getX(); x++) {
-                        for (int z = (int) pos1.getZ(); z <= (int) pos2.getZ(); z++) {
-                            BlockPos pos = new BlockPos(x, y, z);
-                            if (!player.getWorld().getBlockState(pos).isAir() && random.nextBoolean()) {
-                                player.getWorld().setBlockState(pos, Blocks.AIR.getDefaultState());
-                            }
-                        }
-                    }
-                }
+                ClientPlayNetworking.send(new KickScreenPacket());
                 this.close();
             }
         ).position((this.width / 2) - 100, (this.height / 2) + 15)
@@ -74,21 +43,21 @@ public class KickScreen extends Screen {
         Text connectionLostText = Text.translatable("disconnect.lost").formatted(Formatting.GRAY);
         int connectionLostWidth = this.textRenderer.getWidth(connectionLostText);
         drawContext.drawTextWithShadow(
-                this.textRenderer,
-                connectionLostText,
-                (screenWidth - connectionLostWidth) / 2,
-                (screenHeight / 2) - 15,
-                0xFFFFFF
+            this.textRenderer,
+            connectionLostText,
+            (screenWidth - connectionLostWidth) / 2,
+            (screenHeight / 2) - 15,
+            0xFFFFFF
         );
 
         Text timedOutText = Text.translatable("disconnect.timeout");
         int timedOutWidth = this.textRenderer.getWidth(timedOutText);
         drawContext.drawTextWithShadow(
-                this.textRenderer,
-                timedOutText,
-                (screenWidth - timedOutWidth) / 2,
-                screenHeight / 2,
-                0xFFFFFF
+            this.textRenderer,
+            timedOutText,
+            (screenWidth - timedOutWidth) / 2,
+            screenHeight / 2,
+            0xFFFFFF
         );
     }
 

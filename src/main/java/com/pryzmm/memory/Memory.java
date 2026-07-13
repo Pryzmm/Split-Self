@@ -3,9 +3,6 @@ package com.pryzmm.memory;
 import com.pryzmm.memory.data.Card;
 import com.pryzmm.memory.data.CardData;
 import com.pryzmm.memory.util.ImageUtil;
-import com.pryzmm.splitself.data.WorldData;
-import net.minecraft.text.Text;
-
 import javax.imageio.ImageIO;
 import javax.sound.sampled.*;
 import javax.swing.*;
@@ -15,15 +12,16 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.BufferedInputStream;
 import java.util.ArrayList;
 
-@SuppressWarnings("DataFlowIssue")
 public class Memory extends JPanel implements Runnable {
 
     public static Memory instance;
     public static JFrame jFrame;
     public static JLabel textLabel = null;
     public static Clip audioClip;
+    public static final String ADVANCE_STAGE_MARKER = "[SplitSelfMemory] ADVANCE_STAGE";
 
     private static final BufferedImage polkadots;
     private static final BufferedImage polkadotsStage2;
@@ -34,6 +32,46 @@ public class Memory extends JPanel implements Runnable {
     public static final BufferedImage backCard;
     private static final BufferedImage backgroundHueShifted;
     private static final BufferedImage backgroundBrightnessShifted;
+
+    private static int memoryStage = -1;
+    private static String title = "Memory";
+    private static String startText = "Start";
+    private static String finishText = "Finish the memory game first.";
+    private static String completeText = "Complete!";
+    private static String message1 = "";
+    private static String message2 = "";
+    private static String message3 = "";
+    private static String message4 = "";
+
+    public static int memoryStage() {
+        return memoryStage;
+    }
+
+    public static String completeText() {
+        return completeText;
+    }
+
+    public static String message1() {
+        return message1;
+    }
+
+    public static String message2() {
+        return message2;
+    }
+
+    public static String message3() {
+        return message3;
+    }
+
+    public static String message4() {
+        return message4;
+    }
+
+    public static void requestAdvanceStage() {
+        System.out.println(ADVANCE_STAGE_MARKER);
+        System.out.flush();
+    }
+
     static {
         try {
             polkadots = readImage("/assets/memory/textures/ui/polka_dots.png");
@@ -72,7 +110,7 @@ public class Memory extends JPanel implements Runnable {
     public Memory() {
         CardData.populateCards();
         setLayout(null);
-        startButton = new JButton(Text.translatable("game.splitself.memory.start").getString());
+        startButton = new JButton(startText);
         startButton.setBounds(getWidth() / 2, getHeight() / 2, 200, 50);
         startButton.addActionListener(e -> {
             startButton.setVisible(false);
@@ -97,51 +135,119 @@ public class Memory extends JPanel implements Runnable {
     }
 
     public static void main(String[] args) {
-        if (WorldData.getMemoryStage() == -1) return;
+        installExceptionLogging();
+
+        memoryStage = readIntProperty("splitself.memory.stage", -1);
+        title = System.getProperty("splitself.memory.title", "Memory");
+        startText = System.getProperty("splitself.memory.start", "Start");
+        finishText = System.getProperty("splitself.memory.finish", "Finish the memory game first.");
+        completeText = System.getProperty("splitself.memory.complete", "Complete!");
+        message1 = System.getProperty("splitself.memory.message1", "");
+        message2 = System.getProperty("splitself.memory.message2", "");
+        message3 = System.getProperty("splitself.memory.message3", "");
+        message4 = System.getProperty("splitself.memory.message4", "");
+
+
+        System.out.println("Starting Memory App. stage=" + memoryStage);
+
+        //if (memoryStage == -1) return;
+        if (memoryStage == -1) System.out.println("Memory app not opened: THE FREACKING STAGE IS -1 :PARTY_EMOJI YEEY");
 
         SwingUtilities.invokeLater(() -> {
-
-            if (instance != null) {
-                instance.gameLoopThread.interrupt();
-            }
-
-            if (audioClip != null && audioClip.isRunning()) {
-                audioClip.stop();
-                audioClip.close();
-            }
-            if (jFrame != null) {
-                jFrame.dispose();
-                jFrame = null;
-            }
-            cardButtons.clear();
-            instance = new Memory();
-
-            JFrame frame = new JFrame(Text.translatable("game.splitself.memory.title").getString());
-            jFrame = frame;
-            frame.add(instance);
-            frame.setSize(800, 800);
-            frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-            frame.addWindowListener(new WindowAdapter() {
-                @Override
-                public void windowClosing(WindowEvent e) {
-                    if (WorldData.getMemoryStage() != 2) JOptionPane.showMessageDialog(frame, Text.translatable("game.splitself.memory.finish").getString());
-                }
-            });
-            frame.setVisible(true);
-
             try {
-                AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(Memory.class.getResourceAsStream("/assets/memory/sounds/lobby_music_stage_" + WorldData.getMemoryStage() + ".wav"));
-                audioClip = AudioSystem.getClip();
-                audioClip.open(audioInputStream);
-                audioClip.loop(Clip.LOOP_CONTINUOUSLY);
-                audioClip.start();
-            } catch (LineUnavailableException | IOException | UnsupportedAudioFileException e) {
-                throw new RuntimeException(e);
-            }
+                if (instance != null) {
+                    instance.gameLoopThread.interrupt();
+                }
 
-            instance.gameLoopThread.setDaemon(true);
-            instance.gameLoopThread.start();
+                if (audioClip != null && audioClip.isRunning()) {
+                    audioClip.stop();
+                    audioClip.close();
+                }
+
+                if (jFrame != null) {
+                    jFrame.dispose();
+                    jFrame = null;
+                }
+
+                cardButtons.clear();
+                instance = new Memory();
+
+                JFrame frame = new JFrame(title);
+                jFrame = frame;
+                frame.add(instance);
+                frame.setSize(800, 800);
+                frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+                frame.addWindowListener(new WindowAdapter() {
+                    @Override
+                    public void windowClosing(WindowEvent e) {
+                        if (memoryStage != 2) {
+                            JOptionPane.showMessageDialog(frame, finishText);
+                        }
+                    }
+                });
+                frame.setVisible(true);
+
+                instance.gameLoopThread.setDaemon(true);
+                instance.gameLoopThread.start();
+
+                playLoopingAudio("/assets/memory/sounds/lobby_music_stage_" + memoryStage + ".wav");
+
+            } catch (Throwable t) {
+                System.err.println("Failed to open Memory window");
+                t.printStackTrace(System.err);
+            }
         });
+    }
+
+    private static int readIntProperty(String key, int fallback) {
+        try {
+            return Integer.parseInt(System.getProperty(key, String.valueOf(fallback)));
+        } catch (NumberFormatException e) {
+            System.err.println("Invalid int property " + key + ": " + System.getProperty(key));
+            return fallback;
+        }
+    }
+
+    private static void installExceptionLogging() {
+        Thread.setDefaultUncaughtExceptionHandler((thread, error) -> {
+            System.err.println("Uncaught exception on thread " + thread.getName());
+            error.printStackTrace(System.err);
+        });
+    }
+
+    private static AudioInputStream readAudio(String path) throws IOException, UnsupportedAudioFileException {
+        InputStream stream = Memory.class.getResourceAsStream(path);
+        if (stream == null) {
+            throw new IOException("Audio resource not found on classpath: " + path);
+        }
+        return AudioSystem.getAudioInputStream(new BufferedInputStream(stream));
+    }
+
+    private static void playLoopingAudio(String path){
+        try {
+            AudioInputStream audioInputStream = readAudio(path);
+            audioClip = AudioSystem.getClip();
+            audioClip.open(audioInputStream);
+            audioClip.loop(Clip.LOOP_CONTINUOUSLY);
+            audioClip.start();
+        }
+        catch (LineUnavailableException | IOException | UnsupportedAudioFileException e) {
+            System.err.println("Failed to play audio: " + path);
+            e.printStackTrace(System.err);
+        }
+    }
+
+    public static void playAudioOnce(String path){
+        try {
+            AudioInputStream audioInputStream = readAudio(path);
+            audioClip = AudioSystem.getClip();
+            audioClip.open(audioInputStream);
+            audioClip.start();
+        }
+        catch (LineUnavailableException | IOException | UnsupportedAudioFileException e) {
+            System.err.println("Failed to play audio: " + path);
+            e.printStackTrace(System.err);
+        }
     }
 
     private int offsetX = 0;
@@ -151,14 +257,14 @@ public class Memory extends JPanel implements Runnable {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        if (WorldData.getMemoryStage() == 2) g.drawImage(backgroundBrightnessShifted, 0, 0, getWidth(), getHeight(), null);
-        else if (WorldData.getMemoryStage() == 1 && Math.random() * 100 < 2) g.drawImage(backgroundHueShifted, 0, 0, getWidth(), getHeight(), null);
+        if (memoryStage == 2) g.drawImage(backgroundBrightnessShifted, 0, 0, getWidth(), getHeight(), null);
+        else if (memoryStage == 1 && Math.random() * 100 < 2) g.drawImage(backgroundHueShifted, 0, 0, getWidth(), getHeight(), null);
         else g.drawImage(background, 0, 0, getWidth(), getHeight(), null);
 
         offsetX += 1;
         offsetY += 1;
 
-        if (WorldData.getMemoryStage() >= 1 && Math.random() * 100 < 2) {
+        if (memoryStage >= 1 && Math.random() * 100 < 2) {
             offsetX += (int) (Math.random() * 40 - 20);
             offsetY += (int) (Math.random() * 40 - 20);
         }
@@ -175,7 +281,7 @@ public class Memory extends JPanel implements Runnable {
             for (int i = 0; i < cardButtons.size(); i++) {
 
                 int offsetX, offsetY;
-                if (WorldData.getMemoryStage() >= 1 && Math.random() * 100 < 2) {
+                if (memoryStage >= 1 && Math.random() * 100 < 2) {
                     offsetX = (int) (Math.random() * 4 - 2);
                     offsetY = (int) (Math.random() * 4 - 2);
                 } else {
@@ -190,7 +296,7 @@ public class Memory extends JPanel implements Runnable {
 
         for (int x = startX; x < getWidth(); x += imgW) {
             for (int y = startY; y < getHeight(); y += imgH) {
-                if (WorldData.getMemoryStage() == 2) {
+                if (memoryStage == 2) {
                     g.drawImage(polkadotsStage2, x, y, null);
                 }
                 else g.drawImage(polkadots, x, y, null);
@@ -200,7 +306,7 @@ public class Memory extends JPanel implements Runnable {
         if (textLabel != null) textLabel.setBounds(0, 0, Memory.instance.getWidth(), Memory.instance.getHeight());
 
         double rotationOffset;
-        if (WorldData.getMemoryStage() >= 1 && Math.random() * 100 < 2) rotationOffset = Math.random() * 2;
+        if (memoryStage >= 1 && Math.random() * 100 < 2) rotationOffset = Math.random() * 2;
         else rotationOffset = 0;
 
         double rotation = Math.sin((double) System.currentTimeMillis() / 400 + rotationOffset) * 10;

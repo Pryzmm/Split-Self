@@ -11,29 +11,28 @@ import com.pryzmm.splitself.events.helper.StructureManager;
 import com.pryzmm.splitself.file.JsonReader;
 import com.pryzmm.splitself.func.StripMine;
 import com.pryzmm.splitself.packet.ServerPacketHandler;
+import com.pryzmm.splitself.packet.packets.WarningScreenPacket;
 import com.pryzmm.splitself.world.LimboLevitation;
 import com.pryzmm.splitself.entity.ModEntities;
 import com.pryzmm.splitself.entity.custom.TheOtherEntity;
 import com.pryzmm.splitself.file.BackgroundManager;
 import com.pryzmm.splitself.item.ModItemGroups;
 import com.pryzmm.splitself.item.ModItems;
-import com.pryzmm.splitself.screen.WarningScreen;
 import com.pryzmm.splitself.sound.ModSounds;
 import com.pryzmm.splitself.world.DimensionRegistry;
 import com.pryzmm.splitself.world.structure.StructurePieces;
 import com.pryzmm.splitself.world.structure.Structures;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -51,7 +50,7 @@ public class SplitSelf implements ModInitializer {
     public static JsonReader CONFIG = null;
 
 	private void onServerStarted(MinecraftServer server) {
-        WorldData.loadData(server.getOverworld());
+        if (!WorldData.isLoaded()) WorldData.loadData(server.getOverworld());
 		ServerWorld limboWorld = server.getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY);
 		if (limboWorld != null) {
 			StructureManager.placeStructureRandomRotation(
@@ -107,8 +106,6 @@ public class SplitSelf implements ModInitializer {
 	@Override
 	public void onInitialize() {
 
-        MinecraftClient client = MinecraftClient.getInstance();
-
         DefaultConfig.createDefaultConfigs();
         CONFIG = new JsonReader("splitself.json5", true);
 
@@ -124,6 +121,18 @@ public class SplitSelf implements ModInitializer {
         PersistentData.loadData();
 
         ServerPacketHandler.register();
+
+        ClientTickEvents.END_WORLD_TICK.register(EventManager::onClientTick);
+
+        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+            WorldData.loadData(server.getOverworld());
+            ServerPlayerEntity player = handler.player;
+            assert player != null;
+            if (!WorldData.getJoinedPlayers().contains(player.getUuid())) {
+                WorldData.updateJoinedPlayers(player.getUuid());
+                ServerPlayNetworking.send(player, new WarningScreenPacket());
+            }
+        });
 
 		ServerTickEvents.END_SERVER_TICK.register(EventManager::onTick);
         ServerTickEvents.END_SERVER_TICK.register(TheForgottenFunc::removeIfRayCasted);
@@ -164,15 +173,6 @@ public class SplitSelf implements ModInitializer {
                     TheForgottenFunc.tryRandomSpawn(world);
                     nextForgottenSpawn = 600;
                 }
-            }
-        });
-
-        ClientPlayConnectionEvents.JOIN.register((handler, sender, mc) -> {
-            ClientPlayerEntity player = mc.player;
-            assert player != null;
-            if (!WorldData.getJoinedPlayers().contains(player.getUuid())) {
-                WorldData.updateJoinedPlayers(player.getUuid());
-                client.execute(() -> client.setScreen(new WarningScreen()));
             }
         });
 

@@ -1,7 +1,7 @@
 package com.pryzmm.splitself.item;
 
-import com.pryzmm.splitself.screen.MemoryScreen;
-import net.minecraft.client.MinecraftClient;
+import com.pryzmm.splitself.packet.packets.MemoryScreenPacket;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -18,7 +18,9 @@ public class MemoryBookItem extends Item {
 
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         ItemStack itemStack = user.getStackInHand(hand);
-        if (world.isClient()) MinecraftClient.getInstance().setScreen(new MemoryScreen());
+        if (world.isClient()) {
+            ClientPlayNetworking.send(new MemoryScreenPacket(0));
+        }
         user.incrementStat(Stats.USED.getOrCreateStat(this));
         return TypedActionResult.success(itemStack, world.isClient());
     }

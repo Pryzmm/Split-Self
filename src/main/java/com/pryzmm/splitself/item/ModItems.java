@@ -1,7 +1,6 @@
 package com.pryzmm.splitself.item;
 
 import com.pryzmm.splitself.SplitSelf;
-import com.pryzmm.splitself.block.ModBlocks;
 import com.pryzmm.splitself.sound.ModSounds;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.component.type.FoodComponent;
@@ -38,14 +37,6 @@ public class ModItems {
         "ciet_doke",
         new Item(new Item.Settings()
             .food(CIET_DOKE_COMPONENT))
-    );
-
-    public static final Item EMPTY_TELEPORT = registerItem(
-        "empty_teleport",
-        new EmptyTeleportItem(ModBlocks.EMPTY_TELEPORT, new Item.Settings()
-            .maxCount(1)
-            .rarity(Rarity.EPIC)
-            .fireproof())
     );
 
     public static final Item MEMORY_BOOK = registerItem(
@@ -116,8 +107,6 @@ public class ModItems {
             entries.add(MEMORY_PILLAR);
             entries.add(MEMORY_CREEPER);
         });
-        ItemGroupEvents.modifyEntriesEvent(ItemGroups.FOOD_AND_DRINK).register(entries -> {
-            entries.add(CIET_DOKE);
-        });
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.FOOD_AND_DRINK).register(entries -> entries.add(CIET_DOKE));
     }
 }

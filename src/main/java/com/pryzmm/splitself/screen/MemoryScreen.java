@@ -15,18 +15,24 @@ public class MemoryScreen extends Screen {
 
     private static final float sizeMulti = 1.3f;
     private static long frameOffset = 0L;
+    private int memoryBitMask;
 
     private static final List<Memory> memories = new ArrayList<>();
     static {
-        memories.add(new Memory("house", 24, 23));
-        memories.add(new Memory("blu", 53, 72));
-        memories.add(new Memory("mines", 27, 121));
-        memories.add(new Memory("pillar", 184, 32));
-        memories.add(new Memory("creeper", 161, 102));
+        memories.add(new Memory("house", 24, 23, 1));
+        memories.add(new Memory("blu", 53, 72, 2));
+        memories.add(new Memory("mines", 27, 121, 4));
+        memories.add(new Memory("pillar", 184, 32, 8));
+        memories.add(new Memory("creeper", 161, 102, 16));
     }
 
-    public MemoryScreen() {
+    public MemoryScreen(Integer memoryBitMask) {
         super(Text.empty());
+        this.memoryBitMask = memoryBitMask;
+    }
+
+    public boolean isUnlocked(int bitMask) {
+        return (bitMask & memoryBitMask) != 0;
     }
 
     @Override
@@ -67,7 +73,7 @@ public class MemoryScreen extends Screen {
         int drawY = yOffset + (int) (memory.y * sizeMulti);
         int endX  = xOffset + (int) ((memory.x + 76) * sizeMulti);
         int endY  = yOffset + (int) ((memory.y + 40) * sizeMulti);
-        if (memory.image == null || !WorldData.getUnlockedMemories().contains(memory.image)) {
+        if (memory.image == null || !isUnlocked(memory.memoryBitMask)) {
             context.drawTexture(Identifier.of(SplitSelf.MOD_ID, "textures/gui/memories/missing_memory.png"), drawX, drawY, 0, 0, endX - drawX, endY - drawY, (int) (76 * sizeMulti), (int) (40 * sizeMulti));
             int hashOffset = memory.image != null ? memory.image.hashCode() % 256 : 0;
             int timeOffset = Math.toIntExact((long) (frameOffset + (Math.random() * 20))) % 256;
@@ -76,7 +82,7 @@ public class MemoryScreen extends Screen {
         else context.drawTexture(Identifier.of(SplitSelf.MOD_ID, "textures/gui/memories/" + memory.image + ".png"), drawX, drawY, 0, 0, endX - drawX, endY - drawY, (int) (76 * sizeMulti), (int) (40 * sizeMulti));
     }
 
-    public record Memory(String image, int x, int y) {}
+    public record Memory(String image, int x, int y, int memoryBitMask) {}
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {

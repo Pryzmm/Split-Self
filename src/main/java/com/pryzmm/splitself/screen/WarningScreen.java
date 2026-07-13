@@ -5,8 +5,8 @@ import com.igrium.videolib.api.VideoHandleFactory;
 import com.igrium.videolib.render.VideoScreen;
 import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.client.SplitSelfClient;
+import com.pryzmm.splitself.data.ClientData;
 import com.pryzmm.splitself.data.PersistentData;
-import com.pryzmm.splitself.data.WorldData;
 import com.pryzmm.splitself.file.DesktopFileUtil;
 import com.pryzmm.splitself.file.ZipFunc;
 import net.minecraft.client.gui.DrawContext;
@@ -28,7 +28,7 @@ public class WarningScreen extends Screen {
         assert this.client != null;
         MinecraftServer server = this.client.getServer();
         if (server != null) {
-            localPII = WorldData.getPII();
+            localPII = ClientData.getPII();
         }
 
         this.addDrawableChild(ButtonWidget.builder(
@@ -53,7 +53,7 @@ public class WarningScreen extends Screen {
             SplitSelf.translate("warning.splitself.PII.toggle"),
             button -> {
                 localPII = !localPII;
-                WorldData.setPII(localPII);
+                ClientData.setPII(localPII);
             }
         ).position(this.width / 2 + 5, this.height - 50)
         .size(100, 20)
