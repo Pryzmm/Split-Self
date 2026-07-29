@@ -15,8 +15,6 @@ import java.util.Random;
 
 public class ChunkDestroyer {
 
-    public static boolean liftChunkActive = false;
-
     public static void liftChunk(ServerPlayerEntity player, ServerWorld world, int LoopCount, int lift) {
         Vec3d vec = EventManager.moveVectorFromBase(player, player.getPos());
         double posX = vec.x;
@@ -33,7 +31,6 @@ public class ChunkDestroyer {
             ChunkDestroyer.deleteArea(world, structureMin, structureMax);
             StructureManager.placeStructureRandomRotation(world, new BlockPos(centerPos.getX() - 7, centerPos.getY() + lift, centerPos.getZ() - 7), "clone", 0, 0, true, 0.75f, true);
         }
-        liftChunkActive = false;
     }
 
     public static void deleteArea(World world, BlockPos minimumPos, BlockPos maximumPos) {

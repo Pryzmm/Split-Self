@@ -2,7 +2,7 @@ package com.pryzmm.splitself.mixin;
 
 import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.client.SplitSelfClient;
-import com.pryzmm.splitself.data.PersistentData;
+import com.pryzmm.splitself.data.ClientData;
 import com.pryzmm.splitself.file.ZipFunc;
 import com.pryzmm.splitself.screen.LoadingResourcesScreen;
 import com.pryzmm.splitself.screen.PreMainScreen;
@@ -27,14 +27,9 @@ class TitleScreenMixin {
         if (ZipFunc.needsVideoDownloads()) MinecraftClient.getInstance().setScreen(new LoadingResourcesScreen());
         else if (!PreMainScreen.viewedScreen) MinecraftClient.getInstance().setScreen(new PreMainScreen());
 
-        SplitSelfClient.panorama = PersistentData.getPanoramaStage();
+        SplitSelfClient.panorama = ClientData.getPanoramaStage();
 
-        if (!SplitSelf.ShriekInstalled) {
-            System.out.println("Shriek not installed, adding Shriek button");
-            addShriekButton();
-        } else {
-            System.out.println("Shriek installed, skipping Shriek button");
-        }
+        if (!SplitSelf.ShriekInstalled) addShriekButton();
 
     }
 
@@ -54,7 +49,7 @@ class TitleScreenMixin {
             ((ScreenAccessor) screen).invokeAddDrawableChild(ShriekButton);
 
         } catch (Exception e) {
-            System.out.println("Failed to add Shriek button: " + e.getMessage());
+            SplitSelf.LOGGER.info("Failed to add Shriek button: {}", e.getMessage());
         }
     }
 }

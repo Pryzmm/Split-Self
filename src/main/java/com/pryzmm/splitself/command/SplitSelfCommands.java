@@ -1,16 +1,21 @@
 package com.pryzmm.splitself.command;
 
+import com.igrium.videolib.api.VideoHandle;
+import com.igrium.videolib.api.VideoHandleFactory;
+import com.igrium.videolib.render.VideoScreen;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.block.functions.EmptyTeleportBlockFunc;
-import com.pryzmm.splitself.data.PersistentData;
+import com.pryzmm.splitself.client.SplitSelfClient;
+import com.pryzmm.splitself.data.ClientData;
 import com.pryzmm.splitself.data.WorldData;
 import com.pryzmm.splitself.entity.ModEntities;
 import com.pryzmm.splitself.entity.custom.TheForgottenEntity;
 import com.pryzmm.splitself.events.*;
+import com.pryzmm.splitself.file.ZipFunc;
 import com.pryzmm.splitself.func.StripMine;
 import com.pryzmm.splitself.packet.packets.WarningScreenPacket;
 import com.pryzmm.splitself.screen.misc.BlendManager;
@@ -26,6 +31,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import java.io.IOException;
 
 public class SplitSelfCommands {
 
@@ -108,35 +114,36 @@ public class SplitSelfCommands {
                         return 1;
                     })
                 )
-//                .then(CommandManager.literal("debugVideo")
-//                    .then(CommandManager.argument("video", StringArgumentType.greedyString())
-//                        .requires(source -> source.hasPermissionLevel(2))
-//                        .executes(context -> {
-//                            MinecraftClient mc = MinecraftClient.getInstance();
-//                            mc.execute(() -> {
-//                                try {
-//                                    VideoHandleFactory factory = SplitSelfClient.videoManager.getVideoHandleFactory();
-//                                    VideoHandle idHandle = factory.getVideoHandle(ZipFunc.getVideo(StringArgumentType.getString(context, "video")).toURI().toURL());
-//                                    VideoScreen screen = new VideoScreen(SplitSelfClient.videoPlayer);
-//                                    mc.setScreen(screen);
-//                                    SplitSelfClient.videoPlayer.getMediaInterface().play(idHandle);
-//                                } catch (IOException e) {
-//                                    throw new RuntimeException(e);
-//                                }
-//                            });
-//                            return 1;
-//                        })
-//                    )
-//                )
+                .then(CommandManager.literal("debugVideo")
+                    .then(CommandManager.argument("video", StringArgumentType.greedyString())
+                        .requires(source -> source.hasPermissionLevel(2))
+                        .executes(context -> {
+                            MinecraftClient mc = MinecraftClient.getInstance();
+                            mc.execute(() -> {
+                                try {
+                                    VideoHandleFactory factory = SplitSelfClient.videoManager.getVideoHandleFactory();
+                                    VideoHandle idHandle = factory.getVideoHandle(ZipFunc.getVideo(StringArgumentType.getString(context, "video")).toURI().toURL());
+                                    VideoScreen screen = new VideoScreen(SplitSelfClient.videoPlayer);
+                                    mc.getSoundManager().stopAll();
+                                    mc.setScreen(screen);
+                                    SplitSelfClient.videoPlayer.getMediaInterface().play(idHandle);
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            });
+                            return 1;
+                        })
+                    )
+                )
                 .then(CommandManager.literal("debugEmpty")
                     .requires(source -> source.hasPermissionLevel(2))
                     .executes(context -> {
                         ServerPlayerEntity player = context.getSource().getPlayer();
                         if (player != null) {
-                            ServerWorld emptyWorld = player.getServer().getWorld(DimensionRegistry.EMPTINESS_DIMENSION_KEY);
+                            ServerWorld emptyWorld = context.getSource().getServer().getWorld(DimensionRegistry.EMPTINESS_DIMENSION_KEY);
                             BlockPos pos = DeadCoralChunkGenerator.findGroundPos(0, 0);
                             EmptyTeleportBlockFunc.updateLastLocation(player);
-                            PersistentData.setPanoramaStage("empty");
+                            ClientData.setPanoramaStage("empty");
                             player.teleport(emptyWorld, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, null, 0, 0);
                         }
                         return 1;

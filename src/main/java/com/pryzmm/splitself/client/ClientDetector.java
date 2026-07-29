@@ -5,9 +5,6 @@ import net.fabricmc.api.EnvType;
 
 public class ClientDetector {
 
-    /**
-    TODO: Check that this works with the rebranding of Feather into Dawn after June 14th
-     **/
     public static boolean isFeatherClient() {
         if (FabricLoader.getInstance().getEnvironmentType() != EnvType.CLIENT) {return false;}
         if (FabricLoader.getInstance().isModLoaded("feather")) {return true;}

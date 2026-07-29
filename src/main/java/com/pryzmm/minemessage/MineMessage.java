@@ -1,10 +1,8 @@
 package com.pryzmm.minemessage;
 
-import com.pryzmm.memory.Memory;
 import com.pryzmm.minemessage.ui.MessageLoader;
 import com.pryzmm.minemessage.ui.UserObject;
 import javax.imageio.ImageIO;
-import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -53,7 +51,7 @@ public class MineMessage extends JPanel implements Runnable {
     }
 
     public static BufferedImage readImage(String path) throws IOException {
-        InputStream stream = Memory.class.getResourceAsStream(path);
+        InputStream stream = MineMessage.class.getResourceAsStream(path);
         if (stream == null) throw new IOException("Resource not found on classpath: " + path);
         return ImageIO.read(stream);
     }
@@ -104,6 +102,12 @@ public class MineMessage extends JPanel implements Runnable {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
+            if (jFrame != null) {
+                jFrame.setVisible(true);
+                jFrame.toFront();
+                jFrame.requestFocus();
+                return;
+            }
             instance = new MineMessage();
             instance.setPreferredSize(new Dimension(800, 800));
             JFrame frame = new JFrame("MineMessage");
@@ -125,7 +129,6 @@ public class MineMessage extends JPanel implements Runnable {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         g.drawImage(background, 0, 0, 800, 800, null);
-
     }
 
     private final Thread gameLoopThread = new Thread(this);

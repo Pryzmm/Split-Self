@@ -1,7 +1,6 @@
 package com.pryzmm.splitself.events;
 
 import com.pryzmm.splitself.SplitSelf;
-import com.pryzmm.splitself.events.helper.ChunkDestroyer;
 import com.pryzmm.splitself.screen.overlay.*;
 import com.pryzmm.splitself.sound.ModSounds;
 import net.minecraft.client.MinecraftClient;
@@ -118,22 +117,10 @@ public class ScreenOverlay {
         }).start();
     }
 
-    public static void executeGlitchScreen(MinecraftClient client) {
-        EventManager.ACTIVE_EVENT = true;
-        new Thread(() -> {
-            GlitchOverlay.toggleOverlay();
-            try {
-                while (ChunkDestroyer.liftChunkActive) {
-                    Thread.sleep(50);
-                }
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            client.getSoundManager().stopSounds(ModSounds.GLITCH.getId(), null);
-            GlitchOverlay.toggleOverlay();
-            EventManager.ACTIVE_EVENT = false;
-        }).start();
+    public static void toggleGlitchScreen(MinecraftClient client) {
+        GlitchOverlay.toggleOverlay();
+        EventManager.ACTIVE_EVENT = GlitchOverlay.overlayVisible;
+        if (!GlitchOverlay.overlayVisible) client.getSoundManager().stopSounds(ModSounds.GLITCH.getId(), null);
     }
 
     public static void executeStaticScreen(ClientPlayerEntity player) {

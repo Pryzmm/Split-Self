@@ -7,10 +7,12 @@ import com.pryzmm.splitself.events.EventRunner;
 import com.pryzmm.splitself.events.ScreenOverlay;
 import com.pryzmm.splitself.file.EntityScreenshotCapture;
 import com.pryzmm.splitself.file.FrameFileManager;
+import com.pryzmm.splitself.http.PartyEffect;
 import com.pryzmm.splitself.packet.packets.*;
 import com.pryzmm.splitself.screen.KickScreen;
 import com.pryzmm.splitself.screen.MemoryScreen;
 import com.pryzmm.splitself.screen.WarningScreen;
+import com.pryzmm.splitself.sound.ModSounds;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.minecraft.client.MinecraftClient;
@@ -30,6 +32,7 @@ public class ClientPacketHandler {
         PayloadTypeRegistry.playS2C().register(MemoryScreenPacket.ID, MemoryScreenPacket.CODEC);
         PayloadTypeRegistry.playS2C().register(TheOtherOverlayPacket.ID, TheOtherOverlayPacket.CODEC);
         PayloadTypeRegistry.playS2C().register(KickScreenPacket.ID, KickScreenPacket.CODEC);
+        PayloadTypeRegistry.playS2C().register(PartyTimePacket.ID, PartyTimePacket.CODEC);
 
         ClientPlayNetworking.registerGlobalReceiver(BrokenEffectPacket.ID, (packet, context) -> context.client().execute(() -> {
             if (!BrainBlock.brokenEffectActive) {
@@ -40,6 +43,11 @@ public class ClientPacketHandler {
 
         ClientPlayNetworking.registerGlobalReceiver(EventPacket.ID, (packet, context) -> context.client().execute(() -> {
             EventRunner.runClientEvent(context.client(), context.player(), EventManager.Events.valueOf(packet.event()));
+        }));
+
+        ClientPlayNetworking.registerGlobalReceiver(PartyTimePacket.ID, (packet, context) -> context.client().execute(() -> {
+            if (packet.partyType().equals("normal")) PartyEffect.play(context.player(), 4373, 484, ModSounds.PARTY);
+            else if (packet.partyType().equals("caramelldansen")) PartyEffect.play(context.player(), 5393, 364, ModSounds.CARAMELLDANSEN); // thanks reassembly, best idea yet
         }));
 
         ClientPlayNetworking.registerGlobalReceiver(TheOtherOverlayPacket.ID, (packet, context) -> context.client().execute(() -> {
@@ -55,7 +63,7 @@ public class ClientPacketHandler {
         }));
 
         ClientPlayNetworking.registerGlobalReceiver(GlitchEventPacket.ID, (packet, context) -> context.client().execute(() -> {
-            ScreenOverlay.executeGlitchScreen(context.client());
+            ScreenOverlay.toggleGlitchScreen(context.client());
         }));
 
         ClientPlayNetworking.registerGlobalReceiver(WarningScreenPacket.ID, (packet, context) -> context.client().execute(() -> {

@@ -6,7 +6,6 @@ import com.igrium.videolib.render.VideoScreen;
 import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.client.SplitSelfClient;
 import com.pryzmm.splitself.data.ClientData;
-import com.pryzmm.splitself.data.PersistentData;
 import com.pryzmm.splitself.file.DesktopFileUtil;
 import com.pryzmm.splitself.file.ZipFunc;
 import net.minecraft.client.gui.DrawContext;
@@ -35,7 +34,7 @@ public class WarningScreen extends Screen {
             Text.literal(SplitSelf.translate("warning.splitself.continue").getString()),
             button -> {
                 DesktopFileUtil.createFileOnDesktop(SplitSelf.translate("files.splitself.begin.title").getString() + ".txt", SplitSelf.translate("files.splitself.begin.message").getString());
-                PersistentData.setPanoramaStage("main");
+                ClientData.setPanoramaStage("main");
                 try {
                     VideoHandleFactory factory = SplitSelfClient.videoManager.getVideoHandleFactory();
                     VideoHandle idHandle = factory.getVideoHandle(ZipFunc.getVideo("house").toURI().toURL());

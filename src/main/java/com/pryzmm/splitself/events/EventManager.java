@@ -34,6 +34,14 @@ import java.util.List;
 
 public class EventManager {
 
+    // TODO: Make an entity spawn in front of a door and above a ladder
+
+    /*
+     * TODO:
+     * Test/fix the following events on mac:
+     * REMINDER, MEMORY, FREEDOM, THEOTHERSCREENSHOT
+     */
+
     public enum Events {
         SPAWNTHEOTHER,
         POEMSCREEN,
@@ -72,7 +80,7 @@ public class EventManager {
         WHISPER,
         ESCAPE,
         LIFT,
-        SURROUND, // TODO (Screen only appears for half a second for non-hosts)
+        SURROUND,
         LOGS,
         DISCONNECT,
         FORGOTTEN,
@@ -80,7 +88,7 @@ public class EventManager {
         FREEZE,
         BLU,
         MEMORY,
-        REMINDER, // TODO (Unknown issue, likely because of headless but not sure)
+        REMINDER,
         RENAME,
         FOV,
         WEATHER,
@@ -99,7 +107,9 @@ public class EventManager {
         BRAIN,
         BOOK,
         SPOTIFY,
-        SEARCH
+        SEARCH,
+        STATUE,
+        BRIGHTNESS
     }
 
     public static Map<Events, Boolean> oneTimeEvents = new HashMap<>(); // oneLastTime events ong
@@ -257,7 +267,7 @@ public class EventManager {
     public static List<ServerPlayerEntity> sleepingPlayers = new ArrayList<>();
     public static void runSleepEvent(MinecraftServer server, Integer stage) {
         server.execute(() -> new Thread(() -> {
-            SplitSelf.LOGGER.info("sleeping players: " + sleepingPlayers);
+            SplitSelf.LOGGER.info("sleeping players: {}", sleepingPlayers);
             try {
                 ServerWorld limboWorld = server.getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY);
                 sleepingPlayers.forEach(p -> p.changeGameMode(GameMode.ADVENTURE));
@@ -397,15 +407,11 @@ public class EventManager {
 
         totalEventsTriggered++;
 
-        if (player.getServerWorld() == server.getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY)) {
-            return;
-        }
-        if (player.getServerWorld() == server.getWorld(DimensionRegistry.EMPTINESS_DIMENSION_KEY)) {
-            return;
-        }
+        if (player.getServerWorld() == server.getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY)) return;
+        if (player.getServerWorld() == server.getWorld(DimensionRegistry.EMPTINESS_DIMENSION_KEY)) return;
 
         Events eventType;
-        if (ForceEvent == null || ForceEvent.equals("null")) {
+        if (ForceEvent == null || ForceEvent.name().equals("null")) {
             Random javaRandom = new Random(server.getOverworld().getRandom().nextLong());
             eventType = selectWeightedEvent(javaRandom);
         } else {

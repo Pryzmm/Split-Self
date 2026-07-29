@@ -3,7 +3,9 @@
   "package": "com.pryzmm.splitself.mixin",
   "compatibilityLevel": "JAVA_21",
   "client": [
-    "BackgroundRendererMixin",
+    "BackgroundRendererAccessor",
+    "BackgroundRenderMixin",
+    "ChatMixin",
     "ExperimentalMixin",
     "GameMenuMixin",
     "LanguageEntryMixin",
@@ -13,15 +15,17 @@
     "PauseMixin",
     "ScreenAccessor",
     "SignMixin",
+    "SkyRenderMixin",
+    "SoundManagerMixin",
     "TitleScreenMixin",
-    "WindowMixin",
-    "WorldRendererMixin"
+    "WindowMixin"
   ],
   "injectors": {
     "defaultRequire": 1
   },
   "mixins": [
     "CoralMixin",
+    "MiningMixin",
     "PlayerChangeWorldMixin",
     "SleepMixin",
     "WolfMixin"

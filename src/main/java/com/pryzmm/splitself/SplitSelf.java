@@ -3,7 +3,6 @@ package com.pryzmm.splitself;
 import com.pryzmm.splitself.block.ModBlocks;
 import com.pryzmm.splitself.command.SplitSelfCommands;
 import com.pryzmm.splitself.config.DefaultConfig;
-import com.pryzmm.splitself.data.PersistentData;
 import com.pryzmm.splitself.data.WorldData;
 import com.pryzmm.splitself.entity.TheForgottenFunc;
 import com.pryzmm.splitself.events.*;
@@ -20,6 +19,7 @@ import com.pryzmm.splitself.item.ModItemGroups;
 import com.pryzmm.splitself.item.ModItems;
 import com.pryzmm.splitself.sound.ModSounds;
 import com.pryzmm.splitself.world.DimensionRegistry;
+import com.pryzmm.splitself.world.TickScheduler;
 import com.pryzmm.splitself.world.structure.StructurePieces;
 import com.pryzmm.splitself.world.structure.Structures;
 import net.fabricmc.api.ModInitializer;
@@ -107,7 +107,7 @@ public class SplitSelf implements ModInitializer {
 	public void onInitialize() {
 
         DefaultConfig.createDefaultConfigs();
-        CONFIG = new JsonReader("splitself.json5", true);
+        CONFIG = new JsonReader("splitself.json", true);
 
 		ModEntities.registerModEntities();
 		ModSounds.registerSounds();
@@ -118,9 +118,10 @@ public class SplitSelf implements ModInitializer {
 		Structures.register();
 		StructurePieces.register();
 		ServerLifecycleEvents.SERVER_STARTED.register(this::onServerStarted);
-        PersistentData.loadData();
 
         ServerPacketHandler.register();
+
+        TickScheduler.init();
 
         ClientTickEvents.END_WORLD_TICK.register(EventManager::onClientTick);
 

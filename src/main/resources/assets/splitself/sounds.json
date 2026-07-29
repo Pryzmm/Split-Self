@@ -18,6 +18,24 @@
       }
     ]
   },
+  "party": {
+    "category": "master",
+    "sounds": [
+      {
+        "name": "splitself:party",
+        "stream": true
+      }
+    ]
+  },
+  "caramelldansen": {
+    "category": "master",
+    "sounds": [
+      {
+        "name": "splitself:caramelldansen",
+        "stream": true
+      }
+    ]
+  },
   "redsky": {
     "category": "master",
     "subtitle": "sound.splitself.redsky.subtitle",
@@ -123,6 +141,14 @@
     "sounds": [
       {
         "name": "splitself:final"
+      }
+    ]
+  },
+  "final_reversed": {
+    "category": "ambient",
+    "sounds": [
+      {
+        "name": "splitself:final_reversed"
       }
     ]
   },

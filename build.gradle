@@ -36,6 +36,11 @@ repositories {
 
 loom {
     accessWidenerPath = file("src/main/resources/splitself.accesswidener")
+	runs {
+		client {
+			vmArg "-Djava.awt.headless=false"
+		}
+	}
 }
 
 fabricApi {
@@ -55,11 +60,14 @@ dependencies {
 	implementation 'dev.firstdark.discordrpc:discord-rpc:1.0.3'
 	include 'dev.firstdark.discordrpc:discord-rpc:1.0.3'
 
+	implementation 'org.java-websocket:Java-WebSocket:1.5.6'
+	include 'org.java-websocket:Java-WebSocket:1.5.6'
+
 	modImplementation "local:videolib:1.0.1:all"
 //	include "local:videolib:1.0.1:all"
 
-	modImplementation 'org.xerial:sqlite-jdbc:3.45.3.0'
-	include 'org.xerial:sqlite-jdbc:3.45.3.0'
+	modImplementation 'io.roastedroot:sqlite4j:3.53.3.0'
+	include 'io.roastedroot:sqlite4j:3.53.3.0'
 
     modImplementation "maven.modrinth:architectury-api:13.0.6+fabric"
     modImplementation "maven.modrinth:shriek:1.1.1+fabric"

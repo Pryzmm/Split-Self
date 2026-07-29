@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "facing=north,half=lower": { "model": "splitself:block/exit_door_bottom" },
+    "facing=south,half=lower": { "model": "splitself:block/exit_door_bottom", "y": 180 },
+    "facing=west,half=lower":  { "model": "splitself:block/exit_door_bottom", "y": 270 },
+    "facing=east,half=lower":  { "model": "splitself:block/exit_door_bottom", "y": 90 },
+
+    "facing=north,half=upper": { "model": "splitself:block/exit_door_top" },
+    "facing=south,half=upper": { "model": "splitself:block/exit_door_top", "y": 180 },
+    "facing=west,half=upper":  { "model": "splitself:block/exit_door_top", "y": 270 },
+    "facing=east,half=upper":  { "model": "splitself:block/exit_door_top", "y": 90 }
+  }
+}

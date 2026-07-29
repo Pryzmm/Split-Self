@@ -2,7 +2,6 @@ package com.pryzmm.minemessage.ui;
 
 import com.pryzmm.minemessage.MineMessage;
 import net.minecraft.text.Text;
-
 import javax.swing.*;
 import java.awt.*;
 import java.time.LocalDate;

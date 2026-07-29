@@ -22,10 +22,13 @@ public class ModBlocks {
         new BrainBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.HONEY)));
 
     public static final Block BRAINS = registerBlock("brains",
-            new BrainsBlock(AbstractBlock.Settings.create().sounds(BlockSoundGroup.HONEY).hardness(3.0f).resistance(3.0f)));
+        new BrainsBlock(AbstractBlock.Settings.create().sounds(BlockSoundGroup.HONEY).hardness(3.0f).resistance(3.0f)));
 
     public static final Block DEAD_BRAINS = registerBlock("dead_brains",
-            new DeadBrainsBlock(AbstractBlock.Settings.create().sounds(BlockSoundGroup.HONEY).hardness(3.0f).resistance(3.0f)));
+        new DeadBrainsBlock(AbstractBlock.Settings.create().sounds(BlockSoundGroup.HONEY).hardness(3.0f).resistance(3.0f)));
+
+    public static final Block EXIT_DOOR = registerBlock("exit_door",
+        new ExitDoorBlock(AbstractBlock.Settings.create().sounds(BlockSoundGroup.METAL).nonOpaque().hardness(3.0f).resistance(3.0f)));
 
     private static Block registerBlock(String name, Block block) {
         registerBlockItem(name, block);

@@ -106,6 +106,8 @@ public class DefaultConfig {
         updateEventOptions("BOOK",                  new EventOptions(10,  0, false, EventType.GLOBAL));
         updateEventOptions("SPOTIFY",               new EventOptions(10,  3, true,  EventType.CLIENT));
         updateEventOptions("SEARCH",                new EventOptions(10,  2, true,  EventType.CLIENT));
+        updateEventOptions("STATUE",                new EventOptions(5,   3, false, EventType.GLOBAL));
+        updateEventOptions("BRIGHTNESS",            new EventOptions(10,  1, false, EventType.CLIENT));
     }
 
 }

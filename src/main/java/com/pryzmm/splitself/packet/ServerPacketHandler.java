@@ -1,7 +1,7 @@
 package com.pryzmm.splitself.packet;
 
 import com.pryzmm.splitself.block.functions.EmptyTeleportBlockFunc;
-import com.pryzmm.splitself.data.PersistentData;
+import com.pryzmm.splitself.data.ClientData;
 import com.pryzmm.splitself.events.EventManager;
 import com.pryzmm.splitself.item.MemoryItem;
 import com.pryzmm.splitself.item.ModItems;
@@ -15,7 +15,6 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-
 import java.util.Random;
 
 public class ServerPacketHandler {
@@ -28,6 +27,7 @@ public class ServerPacketHandler {
         PayloadTypeRegistry.playC2S().register(SleepEventPacket.ID, SleepEventPacket.CODEC);
         PayloadTypeRegistry.playC2S().register(MemoryScreenPacket.ID, MemoryScreenPacket.CODEC);
         PayloadTypeRegistry.playC2S().register(KickScreenPacket.ID, KickScreenPacket.CODEC);
+        PayloadTypeRegistry.playC2S().register(PartyTimePacket.ID, PartyTimePacket.CODEC);
 
         ServerPlayNetworking.registerGlobalReceiver(BrokenEffectPacket.ID, (payload, context) -> context.server().execute(() -> {
             for (ServerPlayerEntity player : context.server().getPlayerManager().getPlayerList()) {
@@ -35,18 +35,23 @@ public class ServerPacketHandler {
             }
         }));
 
+        ServerPlayNetworking.registerGlobalReceiver(PartyTimePacket.ID, (payload, context) -> context.server().execute(() -> {
+            for (ServerPlayerEntity player : context.server().getPlayerManager().getPlayerList()) {
+                ServerPlayNetworking.send(player, new PartyTimePacket(payload.partyType()));
+            }
+        }));
 
         ServerPlayNetworking.registerGlobalReceiver(EndBrokenEffectPacket.ID, (payload, context) -> context.server().execute(() -> {
             ServerWorld emptyWorld = context.server().getWorld(DimensionRegistry.EMPTINESS_DIMENSION_KEY);
             BlockPos pos = DeadCoralChunkGenerator.findGroundPos(0, 0);
             EmptyTeleportBlockFunc.updateLastLocation(context.player());
-            PersistentData.setPanoramaStage("empty");
+            ClientData.setPanoramaStage("empty");
             context.player().teleport(emptyWorld, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, null, 0, 0);
         }));
 
         ServerPlayNetworking.registerGlobalReceiver(EventPacket.ID, (payload, context) -> context.server().execute(() -> {
            if (context.server().isHost(context.player().getGameProfile())) {
-               if (payload.event().equals("null"))EventManager.triggerRandomEvent(context.player(), null);
+               if (payload.event().equals("null")) EventManager.triggerRandomEvent(context.player(), null);
                else EventManager.triggerRandomEvent(context.player(), EventManager.Events.valueOf(payload.event()));
            }
         }));

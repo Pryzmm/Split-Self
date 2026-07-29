@@ -54,29 +54,25 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWVidMode;
 import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
+import java.util.concurrent.CompletableFuture;
 
 public class EventRunner {
 
     public static void runClientEvent(MinecraftClient client, ClientPlayerEntity player, EventManager.Events event) {
 
         String os = Util.getOperatingSystem().toString().toLowerCase();
-        SplitSelfClient.forceNonHeadless();
 
         switch (event) {
             case POEMSCREEN -> client.execute(() -> client.setScreen(new PoemScreen()));
@@ -86,9 +82,10 @@ public class EventRunner {
             }, "splitself-wallpaper-thread").start();
             case REDSKY -> {
                 player.playSound(ModSounds.REDSKY, 1f, 1.0f);
-                player.addStatusEffect(new StatusEffectInstance(StatusEffects.DARKNESS, 430, 1, false, false, false));
                 SkyColor.changeSkyColor("AA0000");
                 SkyColor.changeFogColor("880000");
+                SkyColor.changeDistantSkyColor("880000");
+                player.addStatusEffect(new StatusEffectInstance(StatusEffects.DARKNESS, 430, 1, false, false, false));
             }
             case NOTEPAD -> {
                 Text[] notepadMessages = {
@@ -202,27 +199,18 @@ public class EventRunner {
                     SplitSelf.LOGGER.error(e.getMessage(), e);
                 }
             }).start();
-            case MEMORY -> {
+            case MEMORY -> CompletableFuture.runAsync(() -> {
                 try { client.execute(SwingUtil::launchApp); }
-                catch (Throwable t) { SplitSelf.LOGGER.error("MEMORY_HOUSE event failed", t); }
-            }
-            case CLIPBOARD -> {
-                try {
-                    StringSelection stringSelection = new StringSelection(Text.translatable("events.splitself.clipboard").getString());
-                    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                    clipboard.setContents(stringSelection, null);
-                } catch (Exception e) {
-                    SplitSelf.LOGGER.info("java.awt.headless = {}", System.getProperty("java.awt.headless"));
-                    SplitSelf.LOGGER.info("GraphicsEnvironment.isHeadless() = {}", java.awt.GraphicsEnvironment.isHeadless());
-                }
-            }
+                catch (Throwable t) { SplitSelf.LOGGER.error("MEMORY event failed", t); }
+            });
+            case CLIPBOARD -> client.keyboard.setClipboard(Text.translatable("events.splitself.clipboard").getString());
             case RPC -> {
                 if (SplitSelfClient.RPCInitialized)
                     SplitSelfClient.RPC.updatePresence(DiscordRichPresence.builder()
-                            .details(Text.translatable("events.splitself.rpc.desc").getString())
-                            .state(Text.translatable("events.splitself.rpc.state").getString())
-                            .largeImageKey("noise")
-                            .build());
+                        .details(Text.translatable("events.splitself.rpc.desc").getString())
+                        .state(Text.translatable("events.splitself.rpc.state").getString())
+                        .largeImageKey("noise")
+                        .build());
             }
             case RECORD -> new Thread(() -> {
                 try {
@@ -239,7 +227,7 @@ public class EventRunner {
                     player.sendMessage(Text.literal(SplitSelf.translate("events.splitself.discordName.friend", SplitSelfClient.discordUsername).getString()).withColor(7506394), false);
                 }
             }
-            case REMINDER -> {
+            case REMINDER -> CompletableFuture.runAsync(() -> {
                 if (!SystemTray.isSupported()) SplitSelf.LOGGER.warn("SystemTray not supported on this platform");
                 SystemTray tray = SystemTray.getSystemTray();
                 Image image = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
@@ -247,16 +235,19 @@ public class EventRunner {
                 trayIcon.setImageAutoSize(true);
                 try { tray.add(trayIcon); } catch (Exception ignored) {}
                 trayIcon.addActionListener(e -> {
-                    try { MinecraftClient.getInstance().execute(() -> MineMessage.main(new String[]{})); }
-                    catch (Throwable t) { SplitSelf.LOGGER.error("REMINDER event failed", t); }
+                    try {
+                        MinecraftClient.getInstance().execute(() -> MineMessage.main(new String[]{}));
+                    } catch (Throwable t) {
+                        SplitSelf.LOGGER.error("REMINDER event failed", t);
+                    }
                 });
 
                 trayIcon.displayMessage(
-                        "Messages",
-                        "You have an unread message from ████████████",
-                        TrayIcon.MessageType.INFO
+                    "Messages",
+                    "You have an unread message from ████████████",
+                    TrayIcon.MessageType.INFO
                 );
-            }
+            });
             case MEMORIES -> DesktopFileUtil.cloneFileToDesktop(Identifier.of(SplitSelf.MOD_ID, "textures/misc/memories.png"));
             case MORSE -> DesktopFileUtil.cloneFileToDesktop(Identifier.of(SplitSelf.MOD_ID, "textures/misc/morse.png"));
             case LOGS -> {
@@ -326,65 +317,20 @@ public class EventRunner {
                 new Thread(() -> {
                     try {
                         for (int i = 0; i < 100; i++) {
-                            if (!client.getWindow().isFullscreen()) {
-                                break;
-                            }
+                            if (!client.getWindow().isFullscreen()) break;
                             System.out.println("Game is still in fullscreen, waiting 50 milliseconds... attempt: " + (i + 1));
                             Thread.sleep(50);
                         }
-                        if (!client.getWindow().isFullscreen()) {
-                            assert client.player != null;
-                            player.sendMessage(Text.literal("<" + player.getName().getString() + "> " + SplitSelf.translate("events.splitself.shrink.message").getString()), false);
-                            EventManager.WINDOW_MANIPULATION_ACTIVE = true;
-                            long glfwWindow = client.getWindow().getHandle();
-                            int[] width = new int[1];
-                            int[] height = new int[1];
-                            GLFW.glfwGetWindowSize(glfwWindow, width, height);
-                            int originalWidth = width[0];
-                            int originalHeight = height[0];
-                            int minWidth = originalWidth / 2;
-                            int minHeight = originalHeight / 2;
-                            long monitor = GLFW.glfwGetPrimaryMonitor();
-                            GLFWVidMode vidMode = GLFW.glfwGetVideoMode(monitor);
-                            assert vidMode != null;
-                            int screenWidth = vidMode.width();
-                            int screenHeight = vidMode.height();
-                            int steps = 50;
-                            for (int i = 0; i < steps; i++) {
-                                float progress = (float) i / steps;
-                                int currentWidth = (int) (originalWidth - (originalWidth - minWidth) * progress);
-                                int currentHeight = (int) (originalHeight - (originalHeight - minHeight) * progress);
-                                int xPos = (screenWidth - currentWidth) / 2;
-                                int yPos = (screenHeight - currentHeight) / 2;
-                                GLFW.glfwSetWindowSize(glfwWindow, currentWidth, currentHeight);
-                                GLFW.glfwSetWindowPos(glfwWindow, xPos, yPos);
-                                client.player.setYaw(client.player.getYaw() + (int) ((Math.random() * 6) - 3));
-                                client.player.setPitch(client.player.getPitch() + (int) ((Math.random() * 6) - 3));
-                                Thread.sleep(20);
-                            }
-
-                            Random shakeRandom = new Random();
-                            int shakeIntensity = 7;
-                            int shakeSteps = 200;
-                            for (int i = 0; i < shakeSteps; i++) {
-                                int[] currentPosX = new int[1];
-                                int[] currentPosY = new int[1];
-                                GLFW.glfwGetWindowPos(glfwWindow, currentPosX, currentPosY);
-
-                                int shakeX = currentPosX[0] + shakeRandom.nextInt(shakeIntensity * 2) - shakeIntensity;
-                                int shakeY = currentPosY[0] + shakeRandom.nextInt(shakeIntensity * 2) - shakeIntensity;
-                                GLFW.glfwSetWindowPos(glfwWindow, shakeX, shakeY);
-                                client.player.setYaw(client.player.getYaw() + (int) ((Math.random() * 6) - 3));
-                                client.player.setPitch(client.player.getPitch() + (int) ((Math.random() * 6) - 3));
-                                Thread.sleep(20);
-                            }
-                            client.getSoundManager().stopSounds(ModSounds.RUMBLE2.getId(), null);
-                        } else {
+                        if (client.getWindow().isFullscreen()) {
                             System.err.println("Failed to un-fullscreen user's screen after 5 seconds!");
+                            return;
                         }
+                        assert client.player != null;
+                        player.sendMessage(Text.literal("<" + player.getName().getString() + "> " + SplitSelf.translate("events.splitself.shrink.message").getString()), false);
+                        EventManager.WINDOW_MANIPULATION_ACTIVE = true;
+                        ClientScreenSizer.runShrinkAnimation(client, player);
                     } catch (Exception e) {
                         SplitSelf.LOGGER.error("Shrink event failed: {} {}", e.getMessage(), e);
-                    } finally {
                         EventManager.WINDOW_MANIPULATION_ACTIVE = false;
                     }
                 }).start();
@@ -425,45 +371,118 @@ public class EventRunner {
                     ProcessBuilder pb = null;
                     if (System.getProperty("os.name").toLowerCase().contains("win")) { // aint gonna lie, ai mostly generated this, aint no way am i understanding all this
                         String script = String.join("; ",
-                                "Add-Type -AssemblyName System.Windows.Forms",
-                                "Add-Type -AssemblyName System.Drawing",
-                                "$form = New-Object System.Windows.Forms.Form",
-                                "$form.FormBorderStyle = 'None'",
-                                "$form.WindowState = 'Maximized'",
-                                "$form.TopMost = $true",
-                                "$form.BackColor = 'DarkRed'",
-                                "$form.Opacity = 0.5",
-                                "$form.ShowInTaskbar = $false",
-                                "$form.Cursor = 'None'",
-                                "$label = New-Object System.Windows.Forms.Label",
-                                "$label.Text = '" + SplitSelf.translate("events.splitself.freedom.message").getString() + "'",
-                                "$label.TextAlign = 'MiddleCenter'",
-                                "$label.Font = New-Object System.Drawing.Font('Ink Free', 32, [System.Drawing.FontStyle]::Regular)",
-                                "$label.ForeColor = 'Red'",
-                                "$label.BackColor = 'Transparent'",
-                                "$label.AutoSize = $true",
-                                "$form.Controls.Add($label)",
-                                "$form.Show()",
-                                "$player = New-Object System.Media.SoundPlayer('C:\\Windows\\Media\\Windows Information Bar.wav')",
-                                "$centerX = ($form.Width - $label.Width) / 2",
-                                "$centerY = ($form.Height - $label.Height) / 2",
-                                "$shakeTimer = New-Object System.Windows.Forms.Timer",
-                                "$shakeTimer.Interval = 50",
-                                "$random = New-Object System.Random",
-                                "$shakeTimer.Add_Tick({",
-                                "  $shakeX = $random.Next(-40, 41)",
-                                "  $shakeY = $random.Next(-40, 41)",
-                                "  $label.Location = New-Object System.Drawing.Point(($centerX + $shakeX), ($centerY + $shakeY))",
-                                "  $player.Play()",
-                                "})",
-                                "$shakeTimer.Start()",
-                                "$timer = New-Object System.Windows.Forms.Timer",
-                                "$timer.Interval = 5000",
-                                "$timer.Add_Tick({$form.Close(); $timer.Stop()})",
-                                "$timer.Start()",
-                                "while($form.Visible){[System.Windows.Forms.Application]::DoEvents(); Start-Sleep -Milliseconds 50}"
+                            "Add-Type -AssemblyName System.Windows.Forms",
+                            "Add-Type -AssemblyName System.Drawing",
+                            "$form = New-Object System.Windows.Forms.Form",
+                            "$form.FormBorderStyle = 'None'",
+                            "$form.WindowState = 'Maximized'",
+                            "$form.TopMost = $true",
+                            "$form.BackColor = 'DarkRed'",
+                            "$form.Opacity = 0.5",
+                            "$form.ShowInTaskbar = $false",
+                            "$form.Cursor = 'None'",
+                            "$label = New-Object System.Windows.Forms.Label",
+                            "$label.Text = '" + SplitSelf.translate("events.splitself.freedom.message").getString() + "'",
+                            "$label.TextAlign = 'MiddleCenter'",
+                            "$label.Font = New-Object System.Drawing.Font('Ink Free', 32, [System.Drawing.FontStyle]::Regular)",
+                            "$label.ForeColor = 'Red'",
+                            "$label.BackColor = 'Transparent'",
+                            "$label.AutoSize = $true",
+                            "$form.Controls.Add($label)",
+                            "$form.Show()",
+                            "$player = New-Object System.Media.SoundPlayer('C:\\Windows\\Media\\Windows Information Bar.wav')",
+                            "$centerX = ($form.Width - $label.Width) / 2",
+                            "$centerY = ($form.Height - $label.Height) / 2",
+                            "$shakeTimer = New-Object System.Windows.Forms.Timer",
+                            "$shakeTimer.Interval = 50",
+                            "$random = New-Object System.Random",
+                            "$shakeTimer.Add_Tick({",
+                            "  $shakeX = $random.Next(-40, 41)",
+                            "  $shakeY = $random.Next(-40, 41)",
+                            "  $label.Location = New-Object System.Drawing.Point(($centerX + $shakeX), ($centerY + $shakeY))",
+                            "  $player.Play()",
+                            "})",
+                            "$shakeTimer.Start()",
+                            "$timer = New-Object System.Windows.Forms.Timer",
+                            "$timer.Interval = 5000",
+                            "$timer.Add_Tick({$form.Close(); $timer.Stop()})",
+                            "$timer.Start()",
+                            "while($form.Visible){[System.Windows.Forms.Application]::DoEvents(); Start-Sleep -Milliseconds 50}"
                         );
                         pb = new ProcessBuilder("powershell.exe", "-WindowStyle", "Hidden", "-ExecutionPolicy", "Bypass", "-Command", script);
+                    } else if (System.getProperty("os.name").toLowerCase().contains("mac")) {
+                        Path scriptPath = Paths.get(System.getProperty("java.io.tmpdir"), "freedom_overlay.js");
+                        String message = SplitSelf.translate("events.splitself.freedom.message").getString().replace("\\", "\\\\").replace("\"", "\\\"");
+                        String script = String.join("\n",
+                            "ObjC.import('Cocoa');",
+                            "ObjC.import('Foundation');",
+                            "ObjC.import('AppKit');",
+                            "",
+                            "var app = $.NSApplication.sharedApplication;",
+                            "app.setActivationPolicy($.NSApplicationActivationPolicyAccessory);",
+                            "",
+                            "var screen = $.NSScreen.mainScreen;",
+                            "var frame = screen.frame;",
+                            "",
+                            "var win = $.NSWindow.alloc.initWithContentRectStyleMaskBackingDefer(",
+                            "    frame,",
+                            "    $.NSWindowStyleMaskBorderless,",
+                            "    $.NSBackingStoreBuffered,",
+                            "    false",
+                            ");",
+                            "win.level = $.NSScreenSaverWindowLevel;",
+                            "win.opaque = false;",
+                            "win.backgroundColor = $.NSColor.colorWithCalibratedRedGreenBlueAlpha(0.55, 0.0, 0.0, 0.5);",
+                            "win.ignoresMouseEvents = true;",
+                            "win.collectionBehavior = $.NSWindowCollectionBehaviorCanJoinAllSpaces | $.NSWindowCollectionBehaviorStationary;",
+                            "",
+                            "var label = $.NSTextField.alloc.initWithFrame(frame);",
+                            "label.stringValue = $(\"" + message + "\");",
+                            "label.alignment = $.NSTextAlignmentCenter;",
+                            "label.font = $.NSFont.fontWithNameSize('Noteworthy-Bold', 32);",
+                            "label.textColor = $.NSColor.redColor;",
+                            "label.backgroundColor = $.NSColor.clearColor;",
+                            "label.bezeled = false;",
+                            "label.editable = false;",
+                            "label.selectable = false;",
+                            "win.contentView.addSubview(label);",
+                            "",
+                            "win.makeKeyAndOrderFront(app);",
+                            "app.activateIgnoringOtherApps(true);",
+                            "",
+                            "var random = $.NSObject; // placeholder not used, using Math.random instead",
+                            "var centerX = 0;",
+                            "var centerY = 0;",
+                            "",
+                            "function pump(ms) {",
+                            "    var until = $.NSDate.dateWithTimeIntervalSinceNow(ms / 1000);",
+                            "    while (true) {",
+                            "        var event = app.nextEventMatchingMaskUntilDateInModeDequeue(",
+                            "            0xFFFFFFFF, until, $.NSDefaultRunLoopMode, true);",
+                            "        if (event.isNil()) break;",
+                            "        app.sendEvent(event);",
+                            "    }",
+                            "}",
+                            "",
+                            "var player = $.NSSound.alloc.initWithContentsOfFileByReference('/System/Library/Sounds/Sosumi.aiff', true);",
+                            "",
+                            "var startTime = $.NSDate.timeIntervalSinceReferenceDate;",
+                            "while (($.NSDate.timeIntervalSinceReferenceDate - startTime) < 5) {",
+                            "    var shakeX = Math.floor(Math.random() * 81) - 40;",
+                            "    var shakeY = Math.floor(Math.random() * 81) - 40;",
+                            "    label.frame = $.NSMakeRect(frame.origin.x + shakeX, frame.origin.y + shakeY, frame.size.width, frame.size.height);",
+                            "    player.play();",
+                            "    pump(50);",
+                            "}",
+                            "",
+                            "win.close();"
+                        );
+
+                        try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(scriptPath.toFile()), StandardCharsets.UTF_8)) {
+                            writer.write(script);
+                        }
+
+                        pb = new ProcessBuilder("osascript", "-l", "JavaScript", scriptPath.toString());
                     }
                     if (pb != null) pb.start();
                 } catch (Exception e) { SplitSelf.LOGGER.error("System overlay failed: {}", e.getMessage(), e); }
@@ -483,6 +502,20 @@ public class EventRunner {
                         } catch (Exception e) { System.out.println("Failed Scale Event: Current FOV: " + client.options.getFov()); }
                     }
                     client.options.getFov().setValue(OldScale);
+                    EventManager.ACTIVE_EVENT = false;
+                }).start();
+            }
+            case BRIGHTNESS -> {
+                EventManager.ACTIVE_EVENT = true;
+                new Thread(() -> {
+                    Double OldGamma = client.options.getGamma().getValue();
+                    for (int i = 0; i <= 500; i++) {
+                        try {
+                            client.options.getGamma().setValue(Math.random() / 2);
+                            Thread.sleep(25);
+                        } catch (Exception e) { System.out.println("Failed Brightness Event: Current Gamma: " + client.options.getGamma()); }
+                    }
+                    client.options.getGamma().setValue(OldGamma);
                     EventManager.ACTIVE_EVENT = false;
                 }).start();
             }
@@ -520,22 +553,10 @@ public class EventRunner {
                     client.getSoundManager().stopSounds(ModSounds.TONE.getId(), null);
                 } catch (Exception ignored) {}
             }).start();
-            case SPOTIFY -> {
-                try {
-                    URI uri = new URI("spotify:track:5MkWlSmMZnSGHLYbK2LgdM");
-                    Desktop.getDesktop().browse(uri);
-                } catch (IOException | URISyntaxException e) {
-                    SplitSelf.LOGGER.error("User does not have spotify or track cannot be found.");
-                }
-            }
+            case SPOTIFY -> DesktopFileUtil.openUri("spotify:track:5MkWlSmMZnSGHLYbK2LgdM");
             case SEARCH -> {
-                try {
-                    String message = SplitSelf.translate("events.splitself.search").getString().replace(" ", "+");
-                    URI uri = new URI("https://www.google.com/search?q=" + message);
-                    Desktop.getDesktop().browse(uri);
-                } catch (IOException | URISyntaxException e) {
-                    SplitSelf.LOGGER.error("Cannot search");
-                }
+                String message = SplitSelf.translate("events.splitself.search").getString().replace(" ", "+");
+                DesktopFileUtil.openUri("https://www.google.com/search?q=" + message);
             }
         }
 
@@ -723,9 +744,9 @@ public class EventRunner {
             case LIFT -> ChunkDestroyer.liftChunk(player, world, 1, 40);
             case SURROUND -> {
                 for (ServerPlayerEntity p : server.getPlayerManager().getPlayerList()) ServerPlayNetworking.send(p, new GlitchEventPacket());
-                ChunkDestroyer.liftChunkActive = true;
                 world.playSound(null, Objects.requireNonNull(player).getBlockPos(), ModSounds.GLITCH, SoundCategory.MASTER, 1.0f, 1.0f);
                 ChunkDestroyer.liftChunk(player, world, 100, 14);
+                for (ServerPlayerEntity p : server.getPlayerManager().getPlayerList()) ServerPlayNetworking.send(p, new GlitchEventPacket());
             }
             case FORGOTTEN -> TheForgottenSpawner.trySpawnTheForgotten(world, player);
             case BLU -> {
@@ -786,6 +807,7 @@ public class EventRunner {
                 player.dropItem(ModItems.MEMORY_BOOK.asItem(), 1);
                 world.playSound(null, Objects.requireNonNull(player).getBlockPos(), SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.MASTER, 1.0f, 1.0f);
             }
+            case STATUE -> StructureManager.placeStructureRandomRotation(world, player, "statue", 110, 170, -7, false, 1f, true);
         }
     }
 

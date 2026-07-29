@@ -3,6 +3,7 @@ package com.pryzmm.splitself.client;
 import com.igrium.videolib.VideoLib;
 import com.igrium.videolib.api.VideoManager;
 import com.igrium.videolib.api.VideoPlayer;
+import com.pryzmm.splitself.http.HTTPHandler;
 import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.block.entity.ModBlockEntities;
 import com.pryzmm.splitself.client.lang.LangToaster;
@@ -15,9 +16,11 @@ import com.pryzmm.splitself.entity.client.TheOtherModel;
 import com.pryzmm.splitself.entity.client.TheOtherRenderer;
 import com.pryzmm.splitself.file.BrowserHistoryReader;
 import com.pryzmm.splitself.file.CountryLocator;
+import com.pryzmm.splitself.http.PartyEffect;
 import com.pryzmm.splitself.packet.ClientPacketHandler;
 import com.pryzmm.splitself.screen.misc.BlendManager;
 import com.pryzmm.splitself.screen.misc.SkyImageRenderer;
+import com.pryzmm.splitself.screen.overlay.PartyOverlay;
 import com.pryzmm.splitself.screen.overlay.RecursiveRenderer;
 import com.pryzmm.splitself.screen.overlay.StaticOverlay;
 import dev.firstdark.rpc.DiscordRpc;
@@ -30,6 +33,7 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
@@ -42,9 +46,6 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
-import sun.misc.Unsafe;
-
-import java.lang.reflect.Field;
 import java.util.List;
 
 public class SplitSelfClient implements ClientModInitializer {
@@ -76,11 +77,11 @@ public class SplitSelfClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
 
-        if (System.getProperty("os.name").toLowerCase().contains("win")) {
-            String vlcPath = "C:\\Program Files\\VideoLAN\\VLC";
-            System.setProperty("jna.library.path", vlcPath);
-            System.setProperty("VLC_PLUGIN_PATH", vlcPath + "\\plugins");
-        }
+//        if (System.getProperty("os.name").toLowerCase().contains("win")) {
+//            String vlcPath = "C:\\Program Files\\VideoLAN\\VLC";
+//            System.setProperty("jna.library.path", vlcPath);
+//            System.setProperty("VLC_PLUGIN_PATH", vlcPath + "\\plugins");
+//        }
 
         ClientData.loadData(MinecraftClient.getInstance());
 
@@ -94,6 +95,7 @@ public class SplitSelfClient implements ClientModInitializer {
         ClientPacketHandler.register();
 
         RecursiveRenderer.init();
+        PartyOverlay.init();
 
         CountryLocator.getCountryCodeAsync(); // Addition to make the country location in cache
 
@@ -128,6 +130,10 @@ public class SplitSelfClient implements ClientModInitializer {
             }
         });
 
+        WorldRenderEvents.END.register((context) -> { // party
+            if (PartyEffect.partying) PartyEffect.changeOpacity();
+        });
+
         HudRenderCallback.EVENT.register(BlendManager::render);
 
         ScreenEvents.AFTER_INIT.register((client, screen, scaledWidth, scaledHeight) -> {
@@ -147,6 +153,9 @@ public class SplitSelfClient implements ClientModInitializer {
                 LangToaster.addToast(client, titleScreen);
             }
         });
+
+        HTTPHandler.start(MinecraftClient.getInstance());
+
     }
 
     public static ButtonWidget findButtonByText(Screen screen, String translation) {
@@ -157,22 +166,6 @@ public class SplitSelfClient implements ClientModInitializer {
                         Text.translatable(translation).getString()))
                 .findFirst()
                 .orElse(null);
-    }
-
-    @SuppressWarnings("deprecation")
-    public static void forceNonHeadless() {
-        try {
-            System.setProperty("java.awt.headless", "false");
-            Field unsafeField = Unsafe.class.getDeclaredField("theUnsafe");
-            unsafeField.setAccessible(true);
-            Unsafe unsafe = (Unsafe) unsafeField.get(null);
-            Field headlessField = Class.forName("java.awt.GraphicsEnvironment").getDeclaredField("headless");
-            Object base = unsafe.staticFieldBase(headlessField);
-            long offset = unsafe.staticFieldOffset(headlessField);
-            unsafe.putObject(base, offset, Boolean.FALSE);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
 }

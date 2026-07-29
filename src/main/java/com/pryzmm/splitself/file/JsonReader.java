@@ -19,6 +19,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 
 public class JsonReader {
@@ -30,26 +31,32 @@ public class JsonReader {
     public JsonReader(String fileName, boolean loadData) {
         this.configPath = FabricLoader.getInstance().getConfigDir().resolve(fileName);
         this.loadData = loadData;
-        safeLoad(configPath.toFile());
+        safeLoad(configPath.toFile(), loadData);
     }
 
     public JsonReader(File file) {
         this.configPath = file.toPath();
         this.loadData = false;
-        safeLoad(file);
+        safeLoad(file, false);
     }
 
     public JsonReader(File file, boolean loadData) {
         this.configPath = file.toPath();
         this.loadData = loadData;
-        safeLoad(file);
+        safeLoad(file, loadData);
     }
 
-    private void safeLoad(File file) {
+    private void safeLoad(File file, boolean loadData) {
         try {
             if (!file.exists() || file.length() == 0) {
                 file.getParentFile().mkdirs();
-                try (FileWriter w = new FileWriter(file)) { w.write("{}"); }
+                try (InputStream in = SplitSelf.class.getClassLoader().getResourceAsStream("data/splitself/default_config.json")) {
+                    if (in == null) throw new IOException("Resource not found: data/splitself/default_config.json");
+                    if (loadData) Files.copy(in, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    else try (FileWriter w = new FileWriter(file)) { w.write("{}"); }
+                } catch (IOException e) {
+                    SplitSelf.LOGGER.error("Failed to copy default config to {}", file.getAbsolutePath(), e);
+                }
             }
             JsonElement element = JsonParser.parseReader(new FileReader(file));
             if (element != null && element.isJsonObject()) jsonObject = element.getAsJsonObject();

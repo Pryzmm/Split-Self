@@ -3,6 +3,7 @@
   "block.splitself.brain": "Brain",
   "block.splitself.brains": "Brains",
   "block.splitself.dead_brains": "Dead Brains",
+  "block.splitself.exit_door": "Exit Door",
   "block.splitself.brain.not_enough_memories": "I don't have enough memories yet...",
 
   "chat.splitself.prompt.absence": "absence",

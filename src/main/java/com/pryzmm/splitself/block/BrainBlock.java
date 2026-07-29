@@ -105,6 +105,7 @@ public class BrainBlock extends Block {
                 client.execute(() -> {
                     SkyColor.changeFogColor(null);
                     SkyColor.changeSkyColor(null);
+                    SkyColor.changeDistantSkyColor(null);
                     ClientPlayNetworking.send(new EndBrokenEffectPacket());
                 });
             } catch (InterruptedException e) {

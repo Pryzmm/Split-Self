@@ -40,6 +40,9 @@
 		"client": [
           "com.pryzmm.splitself.client.SplitSelfClient"
 		],
+		"preLaunch": [
+			"com.pryzmm.splitself.client.ClientPreLaunch"
+		],
 		"modmenu": [
           "com.pryzmm.splitself.config.ModMenuApiImpl"
 		]
