@@ -35,6 +35,7 @@ import java.util.List;
 public class EventManager {
 
     // TODO: Make an entity spawn in front of a door and above a ladder
+    // TODO: Revert memory changes from aqua to see if it works in headless fix
 
     /*
      * TODO:

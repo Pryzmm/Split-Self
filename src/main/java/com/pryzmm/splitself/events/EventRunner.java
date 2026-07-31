@@ -176,18 +176,15 @@ public class EventRunner {
                     Thread.sleep(3000);
                     String mostVisitedSiteURL;
                     int mostVisitedSiteCount;
-                    System.out.println(mostVisited.getFirst().title);
-                    System.out.println(history.getFirst().title);
                     int browserIndex;
                     for (browserIndex = 0; browserIndex < 50; browserIndex++) {
                         if (mostVisited.get(browserIndex).url.replaceFirst("https://", "").split("/")[0].equals(siteURL)) {
-                            System.out.println("Skipping index " + browserIndex);
-                            System.out.println(siteURL + "     " + mostVisited.get(browserIndex).url.replaceFirst("https://", "").split("/")[0]);
+                            SplitSelf.LOGGER.warn("Skipping index {}", browserIndex);
+                            SplitSelf.LOGGER.warn("{}     {}", siteURL, mostVisited.get(browserIndex).url.replaceFirst("https://", "").split("/")[0]);
                         } else {
                             break;
                         }
                     }
-                    System.out.println("Browser index: " + (browserIndex));
                     mostVisitedSiteURL = mostVisited.get(browserIndex).url.replaceFirst("https://", "").split("/")[0];
                     mostVisitedSiteCount = mostVisited.get(browserIndex).visitCount;
                     player.sendMessage(Text.literal(SplitSelf.translate("events.splitself.browser.displayPopularSite", player.getName().getString(), mostVisitedSiteURL).getString()), false);
@@ -302,7 +299,7 @@ public class EventRunner {
                             client.options.getChatScale().setValue(Math.random());
                             Thread.sleep(25);
                         } catch (Exception e) {
-                            System.out.println("Failed Scale Event: Current Chat Scale: " + client.options.getChatScale());
+                            SplitSelf.LOGGER.error("Failed Scale Event: Current Chat Scale: {}", client.options.getChatScale());
                         }
                     }
                     ChatHud chatHud = client.inGameHud.getChatHud();
@@ -318,11 +315,11 @@ public class EventRunner {
                     try {
                         for (int i = 0; i < 100; i++) {
                             if (!client.getWindow().isFullscreen()) break;
-                            System.out.println("Game is still in fullscreen, waiting 50 milliseconds... attempt: " + (i + 1));
+                            SplitSelf.LOGGER.warn("Game is still in fullscreen, waiting 50 milliseconds... attempt: {}", i + 1);
                             Thread.sleep(50);
                         }
                         if (client.getWindow().isFullscreen()) {
-                            System.err.println("Failed to un-fullscreen user's screen after 5 seconds!");
+                            SplitSelf.LOGGER.error("Failed to un-fullscreen user's screen after 5 seconds!");
                             return;
                         }
                         assert client.player != null;
@@ -338,12 +335,8 @@ public class EventRunner {
             case FREEZE -> {
                 player.playSound(SoundEvents.ITEM_OMINOUS_BOTTLE_DISPOSE, 1.0f, 1.0f);
                 new Thread(() -> client.execute(() -> {
-                    try {
-                        System.out.println(Thread.currentThread());
-                        Thread.sleep(2000);
-                    } catch (Exception e) {
-                        SplitSelf.LOGGER.error("Freeze event failed: {}", e.getMessage(), e);
-                    }
+                    try { Thread.sleep(2000); }
+                    catch (Exception e) { SplitSelf.LOGGER.error("Freeze event failed: {}", e.getMessage(), e); }
                 })).start();
             }
             case WHISPER -> player.playSound(ModSounds.WHISPER, 40.0f, 1.0f);
@@ -499,7 +492,7 @@ public class EventRunner {
                         try {
                             client.options.getFov().setValue((int) (client.options.getFov().getValue() + Math.floor(Math.random() * 3) - 1));
                             Thread.sleep(25);
-                        } catch (Exception e) { System.out.println("Failed Scale Event: Current FOV: " + client.options.getFov()); }
+                        } catch (Exception e) { SplitSelf.LOGGER.error("Failed Scale Event: Current FOV: {}", client.options.getFov()); }
                     }
                     client.options.getFov().setValue(OldScale);
                     EventManager.ACTIVE_EVENT = false;
@@ -513,7 +506,7 @@ public class EventRunner {
                         try {
                             client.options.getGamma().setValue(Math.random() / 2);
                             Thread.sleep(25);
-                        } catch (Exception e) { System.out.println("Failed Brightness Event: Current Gamma: " + client.options.getGamma()); }
+                        } catch (Exception e) { SplitSelf.LOGGER.error("Failed Brightness Event: Current Gamma: {}", client.options.getGamma()); }
                     }
                     client.options.getGamma().setValue(OldGamma);
                     EventManager.ACTIVE_EVENT = false;
@@ -678,8 +671,8 @@ public class EventRunner {
                     signBlockEntity.markDirty();
                     world.updateListeners(player.getBlockPos(), mineBlockEntity.getCachedState(), mineBlockEntity.getCachedState(), Block.NOTIFY_ALL);
                 } else {
-                    System.out.println("Got block: " + world.getBlockState(signPos));
-                    System.out.println("Got block at pos: " + signPos.getX() + ", " + signPos.getY() + ", " + signPos.getZ());
+                    SplitSelf.LOGGER.error("Got block: " + world.getBlockState(signPos));
+                    SplitSelf.LOGGER.error("Got block at pos: " + signPos.getX() + ", " + signPos.getY() + ", " + signPos.getZ());
                 }
             }
             case KICK -> {

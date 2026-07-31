@@ -1,8 +1,10 @@
 package com.pryzmm.splitself.file;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class BrowserHistoryReader {
@@ -100,47 +102,32 @@ public class BrowserHistoryReader {
         }
 
         String tempPath = copyToTempFile(historyPath, "Firefox");
-        String connectionUrl = "jdbc:sqlite:" + (tempPath != null ? tempPath : historyPath);
+        File readFile = new File(tempPath != null ? tempPath : historyPath);
 
         try {
-            Connection conn = DriverManager.getConnection(connectionUrl);
-            String query = "SELECT url, title, visit_count, last_visit_date FROM moz_places " +
-                    "WHERE last_visit_date IS NOT NULL AND visit_count > 0 " +
-                    "ORDER BY " + sort + " DESC LIMIT ?";
+            List<HistoryTableReader.Row> rows = HistoryTableReader.readFirefoxPlaces(readFile);
 
-            PreparedStatement stmt = conn.prepareStatement(query);
-            stmt.setInt(1, limit);
-            ResultSet rs = stmt.executeQuery();
+            Comparator<HistoryTableReader.Row> cmp = "visit_count".equals(sort)
+                    ? Comparator.comparingInt(HistoryTableReader.Row::visitCount).reversed()
+                    : Comparator.comparingLong(HistoryTableReader.Row::visitTime).reversed();
+            rows.sort(cmp);
 
-            while (rs.next()) {
-                String title = rs.getString("title");
-                title = replaceTitle(title);
-                long firefoxTime = rs.getLong("last_visit_date");
-                long compatibleTime = firefoxTime + 11644473600000000L;
+            for (HistoryTableReader.Row row : rows) {
+                String title = replaceTitle(row.title());
+                long compatibleTime = row.visitTime() + 11644473600000000L;
 
-                if (title == null || title.trim().isEmpty()) {
-                    continue;
-                } else if (title.contains("GX Corner") || title.contains("New Tab") || title.equals("Home")) { // Removing startup pages from the list
-                    continue;
-                }
+                if (title == null || title.trim().isEmpty()) continue;
+                if (title.contains("GX Corner") || title.contains("New Tab") || title.equals("Home")) continue;
 
-                entries.add(new HistoryEntry(
-                        rs.getString("url"),
-                        title,
-                        compatibleTime,
-                        rs.getInt("visit_count"),
-                        "Firefox"
-                ));
+                entries.add(new HistoryEntry(row.url(), title, compatibleTime, row.visitCount(), "Firefox"));
+                if (entries.size() >= limit) break;
             }
-
-            conn.close();
-
-            if (tempPath != null) {
-                new File(tempPath).delete();
-            }
-
-        } catch (SQLException e) {
+        } catch (IOException e) {
             System.err.println("Error reading Firefox history: " + e.getMessage());
+        }
+
+        if (tempPath != null) {
+            new File(tempPath).delete();
         }
 
         return entries;
@@ -156,39 +143,28 @@ public class BrowserHistoryReader {
         }
 
         String tempPath = copyToTempFile(historyPath, browserName);
-        String connectionUrl = "jdbc:sqlite:" + (tempPath != null ? tempPath : historyPath);
+        File readFile = new File(tempPath != null ? tempPath : historyPath);
 
         try {
-            Connection conn = DriverManager.getConnection(connectionUrl);
-            // Modified query to prioritize by visit count instead of time for most visited
-            String query = "SELECT url, title, visit_count, last_visit_time FROM urls " +
-                    "WHERE last_visit_time > 0 AND visit_count > 0 " +
-                    "ORDER BY " + sort + " DESC LIMIT ?";
+            List<HistoryTableReader.Row> rows = HistoryTableReader.readChromiumUrls(readFile);
 
-            PreparedStatement stmt = conn.prepareStatement(query);
-            stmt.setInt(1, limit);
-            ResultSet rs = stmt.executeQuery();
+            // your existing sort logic, just applied to Row instead of ResultSet
+            Comparator<HistoryTableReader.Row> cmp = "visit_count".equals(sort)
+                    ? Comparator.comparingInt(HistoryTableReader.Row::visitCount).reversed()
+                    : Comparator.comparingLong(HistoryTableReader.Row::visitTime).reversed();
+            rows.sort(cmp);
 
-            while (rs.next()) {
-                String title = rs.getString("title");
-                title = replaceTitle(title);
-                entries.add(new HistoryEntry(
-                        rs.getString("url"),
-                        title,
-                        rs.getLong("last_visit_time"),
-                        rs.getInt("visit_count"),
-                        browserName
-                ));
+            for (HistoryTableReader.Row row : rows) {
+                if (entries.size() >= limit) break;
+                String title = replaceTitle(row.title());
+                entries.add(new HistoryEntry(row.url(), title, row.visitTime(), row.visitCount(), browserName));
             }
-
-            conn.close();
-
-            if (tempPath != null) {
-                new File(tempPath).delete();
-            }
-
-        } catch (SQLException e) {
+        } catch (IOException e) {
             System.err.println("Error reading " + browserName + " history: " + e.getMessage());
+        }
+
+        if (tempPath != null) {
+            new File(tempPath).delete();
         }
 
         return entries;

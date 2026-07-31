@@ -8,6 +8,9 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class NotepadManager {
 
@@ -43,6 +46,12 @@ public class NotepadManager {
     }
 
     public static void execute(Text[] messages) {
+        List<String> m = new ArrayList<>();
+        Arrays.stream(messages).forEach(msg -> m.add(msg.getString()));
+        execute(m);
+    }
+
+    public static void execute(List<String> messages) {
         String os = System.getProperty("os.name").toLowerCase();
         if (os.contains("win")) {
             executeWindows(messages);
@@ -51,7 +60,7 @@ public class NotepadManager {
         }
     }
 
-    public static void executeWindows(Text[] messages) {
+    public static void executeWindows(List<String> messages) {
         new Thread(() -> {
             try {
                 Path scriptPath = Paths.get(System.getProperty("java.io.tmpdir"), "typing_effect.ps1");
@@ -81,11 +90,11 @@ public class NotepadManager {
                     writer.write("$form.Activate()\n\n");
 
                     writer.write("$messages = @(\n");
-                    for (int i = 0; i < messages.length; i++) {
-                        String messageString = messages[i].getString();
+                    for (int i = 0; i < messages.size(); i++) {
+                        String messageString = messages.get(i);
                         String escapedMessage = escapeForPowerShell(messageString);
                         writer.write("    \"" + escapedMessage.replace("\"", "`\"").replace("`", "``") + "\"");
-                        if (i < messages.length - 1) writer.write(",");
+                        if (i < messages.size() - 1) writer.write(",");
                         writer.write("\n");
                     }
                     writer.write(")\n\n");
@@ -126,7 +135,7 @@ public class NotepadManager {
         }).start();
     }
 
-    public static void executeMac(Text[] messages) {
+    public static void executeMac(List<String> messages) {
         new Thread(() -> {
             try {
                 Path scriptPath = Paths.get(System.getProperty("java.io.tmpdir"), "typing_effect.js");
@@ -163,10 +172,10 @@ public class NotepadManager {
                     writer.write("app.activateIgnoringOtherApps(true);\n\n");
 
                     writer.write("var messages = [\n");
-                    for (int i = 0; i < messages.length; i++) {
-                        String msg = escapeForJS(messages[i].getString());
+                    for (int i = 0; i < messages.size(); i++) {
+                        String msg = escapeForJS(messages.get(i));
                         writer.write("    \"" + msg + "\"");
-                        if (i < messages.length - 1) writer.write(",");
+                        if (i < messages.size() - 1) writer.write(",");
                         writer.write("\n");
                     }
                     writer.write("];\n\n");

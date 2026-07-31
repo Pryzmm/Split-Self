@@ -66,8 +66,8 @@ dependencies {
 	modImplementation "local:videolib:1.0.1:all"
 //	include "local:videolib:1.0.1:all"
 
-	modImplementation 'io.roastedroot:sqlite4j:3.53.3.0'
-	include 'io.roastedroot:sqlite4j:3.53.3.0'
+//	modImplementation 'org.xerial:sqlite-jdbc:3.53.2.1'
+//	include 'org.xerial:sqlite-jdbc:3.53.2.1'
 
     modImplementation "maven.modrinth:architectury-api:13.0.6+fabric"
     modImplementation "maven.modrinth:shriek:1.1.1+fabric"
@@ -105,6 +105,12 @@ jar {
 
 	from("LICENSE") {
 		rename { "${it}_${inputs.properties.archivesName}"}
+	}
+
+	manifest {
+		attributes(
+			'Main-Class': 'com.pryzmm.Main'
+		)
 	}
 }
 
