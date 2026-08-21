@@ -7,7 +7,7 @@ This mod can interact with your PC in multiple ways; this goes further into deta
 > As of the latest updates, some PC interaction events may not activate, or the mod may not run, due to different Operating Systems (OS). The mod's author, Pryzmm, uses Windows 10/11. Please create an issue if you experience something abnormal, or a pull request if you have a fix. There is no planned fixes for anything that runs on Windows only until beta versions.
 
 > [!NOTE]
-> Personally Identifiable Information (PII) can and will be shown to you through this mod. If you wish for this information to be hidden, you can toggle it off by the warning screen shown when you first join a world. You can also do `/splitself information` to show the warning screen again, and toggle it off from there. **PII is toggled OFF by default.**
+> Personally Identifiable Information (PII) can and will be shown to you through this mod. This is client sided and no information will be sent to any server or other players. If you wish for this information to be hidden, you can toggle it off by the warning screen shown when you first join a world. You can also do `/splitself information` to show the warning screen again, and toggle it off from there. **PII is toggled OFF by default.**
 
 You are highly encouraged to play without reading this, as it may ruin the experience. But if you worry that damage may be done, well, it is open source after all. :D
 
