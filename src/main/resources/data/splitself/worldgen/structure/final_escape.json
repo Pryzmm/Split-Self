@@ -1,0 +1,6 @@
+{
+  "type": "splitself:final_escape",
+  "biomes": "#splitself:is_grass_empty",
+  "step": "surface_structures",
+  "spawn_overrides": {}
+}

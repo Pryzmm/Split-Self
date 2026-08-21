@@ -2,12 +2,10 @@ package com.pryzmm.splitself.block;
 
 import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.block.entity.ModBlockEntities;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroups;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.sound.BlockSoundGroup;
@@ -24,11 +22,17 @@ public class ModBlocks {
     public static final Block BRAINS = registerBlock("brains",
         new BrainsBlock(AbstractBlock.Settings.create().sounds(BlockSoundGroup.HONEY).hardness(3.0f).resistance(3.0f)));
 
+    public static final Block DARKNESS = registerBlock("darkness",
+        new DarknessBlock(AbstractBlock.Settings.create().sounds(BlockSoundGroup.INTENTIONALLY_EMPTY).hardness(10000.0f).resistance(10000.0f)));
+
     public static final Block DEAD_BRAINS = registerBlock("dead_brains",
         new DeadBrainsBlock(AbstractBlock.Settings.create().sounds(BlockSoundGroup.HONEY).hardness(3.0f).resistance(3.0f)));
 
     public static final Block EXIT_DOOR = registerBlock("exit_door",
         new ExitDoorBlock(AbstractBlock.Settings.create().sounds(BlockSoundGroup.METAL).nonOpaque().hardness(3.0f).resistance(3.0f)));
+
+    public static final Block TRIGGER_TRANSITION = registerBlock("dev_trigger_transition",
+        new TriggerTransitionBlock(AbstractBlock.Settings.create().nonOpaque().noCollision()));
 
     private static Block registerBlock(String name, Block block) {
         registerBlockItem(name, block);
@@ -41,9 +45,6 @@ public class ModBlocks {
 
     public static void registerModBlocks() {
         SplitSelf.LOGGER.info("Registering blocks...");
-
         ModBlockEntities.registerBlockEntities();
-
-        ItemGroupEvents.modifyEntriesEvent(ItemGroups.FUNCTIONAL).register(entries -> entries.add(IMAGE_FRAME));
     }
 }

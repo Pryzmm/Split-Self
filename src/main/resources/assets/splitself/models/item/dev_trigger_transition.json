@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "splitself:item/dev_trigger_transition"
+  }
+}

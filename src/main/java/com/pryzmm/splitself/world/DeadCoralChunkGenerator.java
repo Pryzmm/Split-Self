@@ -87,6 +87,7 @@ public class DeadCoralChunkGenerator extends ChunkGenerator {
                     if (y == MIN_GENERATION_Y) {
                         state = Blocks.BEDROCK.getDefaultState();
                         chunk.setBlockState(mutable.set(x, -64, z), Blocks.BARRIER.getDefaultState(), false);
+                        chunk.setBlockState(mutable.set(x, -62, z), ModBlocks.TRIGGER_TRANSITION.getDefaultState(), false);
                     } else {
                         state = ModBlocks.DEAD_BRAINS.getDefaultState();
                     }

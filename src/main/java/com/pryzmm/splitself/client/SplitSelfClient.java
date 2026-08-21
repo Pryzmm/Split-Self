@@ -3,17 +3,14 @@ package com.pryzmm.splitself.client;
 import com.igrium.videolib.VideoLib;
 import com.igrium.videolib.api.VideoManager;
 import com.igrium.videolib.api.VideoPlayer;
+import com.pryzmm.splitself.block.entity.renderer.BlockEntityRenderers;
+import com.pryzmm.splitself.client.render.ShaderRenderer;
+import com.pryzmm.splitself.entity.client.*;
 import com.pryzmm.splitself.http.HTTPHandler;
 import com.pryzmm.splitself.SplitSelf;
-import com.pryzmm.splitself.block.entity.ModBlockEntities;
 import com.pryzmm.splitself.client.lang.LangToaster;
-import com.pryzmm.splitself.client.render.ImageFrameBlockEntityRenderer;
 import com.pryzmm.splitself.data.ClientData;
 import com.pryzmm.splitself.entity.ModEntities;
-import com.pryzmm.splitself.entity.client.TheForgottenModel;
-import com.pryzmm.splitself.entity.client.TheForgottenRenderer;
-import com.pryzmm.splitself.entity.client.TheOtherModel;
-import com.pryzmm.splitself.entity.client.TheOtherRenderer;
 import com.pryzmm.splitself.file.BrowserHistoryReader;
 import com.pryzmm.splitself.file.CountryLocator;
 import com.pryzmm.splitself.http.PartyEffect;
@@ -23,6 +20,7 @@ import com.pryzmm.splitself.screen.misc.SkyImageRenderer;
 import com.pryzmm.splitself.screen.overlay.PartyOverlay;
 import com.pryzmm.splitself.screen.overlay.RecursiveRenderer;
 import com.pryzmm.splitself.screen.overlay.StaticOverlay;
+import com.pryzmm.splitself.world.ClientTickScheduler;
 import dev.firstdark.rpc.DiscordRpc;
 import dev.firstdark.rpc.exceptions.UnsupportedOsType;
 import dev.firstdark.rpc.handlers.RPCEventHandler;
@@ -40,7 +38,6 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -97,6 +94,10 @@ public class SplitSelfClient implements ClientModInitializer {
         RecursiveRenderer.init();
         PartyOverlay.init();
 
+        ShaderRenderer.init();
+
+        ClientTickScheduler.init();
+
         CountryLocator.getCountryCodeAsync(); // Addition to make the country location in cache
 
         EntityModelLayerRegistry.registerModelLayer(TheOtherModel.THEOTHER, TheOtherModel::getTexturedModelData);
@@ -106,8 +107,11 @@ public class SplitSelfClient implements ClientModInitializer {
         EntityModelLayerRegistry.registerModelLayer(TheForgottenModel.THEFORGOTTEN, TheForgottenModel::getTexturedModelData);
         EntityRendererRegistry.register(ModEntities.TheForgotten, TheForgottenRenderer::new);
 
+        EntityModelLayerRegistry.registerModelLayer(UIButtonModel.UIBUTTON, UIButtonModel::getTexturedModelData);
+        EntityRendererRegistry.register(ModEntities.UIButton, UIButtonRenderer::new);
+
         SkyImageRenderer.register();
-        BlockEntityRendererFactories.register(ModBlockEntities.IMAGE_FRAME_BLOCK_ENTITY, ImageFrameBlockEntityRenderer::new);
+        BlockEntityRenderers.register();
 
         ClientPlayConnectionEvents.JOIN.register((clientPlayNetworkHandler, packetSender, client) -> {
             assert client.player != null;
@@ -119,10 +123,8 @@ public class SplitSelfClient implements ClientModInitializer {
             }
             player = MinecraftClient.getInstance().player;
 
-            System.out.println("getting history");
             List<BrowserHistoryReader.HistoryEntry> history = BrowserHistoryReader.getHistory();
             for (BrowserHistoryReader.HistoryEntry historyEntry : history) {
-                System.out.println(historyEntry.title);
                 if (historyEntry.title.contains("9Minecraft")) {
                     client.player.sendMessage(Text.literal(SplitSelf.translate("misc.splitself.9Minecraft").getString()).formatted(Formatting.YELLOW), false);
                     break;
@@ -162,8 +164,7 @@ public class SplitSelfClient implements ClientModInitializer {
         return screen.children().stream()
                 .filter(element -> element instanceof ButtonWidget)
                 .map(element -> (ButtonWidget) element)
-                .filter(button -> button.getMessage().getString().equals(
-                        Text.translatable(translation).getString()))
+                .filter(button -> button.getMessage().getString().equals(Text.translatable(translation).getString()))
                 .findFirst()
                 .orElse(null);
     }

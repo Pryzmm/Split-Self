@@ -3,6 +3,7 @@ package com.pryzmm.splitself.entity;
 import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.entity.custom.TheForgottenEntity;
 import com.pryzmm.splitself.entity.custom.TheOtherEntity;
+import com.pryzmm.splitself.entity.custom.UIButtonEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.registry.Registries;
@@ -26,6 +27,10 @@ public class ModEntities {
     public static final EntityType<TheForgottenEntity> TheForgotten = Registry.register(Registries.ENTITY_TYPE,
             Identifier.of(SplitSelf.MOD_ID, "the_forgotten"),
             EntityType.Builder.create((EntityType<TheForgottenEntity> entityType, World world) -> new TheForgottenEntity(entityType, world), SpawnGroup.CREATURE).dimensions(0.6f, 1.8f).build());
+
+    public static final EntityType<UIButtonEntity> UIButton = Registry.register(Registries.ENTITY_TYPE,
+            Identifier.of(SplitSelf.MOD_ID, "ui_button"),
+            EntityType.Builder.create(UIButtonEntity::new, SpawnGroup.MISC).dimensions(2f, 0.3f).build());
 
     public static void registerModEntities() {
         SplitSelf.LOGGER.info("Loading and registering entities...");

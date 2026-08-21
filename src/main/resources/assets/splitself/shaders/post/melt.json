@@ -1,0 +1,19 @@
+{
+  "targets": [ "melt_swap" ],
+  "passes": [
+    {
+      "name": "splitself:melt",
+      "intarget": "minecraft:main",
+      "outtarget": "melt_swap",
+      "uniforms": [
+        { "name": "Time", "values": [ 0.0 ] },
+        { "name": "Amount", "values": [ 0.0 ] }
+      ]
+    },
+    {
+      "name": "blit",
+      "intarget": "melt_swap",
+      "outtarget": "minecraft:main"
+    }
+  ]
+}

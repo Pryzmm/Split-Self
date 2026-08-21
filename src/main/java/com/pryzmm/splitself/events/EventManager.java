@@ -1,6 +1,5 @@
 package com.pryzmm.splitself.events;
 
-import com.mojang.authlib.GameProfile;
 import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.config.DefaultConfig;
 import com.pryzmm.splitself.data.ClientData;
@@ -23,7 +22,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Position;
 import net.minecraft.util.math.Vec3d;
@@ -39,7 +37,7 @@ public class EventManager {
 
     /*
      * TODO:
-     * Test/fix the following events on mac:
+     * Test/fix the following events on Mac:
      * REMINDER, MEMORY, FREEDOM, THEOTHERSCREENSHOT
      */
 
@@ -121,8 +119,6 @@ public class EventManager {
     public static boolean WINDOW_MANIPULATION_ACTIVE = false;
     public static boolean PAUSE_SHAKE = false;
     public static boolean ACTIVE_EVENT = false;
-
-    public static Identifier CURRENT_FRAME_TEXTURE = null;
 
     public static boolean EVENTS_ENABLED = SplitSelf.CONFIG.getBoolean("eventsEnabled", DefaultConfig.eventsEnabled);
     public static int TICK_INTERVAL = SplitSelf.CONFIG.getInt("eventTickInterval", DefaultConfig.eventTickInterval);
@@ -366,27 +362,25 @@ public class EventManager {
         }
     }
 
-    public static void runChatEvent(PlayerEntity player, String rawMessage, boolean SkipWait) {
+    public static void runChatEvent(ServerPlayerEntity player, String rawMessage, boolean SkipWait) {
         if (player.getWorld() == Objects.requireNonNull(player.getServer()).getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY)) {return;}
         if (player.getWorld() == Objects.requireNonNull(player.getServer()).getWorld(DimensionRegistry.EMPTINESS_DIMENSION_KEY)) {return;}
         new Thread(() -> {
             try {
+                MinecraftServer server = player.getServer();
+                assert server != null;
                 if (!SkipWait) Thread.sleep((int) (Math.random() * 7000) + 3000);
                 List<TheForgottenEntity> entities = player.getWorld().getEntitiesByType(ModEntities.TheForgotten, player.getBoundingBox().expand(20), entity -> true);
                 String message = rawMessage.replace("?", "").replace("!", "").replace(".", "");
                 if (!entities.isEmpty()) { // If The Forgotten entity is nearby
-                    for (ServerPlayerEntity p : player.getServer().getPlayerManager().getPlayerList()) ServerPlayNetworking.send(p, new ChatEventPacket(message, true));
+                    for (ServerPlayerEntity p : server.getPlayerManager().getPlayerList()) ServerPlayNetworking.send(p, new ChatEventPacket(message, true));
                 } else { // Default to The Other entity messages
-                    for (ServerPlayerEntity p : player.getServer().getPlayerManager().getPlayerList()) ServerPlayNetworking.send(p, new ChatEventPacket(message, false));
+                    for (ServerPlayerEntity p : server.getPlayerManager().getPlayerList()) ServerPlayNetworking.send(p, new ChatEventPacket(message, false));
                 }
             } catch (Exception e) {
                 SplitSelf.LOGGER.error(e.getMessage(), e);
             }
         }).start();
-    }
-
-    public static void triggerRandomEvent(MinecraftServer server, GameProfile profile, Events ForceEvent) {
-        triggerRandomEvent(server.getPlayerManager().getPlayer(profile.getId()), ForceEvent);
     }
 
     /**
@@ -421,7 +415,7 @@ public class EventManager {
 
         eventLastTriggered.put(eventType, totalEventsTriggered);
 
-        System.out.println("Running Event: " + eventType);
+        SplitSelf.LOGGER.info("Running Event: {}", eventType);
 
         Position[] newPositions;
         int arrayLength;

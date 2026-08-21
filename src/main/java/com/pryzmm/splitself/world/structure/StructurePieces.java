@@ -14,6 +14,7 @@ public class StructurePieces {
     public static StructurePieceType PILLAR;
     public static StructurePieceType CREEPER;
     public static StructurePieceType ESCAPE;
+    public static StructurePieceType FINAL_ESCAPE;
 
     public static void register() {
         HOUSE = Registry.register(Registries.STRUCTURE_PIECE, Identifier.of(SplitSelf.MOD_ID, HousePiece.PIECE), (manager, nbt) -> new HousePiece(manager.structureTemplateManager(), nbt));
@@ -22,5 +23,6 @@ public class StructurePieces {
         PILLAR = Registry.register(Registries.STRUCTURE_PIECE, Identifier.of(SplitSelf.MOD_ID, PillarPiece.PIECE), (manager, nbt) -> new PillarPiece(manager.structureTemplateManager(), nbt));
         CREEPER = Registry.register(Registries.STRUCTURE_PIECE, Identifier.of(SplitSelf.MOD_ID, CreeperPiece.PIECE), (manager, nbt) -> new CreeperPiece(manager.structureTemplateManager(), nbt));
         ESCAPE = Registry.register(Registries.STRUCTURE_PIECE, Identifier.of(SplitSelf.MOD_ID, EscapePiece.PIECE), (manager, nbt) -> new EscapePiece(manager.structureTemplateManager(), nbt));
+        FINAL_ESCAPE = Registry.register(Registries.STRUCTURE_PIECE, Identifier.of(SplitSelf.MOD_ID, FinalEscapePiece.PIECE), (manager, nbt) -> new FinalEscapePiece(manager.structureTemplateManager(), nbt));
     }
 }

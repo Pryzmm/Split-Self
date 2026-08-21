@@ -24,6 +24,7 @@ public class ModItemGroups {
                     entries.add(ModBlocks.BRAINS);
                     entries.add(ModBlocks.EXIT_DOOR);
                     entries.add(ModBlocks.DEAD_BRAINS);
+                    entries.add(ModBlocks.DARKNESS);
                     entries.add(ModItems.MEMORY_BOOK);
                     entries.add(ModItems.MEMORY_HOUSE);
                     entries.add(ModItems.MEMORY_BLU);

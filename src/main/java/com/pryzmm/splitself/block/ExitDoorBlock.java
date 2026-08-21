@@ -1,17 +1,31 @@
 package com.pryzmm.splitself.block;
 
+import com.pryzmm.splitself.packet.packets.FinalePacket;
+import com.pryzmm.splitself.world.DimensionRegistry;
+import com.pryzmm.splitself.world.TickScheduler;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.*;
 import net.minecraft.block.enums.DoubleBlockHalf;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.decoration.DisplayEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.context.LootContextParameterSet;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.EnumProperty;
 import net.minecraft.state.property.Properties;
+import net.minecraft.text.Text;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
@@ -126,5 +140,26 @@ public class ExitDoorBlock extends Block {
                 : Collections.emptyList();
     }
 
+    @Override
+    protected ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
+        if (player instanceof ServerPlayerEntity p) {
+            MinecraftServer server = p.getServer();
+            assert server != null;
+            if (p.getServerWorld().getRegistryKey() == DimensionRegistry.GRASS_EMPTINESS_DIMENSION_KEY) {
+                ServerWorld limboWorld = server.getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY);
+                assert limboWorld != null;
+                player.teleport(limboWorld, 4009.5, 7.063, 44.0, null, -90, 45);
+                TickScheduler.schedule(100, () -> {
+                    try {
+                        DisplayEntity.TextDisplayEntity display = limboWorld.getEntitiesByClass(DisplayEntity.TextDisplayEntity.class, new Box(new Vec3d(3999, 13, 13), new Vec3d(4019, 0, 0)), (e) -> true).getFirst();
+                        display.setText(Text.translatable("selectWorld.deleteQuestion").append("\n")
+                            .append(Text.translatable("selectWorld.deleteWarning", server.getSaveProperties().getLevelName())));
+                    } catch (Exception ignored) {}
+                });
+            }
+            server.getPlayerManager().getPlayerList().forEach(pl -> ServerPlayNetworking.send(pl, new FinalePacket(true, false)));
+        }
+        return ActionResult.SUCCESS;
+    }
 
 }

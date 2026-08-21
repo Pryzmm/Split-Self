@@ -1,6 +1,5 @@
 package com.pryzmm.splitself.packet;
 
-import com.pryzmm.splitself.block.functions.EmptyTeleportBlockFunc;
 import com.pryzmm.splitself.data.ClientData;
 import com.pryzmm.splitself.events.EventManager;
 import com.pryzmm.splitself.item.MemoryItem;
@@ -8,6 +7,7 @@ import com.pryzmm.splitself.item.ModItems;
 import com.pryzmm.splitself.packet.packets.*;
 import com.pryzmm.splitself.world.DeadCoralChunkGenerator;
 import com.pryzmm.splitself.world.DimensionRegistry;
+import com.pryzmm.splitself.world.GrassEmptyChunkGenerator;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.Blocks;
@@ -28,6 +28,7 @@ public class ServerPacketHandler {
         PayloadTypeRegistry.playC2S().register(MemoryScreenPacket.ID, MemoryScreenPacket.CODEC);
         PayloadTypeRegistry.playC2S().register(KickScreenPacket.ID, KickScreenPacket.CODEC);
         PayloadTypeRegistry.playC2S().register(PartyTimePacket.ID, PartyTimePacket.CODEC);
+        PayloadTypeRegistry.playC2S().register(TransitionPacket.ID, TransitionPacket.CODEC);
 
         ServerPlayNetworking.registerGlobalReceiver(BrokenEffectPacket.ID, (payload, context) -> context.server().execute(() -> {
             for (ServerPlayerEntity player : context.server().getPlayerManager().getPlayerList()) {
@@ -44,7 +45,6 @@ public class ServerPacketHandler {
         ServerPlayNetworking.registerGlobalReceiver(EndBrokenEffectPacket.ID, (payload, context) -> context.server().execute(() -> {
             ServerWorld emptyWorld = context.server().getWorld(DimensionRegistry.EMPTINESS_DIMENSION_KEY);
             BlockPos pos = DeadCoralChunkGenerator.findGroundPos(0, 0);
-            EmptyTeleportBlockFunc.updateLastLocation(context.player());
             ClientData.setPanoramaStage("empty");
             context.player().teleport(emptyWorld, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, null, 0, 0);
         }));
@@ -66,6 +66,13 @@ public class ServerPacketHandler {
 
         ServerPlayNetworking.registerGlobalReceiver(SleepEventPacket.ID, (payload, context) -> context.server().execute(() -> {
             EventManager.runSleepEvent(context.server(), payload.stage());
+        }));
+
+        ServerPlayNetworking.registerGlobalReceiver(TransitionPacket.ID, (payload, context) -> context.server().execute(() -> {
+            ServerWorld emptyGrassWorld = context.server().getWorld(DimensionRegistry.GRASS_EMPTINESS_DIMENSION_KEY);
+            BlockPos pos = GrassEmptyChunkGenerator.findGroundPos(0, 0);
+            ClientData.setPanoramaStage("empty");
+            context.player().teleport(emptyGrassWorld, pos.getX() + 0.5, 700, pos.getZ() + 0.5, null, 0, 0);
         }));
 
         ServerPlayNetworking.registerGlobalReceiver(KickScreenPacket.ID, (payload, context) -> context.server().execute(() -> {

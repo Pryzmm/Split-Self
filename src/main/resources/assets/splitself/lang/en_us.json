@@ -1,10 +1,12 @@
 {
   "block.splitself.image_frame": "Image Frame",
   "block.splitself.brain": "Brain",
+  "block.splitself.brain.not_enough_memories": "I don't have enough memories yet...",
   "block.splitself.brains": "Brains",
   "block.splitself.dead_brains": "Dead Brains",
   "block.splitself.exit_door": "Exit Door",
-  "block.splitself.brain.not_enough_memories": "I don't have enough memories yet...",
+  "block.splitself.ui_button.delete": "Delete World",
+  "block.splitself.ui_button.cancel": "Cancel",
 
   "chat.splitself.prompt.absence": "absence",
   "chat.splitself.prompt.control": "control",
@@ -68,6 +70,15 @@
   "chat.splitself.sleep.talk2": "Did you really think this would be a good idea..?",
   "chat.splitself.sleep.talk3": "You abandoned them. You didn't even say goodbye.",
   "chat.splitself.sleep.talk4": "You can still fix your mistakes.",
+  "chat.splitself.final.intro1": "<%s> They miss us, you know.",
+  "chat.splitself.final.intro2": "<%s> We didn't have to drift away.",
+  "chat.splitself.final.intro3": "<%s> This is our final choice.",
+  "chat.splitself.final.intro4": "<%s> Delete the world, and forget it all...",
+  "chat.splitself.final.intro5": "<%s> Or keep the world, talk to them again, and fix what we broke.",
+  "chat.splitself.final.cancel1": "<%s> Good.",
+  "chat.splitself.final.cancel2": "<%s> We'll see them soon.",
+  "chat.splitself.final.delete1": "<%s> Well, we made our choice.",
+  "chat.splitself.final.delete2": "<%s> Goodbye.",
 
   "command.splitself.empty_command": "You don't know yourself.",
   "command.splitself.debug_toggle_warning": "<SplitSelf> Set playerReadWarning to %s",
@@ -196,6 +207,7 @@
   "events.splitself.weather.fail": "[SYSTEM] Failed to retrieve weather data for %s",
   "events.splitself.weather.temp": "[SYSTEM] Temperature: %s°C (%s°F)",
   "events.splitself.weather.weather": "[SYSTEM] Weather: %s",
+  "events.splitself.finale.screen": "Failed to load world '███████' (FILE_NOT_FOUND)",
 
   "files.splitself.begin.title": "begin",
   "files.splitself.begin.message": "Can't you see yourself?",

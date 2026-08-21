@@ -137,6 +137,34 @@ public class GrassEmptyChunkGenerator extends ChunkGenerator {
         return (int)(baseHeight + Math.pow(spikeStrength, 2.5) * 200);
     }
 
+    public BlockPos findFlatCenter(int startX, int startZ, int requiredRadius) {
+        for (int d = 0; d < 200; d += 4) {
+            for (int dx = -d; dx <= d; dx += 4) {
+                for (int dz = -d; dz <= d; dz += 4) {
+                    int cx = startX + dx;
+                    int cz = startZ + dz;
+                    if (isFlatArea(cx, cz, requiredRadius)) {
+                        return new BlockPos(cx, 61, cz);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private boolean isFlatArea(int cx, int cz, int radius) {
+        int centerHeight = getSpikeHeight(cx, cz);
+        for (int dx = -radius; dx <= radius; dx += 2) {
+            for (int dz = -radius; dz <= radius; dz += 2) {
+                int h = getSpikeHeight(cx + dx, cz + dz);
+                if (Math.abs(h - centerHeight) > 3 || h > centerHeight + 60) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     @Override
     public int getSeaLevel() {
         return 0;
@@ -173,6 +201,23 @@ public class GrassEmptyChunkGenerator extends ChunkGenerator {
         text.add("GrassEmpty Generator");
         text.add("Structure: " + structureName);
         text.add("At: " + structureX + ", " + structureZ);
+    }
+
+    public static BlockPos findGroundPos(int startX, int startZ) {
+        for (int radius = 0; radius < 1000; radius++) {
+            for (int dx = -radius; dx <= radius; dx++) {
+                for (int dz = -radius; dz <= radius; dz++) {
+                    if (Math.abs(dx) == radius || Math.abs(dz) == radius) {
+                        int x = startX + dx;
+                        int z = startZ + dz;
+                        if (getSpikeHeight(x, z) == 60) {
+                            return new BlockPos(x, 61, z);
+                        }
+                    }
+                }
+            }
+        }
+        return new BlockPos(startX, 61, startZ);
     }
 
 }

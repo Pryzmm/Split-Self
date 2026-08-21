@@ -35,7 +35,7 @@ public class HousePiece extends SimpleStructurePiece {
             TEMPLATE_ID.toString(), createPlacementData(), pos);
 
         try {
-            String resourcePath = "/data/" + SplitSelf.MOD_ID + "/structures/" + PIECE + ".nbt";
+            String resourcePath = "/data/" + SplitSelf.MOD_ID + "/structure/" + PIECE + ".nbt";
             InputStream inputStream = HousePiece.class.getResourceAsStream(resourcePath);
             if (inputStream != null) {
                 NbtCompound nbt = NbtIo.readCompressed(inputStream, NbtSizeTracker.ofUnlimitedBytes());

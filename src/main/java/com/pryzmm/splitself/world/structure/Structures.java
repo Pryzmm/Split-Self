@@ -15,6 +15,7 @@ public class Structures {
     public static StructureType<PillarStructure> PILLAR;
     public static StructureType<CreeperStructure> CREEPER;
     public static StructureType<EscapeStructure> ESCAPE;
+    public static StructureType<FinalEscapeStructure> FINAL_ESCAPE;
 
     public static void register() {
         HOUSE = Registry.register(Registries.STRUCTURE_TYPE, Identifier.of(SplitSelf.MOD_ID, HousePiece.PIECE), () -> HouseStructure.CODEC);
@@ -23,5 +24,6 @@ public class Structures {
         PILLAR = Registry.register(Registries.STRUCTURE_TYPE, Identifier.of(SplitSelf.MOD_ID, PillarPiece.PIECE), () -> PillarStructure.CODEC);
         CREEPER = Registry.register(Registries.STRUCTURE_TYPE, Identifier.of(SplitSelf.MOD_ID, CreeperPiece.PIECE), () -> CreeperStructure.CODEC);
         ESCAPE = Registry.register(Registries.STRUCTURE_TYPE, Identifier.of(SplitSelf.MOD_ID, EscapePiece.PIECE), () -> EscapeStructure.CODEC);
+        FINAL_ESCAPE = Registry.register(Registries.STRUCTURE_TYPE, Identifier.of(SplitSelf.MOD_ID, FinalEscapePiece.PIECE), () -> FinalEscapeStructure.CODEC);
     }
 }

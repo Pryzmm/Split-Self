@@ -98,7 +98,7 @@ public class SkyImageRenderer {
         Vec3d playerLook = client.player.getRotationVec(context.tickCounter().getTickDelta(true));
         Vec3d imageDirection = new Vec3d(IMAGE_RELATIVE_POS.x, IMAGE_RELATIVE_POS.y, IMAGE_RELATIVE_POS.z).normalize();
         double dotProduct = playerLook.dotProduct(imageDirection);
-        double angleInDegrees = Math.toDegrees(Math.acos(Math.max(-1.0, Math.min(1.0, dotProduct))));
+        double angleInDegrees = Math.toDegrees(Math.acos(Math.clamp(dotProduct, -1.0, 1.0)));
         return angleInDegrees < 4.0;
     }
 }

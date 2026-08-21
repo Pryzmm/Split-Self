@@ -5,6 +5,7 @@ import com.pryzmm.splitself.command.SplitSelfCommands;
 import com.pryzmm.splitself.config.DefaultConfig;
 import com.pryzmm.splitself.data.WorldData;
 import com.pryzmm.splitself.entity.TheForgottenFunc;
+import com.pryzmm.splitself.entity.custom.UIButtonEntity;
 import com.pryzmm.splitself.events.*;
 import com.pryzmm.splitself.events.helper.StructureManager;
 import com.pryzmm.splitself.file.JsonReader;
@@ -50,50 +51,62 @@ public class SplitSelf implements ModInitializer {
     public static JsonReader CONFIG = null;
 
 	private void onServerStarted(MinecraftServer server) {
-        if (!WorldData.isLoaded()) WorldData.loadData(server.getOverworld());
-		ServerWorld limboWorld = server.getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY);
-		if (limboWorld != null) {
-			StructureManager.placeStructureRandomRotation(
-					limboWorld,
-					new BlockPos(0, 0, 0),
-					"house_empty",
-					0,
-					0,
-					true,
-                    1f,
-                    false
-			);
+        WorldData.loadData(server);
+
+        ServerWorld limboWorld = server.getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY);
+        if (limboWorld != null) {
             StructureManager.placeStructureRandomRotation(
-                    limboWorld,
-                    new BlockPos(1000, 0, 0),
-                    "memory",
-                    0,
-                    0,
-                    true,
-                    1f,
-                    false
+                limboWorld,
+                new BlockPos(0, 0, 0),
+                "house_empty",
+                0,
+                0,
+                true,
+                1f,
+                false
             );
             StructureManager.placeStructureRandomRotation(
-                    limboWorld,
-                    new BlockPos(2000, 0, 0),
-                    "broken_memory",
-                    0,
-                    0,
-                    true,
-                    1f,
-                    false
+                limboWorld,
+                new BlockPos(1000, 0, 0),
+                "memory",
+                0,
+                0,
+                true,
+                1f,
+                false
             );
             StructureManager.placeStructureRandomRotation(
-                    limboWorld,
-                    new BlockPos(3000, 0, 0),
-                    "meadow",
-                    0,
-                    0,
-                    true,
-                    1f,
-                    false
+                limboWorld,
+                new BlockPos(2000, 0, 0),
+                "broken_memory",
+                0,
+                0,
+                true,
+                1f,
+                false
             );
-		}
+            StructureManager.placeStructureRandomRotation(
+                limboWorld,
+                new BlockPos(3000, 0, 0),
+                "meadow",
+                0,
+                0,
+                true,
+                1f,
+                false
+            );
+
+            StructureManager.placeStructureRandomRotation(
+                limboWorld,
+                new BlockPos(4000, 0, 0),
+                "real_house",
+                0,
+                0,
+                true,
+                1f,
+                false
+            );
+        }
 	}
 
 	public static Text translate(String translateKey, Object... args) { // makes it easier on me
@@ -117,7 +130,8 @@ public class SplitSelf implements ModInitializer {
 		DimensionRegistry.register();
 		Structures.register();
 		StructurePieces.register();
-		ServerLifecycleEvents.SERVER_STARTED.register(this::onServerStarted);
+		ServerLifecycleEvents.SERVER_STARTING.register(this::onServerStarted);
+        ServerLifecycleEvents.SERVER_STARTED.register(WorldData::updateSeed);
 
         ServerPacketHandler.register();
 
@@ -125,10 +139,14 @@ public class SplitSelf implements ModInitializer {
 
         ClientTickEvents.END_WORLD_TICK.register(EventManager::onClientTick);
 
+        ServerPlayConnectionEvents.INIT.register((handler, sender) -> {
+            if (WorldData.getIsDeleted()) {
+                handler.disconnect(Text.translatable("events.splitself.finale.screen"));
+            }
+        });
+
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
-            WorldData.loadData(server.getOverworld());
             ServerPlayerEntity player = handler.player;
-            assert player != null;
             if (!WorldData.getJoinedPlayers().contains(player.getUuid())) {
                 WorldData.updateJoinedPlayers(player.getUuid());
                 ServerPlayNetworking.send(player, new WarningScreenPacket());
@@ -148,6 +166,7 @@ public class SplitSelf implements ModInitializer {
 
 		FabricDefaultAttributeRegistry.register(ModEntities.TheOther, TheOtherEntity.createAttributes());
         FabricDefaultAttributeRegistry.register(ModEntities.TheForgotten, TheOtherEntity.createAttributes());
+        FabricDefaultAttributeRegistry.register(ModEntities.UIButton, UIButtonEntity.createAttributes());
 
 		CommandRegistrationCallback.EVENT.register(SplitSelfCommands::register);
 

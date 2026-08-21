@@ -2,7 +2,6 @@ package com.pryzmm.splitself.data;
 
 import com.pryzmm.splitself.file.JsonReader;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.WorldSavePath;
 import java.io.File;
 import java.util.*;
@@ -15,6 +14,7 @@ public class WorldData {
     private static int memoryStage;
     private static long seed;
     private static Location theForgottenLocation;
+    private static boolean isDeleted;
     static { clearData(); }
 
     private static JsonReader reader = null;
@@ -29,6 +29,7 @@ public class WorldData {
     public static List<UUID> getJoinedPlayers() { return joinedPlayers; }
     public static long getSeed() { return seed; }
     public static Location getTheForgottenLocation() { return theForgottenLocation; }
+    public static boolean getIsDeleted() { return isDeleted; }
 
     public static void setMemoryStage(int value) {
         memoryStage = value;
@@ -60,9 +61,14 @@ public class WorldData {
         reader.save();
     }
 
+    public static void setIsDeleted(boolean value) {
+        isDeleted = value;
+        reader.setBoolean("isDeleted", value);
+        reader.save();
+    }
+
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    public static File getCurrentData(ServerWorld world) {
-        MinecraftServer server = world.getServer();
+    public static File getCurrentData(MinecraftServer server) {
         File root = server.getSavePath(WorldSavePath.ROOT).toFile();
         File dir = new File(root, "data");
         if (!dir.exists()) dir.mkdirs();
@@ -77,15 +83,22 @@ public class WorldData {
         theForgottenLocation = null;
     }
 
-    public static void loadData(ServerWorld world) {
-        File data = getCurrentData(world);
+    public static void loadData(MinecraftServer server) {
+        File data = getCurrentData(server);
         reader = new JsonReader(data);
         joinedPlayers = reader.getUUIDList("joinedPlayers");
         unlockedMemories = reader.getStringList("unlockedMemories");
         sleepStage = reader.getInt("sleepStage", 0);
         memoryStage = reader.getInt("memoryStage", 0);
-        seed = world.getSeed();
+        isDeleted = reader.getBoolean("isDeleted", false);
         theForgottenLocation = reader.getLocation("theForgottenLocation", null);
+        reader.save();
+    }
+
+    public static void updateSeed(MinecraftServer server) {
+        File data = getCurrentData(server);
+        reader = new JsonReader(data);
+        seed = server.getOverworld().getSeed();
         reader.save();
     }
 

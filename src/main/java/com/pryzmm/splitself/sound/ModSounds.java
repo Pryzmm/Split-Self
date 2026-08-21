@@ -32,8 +32,10 @@ public class ModSounds {
     public static final SoundEvent FORGOTTEN = registerSoundEvent("forgotten");
     public static final SoundEvent MEMORY = registerSoundEvent("memory");
     public static final SoundEvent TONE = registerSoundEvent("tone");
+    public static final SoundEvent SCRATCH = registerSoundEvent("scratch");
     public static final SoundEvent SQUISH = registerSoundEvent("block.brain.squish");
     public static final SoundEvent SCRAPE = registerSoundEvent("block.brain.scrape");
+    public static final SoundEvent DELETE = registerSoundEvent("delete");
 
     static {
         registerSoundEvent("in_my_life");

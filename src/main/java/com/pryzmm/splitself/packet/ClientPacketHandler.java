@@ -1,31 +1,36 @@
 package com.pryzmm.splitself.packet;
 
-import com.pryzmm.splitself.SplitSelf;
+import com.igrium.videolib.api.VideoHandle;
+import com.igrium.videolib.api.VideoHandleFactory;
+import com.igrium.videolib.render.VideoScreen;
 import com.pryzmm.splitself.block.BrainBlock;
+import com.pryzmm.splitself.client.SplitSelfClient;
 import com.pryzmm.splitself.events.EventManager;
 import com.pryzmm.splitself.events.EventRunner;
 import com.pryzmm.splitself.events.ScreenOverlay;
-import com.pryzmm.splitself.file.EntityScreenshotCapture;
-import com.pryzmm.splitself.file.FrameFileManager;
+import com.pryzmm.splitself.file.ZipFunc;
 import com.pryzmm.splitself.http.PartyEffect;
 import com.pryzmm.splitself.packet.packets.*;
 import com.pryzmm.splitself.screen.KickScreen;
 import com.pryzmm.splitself.screen.MemoryScreen;
+import com.pryzmm.splitself.screen.ServerClosedScreen;
 import com.pryzmm.splitself.screen.WarningScreen;
 import com.pryzmm.splitself.sound.ModSounds;
+import com.pryzmm.splitself.world.ClientTickScheduler;
+import com.pryzmm.splitself.world.FinaleRenderer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.minecraft.client.MinecraftClient;
-import java.io.File;
-import java.nio.file.Path;
-import java.util.Random;
+import net.minecraft.text.Text;
 
-public class ClientPacketHandler {
+import java.io.IOException;
+
+public class  ClientPacketHandler {
 
     public static void register() {
+
         PayloadTypeRegistry.playS2C().register(BrokenEffectPacket.ID, BrokenEffectPacket.CODEC);
         PayloadTypeRegistry.playS2C().register(EventPacket.ID, EventPacket.CODEC);
-        PayloadTypeRegistry.playS2C().register(UpdateFrameItemPacket.ID, UpdateFrameItemPacket.CODEC);
         PayloadTypeRegistry.playS2C().register(GlitchEventPacket.ID, GlitchEventPacket.CODEC);
         PayloadTypeRegistry.playS2C().register(ChatEventPacket.ID, ChatEventPacket.CODEC);
         PayloadTypeRegistry.playS2C().register(WarningScreenPacket.ID, WarningScreenPacket.CODEC);
@@ -33,6 +38,8 @@ public class ClientPacketHandler {
         PayloadTypeRegistry.playS2C().register(TheOtherOverlayPacket.ID, TheOtherOverlayPacket.CODEC);
         PayloadTypeRegistry.playS2C().register(KickScreenPacket.ID, KickScreenPacket.CODEC);
         PayloadTypeRegistry.playS2C().register(PartyTimePacket.ID, PartyTimePacket.CODEC);
+        PayloadTypeRegistry.playS2C().register(TransitionPacket.ID, TransitionPacket.CODEC);
+        PayloadTypeRegistry.playS2C().register(FinalePacket.ID, FinalePacket.CODEC);
 
         ClientPlayNetworking.registerGlobalReceiver(BrokenEffectPacket.ID, (packet, context) -> context.client().execute(() -> {
             if (!BrainBlock.brokenEffectActive) {
@@ -45,9 +52,27 @@ public class ClientPacketHandler {
             EventRunner.runClientEvent(context.client(), context.player(), EventManager.Events.valueOf(packet.event()));
         }));
 
+        ClientPlayNetworking.registerGlobalReceiver(TransitionPacket.ID, (packet, context) -> context.client().execute(() -> {
+            try {
+                VideoHandleFactory factory = SplitSelfClient.videoManager.getVideoHandleFactory();
+                VideoHandle idHandle = factory.getVideoHandle(ZipFunc.getVideo("transition").toURI().toURL());
+                VideoScreen screen = new VideoScreen(SplitSelfClient.videoPlayer);
+                context.client().getSoundManager().stopAll();
+                context.client().setScreen(screen);
+                SplitSelfClient.videoPlayer.getEvents().onFinished(v -> {
+                    context.client().setScreen(new ServerClosedScreen());
+                    ClientTickScheduler.schedule(1, () -> context.client().setScreen(new ServerClosedScreen()));
+                });
+                SplitSelfClient.videoPlayer.getMediaInterface().play(idHandle);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }));
+
         ClientPlayNetworking.registerGlobalReceiver(PartyTimePacket.ID, (packet, context) -> context.client().execute(() -> {
             if (packet.partyType().equals("normal")) PartyEffect.play(context.player(), 4373, 484, ModSounds.PARTY);
-            else if (packet.partyType().equals("caramelldansen")) PartyEffect.play(context.player(), 5393, 364, ModSounds.CARAMELLDANSEN); // thanks reassembly, best idea yet
+            else if (packet.partyType().equals("caramelldansen"))
+                PartyEffect.play(context.player(), 5393, 364, ModSounds.CARAMELLDANSEN); // thanks reassembly, best idea yet
         }));
 
         ClientPlayNetworking.registerGlobalReceiver(TheOtherOverlayPacket.ID, (packet, context) -> context.client().execute(() -> {
@@ -74,58 +99,24 @@ public class ClientPacketHandler {
             EventManager.receiveChatEventPacket(context.player(), packet.message(), packet.talkingToTheForgotten());
         }));
 
-        ClientPlayNetworking.registerGlobalReceiver(UpdateFrameItemPacket.ID, (packet, context) -> context.client().execute(() -> {
-            boolean takeScreenshot = false;
-            Path defaultScreenshotsFolder = Path.of(System.getenv("APPDATA") + "\\.minecraft\\screenshots");
-            try {
-                Random random = new Random();
-                File[] screenshotFiles = defaultScreenshotsFolder.toFile().listFiles((dir, name) ->
-                        name.toLowerCase().endsWith(".png") || name.toLowerCase().endsWith(".jpg") || name.toLowerCase().endsWith(".jpeg"));
-                if (screenshotFiles != null && screenshotFiles.length > 0) {
-                    File randomScreenshot = screenshotFiles[random.nextInt(screenshotFiles.length)];
-                    FrameFileManager.loadImageToFrame(randomScreenshot);
-                } else {
-                    throw new RuntimeException("Screenshot folder is null or empty! " + defaultScreenshotsFolder.toAbsolutePath());
-                }
-            } catch (Exception e) {
-                SplitSelf.LOGGER.warn("Failed to access screenshot folder of default Minecraft directory: {}", e.getMessage());
-                File screenshotsDir = new File(MinecraftClient.getInstance().runDirectory, "screenshots");
-                if (screenshotsDir.exists() && screenshotsDir.isDirectory()) {
-                    File[] screenshotFiles = screenshotsDir.listFiles((dir, name) ->
-                            name.toLowerCase().endsWith(".png") || name.toLowerCase().endsWith(".jpg") || name.toLowerCase().endsWith(".jpeg"));
-                    if (screenshotFiles != null && screenshotFiles.length > 0) {
-                        Random random = new Random();
-                        File randomScreenshot = screenshotFiles[random.nextInt(screenshotFiles.length)];
-                        try {
-                            FrameFileManager.loadImageToFrame(randomScreenshot);
-                            SplitSelf.LOGGER.info("Loaded random screenshot to frame: {}", randomScreenshot.getName());
-                        } catch (Exception e2) {
-                            SplitSelf.LOGGER.error("Failed to load random screenshot to frame: {} {}", e2.getMessage(), e2);
-                        }
-                    } else {
-                        takeScreenshot = true;
-                    }
-                } else {
-                    takeScreenshot = true;
-                } if (takeScreenshot) {
-                    SplitSelf.LOGGER.warn("Screenshots directory does not exist, taking a new screenshot instead");
-                    new Thread(() -> context.client().execute(() -> {
-                        EntityScreenshotCapture capture = new EntityScreenshotCapture();
-                        capture.capture((file) -> {
-                            if (file != null) {
-                                try {
-                                    FrameFileManager.loadImageToFrame(file);
-                                } catch (Exception e2) {
-                                    SplitSelf.LOGGER.error("Failed to load image to frame: {} {}", e2.getMessage(), e2);
-                                }
-                            } else {
-                                SplitSelf.LOGGER.error("Could not get file!");
-                            }
-                        });
-                    })).start();
-                }
+        ClientPlayNetworking.registerGlobalReceiver(FinalePacket.ID, (packet, context) -> context.client().execute(() -> {
+            if (packet.isIntro()) {
+                ClientTickScheduler.schedule(100, () -> context.player().sendMessage(Text.translatable("chat.splitself.final.intro1", context.player().getName().getString())));
+                ClientTickScheduler.schedule(190, () -> context.player().sendMessage(Text.translatable("chat.splitself.final.intro2", context.player().getName().getString())));
+                ClientTickScheduler.schedule(280, () -> context.player().sendMessage(Text.translatable("chat.splitself.final.intro3", context.player().getName().getString())));
+                ClientTickScheduler.schedule(370, () -> context.player().sendMessage(Text.translatable("chat.splitself.final.intro4", context.player().getName().getString())));
+                ClientTickScheduler.schedule(460, () -> context.player().sendMessage(Text.translatable("chat.splitself.final.intro5", context.player().getName().getString())));
+            } else if (packet.deleteWorld()) {
+                context.player().playSound(ModSounds.DELETE, 1f, 1f);
+                ClientTickScheduler.schedule(30, () -> context.player().sendMessage(Text.translatable("chat.splitself.final.delete1", context.player().getName().getString())));
+                ClientTickScheduler.schedule(120, () -> context.player().sendMessage(Text.translatable("chat.splitself.final.delete2", context.player().getName().getString())));
+                FinaleRenderer.startEffect();
+            } else {
+                ClientTickScheduler.schedule(30, () -> context.player().sendMessage(Text.translatable("chat.splitself.final.cancel1", context.player().getName().getString())));
+                ClientTickScheduler.schedule(110, () -> context.player().sendMessage(Text.translatable("chat.splitself.final.cancel2", context.player().getName().getString())));
             }
         }));
+
     }
 
 }

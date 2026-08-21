@@ -60,7 +60,7 @@ public class StructureManager {
 
         // 2. Fall back to classpath (bundled structures)
         try {
-            String resourcePath = "/data/" + SplitSelf.MOD_ID + "/structures/" + fileName + ".nbt";
+            String resourcePath = "/data/" + SplitSelf.MOD_ID + "/structure/" + fileName + ".nbt";
             InputStream is = StructureManager.class.getResourceAsStream(resourcePath);
             if (is == null) return Optional.empty();
             NbtCompound nbt = NbtIo.readCompressed(is, NbtSizeTracker.ofUnlimitedBytes());
@@ -138,10 +138,11 @@ public class StructureManager {
 
     private static void placeTemplate(ServerWorld world, BlockPos pos, StructureTemplate template, BlockRotation rotation, BlockMirror mirror, Float Integrity, boolean ignoreEntities) {
         StructurePlacementData placementData = new StructurePlacementData()
-                .setRotation(rotation)
-                .setMirror(mirror)
-                .setIgnoreEntities(ignoreEntities)
-                .addProcessor(BlockIgnoreStructureProcessor.IGNORE_AIR_AND_STRUCTURE_BLOCKS);
+            .setRotation(rotation)
+            .setMirror(mirror)
+            .setIgnoreEntities(ignoreEntities)
+            .setUpdateNeighbors(false)
+            .addProcessor(BlockIgnoreStructureProcessor.IGNORE_AIR_AND_STRUCTURE_BLOCKS);
         if (Integrity != null && Integrity < 1.0f) {
             placementData.addProcessor(new IntegrityProcessor(Integrity));
         }

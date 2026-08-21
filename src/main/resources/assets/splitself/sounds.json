@@ -219,6 +219,22 @@
       }
     ]
   },
+  "scratch": {
+    "category": "master",
+    "sounds": [
+      {
+        "name": "splitself:scratch"
+      }
+    ]
+  },
+  "delete": {
+    "category": "master",
+    "sounds": [
+      {
+        "name": "splitself:delete"
+      }
+    ]
+  },
   "block.brain.squish": {
     "category": "blocks",
     "sounds": [

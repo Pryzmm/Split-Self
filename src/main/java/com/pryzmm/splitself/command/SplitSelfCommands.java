@@ -8,7 +8,6 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.pryzmm.splitself.SplitSelf;
-import com.pryzmm.splitself.block.functions.EmptyTeleportBlockFunc;
 import com.pryzmm.splitself.client.SplitSelfClient;
 import com.pryzmm.splitself.data.ClientData;
 import com.pryzmm.splitself.data.WorldData;
@@ -142,7 +141,6 @@ public class SplitSelfCommands {
                         if (player != null) {
                             ServerWorld emptyWorld = context.getSource().getServer().getWorld(DimensionRegistry.EMPTINESS_DIMENSION_KEY);
                             BlockPos pos = DeadCoralChunkGenerator.findGroundPos(0, 0);
-                            EmptyTeleportBlockFunc.updateLastLocation(player);
                             ClientData.setPanoramaStage("empty");
                             player.teleport(emptyWorld, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, null, 0, 0);
                         }

@@ -228,8 +228,7 @@ public class Lang_Toaster_Overlay extends ClickableWidget {
                     : trOr("splitself.nudge.title", "Translation available");
 
             int rawTitleW = tr.getWidth(title);
-            float titleScale = Math.min(TITLE_BASE_SCALE,
-                    Math.max(MIN_TEXT_SCALE, (float) textW / Math.max(1, rawTitleW)));
+            float titleScale = Math.clamp((float) textW / Math.max(1, rawTitleW), MIN_TEXT_SCALE, TITLE_BASE_SCALE);
             int titlePixH = Math.round(LINE_BASE_HEIGHT * titleScale);
 
             dc.getMatrices().push();

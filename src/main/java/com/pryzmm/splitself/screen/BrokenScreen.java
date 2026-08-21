@@ -17,7 +17,7 @@ public class BrokenScreen extends Screen {
     public BrokenScreen() {
         super(Text.empty());
         RecursiveRenderer.captureFreezeFrameAsync(id -> {
-            if (id == null) SplitSelf.LOGGER.info("[SplitSelf] freeze frame capture failed/unsafe");
+            if (id == null) SplitSelf.LOGGER.info("freeze frame capture failed/unsafe");
             capturedFrameTexture = id;
         });
     }
@@ -44,10 +44,7 @@ public class BrokenScreen extends Screen {
     public void renderOverlayImage(DrawContext drawContext, int screenWidth, int screenHeight, Identifier image) {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
-
-        // Use the 9-parameter overload: (id, x, y, u, v, width, height, texWidth, texHeight)
         drawContext.drawTexture(image, 0, 0, 0, 0, screenWidth, screenHeight, screenWidth, screenHeight);
-
         RenderSystem.disableBlend();
     }
 

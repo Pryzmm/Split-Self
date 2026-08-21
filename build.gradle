@@ -23,6 +23,15 @@ repositories {
 		name = "FDD Maven"
 		url = "https://maven.firstdark.dev/releases"
 	}
+	maven {
+		name = 'Ladysnake Mods'
+		url = 'https://maven.ladysnake.org/releases'
+		content {
+			includeGroup 'io.github.ladysnake'
+			includeGroup 'org.ladysnake'
+			includeGroupByRegex 'dev\\.onyxstudios.*'
+		}
+	}
 
 	ivy {
 		name = "libs"
@@ -69,8 +78,11 @@ dependencies {
 //	modImplementation 'org.xerial:sqlite-jdbc:3.53.2.1'
 //	include 'org.xerial:sqlite-jdbc:3.53.2.1'
 
-    modImplementation "maven.modrinth:architectury-api:13.0.6+fabric"
-    modImplementation "maven.modrinth:shriek:1.1.1+fabric"
+	modImplementation "org.ladysnake:satin:${satin_version}"
+	include "org.ladysnake:satin:${satin_version}"
+
+    modImplementation "maven.modrinth:architectury-api:${project.architectury_version}+fabric"
+    modImplementation "maven.modrinth:shriek:${project.shriek_version}+fabric"
 
     modImplementation "com.terraformersmc:modmenu:${project.mod_menu_version}"
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"

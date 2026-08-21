@@ -13,7 +13,6 @@ import com.pryzmm.splitself.item.ModItems;
 import com.pryzmm.splitself.mixin.WolfMixin;
 import com.pryzmm.splitself.packet.packets.GlitchEventPacket;
 import com.pryzmm.splitself.packet.packets.KickScreenPacket;
-import com.pryzmm.splitself.packet.packets.UpdateFrameItemPacket;
 import com.pryzmm.splitself.screen.PoemScreen;
 import com.pryzmm.splitself.screen.misc.BlendManager;
 import com.pryzmm.splitself.screen.misc.SkyImageRenderer;
@@ -730,7 +729,6 @@ public class EventRunner {
                 }
             }
             case FRAME -> {
-                for (ServerPlayerEntity p : server.getPlayerManager().getPlayerList()) ServerPlayNetworking.send(p, new UpdateFrameItemPacket());
                 player.dropItem(ModBlocks.IMAGE_FRAME.asItem(), 1);
                 world.playSound(null, Objects.requireNonNull(player).getBlockPos(), SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.MASTER, 1.0f, 1.0f);
             }

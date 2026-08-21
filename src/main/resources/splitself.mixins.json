@@ -5,9 +5,13 @@
   "client": [
     "BackgroundRendererAccessor",
     "BackgroundRenderMixin",
+    "BrokenSkyMixin",
+    "BrokenUIMixin",
     "ChatMixin",
+    "DrawContextMixin",
     "ExperimentalMixin",
     "GameMenuMixin",
+    "GameRendererMixin",
     "LanguageEntryMixin",
     "LevelLoadMixin",
     "OptionsScreenMixin",
@@ -25,6 +29,7 @@
   },
   "mixins": [
     "CoralMixin",
+    "FallDamageMixin",
     "MiningMixin",
     "PlayerChangeWorldMixin",
     "SleepMixin",

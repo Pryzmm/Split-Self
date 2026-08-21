@@ -27,7 +27,6 @@ public class ModItems {
             .jukeboxPlayable(ModSounds.FREEDOM_KEY))
     );
 
-
     public static final FoodComponent CIET_DOKE_COMPONENT = new FoodComponent.Builder()
         .alwaysEdible()
         .nutrition(10)
