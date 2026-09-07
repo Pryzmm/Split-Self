@@ -1,7 +1,5 @@
 # Split Self | Minecraft Horror Mod
 
-## NOTICE TO FUTURE RELEASES
-
 ## ⚠️ DISCLAIMER
 
 This mod will interact with your device **outside of the game**. Rest assured, your PC will not be damaged, and any changes made are easily reversible. If you feel unsafe using this mod, or if it's not supported on your device, you may download the **safe version** from every GitHub full release.
