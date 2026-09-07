@@ -20,19 +20,31 @@ public class ModBlocks {
         new BrainBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.HONEY)));
 
     public static final Block BRAINS = registerBlock("brains",
-        new BrainsBlock(AbstractBlock.Settings.create().sounds(BlockSoundGroup.HONEY).hardness(3.0f).resistance(3.0f)));
+        new Block(AbstractBlock.Settings.create().sounds(BlockSoundGroup.HONEY).hardness(3.0f).resistance(3.0f)));
 
     public static final Block DARKNESS = registerBlock("darkness",
-        new DarknessBlock(AbstractBlock.Settings.create().sounds(BlockSoundGroup.INTENTIONALLY_EMPTY).hardness(10000.0f).resistance(10000.0f)));
+        new Block(AbstractBlock.Settings.create().sounds(BlockSoundGroup.INTENTIONALLY_EMPTY).hardness(10000.0f).resistance(10000.0f)));
 
     public static final Block DEAD_BRAINS = registerBlock("dead_brains",
-        new DeadBrainsBlock(AbstractBlock.Settings.create().sounds(BlockSoundGroup.HONEY).hardness(3.0f).resistance(3.0f)));
+        new Block(AbstractBlock.Settings.create().sounds(BlockSoundGroup.HONEY).hardness(3.0f).resistance(3.0f)));
+
+    public static final Block COMPUTER = registerBlock("computer",
+        new ComputerBlock(AbstractBlock.Settings.create().sounds(BlockSoundGroup.METAL).nonOpaque().hardness(3.0f).resistance(3.0f)));
+
+    public static final Block KEYBOARD = registerBlock("keyboard",
+        new KeyboardBlock(AbstractBlock.Settings.create().sounds(BlockSoundGroup.METAL).nonOpaque().hardness(3.0f).resistance(3.0f)));
+
+    public static final Block TABLE = registerBlock("table",
+        new TableBlock(AbstractBlock.Settings.create().sounds(BlockSoundGroup.WOOD).nonOpaque().hardness(3.0f).resistance(3.0f)));
 
     public static final Block EXIT_DOOR = registerBlock("exit_door",
         new ExitDoorBlock(AbstractBlock.Settings.create().sounds(BlockSoundGroup.METAL).nonOpaque().hardness(3.0f).resistance(3.0f)));
 
     public static final Block TRIGGER_TRANSITION = registerBlock("dev_trigger_transition",
-        new TriggerTransitionBlock(AbstractBlock.Settings.create().nonOpaque().noCollision()));
+        new TriggerTransitionBlock(AbstractBlock.Settings.create().nonOpaque().noCollision().hardness(10000.0f).resistance(10000.0f)));
+
+    public static final Block BROKEN_FLOWER = registerBlock("broken_flower",
+        new BrokenFlowerBlock(AbstractBlock.Settings.create().nonOpaque().noCollision().hardness(10000.0f).resistance(10000.0f)));
 
     private static Block registerBlock(String name, Block block) {
         registerBlockItem(name, block);

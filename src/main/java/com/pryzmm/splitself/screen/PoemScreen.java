@@ -1,6 +1,5 @@
 package com.pryzmm.splitself.screen;
 
-import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.events.EventManager;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -33,21 +32,21 @@ public class PoemScreen extends Screen {
         context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 20, 0xFFFFFF);
 
         ArrayList<String> lines = new ArrayList<>();
-        lines.add(SplitSelf.translate("events.splitself.poemScreen.line1").getString());
-        lines.add(SplitSelf.translate("events.splitself.poemScreen.line2").getString());
+        lines.add(Text.translatable("events.splitself.poemScreen.line1").getString());
+        lines.add(Text.translatable("events.splitself.poemScreen.line2").getString());
         lines.add("");
-        lines.add(SplitSelf.translate("events.splitself.poemScreen.line3").getString());
-        lines.add(SplitSelf.translate("events.splitself.poemScreen.line4").getString());
+        lines.add(Text.translatable("events.splitself.poemScreen.line3").getString());
+        lines.add(Text.translatable("events.splitself.poemScreen.line4").getString());
         lines.add("");
-        lines.add(SplitSelf.translate("events.splitself.poemScreen.line5").getString());
-        lines.add(SplitSelf.translate("events.splitself.poemScreen.line6").getString());
+        lines.add(Text.translatable("events.splitself.poemScreen.line5").getString());
+        lines.add(Text.translatable("events.splitself.poemScreen.line6").getString());
         lines.add("");
-        lines.add(SplitSelf.translate("events.splitself.poemScreen.line7").getString());
-        lines.add(SplitSelf.translate("events.splitself.poemScreen.line8").getString());
+        lines.add(Text.translatable("events.splitself.poemScreen.line7").getString());
+        lines.add(Text.translatable("events.splitself.poemScreen.line8").getString());
         lines.add("");
         lines.add("");
         lines.add("");
-        lines.add(SplitSelf.translate("events.splitself.poemScreen.line9", EventManager.getName(client.player)).getString());
+        lines.add(Text.translatable("events.splitself.poemScreen.line9", EventManager.getName(client.player)).getString());
         int y = 10;
         for (String line : lines) {
             Text lineText = Text.literal(line);

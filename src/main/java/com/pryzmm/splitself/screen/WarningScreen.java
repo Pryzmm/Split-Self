@@ -9,12 +9,14 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Util;
+import java.net.URI;
 
 public class WarningScreen extends Screen {
     private static boolean localPII = false;
 
     public WarningScreen() {
-        super(SplitSelf.translate("warning.splitself.title"));
+        super(Text.translatable("warning.splitself.title"));
     }
 
     @Override
@@ -26,9 +28,9 @@ public class WarningScreen extends Screen {
         }
 
         this.addDrawableChild(ButtonWidget.builder(
-            Text.literal(SplitSelf.translate("warning.splitself.continue").getString()),
+            Text.translatable("warning.splitself.continue"),
             button -> {
-                DesktopFileUtil.createFileOnDesktop(SplitSelf.translate("files.splitself.begin.title").getString() + ".txt", SplitSelf.translate("files.splitself.begin.message").getString());
+                DesktopFileUtil.createFileOnDesktop(Text.translatable("files.splitself.begin.title").getString() + ".txt", Text.translatable("files.splitself.begin.message").getString());
                 ClientData.setPanoramaStage("main");
                 this.close();
             }
@@ -36,7 +38,7 @@ public class WarningScreen extends Screen {
         .size(100, 20)
         .build());
         this.addDrawableChild(ButtonWidget.builder(
-            SplitSelf.translate("warning.splitself.PII.toggle"),
+            Text.translatable("warning.splitself.PII.toggle"),
             button -> {
                 localPII = !localPII;
                 ClientData.setPII(localPII);
@@ -44,6 +46,14 @@ public class WarningScreen extends Screen {
         ).position(this.width / 2 + 5, this.height - 50)
         .size(100, 20)
         .build());
+        if (!SplitSelf.IS_UNSAFE_VERSION) {
+            this.addDrawableChild(ButtonWidget.builder(
+                Text.translatable("warning.splitself.download_unsafe"),
+                button -> Util.getOperatingSystem().open(URI.create("https://modrinth.com/mod/split-self"))
+            ).position((this.width / 2 - 100), this.height - 25)
+            .size(200, 20)
+            .build());
+        }
     }
 
     @Override
@@ -52,20 +62,18 @@ public class WarningScreen extends Screen {
         super.render(context, mouseX, mouseY, delta);
         context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 20, 0xFFFFFF);
 
-        Text piiStatus = Text.literal(localPII ? SplitSelf.translate("warning.splitself.PII.enabled").getString() : SplitSelf.translate("warning.splitself.PII.disabled").getString())
-                .formatted(localPII ? Formatting.GREEN : Formatting.RED);
+        Text piiStatus = (localPII ? Text.translatable("warning.splitself.PII.enabled") : Text.translatable("warning.splitself.PII.disabled")).formatted(localPII ? Formatting.GREEN : Formatting.RED);
 
         Text[] lines = {
-                Text.literal(SplitSelf.translate("warning.splitself.line1").getString()),
-                Text.literal(SplitSelf.translate("warning.splitself.line2").getString()),
-                Text.literal(SplitSelf.translate("warning.splitself.line3").getString()),
-                Text.literal(SplitSelf.translate("warning.splitself.line4").getString()).formatted(Formatting.YELLOW),
-                Text.literal(""),
-                Text.literal(SplitSelf.translate("warning.splitself.line5").getString()).formatted(Formatting.RED),
-                Text.literal(SplitSelf.translate("warning.splitself.line6").getString()).formatted(Formatting.GRAY),
-                Text.literal(""),
-                Text.literal(SplitSelf.translate("warning.splitself.line7").getString())
-                        .append(piiStatus)
+            Text.translatable("warning.splitself.line1"),
+            (SplitSelf.IS_UNSAFE_VERSION) ? Text.translatable("warning.splitself.line2") : Text.translatable("warning.splitself.line2.safe"),
+            (SplitSelf.IS_UNSAFE_VERSION) ? Text.translatable("warning.splitself.line3") : Text.translatable("warning.splitself.line3.safe"),
+            (SplitSelf.IS_UNSAFE_VERSION) ? Text.translatable("warning.splitself.line4").formatted(Formatting.YELLOW) : Text.translatable("warning.splitself.line4.safe").formatted(Formatting.YELLOW),
+            Text.literal(""),
+            Text.translatable("warning.splitself.line5").formatted(Formatting.RED),
+            Text.translatable("warning.splitself.line6").formatted(Formatting.GRAY),
+            Text.literal(""),
+            Text.translatable("warning.splitself.line7").append(piiStatus)
         };
 
         int y = 70;

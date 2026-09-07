@@ -2,7 +2,7 @@ package com.pryzmm.splitself.mixin;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.pryzmm.splitself.SplitSelf;
-import com.pryzmm.splitself.world.FinaleRenderer;
+import com.pryzmm.splitself.events.FinaleRenderer;
 import net.minecraft.client.gl.ShaderProgram;
 import net.minecraft.client.gl.VertexBuffer;
 import net.minecraft.client.render.*;

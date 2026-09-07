@@ -49,6 +49,7 @@ public class JsonReader {
     private void safeLoad(File file, boolean loadData) {
         try {
             if (!file.exists() || file.length() == 0) {
+                //noinspection ResultOfMethodCallIgnored
                 file.getParentFile().mkdirs();
                 try (InputStream in = SplitSelf.class.getClassLoader().getResourceAsStream("data/splitself/default_config.json")) {
                     if (in == null) throw new IOException("Resource not found: data/splitself/default_config.json");
@@ -125,7 +126,7 @@ public class JsonReader {
                         }
                     }
                 } catch (IllegalAccessException e) {
-                    SplitSelf.LOGGER.error("Could not access field: {}", field.getName());
+                    SplitSelf.LOGGER.error("Could not access field for fillMissingDefaults(): {}", field.getName());
                 }
             }
         }
@@ -177,7 +178,7 @@ public class JsonReader {
                         }
                     }
                 } catch (IllegalAccessException e) {
-                    SplitSelf.LOGGER.error("Could not access field: {}", field.getName());
+                    SplitSelf.LOGGER.error("Could not access field for removeNonDefaultKeys(): {}", field.getName());
                 }
             }
         }
@@ -361,6 +362,19 @@ public class JsonReader {
             return result;
         }
         return new ArrayList<>();
+    }
+
+    public void setAndSave(String key, Object value) {
+        switch (value) {
+            case Integer i -> jsonObject.addProperty(key, i);
+            case Double d -> jsonObject.addProperty(key, d);
+            case String s -> jsonObject.addProperty(key, s);
+            case Boolean b -> jsonObject.addProperty(key, b);
+            case Location l -> jsonObject.addProperty(key, l.toString());
+            case null -> jsonObject.add(key, JsonNull.INSTANCE);
+            default -> throw new IllegalArgumentException("Unsupported type: " + value.getClass());
+        }
+        save();
     }
 
     public void setInt(String key, int value) {

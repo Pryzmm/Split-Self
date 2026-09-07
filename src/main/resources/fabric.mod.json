@@ -22,8 +22,9 @@
       "§bImKaysar §7| §3Simplified Chinese Translation",
       "§bCoki91 §7| §3Spanish Translation",
       "§bbenaexd1 §7| §3Swedish Translation",
-      "§bBeastEge §7| §3Turkish Translation"
-    ],
+      "§bBeastEge §7| §3Turkish Translation",
+	  "§bEveryone else on CrowdIn"
+	],
 	"contact": {
 		"sources": "https://github.com/Pryzmm/split-self",
 		"homepage": "https://modrinth.com/mod/split-self",

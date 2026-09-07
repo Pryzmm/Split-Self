@@ -8,6 +8,7 @@
     "BrokenSkyMixin",
     "BrokenUIMixin",
     "ChatMixin",
+    "ColorOverlayMixin",
     "DrawContextMixin",
     "ExperimentalMixin",
     "GameMenuMixin",

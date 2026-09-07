@@ -1,12 +1,12 @@
 package com.pryzmm.splitself.screen.overlay;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.pryzmm.splitself.SplitSelf;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.Text;
 
 public class InventoryOverlayRenderer {
     public static boolean overlayVisible = false;
@@ -46,7 +46,7 @@ public class InventoryOverlayRenderer {
     public static void renderOverlayContent(DrawContext drawContext) {
         MinecraftClient client = MinecraftClient.getInstance();
         TextRenderer textRenderer = client.textRenderer;
-        String overlayText = SplitSelf.translate("events.splitself.inventoryOverlay.message").getString();
+        String overlayText = Text.translatable("events.splitself.inventoryOverlay.message").getString();
         drawContext.drawTextWithShadow(textRenderer, overlayText, 50, 50, 0xFFFFFF);
     }
 }

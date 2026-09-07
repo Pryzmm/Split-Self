@@ -1,6 +1,5 @@
 package com.pryzmm.splitself.mixin;
 
-import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.client.SplitSelfClient;
 import com.pryzmm.splitself.config.CustomConfigScreen;
 import net.minecraft.client.gui.screen.Screen;
@@ -24,14 +23,14 @@ public class OptionsScreenMixin extends Screen {
         ButtonWidget creditsButton = SplitSelfClient.findButtonByText(this, "options.credits_and_attribution");
         if (creditsButton != null) {
             ButtonWidget customButton = ButtonWidget.builder(
-                            (SplitSelf.translate("config.splitself.title")),
-                            button -> {
-                                assert client != null;
-                                client.setScreen(new CustomConfigScreen(this));
-                            }
-                    )
-                    .dimensions(5, 5, 150, 20)
-                    .build();
+                    (Text.translatable("config.splitself.title")),
+                    button -> {
+                        assert client != null;
+                        client.setScreen(new CustomConfigScreen(this));
+                    }
+                )
+                .dimensions(5, 5, 150, 20)
+                .build();
             this.addDrawableChild(customButton);
 
         }

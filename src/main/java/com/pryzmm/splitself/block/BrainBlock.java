@@ -1,6 +1,6 @@
 package com.pryzmm.splitself.block;
 
-import com.pryzmm.splitself.SplitSelf;
+import com.pryzmm.splitself.data.ClientData;
 import com.pryzmm.splitself.data.WorldData;
 import com.pryzmm.splitself.events.ScreenOverlay;
 import com.pryzmm.splitself.events.helper.SkyColor;
@@ -24,6 +24,7 @@ import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.Properties;
+import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ItemActionResult;
 import net.minecraft.util.hit.BlockHitResult;
@@ -63,7 +64,7 @@ public class BrainBlock extends Block {
         if (stack.isOf(ModItems.MEMORY_BOOK)) {
             if (hand == Hand.MAIN_HAND) {
                 if (WorldData.getUnlockedMemories().size() < 5) {
-                    player.sendMessage(SplitSelf.translate("block.splitself.brain.not_enough_memories"), true);
+                    player.sendMessage(Text.translatable("block.splitself.brain.not_enough_memories"), true);
                 } else if (!state.get(HAS_BOOK)) {
                     world.setBlockState(pos, state.with(HAS_BOOK, true));
                     stack.decrement(1);
@@ -106,6 +107,7 @@ public class BrainBlock extends Block {
                     SkyColor.changeFogColor(null);
                     SkyColor.changeSkyColor(null);
                     SkyColor.changeDistantSkyColor(null);
+                    ClientData.setPanoramaStage("empty");
                     ClientPlayNetworking.send(new EndBrokenEffectPacket());
                 });
             } catch (InterruptedException e) {

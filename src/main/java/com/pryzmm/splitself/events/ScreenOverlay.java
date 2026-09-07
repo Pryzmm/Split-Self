@@ -1,6 +1,5 @@
 package com.pryzmm.splitself.events;
 
-import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.screen.overlay.*;
 import com.pryzmm.splitself.sound.ModSounds;
 import net.minecraft.client.MinecraftClient;
@@ -8,6 +7,7 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.text.Text;
 import java.io.File;
 
 public class ScreenOverlay {
@@ -86,11 +86,11 @@ public class ScreenOverlay {
             player.getWorld().playSound(source, player.getBlockPos(), ModSounds.AMSTATIC, SoundCategory.MASTER, 1.0f, 1.0f);
             FaceOverlayRenderer.toggleOverlay(image, 0.5f, 0.5f, 0.5f, 1.0f, 100, 133);
             try { Thread.sleep(3000); } catch (InterruptedException e) { throw new RuntimeException(e); }
-            FaceOverlayRenderer.setOverlayText(SplitSelf.translate("events.splitself.face.line1").getString());
+            FaceOverlayRenderer.setOverlayText(Text.translatable("events.splitself.face.line1").getString());
             try { Thread.sleep(4500); } catch (InterruptedException e) { throw new RuntimeException(e); }
-            FaceOverlayRenderer.setOverlayText(SplitSelf.translate("events.splitself.face.line2").getString());
+            FaceOverlayRenderer.setOverlayText(Text.translatable("events.splitself.face.line2").getString());
             try { Thread.sleep(4500); } catch (InterruptedException e) { throw new RuntimeException(e); }
-            FaceOverlayRenderer.setOverlayText(SplitSelf.translate("events.splitself.face.line3").getString());
+            FaceOverlayRenderer.setOverlayText(Text.translatable("events.splitself.face.line3").getString());
             try { Thread.sleep(6000); } catch (InterruptedException e) { throw new RuntimeException(e); }
             FaceOverlayRenderer.toggleOverlay(image, 0f, 0f, 0f, 0f, 0, 0);
             MinecraftClient.getInstance().getSoundManager().stopAll();

@@ -9,6 +9,7 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.render.RenderTickCounter;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import java.text.DateFormat;
 import java.util.Date;
@@ -81,7 +82,7 @@ public class EmergencyOverlayRenderer {
 
         renderImageOverlay(drawContext, screenWidth, screenHeight);
 
-        String overlayText = SplitSelf.translate("events.splitself.emergency.notice").getString();
+        String overlayText = Text.translatable("events.splitself.emergency.notice").getString();
         int titleY = screenHeight / 3;
 
         MatrixStack matrices = drawContext.getMatrices();
@@ -96,9 +97,9 @@ public class EmergencyOverlayRenderer {
         matrices.pop();
 
         if (!ClientData.getPII()) {
-            city = SplitSelf.translate("events.splitself.redacted_name").getString();
+            city = Text.translatable("events.splitself.redacted_name").getString();
         }
-        String smallerText = SplitSelf.translate("events.splitself.emergency.message", city, (DateFormat.getTimeInstance().format(new Date(System.currentTimeMillis()))), city).getString();
+        String smallerText = Text.translatable("events.splitself.emergency.message", city, (DateFormat.getTimeInstance().format(new Date(System.currentTimeMillis()))), city).getString();
         int smallerTextY = titleY + 100;
         int smallerTextWidth = textRenderer.getWidth(smallerText);
 

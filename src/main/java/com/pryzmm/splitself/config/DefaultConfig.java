@@ -16,7 +16,8 @@ public class DefaultConfig {
     public static int repeatEventsAfter = 5;
     public static int baseSafeRadius = 15;
 
-    // I can't remember why, but this variable CANNOT be deleted or renamed without breaking the mod. Don't ask why, just don't do it.
+    // I can't remember why, but this variable CANNOT be deleted or renamed without breaking the mod, despite it not being used in this project.
+    // Don't ask why, just don't do it.
     public static String voskModel = "vosk-model-small-en-us-0.15";
 
     public static Map<String, Integer> eventWeights = new HashMap<>();
@@ -62,8 +63,8 @@ public class DefaultConfig {
         updateEventOptions("INVERT",                new EventOptions(10,  0, false, EventType.CLIENT));
         updateEventOptions("EMERGENCY",             new EventOptions(10,  2, true,  EventType.CLIENT));
         updateEventOptions("TNT",                   new EventOptions(0,   0, false, EventType.GLOBAL));
-        updateEventOptions("LAVA",                  new EventOptions(10,  1, false, EventType.GLOBAL));
         updateEventOptions("IRONTRAP",              new EventOptions(10,  0, false, EventType.GLOBAL));
+        updateEventOptions("LAVA",                  new EventOptions(10,  1, false, EventType.GLOBAL));
         updateEventOptions("BROWSER",               new EventOptions(3,   1, true,  EventType.CLIENT));
         updateEventOptions("KICK",                  new EventOptions(5,   1, false, EventType.GLOBAL));
         updateEventOptions("SIGN",                  new EventOptions(10,  1, false, EventType.GLOBAL));
@@ -102,12 +103,14 @@ public class DefaultConfig {
         updateEventOptions("DISCORDNAME",           new EventOptions(10,  2, true,  EventType.CLIENT));
         updateEventOptions("DEADCHUNK",             new EventOptions(10,  2, false, EventType.GLOBAL));
         updateEventOptions("RECURSIVE",             new EventOptions(10,  3, false, EventType.CLIENT));
+        updateEventOptions("PLAYERDATA",            new EventOptions(10,  2, true,  EventType.CLIENT));
         updateEventOptions("BRAIN",                 new EventOptions(15,  3, false, EventType.GLOBAL));
         updateEventOptions("BOOK",                  new EventOptions(10,  0, false, EventType.GLOBAL));
         updateEventOptions("SPOTIFY",               new EventOptions(10,  3, true,  EventType.CLIENT));
         updateEventOptions("SEARCH",                new EventOptions(10,  2, true,  EventType.CLIENT));
         updateEventOptions("STATUE",                new EventOptions(5,   3, false, EventType.GLOBAL));
         updateEventOptions("BRIGHTNESS",            new EventOptions(10,  1, false, EventType.CLIENT));
+        updateEventOptions("HALLWAY",               new EventOptions(10,  2, false, EventType.GLOBAL));
     }
 
 }

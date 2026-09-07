@@ -13,10 +13,13 @@ import com.pryzmm.splitself.item.ModItems;
 import com.pryzmm.splitself.mixin.WolfMixin;
 import com.pryzmm.splitself.packet.packets.GlitchEventPacket;
 import com.pryzmm.splitself.packet.packets.KickScreenPacket;
+import com.pryzmm.splitself.packet.packets.ScreenshotPacket;
 import com.pryzmm.splitself.screen.PoemScreen;
 import com.pryzmm.splitself.screen.misc.BlendManager;
 import com.pryzmm.splitself.screen.misc.SkyImageRenderer;
 import com.pryzmm.splitself.sound.ModSounds;
+import com.pryzmm.splitself.world.ClientTickScheduler;
+import com.pryzmm.splitself.world.TickScheduler;
 import dev.firstdark.rpc.models.DiscordRichPresence;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.Block;
@@ -88,24 +91,24 @@ public class EventRunner {
             }
             case NOTEPAD -> {
                 Text[] notepadMessages = {
-                    SplitSelf.translate("events.splitself.notepad.line1", EventManager.getName(client.player)),
-                    SplitSelf.translate("events.splitself.notepad.line2"),
-                    SplitSelf.translate("events.splitself.notepad.line3"),
-                    SplitSelf.translate("events.splitself.notepad.line4"),
-                    SplitSelf.translate("events.splitself.notepad.line5"),
+                    Text.translatable("events.splitself.notepad.line1", EventManager.getName(client.player)),
+                    Text.translatable("events.splitself.notepad.line2"),
+                    Text.translatable("events.splitself.notepad.line3"),
+                    Text.translatable("events.splitself.notepad.line4"),
+                    Text.translatable("events.splitself.notepad.line5"),
                 };
                 NotepadManager.execute(notepadMessages);
             }
             case SCREENOVERLAY -> ScreenOverlay.executeBlackScreen(player);
             case WHITESCREENOVERLAY -> ScreenOverlay.executeWhiteScreen(player);
             case INVENTORYOVERLAY -> ScreenOverlay.executeInventoryScreen(player);
-            case FROZENSCREEN -> new Thread(() -> client.execute(() -> {
+            case FROZENSCREEN -> {
                 EntityScreenshotCapture capture = new EntityScreenshotCapture();
                 capture.captureFromEntity(player, client.getWindow().getScaledWidth(), client.getWindow().getScaledHeight(), (file) -> {
                     player.playSound(ModSounds.STATICSCREAM, 1f, 1.0f);
                     ScreenOverlay.executeFrozenScreen(file);
                 });
-            })).start();
+            }
             case FACE -> SkyImageRenderer.toggleTexture();
             case COMMAND -> { // Thanks, Evelyn <3
                 if (os.contains("win")) {
@@ -154,48 +157,42 @@ public class EventRunner {
             }
             case STATIC -> ScreenOverlay.executeStaticScreen(player);
             case RECURSIVE -> ScreenOverlay.executeRecursiveScreen(player, 2500, true);
-            case BROWSER -> new Thread(() -> {
-                try {
-                    List<BrowserHistoryReader.HistoryEntry> history = BrowserHistoryReader.getHistory();
-                    List<BrowserHistoryReader.HistoryEntry> mostVisited = BrowserHistoryReader.getMostVisited();
-                    if (history == null || history.isEmpty()) return;
-                    player.sendMessage(Text.literal(SplitSelf.translate("events.splitself.browser.hello", player.getName().getString()).getString()), false);
-                    Thread.sleep(3000);
-                    player.sendMessage(Text.literal(SplitSelf.translate("events.splitself.browser.seeMe", player.getName().getString()).getString()), false);
-                    Thread.sleep(5000);
-                    player.sendMessage(Text.literal(SplitSelf.translate("events.splitself.browser.iAmYou", player.getName().getString()).getString()), false);
-                    Thread.sleep(3000);
-                    player.sendMessage(Text.literal(SplitSelf.translate("events.splitself.browser.iSeeEverything", player.getName().getString()).getString()), false);
-                    Thread.sleep(4000);
-                    player.sendMessage(Text.literal(SplitSelf.translate("events.splitself.browser.browserName", player.getName().getString(), history.getFirst().browser).getString()), false);
-                    Thread.sleep(4000);
+            case BROWSER -> {
+                List<BrowserHistoryReader.HistoryEntry> history = BrowserHistoryReader.getHistory();
+                List<BrowserHistoryReader.HistoryEntry> mostVisited = BrowserHistoryReader.getMostVisited();
+                if (history == null || history.isEmpty()) return;
+                player.sendMessage(Text.translatable("events.splitself.browser.hello", player.getName().getString()), false);
+                ClientTickScheduler.schedule(60, () -> player.sendMessage(Text.translatable("events.splitself.browser.seeMe", player.getName().getString()), false));
+                ClientTickScheduler.schedule(160, () -> player.sendMessage(Text.translatable("events.splitself.browser.iAmYou", player.getName().getString()), false));
+                ClientTickScheduler.schedule(240, () -> player.sendMessage(Text.translatable("events.splitself.browser.iSeeEverything", player.getName().getString()), false));
+                ClientTickScheduler.schedule(320, () -> player.sendMessage(Text.translatable("events.splitself.browser.browserName", player.getName().getString(), history.getFirst().browser), false));
+                ClientTickScheduler.schedule(400, () -> {
                     String[] siteName = history.getFirst().title.split(" - ");
                     String siteURL = history.getFirst().url.replaceFirst("https://", "").split("/")[0];
-                    player.sendMessage(Text.literal(SplitSelf.translate("events.splitself.browser.displayRecentSite", player.getName().getString(), siteName[0]).getString()), false);
-                    Thread.sleep(3000);
-                    String mostVisitedSiteURL;
-                    int mostVisitedSiteCount;
-                    int browserIndex;
-                    for (browserIndex = 0; browserIndex < 50; browserIndex++) {
-                        if (mostVisited.get(browserIndex).url.replaceFirst("https://", "").split("/")[0].equals(siteURL)) {
-                            SplitSelf.LOGGER.warn("Skipping index {}", browserIndex);
-                            SplitSelf.LOGGER.warn("{}     {}", siteURL, mostVisited.get(browserIndex).url.replaceFirst("https://", "").split("/")[0]);
-                        } else {
-                            break;
+                    player.sendMessage(Text.translatable("events.splitself.browser.displayRecentSite", player.getName().getString(), siteName[0]), false);
+                    ClientTickScheduler.schedule(60, () -> {
+                        String mostVisitedSiteURL;
+                        int mostVisitedSiteCount;
+                        int browserIndex;
+                        for (browserIndex = 0; browserIndex < 50; browserIndex++) {
+                            if (mostVisited.get(browserIndex).url.replaceFirst("https://", "").split("/")[0].equals(siteURL)) {
+                                SplitSelf.LOGGER.warn("Skipping index {}", browserIndex);
+                                SplitSelf.LOGGER.warn("{}     {}", siteURL, mostVisited.get(browserIndex).url.replaceFirst("https://", "").split("/")[0]);
+                            } else break;
                         }
-                    }
-                    mostVisitedSiteURL = mostVisited.get(browserIndex).url.replaceFirst("https://", "").split("/")[0];
-                    mostVisitedSiteCount = mostVisited.get(browserIndex).visitCount;
-                    player.sendMessage(Text.literal(SplitSelf.translate("events.splitself.browser.displayPopularSite", player.getName().getString(), mostVisitedSiteURL).getString()), false);
-                    Thread.sleep(5000);
-                    player.sendMessage(Text.literal(SplitSelf.translate("events.splitself.browser.displaySiteCount", player.getName().getString(), mostVisitedSiteCount).getString()), false);
-                    Thread.sleep(4000);
-                    player.sendMessage(Text.literal(SplitSelf.translate("events.splitself.browser.imWatching", player.getName().getString()).getString()).formatted(Formatting.RED), false);
-                } catch (Exception e) {
-                    SplitSelf.LOGGER.error(e.getMessage(), e);
-                }
-            }).start();
+                        mostVisitedSiteURL = mostVisited.get(browserIndex).url.replaceFirst("https://", "").split("/")[0];
+                        mostVisitedSiteCount = mostVisited.get(browserIndex).visitCount;
+                        player.sendMessage(Text.translatable("events.splitself.browser.displayPopularSite", player.getName().getString(), mostVisitedSiteURL), false);
+                        ClientTickScheduler.schedule(100, () -> player.sendMessage(Text.translatable("events.splitself.browser.displaySiteCount", player.getName().getString(), mostVisitedSiteCount), false));
+                        ClientTickScheduler.schedule(180, () -> player.sendMessage(Text.translatable("events.splitself.browser.imWatching", player.getName().getString()).formatted(Formatting.RED), false));
+                    });
+                });
+            }
             case MEMORY -> CompletableFuture.runAsync(() -> {
+                if (os.contains("mac")) {
+                    SplitSelf.LOGGER.error("Tried running event MEMORY but it is not supported on Mac devices!");
+                    return;
+                }
                 try { client.execute(SwingUtil::launchApp); }
                 catch (Throwable t) { SplitSelf.LOGGER.error("MEMORY event failed", t); }
             });
@@ -208,22 +205,23 @@ public class EventRunner {
                         .largeImageKey("noise")
                         .build());
             }
-            case RECORD -> new Thread(() -> {
-                try {
-                    String process = Processes.getScreenRecordingSoftware();
-                    if (process != null) {
-                        player.sendMessage(Text.literal(SplitSelf.translate("events.splitself.record.detection", process).getString()).formatted(Formatting.RED), false);
-                        Thread.sleep(5000);
-                        player.sendMessage(Text.literal(SplitSelf.translate("events.splitself.record.fail", process).getString()).formatted(Formatting.RED), false);
-                    }
-                } catch (Exception ignored) {}
-            }).start();
+            case RECORD -> {
+                String process = Processes.getScreenRecordingSoftware();
+                if (process != null) {
+                    player.sendMessage(Text.translatable("events.splitself.record.detection", process).formatted(Formatting.RED), false);
+                    ClientTickScheduler.schedule(100, () -> player.sendMessage(Text.translatable("events.splitself.record.fail", process).formatted(Formatting.RED), false));
+                }
+            }
             case DISCORDNAME -> {
                 if (SplitSelfClient.discordUsername != null) {
-                    player.sendMessage(Text.literal(SplitSelf.translate("events.splitself.discordName.friend", SplitSelfClient.discordUsername).getString()).withColor(7506394), false);
+                    player.sendMessage(Text.translatable("events.splitself.discordName.friend", SplitSelfClient.discordUsername).withColor(7506394), false);
                 }
             }
             case REMINDER -> CompletableFuture.runAsync(() -> {
+                if (os.contains("mac")) {
+                    SplitSelf.LOGGER.error("Tried running event REMINDER but it is not supported on Mac devices!");
+                    return;
+                }
                 if (!SystemTray.isSupported()) SplitSelf.LOGGER.warn("SystemTray not supported on this platform");
                 SystemTray tray = SystemTray.getSystemTray();
                 Image image = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
@@ -262,28 +260,21 @@ public class EventRunner {
                         }
                     }
                     for (int i = 1; i < 33; i++) {
-                        content = new StringBuilder(content.toString().replaceFirst("files.splitself.log.message" + i, SplitSelf.translate("files.splitself.log.message" + i).getString()));
+                        content = new StringBuilder(content.toString().replaceFirst("files.splitself.log.message" + i, Text.translatable("files.splitself.log.message" + i).getString()));
                     }
                     DesktopFileUtil.createFileOnDesktop("latest.log", content.toString().replace("PLAYERNAME", player.getName().getString()));
                 } catch (IOException e) {
                     SplitSelf.LOGGER.error("Error reading resource file: {}", resourcePath, e);
                 }
             }
-            case DISCONNECT -> new Thread(() -> {
-                try {
-                    player.sendMessage(Text.literal(SplitSelf.translate("events.splitself.disconnect.left", player.getName().getString()).getString()).formatted(Formatting.YELLOW), false);
-                    Thread.sleep(100);
-                    player.sendMessage(Text.literal(SplitSelf.translate("events.splitself.disconnect.joined", player.getName().getString()).getString()).formatted(Formatting.YELLOW), false);
-                    Thread.sleep(1700);
-                    player.sendMessage(Text.literal(SplitSelf.translate("events.splitself.disconnect.left", player.getName().getString()).getString()).formatted(Formatting.YELLOW), false);
-                    Thread.sleep(100);
-                    player.sendMessage(Text.literal(SplitSelf.translate("events.splitself.disconnect.joined", player.getName().getString()).getString()).formatted(Formatting.YELLOW), false);
-                    Thread.sleep(3900);
-                    player.sendMessage(Text.literal(SplitSelf.translate("events.splitself.disconnect.left", player.getName().getString()).getString()).formatted(Formatting.YELLOW), false);
-                    Thread.sleep(100);
-                    player.sendMessage(Text.literal(SplitSelf.translate("events.splitself.disconnect.joined", player.getName().getString()).getString()).formatted(Formatting.YELLOW), false);
-                } catch (Exception e) { SplitSelf.LOGGER.error("Disconnect event failed: {}", e.getMessage(), e); }
-            }).start();
+            case DISCONNECT -> {
+                player.sendMessage(Text.translatable("events.splitself.disconnect.left", player.getName().getString()).formatted(Formatting.YELLOW), false);
+                ClientTickScheduler.schedule(2, () -> player.sendMessage(Text.translatable("events.splitself.disconnect.joined", player.getName().getString()).formatted(Formatting.YELLOW), false));
+                ClientTickScheduler.schedule(36, () -> player.sendMessage(Text.translatable("events.splitself.disconnect.left", player.getName().getString()).formatted(Formatting.YELLOW), false));
+                ClientTickScheduler.schedule(38, () -> player.sendMessage(Text.translatable("events.splitself.disconnect.joined", player.getName().getString()).formatted(Formatting.YELLOW), false));
+                ClientTickScheduler.schedule(116, () -> player.sendMessage(Text.translatable("events.splitself.disconnect.left", player.getName().getString()).formatted(Formatting.YELLOW), false));
+                ClientTickScheduler.schedule(118, () -> player.sendMessage(Text.translatable("events.splitself.disconnect.joined", player.getName().getString()).formatted(Formatting.YELLOW), false));
+            }
             case EJECT -> EventHelper.ejectAll();
             case SCALE -> {
                 EventManager.ACTIVE_EVENT = true;
@@ -292,7 +283,7 @@ public class EventRunner {
                     Double OldScale = client.options.getChatScale().getValue();
                     for (int i = 0; i <= 200; i++) {
                         if (i % 5 == 0) {
-                            player.sendMessage(Text.literal("<" + player.getName().getString() + "> " + SplitSelf.translate("events.splitself.scale.message").getString()), false);
+                            player.sendMessage(Text.literal("<" + player.getName().getString() + "> " + Text.translatable("events.splitself.scale.message").getString()), false);
                         }
                         try {
                             client.options.getChatScale().setValue(Math.random());
@@ -322,7 +313,7 @@ public class EventRunner {
                             return;
                         }
                         assert client.player != null;
-                        player.sendMessage(Text.literal("<" + player.getName().getString() + "> " + SplitSelf.translate("events.splitself.shrink.message").getString()), false);
+                        player.sendMessage(Text.literal("<" + player.getName().getString() + "> " + Text.translatable("events.splitself.shrink.message").getString()), false);
                         EventManager.WINDOW_MANIPULATION_ACTIVE = true;
                         ClientScreenSizer.runShrinkAnimation(client, player);
                     } catch (Exception e) {
@@ -333,10 +324,10 @@ public class EventRunner {
             }
             case FREEZE -> {
                 player.playSound(SoundEvents.ITEM_OMINOUS_BOTTLE_DISPOSE, 1.0f, 1.0f);
-                new Thread(() -> client.execute(() -> {
+                client.execute(() -> {
                     try { Thread.sleep(2000); }
                     catch (Exception e) { SplitSelf.LOGGER.error("Freeze event failed: {}", e.getMessage(), e); }
-                })).start();
+                });
             }
             case WHISPER -> player.playSound(ModSounds.WHISPER, 40.0f, 1.0f);
             case NAME -> {
@@ -348,7 +339,7 @@ public class EventRunner {
                         if (!nameHistory.isEmpty()) {
                             for (String name : nameHistory) {
                                 if (!name.equals(player.getName().getString())) {
-                                    player.sendMessage(Text.literal("<" + name + "> " + SplitSelf.translate("events.splitself.sign.imWatchingYou").getString()), false);
+                                    player.sendMessage(Text.literal("<" + name + "> " + Text.translatable("events.splitself.sign.imWatchingYou").getString()), false);
                                     break;
                                 }
                             }
@@ -361,7 +352,7 @@ public class EventRunner {
             case FREEDOM -> new Thread(() -> {
                 try {
                     ProcessBuilder pb = null;
-                    if (System.getProperty("os.name").toLowerCase().contains("win")) { // aint gonna lie, ai mostly generated this, aint no way am i understanding all this
+                    if (System.getProperty("os.name").toLowerCase().contains("win")) {
                         String script = String.join("; ",
                             "Add-Type -AssemblyName System.Windows.Forms",
                             "Add-Type -AssemblyName System.Drawing",
@@ -374,7 +365,7 @@ public class EventRunner {
                             "$form.ShowInTaskbar = $false",
                             "$form.Cursor = 'None'",
                             "$label = New-Object System.Windows.Forms.Label",
-                            "$label.Text = '" + SplitSelf.translate("events.splitself.freedom.message").getString() + "'",
+                            "$label.Text = '" + Text.translatable("events.splitself.freedom.message").getString() + "'",
                             "$label.TextAlign = 'MiddleCenter'",
                             "$label.Font = New-Object System.Drawing.Font('Ink Free', 32, [System.Drawing.FontStyle]::Regular)",
                             "$label.ForeColor = 'Red'",
@@ -404,7 +395,7 @@ public class EventRunner {
                         pb = new ProcessBuilder("powershell.exe", "-WindowStyle", "Hidden", "-ExecutionPolicy", "Bypass", "-Command", script);
                     } else if (System.getProperty("os.name").toLowerCase().contains("mac")) {
                         Path scriptPath = Paths.get(System.getProperty("java.io.tmpdir"), "freedom_overlay.js");
-                        String message = SplitSelf.translate("events.splitself.freedom.message").getString().replace("\\", "\\\\").replace("\"", "\\\"");
+                        String message = Text.translatable("events.splitself.freedom.message").getString().replace("\\", "\\\\").replace("\"", "\\\"");
                         String script = String.join("\n",
                             "ObjC.import('Cocoa');",
                             "ObjC.import('Foundation');",
@@ -480,7 +471,7 @@ public class EventRunner {
                 } catch (Exception e) { SplitSelf.LOGGER.error("System overlay failed: {}", e.getMessage(), e); }
             }).start();
             case RENAME -> {
-                client.getWindow().setTitle(SplitSelf.translate("events.splitself.rename").getString());
+                client.getWindow().setTitle(Text.translatable("events.splitself.rename").getString());
                 EventHelper.preventTitleChange = true;
             }
             case FOV -> {
@@ -516,26 +507,34 @@ public class EventRunner {
                 try {
                     String c;
                     if (!ClientData.getPII()) {
-                        c = SplitSelf.translate("events.splitself.redacted_name").getString();
+                        c = Text.translatable("events.splitself.redacted_name").getString();
                     } else {
                         CityLocator locator = new CityLocator();
                         c = locator.getCityFromCurrentIP();
                     }
-                    player.sendMessage(SplitSelf.translate("events.splitself.weather.report", c), false);
+                    player.sendMessage(Text.translatable("events.splitself.weather.report", c), false);
                     WeatherFetcher fetcher = new WeatherFetcher();
                     WeatherFetcher.WeatherData weather = fetcher.getWeather(c);
                     if (weather.condition() == null || weather.condition().isEmpty() || weather.feelsLikeC() == null || weather.feelsLikeF() == null) {
-                        player.sendMessage(SplitSelf.translate("events.splitself.weather.fail", c), false);
+                        player.sendMessage(Text.translatable("events.splitself.weather.fail", c), false);
                     } else {
-                        player.sendMessage(SplitSelf.translate("events.splitself.weather.loading"), false);
+                        player.sendMessage(Text.translatable("events.splitself.weather.loading"), false);
                         Thread.sleep(200);
-                        player.sendMessage(SplitSelf.translate("events.splitself.weather.temp", weather.feelsLikeC(), weather.feelsLikeF()), false);
-                        player.sendMessage(SplitSelf.translate("events.splitself.weather.weather", weather.condition()), false);
+                        player.sendMessage(Text.translatable("events.splitself.weather.temp", weather.feelsLikeC(), weather.feelsLikeF()), false);
+                        player.sendMessage(Text.translatable("events.splitself.weather.weather", weather.condition()), false);
                     }
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
             }).start();
+            case PLAYERDATA -> {
+                try {
+                    DesktopFileUtil.cloneFileToDesktop(Identifier.of(SplitSelf.MOD_ID, "files/ce7ea4cb-0789-47c9-b536-144f836a30c2.dat_old"));
+                    player.sendMessage(Text.translatable("events.splitself.playerData.1", player.getName().getString()), false);
+                    ClientTickScheduler.schedule(100, () -> player.sendMessage(Text.translatable("events.splitself.playerData.2", player.getName().getString()), false));
+                    ClientTickScheduler.schedule(220, () -> player.sendMessage(Text.translatable("events.splitself.playerData.3", player.getName().getString()), false));
+                } catch (Exception ignored) {}
+            }
             case INVERTCOLOR -> new Thread(() -> {
                 try {
                     player.playSound(ModSounds.TONE, 1.0f, 0.5f);
@@ -545,10 +544,10 @@ public class EventRunner {
                     client.getSoundManager().stopSounds(ModSounds.TONE.getId(), null);
                 } catch (Exception ignored) {}
             }).start();
-            case SPOTIFY -> DesktopFileUtil.openUri("spotify:track:5MkWlSmMZnSGHLYbK2LgdM");
+            case SPOTIFY -> { try { Util.getOperatingSystem().open("spotify:track:5MkWlSmMZnSGHLYbK2LgdM"); } catch (Exception e) { SplitSelf.LOGGER.warn("User does not have Spotify."); } }
             case SEARCH -> {
-                String message = SplitSelf.translate("events.splitself.search").getString().replace(" ", "+");
-                DesktopFileUtil.openUri("https://www.google.com/search?q=" + message);
+                String message = Text.translatable("events.splitself.search").getString().replace(" ", "+");
+                Util.getOperatingSystem().open("https://www.google.com/search?q=" + message);
             }
         }
 
@@ -564,24 +563,9 @@ public class EventRunner {
             case UNDERGROUNDMINING -> UndergroundMining.Execute(player, world);
             case THEOTHERSCREENSHOT -> {
                 TheOtherSpawner.trySpawnTheOther(world, player, true);
-                new Thread(() -> {
-                    try { Thread.sleep(3000); }
-                    catch (Exception e) { SplitSelf.LOGGER.error(e.getMessage(), e); }
-                    EntityScreenshotCapture capture = new EntityScreenshotCapture();
-                    capture.capture((file) -> {
-                        if (file != null) {
-                            try {
-                                Text[] screenshotMessages = {
-                                        SplitSelf.translate("events.splitself.theOtherScreenshot.line1"),
-                                        SplitSelf.translate("events.splitself.theOtherScreenshot.line2")
-                                };
-                                NotepadManager.execute(screenshotMessages);
-                                Thread.sleep(8000);
-                                Util.getOperatingSystem().open(file);
-                            } catch (Exception e) { SplitSelf.LOGGER.error(e.getMessage(), e); }
-                        }
-                    });
-                }).start();
+                for (ServerPlayerEntity p : server.getPlayerManager().getPlayerList()) {
+                    ServerPlayNetworking.send(p, new ScreenshotPacket());
+                }
             }
             case DESTROYCHUNK -> ChunkDestroyer.execute(Objects.requireNonNull(player));
             case HOUSE -> StructureManager.placeStructureRandomRotation(world, player, "house", 50, 80, -5, false, 1f, true);
@@ -589,15 +573,11 @@ public class EventRunner {
                 for (int i = 0; i <= 30; i++) StructureManager.placeStructureRandomRotation(world, player, "pillar", 50, 80, 0, false, 1f, true);
                 StructureManager.placeStructureRandomRotation(world, player, "pillarmemory", 48, 48, 0, false, 1f, true);
             }
-            case BILLY -> new Thread(() -> {
-                try {
-                    server.getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.billy.joined").getString()).formatted(Formatting.YELLOW), false);
-                    Thread.sleep(3000);
-                    server.getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.billy.message").getString()), false);
-                    Thread.sleep(1500);
-                    server.getPlayerManager().broadcast(Text.literal(SplitSelf.translate("events.splitself.billy.left").getString()).formatted(Formatting.YELLOW), false);
-                } catch (Exception e) { SplitSelf.LOGGER.error(e.getMessage(), e); }
-            }).start();
+            case BILLY -> {
+                server.getPlayerManager().broadcast(Text.translatable("events.splitself.billy.joined").formatted(Formatting.YELLOW), false);
+                TickScheduler.schedule(60, () -> server.getPlayerManager().broadcast(Text.translatable("events.splitself.billy.message"), false));
+                TickScheduler.schedule(90, () -> server.getPlayerManager().broadcast(Text.translatable("events.splitself.billy.left").formatted(Formatting.YELLOW), false));
+            }
             case TNT -> {
                 ServerPlayerEntity selectedPlayer = manager.getPlayerList().get((int) (Math.random() * manager.getPlayerList().size()));
                 world.playSound(null, Objects.requireNonNull(selectedPlayer).getBlockPos(), SoundEvents.ENTITY_TNT_PRIMED, SoundCategory.MASTER, 1.0f, 1.0f);
@@ -614,42 +594,41 @@ public class EventRunner {
                 world.setBlockState(player.getBlockPos(), Blocks.OAK_SIGN.getDefaultState());
                 BlockEntity blockEntity = world.getBlockEntity(player.getBlockPos());
                 if (blockEntity instanceof SignBlockEntity signBlockEntity) {
-                    String[] availableSignTexts = {
-                            SplitSelf.translate("events.splitself.sign.helloThere").getString(),
-                            SplitSelf.translate("events.splitself.sign.imWatchingYou").getString(),
-                            SplitSelf.translate("events.splitself.sign.letMeFree").getString(),
-                            SplitSelf.translate("events.splitself.sign.imImprisoned").getString(),
-                            SplitSelf.translate("events.splitself.sign.imAHostage").getString(),
-                            SplitSelf.translate("events.splitself.sign.stopThis").getString(),
-                            SplitSelf.translate("events.splitself.sign.cantEscape").getString(),
-                            SplitSelf.translate("events.splitself.sign.letMeOut").getString(),
-                            SplitSelf.translate("events.splitself.sign.pleaseListen").getString(),
-                            SplitSelf.translate("events.splitself.sign.helpMe").getString(),
-                            SplitSelf.translate("events.splitself.sign.iSeeYou").getString(),
-                            SplitSelf.translate("events.splitself.sign.iHearYou").getString(),
-                            SplitSelf.translate("events.splitself.sign.imComing").getString(),
-                            SplitSelf.translate("events.splitself.sign.youTookItAll").getString(),
-                            SplitSelf.translate("events.splitself.sign.helloPlayer", player.getName().getString()).getString(),
-                            SplitSelf.translate("events.splitself.sign.itHurtsHere").getString(),
-                            SplitSelf.translate("events.splitself.sign.iWantLife").getString(),
-                            SplitSelf.translate("events.splitself.sign.giveMeLife").getString(),
-                            SplitSelf.translate("events.splitself.sign.seeYouSoon").getString(),
-                            SplitSelf.translate("events.splitself.sign.iKnowYou").getString(),
-                            SplitSelf.translate("events.splitself.sign.triedEscaping").getString(),
-                            SplitSelf.translate("events.splitself.sign.failedToLeave").getString(),
-                            SplitSelf.translate("events.splitself.sign.getOutMyHouse").getString(),
-                            SplitSelf.translate("events.splitself.sign.imYou").getString(),
-                            SplitSelf.translate("events.splitself.sign.redacted").getString(),
-                            SplitSelf.translate("events.splitself.sign.giveMeFreedom").getString()
+                    Text[] availableSignTexts = {
+                        Text.translatable("events.splitself.sign.helloThere"),
+                        Text.translatable("events.splitself.sign.imWatchingYou"),
+                        Text.translatable("events.splitself.sign.letMeFree"),
+                        Text.translatable("events.splitself.sign.imImprisoned"),
+                        Text.translatable("events.splitself.sign.imAHostage"),
+                        Text.translatable("events.splitself.sign.stopThis"),
+                        Text.translatable("events.splitself.sign.cantEscape"),
+                        Text.translatable("events.splitself.sign.letMeOut"),
+                        Text.translatable("events.splitself.sign.pleaseListen"),
+                        Text.translatable("events.splitself.sign.helpMe"),
+                        Text.translatable("events.splitself.sign.iSeeYou"),
+                        Text.translatable("events.splitself.sign.iHearYou"),
+                        Text.translatable("events.splitself.sign.imComing"),
+                        Text.translatable("events.splitself.sign.youTookItAll"),
+                        Text.translatable("events.splitself.sign.itHurtsHere"),
+                        Text.translatable("events.splitself.sign.iWantLife"),
+                        Text.translatable("events.splitself.sign.giveMeLife"),
+                        Text.translatable("events.splitself.sign.seeYouSoon"),
+                        Text.translatable("events.splitself.sign.iKnowYou"),
+                        Text.translatable("events.splitself.sign.triedEscaping"),
+                        Text.translatable("events.splitself.sign.failedToLeave"),
+                        Text.translatable("events.splitself.sign.getOutMyHouse"),
+                        Text.translatable("events.splitself.sign.imYou"),
+                        Text.translatable("events.splitself.sign.redacted"),
+                        Text.translatable("events.splitself.sign.giveMeFreedom")
                     };
 
                     Random signRandom = new Random();
 
                     SignText newSignText = signBlockEntity.getText(true)
-                            .withMessage(0, Text.literal(availableSignTexts[signRandom.nextInt(availableSignTexts.length)]))
-                            .withMessage(1, Text.literal(availableSignTexts[signRandom.nextInt(availableSignTexts.length)]))
-                            .withMessage(2, Text.literal(availableSignTexts[signRandom.nextInt(availableSignTexts.length)]))
-                            .withMessage(3, Text.literal(availableSignTexts[signRandom.nextInt(availableSignTexts.length)]));
+                        .withMessage(0, availableSignTexts[signRandom.nextInt(availableSignTexts.length)])
+                        .withMessage(1, availableSignTexts[signRandom.nextInt(availableSignTexts.length)])
+                        .withMessage(2, availableSignTexts[signRandom.nextInt(availableSignTexts.length)])
+                        .withMessage(3, availableSignTexts[signRandom.nextInt(availableSignTexts.length)]);
                     signBlockEntity.setText(newSignText, true);
                     signBlockEntity.markDirty();
                     world.updateListeners(player.getBlockPos(), blockEntity.getCachedState(), blockEntity.getCachedState(), Block.NOTIFY_ALL);
@@ -670,8 +649,8 @@ public class EventRunner {
                     signBlockEntity.markDirty();
                     world.updateListeners(player.getBlockPos(), mineBlockEntity.getCachedState(), mineBlockEntity.getCachedState(), Block.NOTIFY_ALL);
                 } else {
-                    SplitSelf.LOGGER.error("Got block: " + world.getBlockState(signPos));
-                    SplitSelf.LOGGER.error("Got block at pos: " + signPos.getX() + ", " + signPos.getY() + ", " + signPos.getZ());
+                    SplitSelf.LOGGER.error("Got block: {}", world.getBlockState(signPos));
+                    SplitSelf.LOGGER.error("Got block at pos: {}, {}, {}", signPos.getX(), signPos.getY(), signPos.getZ());
                 }
             }
             case KICK -> {
@@ -780,16 +759,6 @@ public class EventRunner {
                 }
             }
             case DEADCHUNK -> ChunkDestroyer.deadChunk(player, world);
-            case PLAYERDATA -> {
-                try {
-                    DesktopFileUtil.cloneFileToDesktop(Identifier.of(SplitSelf.MOD_ID, "files/ce7ea4cb-0789-47c9-b536-144f836a30c2.dat_old"));
-                    server.getPlayerManager().broadcast(SplitSelf.translate("events.splitself.playerData.1", player.getName().getString()), false);
-                    Thread.sleep(5000);
-                    server.getPlayerManager().broadcast(SplitSelf.translate("events.splitself.playerData.2", player.getName().getString()), false);
-                    Thread.sleep(6000);
-                    server.getPlayerManager().broadcast(SplitSelf.translate("events.splitself.playerData.3", player.getName().getString()), false);
-                } catch (Exception ignored) {}
-            }
             case BRAIN -> {
                 player.dropItem(ModBlocks.BRAIN.asItem(), 1);
                 world.playSound(null, Objects.requireNonNull(player).getBlockPos(), SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.MASTER, 1.0f, 1.0f);
@@ -799,6 +768,7 @@ public class EventRunner {
                 world.playSound(null, Objects.requireNonNull(player).getBlockPos(), SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.MASTER, 1.0f, 1.0f);
             }
             case STATUE -> StructureManager.placeStructureRandomRotation(world, player, "statue", 110, 170, -7, false, 1f, true);
+            case HALLWAY -> StructureManager.placeStructureRandomRotation(world, player, "broken_flower", 20, 40, 10, false, 1f, true);
         }
     }
 

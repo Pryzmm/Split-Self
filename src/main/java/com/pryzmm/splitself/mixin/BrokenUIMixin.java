@@ -1,6 +1,6 @@
 package com.pryzmm.splitself.mixin;
 
-import com.pryzmm.splitself.world.FinaleRenderer;
+import com.pryzmm.splitself.events.FinaleRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.render.RenderTickCounter;

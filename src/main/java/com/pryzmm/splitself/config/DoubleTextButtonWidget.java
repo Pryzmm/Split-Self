@@ -1,6 +1,5 @@
 package com.pryzmm.splitself.config;
 
-import com.pryzmm.splitself.SplitSelf;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.tooltip.Tooltip;
@@ -8,7 +7,6 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 import org.apache.http.util.TextUtils;
-
 import java.util.function.Supplier;
 
 public class DoubleTextButtonWidget extends ButtonWidget {
@@ -25,7 +23,7 @@ public class DoubleTextButtonWidget extends ButtonWidget {
         this.rightTextSupplier = rightTextSupplier;
         this.rightTextColorSupplier = rightTextColorSupplier;
         if (!TextUtils.isEmpty(tooltipTranslatableKey)) {
-            this.setTooltip(Tooltip.of(Text.of(leftText.getString() + "\n" + SplitSelf.translate(tooltipTranslatableKey).getString())));
+            this.setTooltip(Tooltip.of(Text.of(leftText.getString() + "\n" + Text.translatable(tooltipTranslatableKey).getString())));
         }
     }
 

@@ -1,6 +1,5 @@
 package com.pryzmm.splitself.mixin;
 
-import com.pryzmm.splitself.SplitSelf;
 import net.minecraft.block.entity.SignBlockEntity;
 import net.minecraft.block.entity.SignText;
 import net.minecraft.nbt.NbtCompound;
@@ -82,7 +81,7 @@ public class SignMixin {
         String content = text.getString();
         if (content.startsWith("SS|")) {
             content = "sign.splitself." + content.substring(3);
-            return SplitSelf.translate(content);
+            return Text.translatable(content);
         }
         return text;
     }

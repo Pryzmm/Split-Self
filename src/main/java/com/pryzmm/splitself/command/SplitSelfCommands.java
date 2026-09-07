@@ -7,7 +7,6 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
-import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.client.SplitSelfClient;
 import com.pryzmm.splitself.data.ClientData;
 import com.pryzmm.splitself.data.WorldData;
@@ -49,7 +48,7 @@ public class SplitSelfCommands {
 
         dispatcher.register(CommandManager.literal("splitself")
             .executes(context -> {
-                context.getSource().sendFeedback(() -> Text.literal("<" + context.getSource().getName() + "> " + SplitSelf.translate("command.splitself.empty_command").getString()), false);
+                context.getSource().sendFeedback(() -> Text.literal("<" + context.getSource().getName() + "> " + Text.translatable("command.splitself.empty_command").getString()), false);
                 return 1;
             })
             .then(CommandManager.literal("information")
@@ -75,7 +74,7 @@ public class SplitSelfCommands {
                                 EventManager.Events event = EventManager.Events.valueOf(eventArg.toUpperCase());
                                 EventManager.triggerRandomEvent(player, event);
                             } catch (IllegalArgumentException e) {
-                                context.getSource().sendFeedback(() -> Text.literal("<" + context.getSource().getName() + "> " + SplitSelf.translate("command.splitself.invalid_value").getString()), false);
+                                context.getSource().sendFeedback(() -> Text.literal("<" + context.getSource().getName() + "> " + Text.translatable("command.splitself.invalid_value").getString()), false);
                             }
                         }
                         return 1;

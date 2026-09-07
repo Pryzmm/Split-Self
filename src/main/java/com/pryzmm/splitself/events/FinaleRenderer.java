@@ -1,9 +1,15 @@
-package com.pryzmm.splitself.world;
+package com.pryzmm.splitself.events;
 
+import com.pryzmm.splitself.events.helper.ChunkDestroyer;
 import com.pryzmm.splitself.events.helper.SkyColor;
 import com.pryzmm.splitself.screen.overlay.ColorOverlay;
+import com.pryzmm.splitself.world.ClientTickScheduler;
+import com.pryzmm.splitself.world.TickScheduler;
+import net.minecraft.server.MinecraftServer;
 
 public class FinaleRenderer {
+
+    // CLIENT-START
 
     public static boolean brokenClouds = false;
     public static boolean brokenHotbar = false;
@@ -15,7 +21,7 @@ public class FinaleRenderer {
     public static boolean brokenItems = false;
     public static boolean brokenUI = false;
 
-    public static void startEffect() {
+    public static void startClientEffect() {
         ColorOverlay.setColor(0xFF000000);
         restartCloudEffect();
         restartSkyEffect();
@@ -31,9 +37,9 @@ public class FinaleRenderer {
     }
 
     private static void restartCloudEffect() {
-        TickScheduler.schedule((long) (Math.random() * 50), () -> {
+        ClientTickScheduler.schedule((long) (Math.random() * 50), () -> {
             brokenClouds = true;
-            TickScheduler.schedule((long) (Math.random() * 30), () -> {
+            ClientTickScheduler.schedule((long) (Math.random() * 30), () -> {
                 brokenClouds = false;
                 restartCloudEffect();
             });
@@ -41,11 +47,11 @@ public class FinaleRenderer {
     }
 
     private static void restartSkyEffect() {
-        TickScheduler.schedule((long) (Math.random() * 50), () -> {
+        ClientTickScheduler.schedule((long) (Math.random() * 50), () -> {
             SkyColor.changeSkyColor("000000");
             SkyColor.changeFogColor("000000");
             SkyColor.changeDistantSkyColor("000000");
-            TickScheduler.schedule((long) (Math.random() * 30), () -> {
+            ClientTickScheduler.schedule((long) (Math.random() * 30), () -> {
                 SkyColor.changeSkyColor(null);
                 SkyColor.changeFogColor(null);
                 SkyColor.changeDistantSkyColor(null);
@@ -55,9 +61,9 @@ public class FinaleRenderer {
     }
 
     private static void restartHotbarEffect() {
-        TickScheduler.schedule((long) (Math.random() * 50), () -> {
+        ClientTickScheduler.schedule((long) (Math.random() * 50), () -> {
             brokenHotbar = true;
-            TickScheduler.schedule((long) (Math.random() * 30), () -> {
+            ClientTickScheduler.schedule((long) (Math.random() * 30), () -> {
                 brokenHotbar = false;
                 restartHotbarEffect();
             });
@@ -65,9 +71,9 @@ public class FinaleRenderer {
     }
 
     private static void restartHotbarSizeEffect() {
-        TickScheduler.schedule((long) (Math.random() * 50), () -> {
+        ClientTickScheduler.schedule((long) (Math.random() * 50), () -> {
             brokenHotbarSize = true;
-            TickScheduler.schedule((long) (Math.random() * 30), () -> {
+            ClientTickScheduler.schedule((long) (Math.random() * 30), () -> {
                 brokenHotbarSize = false;
                 restartHotbarSizeEffect();
             });
@@ -75,9 +81,9 @@ public class FinaleRenderer {
     }
 
     private static void restartHealthEffect() {
-        TickScheduler.schedule((long) (Math.random() * 50), () -> {
+        ClientTickScheduler.schedule((long) (Math.random() * 50), () -> {
             brokenHealth = true;
-            TickScheduler.schedule((long) (Math.random() * 30), () -> {
+            ClientTickScheduler.schedule((long) (Math.random() * 30), () -> {
                 brokenHealth = false;
                 restartHealthEffect();
             });
@@ -85,9 +91,9 @@ public class FinaleRenderer {
     }
 
     private static void restartFoodEffect() {
-        TickScheduler.schedule((long) (Math.random() * 50), () -> {
+        ClientTickScheduler.schedule((long) (Math.random() * 50), () -> {
             brokenFood = true;
-            TickScheduler.schedule((long) (Math.random() * 30), () -> {
+            ClientTickScheduler.schedule((long) (Math.random() * 30), () -> {
                 brokenFood = false;
                 restartFoodEffect();
             });
@@ -95,9 +101,9 @@ public class FinaleRenderer {
     }
 
     private static void restartArmorEffect() {
-        TickScheduler.schedule((long) (Math.random() * 50), () -> {
+        ClientTickScheduler.schedule((long) (Math.random() * 50), () -> {
             brokenArmor = true;
-            TickScheduler.schedule((long) (Math.random() * 30), () -> {
+            ClientTickScheduler.schedule((long) (Math.random() * 30), () -> {
                 brokenArmor = false;
                 restartArmorEffect();
             });
@@ -105,9 +111,9 @@ public class FinaleRenderer {
     }
 
     private static void restartExperienceEffect() {
-        TickScheduler.schedule((long) (Math.random() * 50), () -> {
+        ClientTickScheduler.schedule((long) (Math.random() * 50), () -> {
             brokenExperience = true;
-            TickScheduler.schedule((long) (Math.random() * 30), () -> {
+            ClientTickScheduler.schedule((long) (Math.random() * 30), () -> {
                 brokenExperience = false;
                 restartExperienceEffect();
             });
@@ -115,9 +121,9 @@ public class FinaleRenderer {
     }
 
     private static void restartScreenEffect() {
-        TickScheduler.schedule((long) (100 + (Math.random() * 200)), () -> {
+        ClientTickScheduler.schedule((long) (100 + (Math.random() * 200)), () -> {
             ColorOverlay.toggleOverlay(true);
-            TickScheduler.schedule((long) (10 + (Math.random() * 30)), () -> {
+            ClientTickScheduler.schedule((long) (10 + (Math.random() * 30)), () -> {
                 ColorOverlay.toggleOverlay(false);
                 restartExperienceEffect();
             });
@@ -125,9 +131,9 @@ public class FinaleRenderer {
     }
 
     private static void restartItemEffect() {
-        TickScheduler.schedule((long) (Math.random() * 50), () -> {
+        ClientTickScheduler.schedule((long) (Math.random() * 50), () -> {
             brokenItems = true;
-            TickScheduler.schedule((long) (Math.random() * 30), () -> {
+            ClientTickScheduler.schedule((long) (Math.random() * 30), () -> {
                 brokenItems = false;
                 restartItemEffect();
             });
@@ -135,13 +141,27 @@ public class FinaleRenderer {
     }
 
     private static void restartUIEffect() {
-        TickScheduler.schedule((long) (Math.random() * 50), () -> {
+        ClientTickScheduler.schedule((long) (Math.random() * 50), () -> {
             brokenUI = true;
-            TickScheduler.schedule((long) (Math.random() * 30), () -> {
+            ClientTickScheduler.schedule((long) (Math.random() * 30), () -> {
                 brokenUI = false;
                 restartUIEffect();
             });
         });
+    }
+
+
+
+
+    // SERVER-START
+
+    public static void startServerEffect(MinecraftServer server) {
+        restartTerrainEffect(server);
+    }
+
+    private static void restartTerrainEffect(MinecraftServer server) {
+        ChunkDestroyer.liftChunk(server, 1, -12);
+        TickScheduler.schedule((long) (Math.random() * 40), () -> FinaleRenderer.restartTerrainEffect(server));
     }
 
 }

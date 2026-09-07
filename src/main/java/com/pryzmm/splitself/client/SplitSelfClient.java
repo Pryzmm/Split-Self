@@ -6,6 +6,7 @@ import com.igrium.videolib.api.VideoPlayer;
 import com.pryzmm.splitself.block.entity.renderer.BlockEntityRenderers;
 import com.pryzmm.splitself.client.render.ShaderRenderer;
 import com.pryzmm.splitself.entity.client.*;
+import com.pryzmm.splitself.file.BackgroundManager;
 import com.pryzmm.splitself.http.HTTPHandler;
 import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.client.lang.LangToaster;
@@ -44,6 +45,7 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import java.util.List;
+import java.util.Objects;
 
 public class SplitSelfClient implements ClientModInitializer {
 
@@ -82,6 +84,8 @@ public class SplitSelfClient implements ClientModInitializer {
 
         ClientData.loadData(MinecraftClient.getInstance());
 
+        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> ClientTickScheduler.clearAllTasks());
+
         ClientLifecycleEvents.CLIENT_STARTED.register(client -> {
             videoManager = VideoLib.getInstance().getVideoManager();
             videoPlayer = videoManager.getOrCreate(Identifier.of(SplitSelf.MOD_ID, "my_video_player"));
@@ -116,17 +120,17 @@ public class SplitSelfClient implements ClientModInitializer {
         ClientPlayConnectionEvents.JOIN.register((clientPlayNetworkHandler, packetSender, client) -> {
             assert client.player != null;
             if (ClientDetector.isFeatherClient()) {
-                client.player.sendMessage(Text.literal(SplitSelf.translate("misc.splitself.featherClient").getString()).formatted(Formatting.YELLOW), false);
+                client.player.sendMessage(Text.translatable("misc.splitself.featherClient").formatted(Formatting.YELLOW), false);
             }
             if (!Util.getOperatingSystem().toString().toLowerCase().contains("win")) {
-                client.player.sendMessage(Text.literal(SplitSelf.translate("misc.splitself.windowsSupport").getString()).formatted(Formatting.RED), false);
+                client.player.sendMessage(Text.translatable("misc.splitself.windowsSupport").formatted(Formatting.RED), false);
             }
             player = MinecraftClient.getInstance().player;
 
             List<BrowserHistoryReader.HistoryEntry> history = BrowserHistoryReader.getHistory();
             for (BrowserHistoryReader.HistoryEntry historyEntry : history) {
                 if (historyEntry.title.contains("9Minecraft")) {
-                    client.player.sendMessage(Text.literal(SplitSelf.translate("misc.splitself.9Minecraft").getString()).formatted(Formatting.YELLOW), false);
+                    client.player.sendMessage(Text.translatable("misc.splitself.9Minecraft").formatted(Formatting.YELLOW), false);
                     break;
                 }
             }
@@ -143,18 +147,24 @@ public class SplitSelfClient implements ClientModInitializer {
                 ButtonWidget multiplayerButton = findButtonByText(titleScreen, "menu.multiplayer");
                 if (multiplayerButton != null) {
                     multiplayerButton.active = false;
-                    multiplayerButton.setTooltip(Tooltip.of(SplitSelf.translate("misc.splitself.multiplayer")));
+                    multiplayerButton.setTooltip(Tooltip.of(Text.translatable("misc.splitself.multiplayer")));
                 }
                 ButtonWidget realmsButton = findButtonByText(titleScreen, "menu.online");
                 if (realmsButton != null) {
-                    realmsButton.setTooltip(Tooltip.of(SplitSelf.translate("misc.splitself.realms")));
+                    realmsButton.setTooltip(Tooltip.of(Text.translatable("misc.splitself.realms")));
                     realmsButton.active = false;
-                    }
+                }
 
                 // This is the call for the Toast notification that does the translation verification
                 LangToaster.addToast(client, titleScreen);
             }
         });
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            if (BackgroundManager.getUserBackground() != null && Objects.equals(BackgroundManager.getCurrentBackground(), BackgroundManager.getModBackground())) {
+                BackgroundManager.restoreUserBackground();
+            }
+        }));
 
         HTTPHandler.start(MinecraftClient.getInstance());
 

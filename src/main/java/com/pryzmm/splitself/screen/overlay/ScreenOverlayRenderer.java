@@ -7,6 +7,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 public class ScreenOverlayRenderer {
@@ -64,7 +65,7 @@ public class ScreenOverlayRenderer {
 
         renderImageOverlay(drawContext, screenWidth, screenHeight);
 
-        String overlayText = SplitSelf.translate("events.splitself.screenOverlay.message").getString();
+        String overlayText = Text.translatable("events.splitself.screenOverlay.message").getString();
         int textWidth = textRenderer.getWidth(overlayText);
         int textX = ((screenWidth - textWidth) / 2) + 100;
         int textY = (screenHeight / 2) + 100;

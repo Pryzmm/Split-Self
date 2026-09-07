@@ -235,6 +235,23 @@
       }
     ]
   },
+  "delete_hum": {
+    "category": "master",
+    "sounds": [
+      {
+        "name": "splitself:delete_hum",
+        "stream": true
+      }
+    ]
+  },
+  "keyboard": {
+    "category": "blocks",
+    "sounds": [
+      {
+        "name": "splitself:keyboard"
+      }
+    ]
+  },
   "block.brain.squish": {
     "category": "blocks",
     "sounds": [

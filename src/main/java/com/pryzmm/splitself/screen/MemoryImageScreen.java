@@ -38,9 +38,9 @@ public class MemoryImageScreen extends Screen {
             320, 168);
         context.drawBorder(xOffset, yOffset, 320, 168, 0xFFFFFFFF);
 
-        Text title = SplitSelf.translate("memory.splitself." + memory.image());
-        Text description = SplitSelf.translate("memory.splitself." + memory.image() + ".desc");
-        context.drawText(this.textRenderer, SplitSelf.translate("memory.splitself." + memory.image()),
+        Text title = Text.translatable("memory.splitself." + memory.image());
+        Text description = Text.translatable("memory.splitself." + memory.image() + ".desc");
+        context.drawText(this.textRenderer, Text.translatable("memory.splitself." + memory.image()),
             (context.getScaledWindowWidth() / 2) - (this.textRenderer.getWidth(title.getString()) / 2),
             yOffset + 172,
             0xFFFFFFFF, true);

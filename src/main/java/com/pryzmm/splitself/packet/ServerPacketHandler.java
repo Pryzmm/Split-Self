@@ -45,7 +45,6 @@ public class ServerPacketHandler {
         ServerPlayNetworking.registerGlobalReceiver(EndBrokenEffectPacket.ID, (payload, context) -> context.server().execute(() -> {
             ServerWorld emptyWorld = context.server().getWorld(DimensionRegistry.EMPTINESS_DIMENSION_KEY);
             BlockPos pos = DeadCoralChunkGenerator.findGroundPos(0, 0);
-            ClientData.setPanoramaStage("empty");
             context.player().teleport(emptyWorld, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, null, 0, 0);
         }));
 

@@ -21,16 +21,16 @@ public class ModEntities {
     static RegistryKey<EntityType<?>> key_the_forgotten = RegistryKey.of(RegistryKeys.ENTITY_TYPE, id_the_forgotten);
 
     public static final EntityType<TheOtherEntity> TheOther = Registry.register(Registries.ENTITY_TYPE,
-            Identifier.of(SplitSelf.MOD_ID, "the_other"),
-            EntityType.Builder.create(TheOtherEntity::new, SpawnGroup.CREATURE).dimensions(0.6f, 1.8f).build());
+        Identifier.of(SplitSelf.MOD_ID, "the_other"),
+        EntityType.Builder.create((EntityType<TheOtherEntity> entityType, World world) -> new TheOtherEntity(entityType, world), SpawnGroup.CREATURE).dimensions(0.6f, 1.8f).build());
 
     public static final EntityType<TheForgottenEntity> TheForgotten = Registry.register(Registries.ENTITY_TYPE,
-            Identifier.of(SplitSelf.MOD_ID, "the_forgotten"),
-            EntityType.Builder.create((EntityType<TheForgottenEntity> entityType, World world) -> new TheForgottenEntity(entityType, world), SpawnGroup.CREATURE).dimensions(0.6f, 1.8f).build());
+        Identifier.of(SplitSelf.MOD_ID, "the_forgotten"),
+        EntityType.Builder.create((EntityType<TheForgottenEntity> entityType, World world) -> new TheForgottenEntity(entityType, world), SpawnGroup.CREATURE).dimensions(0.6f, 1.8f).build());
 
     public static final EntityType<UIButtonEntity> UIButton = Registry.register(Registries.ENTITY_TYPE,
-            Identifier.of(SplitSelf.MOD_ID, "ui_button"),
-            EntityType.Builder.create(UIButtonEntity::new, SpawnGroup.MISC).dimensions(2f, 0.3f).build());
+        Identifier.of(SplitSelf.MOD_ID, "ui_button"),
+        EntityType.Builder.create(UIButtonEntity::new, SpawnGroup.MISC).dimensions(2f, 0.3f).build());
 
     public static void registerModEntities() {
         SplitSelf.LOGGER.info("Loading and registering entities...");

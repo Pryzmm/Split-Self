@@ -18,21 +18,24 @@ public class ModItemGroups {
                 .entries((displayContext, entries) -> {
                     entries.add(ModItems.IN_MY_LIFE_MUSIC_DISC);
                     entries.add(ModItems.FREEDOM_MUSIC_DISC);
-                    entries.add(ModItems.CIET_DOKE);
                     entries.add(ModBlocks.IMAGE_FRAME);
                     entries.add(ModBlocks.BRAIN);
                     entries.add(ModBlocks.BRAINS);
-                    entries.add(ModBlocks.EXIT_DOOR);
                     entries.add(ModBlocks.DEAD_BRAINS);
+                    entries.add(ModBlocks.EXIT_DOOR);
                     entries.add(ModBlocks.DARKNESS);
+                    entries.add(ModBlocks.BROKEN_FLOWER);
                     entries.add(ModItems.MEMORY_BOOK);
                     entries.add(ModItems.MEMORY_HOUSE);
                     entries.add(ModItems.MEMORY_BLU);
                     entries.add(ModItems.MEMORY_MINES);
                     entries.add(ModItems.MEMORY_PILLAR);
                     entries.add(ModItems.MEMORY_CREEPER);
-                })
-                .build());
+                    entries.add(ModBlocks.COMPUTER);
+                    entries.add(ModBlocks.KEYBOARD);
+                    entries.add(ModBlocks.TABLE);
+                    entries.add(ModItems.CIET_DOKE);
+                }).build());
     }
 
     public static void registerItemGroups() {

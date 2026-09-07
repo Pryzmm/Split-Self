@@ -54,7 +54,7 @@ public class PartyEffect {
         long elapsedNanos = System.nanoTime() - lastBeat;
         float elapsedMs = elapsedNanos / 1_000_000f;
         float progress = elapsedMs / currentBeatLength;
-        progress = Math.max(0.0f, Math.min(1.0f, progress));
+        progress = Math.clamp(progress, 0.0f, 1.0f);
         SkyColor.colorOpacity = 1.0f - progress;
     }
 

@@ -79,18 +79,4 @@ public class DesktopFileUtil {
         });
     }
 
-    public static void openUri(String uri) {
-        String os = System.getProperty("os.name").toLowerCase();
-        try {
-            ProcessBuilder pb;
-            if (os.contains("win")) pb = new ProcessBuilder("rundll32", "url.dll,FileProtocolHandler", uri);
-            else if (os.contains("mac")) pb = new ProcessBuilder("open", uri);
-            else pb = new ProcessBuilder("xdg-open", uri);
-            pb.redirectErrorStream(true);
-            pb.start();
-        } catch (IOException e) {
-            SplitSelf.LOGGER.error("Failed to open URI: {}", uri, e);
-        }
-    }
-
 }

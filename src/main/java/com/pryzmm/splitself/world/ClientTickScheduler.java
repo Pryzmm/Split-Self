@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class ClientTickScheduler {
 
-    private record ScheduledTask(long runAtTick, Runnable task) {}
+    private record ScheduledTask(long runAtTick, Runnable task, boolean ignoreClear) {}
 
     private static final PriorityQueue<ScheduledTask> tasks = new PriorityQueue<>(Comparator.comparingLong(a -> a.runAtTick));
 
@@ -20,8 +20,9 @@ public class ClientTickScheduler {
         ClientTickEvents.END_CLIENT_TICK.register(ClientTickScheduler::tick);
     }
 
-    public static void schedule(long delayTicks, Runnable task) {
-        pending.add(new ScheduledTask(currentTick + delayTicks, task));
+    public static void schedule(long delayTicks, Runnable task) { schedule(delayTicks, task, false); }
+    public static void schedule(long delayTicks, Runnable task, boolean ignoreClear) {
+        pending.add(new ScheduledTask(currentTick + delayTicks, task, ignoreClear));
     }
 
     private static void tick(MinecraftClient client) {
@@ -36,4 +37,10 @@ public class ClientTickScheduler {
             tasks.poll().task().run();
         }
     }
+
+    public static void clearAllTasks() {
+        tasks.removeIf(t -> !t.ignoreClear);
+        pending.removeIf(p -> !p.ignoreClear);
+    }
+
 }

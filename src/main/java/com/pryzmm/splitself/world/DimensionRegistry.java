@@ -13,6 +13,7 @@ public class DimensionRegistry {
     public static final RegistryKey<World> LIMBO_DIMENSION_KEY = RegistryKey.of(RegistryKeys.WORLD, Identifier.of(SplitSelf.MOD_ID, "limbo_dimension"));
     public static final RegistryKey<World> EMPTINESS_DIMENSION_KEY = RegistryKey.of(RegistryKeys.WORLD, Identifier.of(SplitSelf.MOD_ID, "empty_dimension"));
     public static final RegistryKey<World> GRASS_EMPTINESS_DIMENSION_KEY = RegistryKey.of(RegistryKeys.WORLD, Identifier.of(SplitSelf.MOD_ID, "grass_empty_dimension"));
+    public static final RegistryKey<World> HALLWAY_DIMENSION_KEY = RegistryKey.of(RegistryKeys.WORLD, Identifier.of(SplitSelf.MOD_ID, "hallway_dimension"));
 
     static {
         RegistryKey.of(RegistryKeys.DIMENSION_TYPE, Identifier.of(SplitSelf.MOD_ID, "limbo_dimension"));
@@ -21,6 +22,8 @@ public class DimensionRegistry {
         RegistryKey.of(RegistryKeys.BIOME, Identifier.of(SplitSelf.MOD_ID, "empty_biome"));
         RegistryKey.of(RegistryKeys.DIMENSION_TYPE, Identifier.of(SplitSelf.MOD_ID, "grass_empty_dimension"));
         RegistryKey.of(RegistryKeys.BIOME, Identifier.of(SplitSelf.MOD_ID, "grass_empty_biome"));
+        RegistryKey.of(RegistryKeys.DIMENSION_TYPE, Identifier.of(SplitSelf.MOD_ID, "hallway_dimension"));
+        RegistryKey.of(RegistryKeys.BIOME, Identifier.of(SplitSelf.MOD_ID, "hallway_biome"));
     }
 
     public static void register() {
@@ -38,6 +41,11 @@ public class DimensionRegistry {
             Identifier.of(SplitSelf.MOD_ID, "grass_empty"),
             GrassEmptyChunkGenerator.CODEC);
         SplitSelf.LOGGER.info("Registered chunk generator: {}", Identifier.of(SplitSelf.MOD_ID, "grass_empty"));
+
+        Registry.register(Registries.CHUNK_GENERATOR,
+            Identifier.of(SplitSelf.MOD_ID, "hallway"),
+            HallwayChunkGenerator.CODEC);
+        SplitSelf.LOGGER.info("Registered chunk generator: {}", Identifier.of(SplitSelf.MOD_ID, "hallway"));
     }
 
 }

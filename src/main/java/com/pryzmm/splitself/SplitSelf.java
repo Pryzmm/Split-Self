@@ -5,8 +5,10 @@ import com.pryzmm.splitself.command.SplitSelfCommands;
 import com.pryzmm.splitself.config.DefaultConfig;
 import com.pryzmm.splitself.data.WorldData;
 import com.pryzmm.splitself.entity.TheForgottenFunc;
+import com.pryzmm.splitself.entity.custom.TheForgottenEntity;
 import com.pryzmm.splitself.entity.custom.UIButtonEntity;
 import com.pryzmm.splitself.events.*;
+import com.pryzmm.splitself.events.helper.ConstantServerEvents;
 import com.pryzmm.splitself.events.helper.StructureManager;
 import com.pryzmm.splitself.file.JsonReader;
 import com.pryzmm.splitself.func.StripMine;
@@ -46,15 +48,24 @@ import java.util.Objects;
 import java.util.Random;
 
 public class SplitSelf implements ModInitializer {
+
+
 	public static final String MOD_ID = "splitself";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     public static JsonReader CONFIG = null;
 
-	private void onServerStarted(MinecraftServer server) {
-        WorldData.loadData(server);
+    public static final boolean IS_UNSAFE_VERSION = true;
 
+	private void onServerStarting(MinecraftServer server) {
+        WorldData.loadData(server);
+	}
+
+    private void onServerStarted(MinecraftServer server) {
+        new ConstantServerEvents(server).init();
+        WorldData.updateSeed(server);
         ServerWorld limboWorld = server.getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY);
-        if (limboWorld != null) {
+        if (limboWorld != null && !WorldData.hasPreviouslyLoaded()) {
+            WorldData.setPrevLoaded(true);
             StructureManager.placeStructureRandomRotation(
                 limboWorld,
                 new BlockPos(0, 0, 0),
@@ -95,7 +106,6 @@ public class SplitSelf implements ModInitializer {
                 1f,
                 false
             );
-
             StructureManager.placeStructureRandomRotation(
                 limboWorld,
                 new BlockPos(4000, 0, 0),
@@ -106,12 +116,19 @@ public class SplitSelf implements ModInitializer {
                 1f,
                 false
             );
+            StructureManager.placeStructureRandomRotation(
+                limboWorld,
+                new BlockPos(4000, 0, -47),
+                "computer",
+                0,
+                0,
+                true,
+                1f,
+                false
+            );
         }
-	}
+    }
 
-	public static Text translate(String translateKey, Object... args) { // makes it easier on me
-		return Text.translatable(translateKey, args);
-	}
     public static boolean ShriekInstalled = false;
 
     private static int nextForgottenSpawn = 600;
@@ -130,8 +147,9 @@ public class SplitSelf implements ModInitializer {
 		DimensionRegistry.register();
 		Structures.register();
 		StructurePieces.register();
-		ServerLifecycleEvents.SERVER_STARTING.register(this::onServerStarted);
-        ServerLifecycleEvents.SERVER_STARTED.register(WorldData::updateSeed);
+		ServerLifecycleEvents.SERVER_STARTING.register(this::onServerStarting);
+        ServerLifecycleEvents.SERVER_STARTED.register(this::onServerStarted);
+        ServerLifecycleEvents.SERVER_STOPPING.register((server) -> TickScheduler.clearAllTasks());
 
         ServerPacketHandler.register();
 
@@ -141,7 +159,9 @@ public class SplitSelf implements ModInitializer {
 
         ServerPlayConnectionEvents.INIT.register((handler, sender) -> {
             if (WorldData.getIsDeleted()) {
-                handler.disconnect(Text.translatable("events.splitself.finale.screen"));
+                handler.disconnect(Text.translatable("events.splitself.bad_end.screen"));
+            } else if (WorldData.getIsFull()) {
+                handler.disconnect(Text.translatable("events.splitself.good_end.screen"));
             }
         });
 
@@ -165,7 +185,7 @@ public class SplitSelf implements ModInitializer {
         } else SplitSelf.LOGGER.warn("Cannot register microphone reader, missing shriek or architectury");
 
 		FabricDefaultAttributeRegistry.register(ModEntities.TheOther, TheOtherEntity.createAttributes());
-        FabricDefaultAttributeRegistry.register(ModEntities.TheForgotten, TheOtherEntity.createAttributes());
+        FabricDefaultAttributeRegistry.register(ModEntities.TheForgotten, TheForgottenEntity.createAttributes());
         FabricDefaultAttributeRegistry.register(ModEntities.UIButton, UIButtonEntity.createAttributes());
 
 		CommandRegistrationCallback.EVENT.register(SplitSelfCommands::register);
@@ -176,13 +196,6 @@ public class SplitSelf implements ModInitializer {
                 BackgroundManager.restoreUserBackground();
             }
         });
-
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            if (BackgroundManager.getUserBackground() != null &&
-                    Objects.equals(BackgroundManager.getCurrentBackground(), BackgroundManager.getModBackground())) {
-                BackgroundManager.restoreUserBackground();
-            }
-        }));
 
 		ServerMessageEvents.CHAT_MESSAGE.register((message, messageSender, params) -> EventManager.runChatEvent(messageSender, message.getContent().getString(), false));
 
@@ -198,7 +211,7 @@ public class SplitSelf implements ModInitializer {
 
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
 			ServerPlayerEntity player = handler.getPlayer();
-            if (player.getWorld() == server.getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY)) {
+            if ((player.getWorld() == server.getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY) && player.getPos().x <= 3500) || player.getWorld() == server.getWorld(DimensionRegistry.HALLWAY_DIMENSION_KEY)) {
                 if (player.getSpawnPointPosition() == null) {
                     ServerWorld world = server.getOverworld();
                     player.teleport(world, world.getSpawnPos().getX(), world.getSpawnPos().getY(), world.getSpawnPos().getZ(), 0, 0);

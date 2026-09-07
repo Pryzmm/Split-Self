@@ -35,8 +35,8 @@ public class TheForgottenEntity extends HostileEntity {
 
     public static DefaultAttributeContainer.Builder createAttributes() {
         return MobEntity.createMobAttributes()
-                .add(EntityAttributes.GENERIC_GRAVITY, 0)
-                .add(EntityAttributes.GENERIC_MAX_HEALTH, 1024);
+            .add(EntityAttributes.GENERIC_GRAVITY, 0)
+            .add(EntityAttributes.GENERIC_MAX_HEALTH, 1024);
     }
 
     public void tick() {
@@ -60,7 +60,7 @@ public class TheForgottenEntity extends HostileEntity {
     }
 
     public enum Type {
-        NORMAL, DISAPPEAR
+        NORMAL, DISAPPEAR, STATIC
     }
 
     public TheForgottenEntity(EntityType<? extends HostileEntity> entityType, World world) {

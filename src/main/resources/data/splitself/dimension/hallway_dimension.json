@@ -1,0 +1,10 @@
+{
+  "type": "splitself:hallway_dimension",
+  "generator": {
+    "type": "splitself:hallway",
+    "structure_name": "test",
+    "structure_x": 0,
+    "structure_z": 0,
+    "biome": "splitself:hallway_biome"
+  }
+}

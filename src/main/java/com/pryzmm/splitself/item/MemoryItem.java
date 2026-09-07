@@ -1,6 +1,5 @@
 package com.pryzmm.splitself.item;
 
-import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.data.WorldData;
 import com.pryzmm.splitself.sound.ModSounds;
 import net.minecraft.client.MinecraftClient;
@@ -65,7 +64,7 @@ public class MemoryItem extends Item {
 
     @Override
     public Text getName(ItemStack stack) {
-        return SplitSelf.translate("item.splitself.memory");
+        return Text.translatable("item.splitself.memory");
     }
 
 }

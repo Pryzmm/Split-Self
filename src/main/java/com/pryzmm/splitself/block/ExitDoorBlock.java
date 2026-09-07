@@ -27,10 +27,7 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
-import net.minecraft.world.WorldView;
+import net.minecraft.world.*;
 import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
@@ -148,7 +145,8 @@ public class ExitDoorBlock extends Block {
             if (p.getServerWorld().getRegistryKey() == DimensionRegistry.GRASS_EMPTINESS_DIMENSION_KEY) {
                 ServerWorld limboWorld = server.getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY);
                 assert limboWorld != null;
-                player.teleport(limboWorld, 4009.5, 7.063, 44.0, null, -90, 45);
+                p.changeGameMode(GameMode.ADVENTURE);
+                p.teleport(limboWorld, 4009.5, 7.063, 44.0, null, -90, 45);
                 TickScheduler.schedule(100, () -> {
                     try {
                         DisplayEntity.TextDisplayEntity display = limboWorld.getEntitiesByClass(DisplayEntity.TextDisplayEntity.class, new Box(new Vec3d(3999, 13, 13), new Vec3d(4019, 0, 0)), (e) -> true).getFirst();

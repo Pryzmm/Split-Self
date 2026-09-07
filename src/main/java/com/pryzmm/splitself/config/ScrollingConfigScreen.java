@@ -94,17 +94,17 @@ public class ScrollingConfigScreen extends Screen {
                 Text.empty() // nothing renders here for some reason :(
         ));
         if (inputType == InputType.INT) {
-            int textWidth = textRenderer.getWidth(SplitSelf.translate("config.splitself.numeric_value", (int) minimum, (int) maximum));
+            int textWidth = textRenderer.getWidth(Text.translatable("config.splitself.numeric_value", (int) minimum, (int) maximum));
             textFieldHeaderWidget = this.addDrawableChild(new TextWidget(
                     x, y - 15, textWidth, 20,
-                    SplitSelf.translate("config.splitself.numeric_value", (int) minimum, (int) maximum),
+                    Text.translatable("config.splitself.numeric_value", (int) minimum, (int) maximum),
                     this.textRenderer
             ));
         } else if (inputType == InputType.DOUBLE) {
-            int textWidth = textRenderer.getWidth(SplitSelf.translate("config.splitself.numeric_value", minimum, maximum));
+            int textWidth = textRenderer.getWidth(Text.translatable("config.splitself.numeric_value", minimum, maximum));
             textFieldHeaderWidget = this.addDrawableChild(new TextWidget(
                     x, y - 15, textWidth, 20,
-                    SplitSelf.translate("config.splitself.numeric_value", minimum, maximum),
+                    Text.translatable("config.splitself.numeric_value", minimum, maximum),
                     this.textRenderer
             ));
         }

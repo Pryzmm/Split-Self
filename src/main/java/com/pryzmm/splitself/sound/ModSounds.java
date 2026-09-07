@@ -36,6 +36,8 @@ public class ModSounds {
     public static final SoundEvent SQUISH = registerSoundEvent("block.brain.squish");
     public static final SoundEvent SCRAPE = registerSoundEvent("block.brain.scrape");
     public static final SoundEvent DELETE = registerSoundEvent("delete");
+    public static final SoundEvent DELETE_HUM = registerSoundEvent("delete_hum");
+    public static final SoundEvent KEYBOARD = registerSoundEvent("keyboard");
 
     static {
         registerSoundEvent("in_my_life");

@@ -195,14 +195,14 @@ public class FakeMenuScreen extends Screen {
         if (isMelting) return;
         isMelting = true;
         ClientTickScheduler.schedule(60, () -> {
-            ShaderRenderer.setActive(true);
+            ShaderRenderer.toggleShader(ShaderRenderer.Shaders.MELT, true);
             assert client != null;
             SoundInstance sound = PositionedSoundInstance.master(ModSounds.SCRATCH, 1.0F);
             client.getSoundManager().play(sound);
             ClientTickScheduler.schedule(25, () -> {
                 assert client != null;
                 client.getSoundManager().stop(sound);
-                ShaderRenderer.setActive(false);
+                ShaderRenderer.toggleShader(ShaderRenderer.Shaders.MELT, false);
                 ClientPlayNetworking.send(new TransitionPacket());
             });
         });

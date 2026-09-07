@@ -12,6 +12,8 @@ import net.minecraft.client.toast.ToastManager;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CustomConfigScreen extends Screen {
 
@@ -83,7 +85,7 @@ public class CustomConfigScreen extends Screen {
     public void createIntConfigButton(int x, int y, String configKey, int defaultValue, int minimum, int maximum, String translationKey) {
         this.addDrawableChild(new DoubleTextButtonWidget(
             x, y, 150, 20,
-            SplitSelf.translate(translationKey),
+            Text.translatable(translationKey),
             () -> String.valueOf(SplitSelf.CONFIG.getInt(configKey, defaultValue)),
             () -> 0xFFFF00,
             translationKey + ".description",
@@ -94,7 +96,7 @@ public class CustomConfigScreen extends Screen {
     public void createDoubleConfigButton(int x, int y, String configKey, double defaultValue, double minimum, double maximum, String translationKey) {
         this.addDrawableChild(new DoubleTextButtonWidget(
             x, y, 150, 20,
-            SplitSelf.translate(translationKey),
+            Text.translatable(translationKey),
             () -> String.valueOf(SplitSelf.CONFIG.getDouble(configKey, defaultValue)),
             () -> 0xFFFF00,
             translationKey + ".description",
@@ -105,7 +107,7 @@ public class CustomConfigScreen extends Screen {
     public void createBooleanConfigButton(int x, int y, String configKey, boolean defaultValue, String translationKey) {
         this.addDrawableChild(new DoubleTextButtonWidget(
             x, y, 150, 20,
-            SplitSelf.translate(translationKey),
+            Text.translatable(translationKey),
             () -> SplitSelf.CONFIG.getBoolean(configKey, defaultValue) ? "True" : "False",
             () -> SplitSelf.CONFIG.getBoolean(configKey,defaultValue) ? 0x00FF00 : 0xFF0000,
             translationKey + ".description",
@@ -120,8 +122,8 @@ public class CustomConfigScreen extends Screen {
     public void createVoskConfigButton(int x, int y, String link, String translationKey) {
         this.addDrawableChild(new SingleTextButtonWidget(
             x, y, 150, 20,
-            SplitSelf.translate(translationKey),
-            SplitSelf.translate(translationKey + ".description", SplitSelf.CONFIG.getString("voskModel")).getString(),
+            Text.translatable(translationKey),
+            Text.translatable(translationKey + ".description", SplitSelf.CONFIG.getString("voskModel")).getString(),
             button -> {
                 Util.getOperatingSystem().open(link);
                 createVoskValueWidget(5, this.height - 25);
@@ -132,8 +134,8 @@ public class CustomConfigScreen extends Screen {
     public void createMenuConfigButton(int x, int y, String translationKey, double minimum, double maximum, String menuID, InputType inputType) {
         this.addDrawableChild(new SingleTextButtonWidget(
             x, y, 150, 20,
-            SplitSelf.translate(translationKey),
-            SplitSelf.translate(translationKey + ".description").getString(),
+            Text.translatable(translationKey),
+            Text.translatable(translationKey + ".description").getString(),
             button -> {
                 assert client != null;
                 arrayID = menuID;
@@ -160,17 +162,17 @@ public class CustomConfigScreen extends Screen {
             Text.empty() // nothing renders here for some reason :(
         ));
         if (inputType == InputType.INT) {
-            int textWidth = textRenderer.getWidth(SplitSelf.translate("config.splitself.numeric_value", (int) minimum, (int) maximum));
+            int textWidth = textRenderer.getWidth(Text.translatable("config.splitself.numeric_value", (int) minimum, (int) maximum));
             textFieldHeaderWidget = this.addDrawableChild(new TextWidget(
                 x, y - 15, textWidth, 20,
-                SplitSelf.translate("config.splitself.numeric_value", (int) minimum, (int) maximum),
+                Text.translatable("config.splitself.numeric_value", (int) minimum, (int) maximum),
                 this.textRenderer
             ));
         } else if (inputType == InputType.DOUBLE) {
-            int textWidth = textRenderer.getWidth(SplitSelf.translate("config.splitself.numeric_value", minimum, maximum));
+            int textWidth = textRenderer.getWidth(Text.translatable("config.splitself.numeric_value", minimum, maximum));
             textFieldHeaderWidget = this.addDrawableChild(new TextWidget(
                 x, y - 15, textWidth, 20,
-                SplitSelf.translate("config.splitself.numeric_value", minimum, maximum),
+                Text.translatable("config.splitself.numeric_value", minimum, maximum),
                 this.textRenderer
             ));
         }
@@ -193,10 +195,10 @@ public class CustomConfigScreen extends Screen {
             x, y, 100, 20,
             Text.empty() // nothing renders here for some reason :(
         ));
-        int textWidth = textRenderer.getWidth(SplitSelf.translate("config.splitself.string_value"));
+        int textWidth = textRenderer.getWidth(Text.translatable("config.splitself.string_value"));
         textFieldHeaderWidget = this.addDrawableChild(new TextWidget(
             x, y - 15, textWidth, 20,
-            SplitSelf.translate("config.splitself.string_value"),
+            Text.translatable("config.splitself.string_value"),
             this.textRenderer
         ));
         submitButtonWidget = this.addDrawableChild(new SingleTextButtonWidget(
@@ -237,6 +239,7 @@ public class CustomConfigScreen extends Screen {
         }
     }
 
+    @SuppressWarnings("DataFlowIssue")
     private void submitVoskPrompt(TextFieldWidget textFieldWidget) {
         try {
             if (textFieldWidget.getText().isEmpty()) {
@@ -252,7 +255,7 @@ public class CustomConfigScreen extends Screen {
                     public Visibility draw(DrawContext context, ToastManager manager, long startTime) {
                         String message = Text.translatable("mco.error.invalid.session.message").getString();
                         int maxWidth = 180;
-                        java.util.List<String> lines = wrapText(message, maxWidth);
+                        List<String> lines = wrapText(message, maxWidth);
                         int width = 200;
                         int lineHeight = client.textRenderer.fontHeight + 2;
                         int height = Math.max(32, (lines.size() * lineHeight) + 12);
@@ -267,8 +270,8 @@ public class CustomConfigScreen extends Screen {
                         }
                         return startTime >= 5000L ? Visibility.HIDE : Visibility.SHOW;
                     }
-                    private java.util.List<String> wrapText(String text, int maxWidth) {
-                        java.util.List<String> lines = new java.util.ArrayList<>();
+                    private List<String> wrapText(String text, int maxWidth) {
+                        List<String> lines = new ArrayList<>();
                         String[] words = text.split(" ");
                         StringBuilder currentLine = new StringBuilder();
                         for (String word : words) {
@@ -299,7 +302,7 @@ public class CustomConfigScreen extends Screen {
                     @Override
                     public int getHeight() {
                         String message = Text.translatable("mco.error.invalid.session.message").getString();
-                        java.util.List<String> lines = wrapText(message, 180);
+                        List<String> lines = wrapText(message, 180);
                         int lineHeight = client.textRenderer.fontHeight + 2;
                         return Math.max(32, (lines.size() * lineHeight) + 12);
                     }

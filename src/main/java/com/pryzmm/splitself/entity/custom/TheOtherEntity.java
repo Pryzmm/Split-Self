@@ -1,11 +1,11 @@
 package com.pryzmm.splitself.entity.custom;
 
-import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.client.SplitSelfClient;
 import com.pryzmm.splitself.data.WorldData;
 import com.pryzmm.splitself.packet.packets.TheOtherOverlayPacket;
 import com.pryzmm.splitself.sound.ModSounds;
 import com.pryzmm.splitself.world.DimensionRegistry;
+import com.pryzmm.splitself.world.TickScheduler;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.*;
@@ -36,8 +36,7 @@ import java.util.Objects;
 
 public class TheOtherEntity extends HostileEntity {
 
-    private static final TrackedData<Integer> DATA_ID_TYPE_VARIANT =
-            DataTracker.registerData(TheOtherEntity.class, TrackedDataHandlerRegistry.INTEGER);
+    private static final TrackedData<Integer> DATA_ID_TYPE_VARIANT = DataTracker.registerData(TheOtherEntity.class, TrackedDataHandlerRegistry.INTEGER);
 
     public final AnimationState idleAnimationState = new AnimationState();
 
@@ -65,9 +64,9 @@ public class TheOtherEntity extends HostileEntity {
 
     public static DefaultAttributeContainer.Builder createAttributes() {
         return MobEntity.createMobAttributes()
-                .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 100)
-                .add(EntityAttributes.GENERIC_MAX_HEALTH, 1024)
-                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 0);
+            .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 100)
+            .add(EntityAttributes.GENERIC_MAX_HEALTH, 1024)
+            .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 1);
     }
 
     private void applyVariantAttributes() {
@@ -101,43 +100,35 @@ public class TheOtherEntity extends HostileEntity {
         }
 
         List<ServerPlayerEntity> nearbyPlayers = this.getWorld().getEntitiesByClass(
-                ServerPlayerEntity.class,
-                this.getBoundingBox().expand(10.0),
-                LivingEntity::isAlive
+            ServerPlayerEntity.class,
+            this.getBoundingBox().expand(10.0),
+            LivingEntity::isAlive
         );
-
-        if (!this.getWorld().isClient && this.getWorld() == this.getWorld().getServer().getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY)) {
-            for (PlayerEntity player : nearbyPlayers) {
-                double distance = this.distanceTo(player);
-                if (distance < 3.0) {
-                    if (this.getX() >= 1500) {
-                        this.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> " + SplitSelf.translate("events.splitself.sleep.remember").getString()), false);
-                    }
-                    this.getWorld().playSound(null, Objects.requireNonNull(player).getBlockPos(), ModSounds.DISAPPEAR, SoundCategory.MASTER, 1.0f, 1.0f);
-                    this.discard();
-                }
-            }
-        } else if (!this.getWorld().isClient && this.getWorld() != this.getWorld().getServer().getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY)) {
-            for (ServerPlayerEntity player : nearbyPlayers) {
-                double distance = this.distanceTo(player);
-                double distanceMax;
-                if (this.getVariant() == TheOtherVariant.TWITCHING) {
-                    distanceMax = 4;
-                } else {
-                    distanceMax = 10;
-                }
-                if (distance < distanceMax && !toBeDiscarded.containsKey(this)) {
-                    toBeDiscarded.put(this, 1);
-                    ServerPlayNetworking.send(player, new TheOtherOverlayPacket());
-                    player.addStatusEffect(new StatusEffectInstance(StatusEffects.WITHER, 100, 1, false, false, false));
-                    new Thread(() -> {
-                        try {
-                            Thread.sleep(5000);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
+        if (!this.getWorld().isClient()) {
+            if (this.getVariant() == TheOtherVariant.STATIC) return;
+            if (this.getWorld() == this.getWorld().getServer().getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY)) {
+                for (PlayerEntity player : nearbyPlayers) {
+                    double distance = this.distanceTo(player);
+                    if (distance < 3.0) {
+                        if (this.getX() >= 1500) {
+                            this.getServer().getPlayerManager().broadcast(Text.literal("<" + player.getName().getString() + "> " + Text.translatable("events.splitself.sleep.remember").getString()), false);
                         }
+                        this.getWorld().playSound(null, Objects.requireNonNull(player).getBlockPos(), ModSounds.DISAPPEAR, SoundCategory.MASTER, 1.0f, 1.0f);
                         this.discard();
-                    }).start();
+                    }
+                }
+            } else if (this.getWorld() != this.getWorld().getServer().getWorld(DimensionRegistry.LIMBO_DIMENSION_KEY)) {
+                for (ServerPlayerEntity player : nearbyPlayers) {
+                    double distance = this.distanceTo(player);
+                    double distanceMax;
+                    if (this.getVariant() == TheOtherVariant.TWITCHING) distanceMax = 4;
+                    else distanceMax = 10;
+                    if (distance < distanceMax && !toBeDiscarded.containsKey(this)) {
+                        toBeDiscarded.put(this, 1);
+                        ServerPlayNetworking.send(player, new TheOtherOverlayPacket());
+                        player.addStatusEffect(new StatusEffectInstance(StatusEffects.WITHER, 100, 1, false, false, false));
+                        TickScheduler.schedule(100, this::discard);
+                    }
                 }
             }
         }
@@ -153,6 +144,12 @@ public class TheOtherEntity extends HostileEntity {
 
     public TheOtherEntity(EntityType<? extends HostileEntity> entityType, World world) {
         super(entityType, world);
+        setupGoals();
+    }
+
+    public TheOtherEntity(EntityType<? extends HostileEntity> entityType, World world, TheOtherVariant variant) {
+        super(entityType, world);
+        this.setTypeVariant(variant);
         setupGoals();
     }
 

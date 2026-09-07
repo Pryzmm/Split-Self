@@ -4,6 +4,7 @@ import com.pryzmm.splitself.events.EventManager;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
@@ -15,7 +16,12 @@ import java.util.Random;
 
 public class ChunkDestroyer {
 
+    public static void liftChunk(MinecraftServer server, int LoopCount, int lift) {
+        liftChunk(server.getOverworld().getRandomAlivePlayer(), server.getOverworld(), LoopCount, lift);
+    }
+
     public static void liftChunk(ServerPlayerEntity player, ServerWorld world, int LoopCount, int lift) {
+        if (player == null || world == null) return;
         Vec3d vec = EventManager.moveVectorFromBase(player, player.getPos());
         double posX = vec.x;
         double posZ = vec.z;

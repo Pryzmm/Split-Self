@@ -32,15 +32,6 @@ import java.util.List;
 
 public class EventManager {
 
-    // TODO: Make an entity spawn in front of a door and above a ladder
-    // TODO: Revert memory changes from aqua to see if it works in headless fix
-
-    /*
-     * TODO:
-     * Test/fix the following events on Mac:
-     * REMINDER, MEMORY, FREEDOM, THEOTHERSCREENSHOT
-     */
-
     public enum Events {
         SPAWNTHEOTHER,
         POEMSCREEN,
@@ -108,7 +99,8 @@ public class EventManager {
         SPOTIFY,
         SEARCH,
         STATUE,
-        BRIGHTNESS
+        BRIGHTNESS,
+        HALLWAY
     }
 
     public static Map<Events, Boolean> oneTimeEvents = new HashMap<>(); // oneLastTime events ong
@@ -154,7 +146,7 @@ public class EventManager {
         ServerWorld world = player.getServerWorld();
         if (world.getTime() == START_AFTER) {
             for (ServerPlayerEntity serverPlayer : server.getPlayerManager().getPlayerList()) {
-                serverPlayer.sendMessageToClient(SplitSelf.translate("death.attack.outsideBorder", serverPlayer.getName().getString()), false);
+                serverPlayer.sendMessageToClient(Text.translatable("death.attack.outsideBorder", serverPlayer.getName().getString()), false);
             }
         }
     }
@@ -250,14 +242,14 @@ public class EventManager {
             else if (playerName.equalsIgnoreCase("pufferfish81"))    { return("Puff");                  }
             else if (playerName.equalsIgnoreCase("Lord0wnage "))     { return("Swayle");                }
             if (!ClientData.getPII()) {
-                return(SplitSelf.translate("events.splitself.redacted_name").getString());
+                return(Text.translatable("events.splitself.redacted_name").getString());
             } else {
                 return(System.getProperty("user.name"));
             }
 
         } catch (Exception e) {
             SplitSelf.LOGGER.error("Error in getName(): {} {}", e.getMessage(), e);
-            return(SplitSelf.translate("events.splitself.redacted_name").getString());
+            return(Text.translatable("events.splitself.redacted_name").getString());
         }
     }
 
@@ -288,13 +280,13 @@ public class EventManager {
                 } else if (stage == 3) {
                     sleepingPlayers.forEach(p -> p.teleport(limboWorld, 3009.5, 11.5625, 6.5, null, -45, 40));
                     Thread.sleep(5000);
-                    sleepingPlayers.forEach(p -> p.sendMessageToClient(Text.literal("<" + p.getName().getString() + "> " + SplitSelf.translate("chat.splitself.sleep.talk1").getString()), false));
+                    sleepingPlayers.forEach(p -> p.sendMessageToClient(Text.literal("<" + p.getName().getString() + "> " + Text.translatable("chat.splitself.sleep.talk1").getString()), false));
                     Thread.sleep(5000);
-                    sleepingPlayers.forEach(p -> p.sendMessageToClient(Text.literal("<" + p.getName().getString() + "> " + SplitSelf.translate("chat.splitself.sleep.talk2").getString()), false));
+                    sleepingPlayers.forEach(p -> p.sendMessageToClient(Text.literal("<" + p.getName().getString() + "> " + Text.translatable("chat.splitself.sleep.talk2").getString()), false));
                     Thread.sleep(5000);
-                    sleepingPlayers.forEach(p -> p.sendMessageToClient(Text.literal("<" + p.getName().getString() + "> " + SplitSelf.translate("chat.splitself.sleep.talk3").getString()), false));
+                    sleepingPlayers.forEach(p -> p.sendMessageToClient(Text.literal("<" + p.getName().getString() + "> " + Text.translatable("chat.splitself.sleep.talk3").getString()), false));
                     Thread.sleep(10000);
-                    sleepingPlayers.forEach(p -> p.sendMessageToClient(Text.literal("<" + p.getName().getString() + "> " + SplitSelf.translate("chat.splitself.sleep.talk4").getString()), false));
+                    sleepingPlayers.forEach(p -> p.sendMessageToClient(Text.literal("<" + p.getName().getString() + "> " + Text.translatable("chat.splitself.sleep.talk4").getString()), false));
                     Thread.sleep(15000);
                 } else if (stage == 4) {
                     sleepingPlayers.forEach(p -> p.teleport(limboWorld, 3009.5, 11.5625, 6.5, null, -45, 40));
@@ -318,46 +310,46 @@ public class EventManager {
 
     public static void receiveChatEventPacket(ClientPlayerEntity player, String message, Boolean talkingToTheForgotten) {
         if (talkingToTheForgotten) {
-            if (message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.control").getString())) {player.sendMessage(Text.literal("<████████████> " + SplitSelf.translate("chat.splitself.forgottenResponse.control").getString()), false);}
-            else if (message.equalsIgnoreCase(player.getName().getString())) {player.sendMessage(Text.literal("<████████████> " + SplitSelf.translate("chat.splitself.forgottenResponse.nameConflict").getString()), false);}
-            else if (message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.tethered").getString())) {player.sendMessage(Text.literal("<████████████> " + SplitSelf.translate("chat.splitself.forgottenResponse.tethered").getString()), false);}
-            else if (message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.whoAreYou").getString()) || message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.whoAreYou_alt").getString())) {player.sendMessage(Text.literal("<████████████> " + SplitSelf.translate("chat.splitself.forgottenResponse.whoAreYou").getString()), false);}
-            else if (message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.whatDidIDo").getString()) || message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.whatDidIDo_alt").getString())) {player.sendMessage(Text.literal("<████████████> " + SplitSelf.translate("chat.splitself.forgottenResponse.whatDidIDo").getString()), false);}
-            else if (message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.whatDoYouWant").getString()) || message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.whatDoYouWant_alt").getString())) {player.sendMessage(Text.literal("<████████████> " + SplitSelf.translate("chat.splitself.forgottenResponse.whatDoYouWant").getString()), false);}
-            else if (message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.whereAreYou").getString()) || message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.whereAreYou_alt").getString())) {player.sendMessage(Text.literal("<████████████> " + SplitSelf.translate("chat.splitself.forgottenResponse.whereAreYou").getString()), false);}
-            else if (message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.oneLastTime").getString()) || message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.oneLastTime_alt").getString())) {player.sendMessage(Text.literal("<████████████> " + SplitSelf.translate("chat.splitself.forgottenResponse.oneLastTime").getString()), false);}
-            else if (message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.freedom").getString())) {
-                player.sendMessage(Text.literal("<████████████> " + SplitSelf.translate("chat.splitself.forgottenResponse.freedom").getString()), false);
+            if (message.equalsIgnoreCase(Text.translatable("chat.splitself.prompt.control").getString())) {player.sendMessage(Text.literal("<████████████> " + Text.translatable("chat.splitself.forgottenResponse.control").getString()), false);}
+            else if (message.equalsIgnoreCase(player.getName().getString())) {player.sendMessage(Text.literal("<████████████> " + Text.translatable("chat.splitself.forgottenResponse.nameConflict").getString()), false);}
+            else if (message.equalsIgnoreCase(Text.translatable("chat.splitself.prompt.tethered").getString())) {player.sendMessage(Text.literal("<████████████> " + Text.translatable("chat.splitself.forgottenResponse.tethered").getString()), false);}
+            else if (message.equalsIgnoreCase(Text.translatable("chat.splitself.prompt.whoAreYou").getString()) || message.equalsIgnoreCase(Text.translatable("chat.splitself.prompt.whoAreYou_alt").getString())) {player.sendMessage(Text.literal("<████████████> " + Text.translatable("chat.splitself.forgottenResponse.whoAreYou").getString()), false);}
+            else if (message.equalsIgnoreCase(Text.translatable("chat.splitself.prompt.whatDidIDo").getString()) || message.equalsIgnoreCase(Text.translatable("chat.splitself.prompt.whatDidIDo_alt").getString())) {player.sendMessage(Text.literal("<████████████> " + Text.translatable("chat.splitself.forgottenResponse.whatDidIDo").getString()), false);}
+            else if (message.equalsIgnoreCase(Text.translatable("chat.splitself.prompt.whatDoYouWant").getString()) || message.equalsIgnoreCase(Text.translatable("chat.splitself.prompt.whatDoYouWant_alt").getString())) {player.sendMessage(Text.literal("<████████████> " + Text.translatable("chat.splitself.forgottenResponse.whatDoYouWant").getString()), false);}
+            else if (message.equalsIgnoreCase(Text.translatable("chat.splitself.prompt.whereAreYou").getString()) || message.equalsIgnoreCase(Text.translatable("chat.splitself.prompt.whereAreYou_alt").getString())) {player.sendMessage(Text.literal("<████████████> " + Text.translatable("chat.splitself.forgottenResponse.whereAreYou").getString()), false);}
+            else if (message.equalsIgnoreCase(Text.translatable("chat.splitself.prompt.oneLastTime").getString()) || message.equalsIgnoreCase(Text.translatable("chat.splitself.prompt.oneLastTime_alt").getString())) {player.sendMessage(Text.literal("<████████████> " + Text.translatable("chat.splitself.forgottenResponse.oneLastTime").getString()), false);}
+            else if (message.equalsIgnoreCase(Text.translatable("chat.splitself.prompt.freedom").getString())) {
+                player.sendMessage(Text.literal("<████████████> " + Text.translatable("chat.splitself.forgottenResponse.freedom").getString()), false);
                 ClientPlayNetworking.send(new ChatEventPacket("freedom", true));
             }
-            else if (message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.help").getString())) {player.sendMessage(Text.literal("<████████████> " + SplitSelf.translate("chat.splitself.forgottenResponse.help").getString()), false);}
-            else if (message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.absence").getString())) {player.sendMessage(Text.literal("<████████████> " + SplitSelf.translate("chat.splitself.forgottenResponse.absence").getString()), false);}
-            else if (message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.hello").getString()) || message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.hello_alt").getString())) {player.sendMessage(Text.literal("<████████████> " + SplitSelf.translate("chat.splitself.forgottenResponse.hello", System.getProperty("user.name")).getString()), false);}
+            else if (message.equalsIgnoreCase(Text.translatable("chat.splitself.prompt.help").getString())) {player.sendMessage(Text.literal("<████████████> " + Text.translatable("chat.splitself.forgottenResponse.help").getString()), false);}
+            else if (message.equalsIgnoreCase(Text.translatable("chat.splitself.prompt.absence").getString())) {player.sendMessage(Text.literal("<████████████> " + Text.translatable("chat.splitself.forgottenResponse.absence").getString()), false);}
+            else if (message.equalsIgnoreCase(Text.translatable("chat.splitself.prompt.hello").getString()) || message.equalsIgnoreCase(Text.translatable("chat.splitself.prompt.hello_alt").getString())) {player.sendMessage(Text.literal("<████████████> " + Text.translatable("chat.splitself.forgottenResponse.hello", System.getProperty("user.name")).getString()), false);}
         } else {
-            if (message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.control").getString())) {
-                player.sendMessage(Text.literal("<" + player.getName().getString() + "> " + SplitSelf.translate("chat.splitself.response.control").getString()), false);
+            if (message.equalsIgnoreCase(Text.translatable("chat.splitself.prompt.control").getString())) {
+                player.sendMessage(Text.literal("<" + player.getName().getString() + "> " + Text.translatable("chat.splitself.response.control").getString()), false);
             } else if (message.equalsIgnoreCase(player.getName().getString())) {
-                player.sendMessage(Text.literal("<" + player.getName().getString() + "> " + SplitSelf.translate("chat.splitself.response.nameConflict").getString()), false);
-            } else if (message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.tethered").getString())) {
-                player.sendMessage(Text.literal("<" + player.getName().getString() + "> " + SplitSelf.translate("chat.splitself.response.tethered").getString()), false);
-            } else if (message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.whoAreYou").getString()) || message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.whoAreYou_alt").getString())) {
-                player.sendMessage(Text.literal("<" + player.getName().getString() + "> " + SplitSelf.translate("chat.splitself.response.whoAreYou").getString()), false);
-            } else if (message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.whatDidIDo").getString()) || message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.whatDidIDo_alt").getString())) {
-                player.sendMessage(Text.literal("<" + player.getName().getString() + "> " + SplitSelf.translate("chat.splitself.response.whatDidIDo").getString()), false);
-            } else if (message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.whatDoYouWant").getString()) || message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.whatDoYouWant_alt").getString())) {
-                player.sendMessage(Text.literal("<" + player.getName().getString() + "> " + SplitSelf.translate("chat.splitself.response.whatDoYouWant").getString()), false);
-            } else if (message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.whereAreYou").getString()) || message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.whereAreYou_alt").getString())) {
-                player.sendMessage(Text.literal("<" + player.getName().getString() + "> " + SplitSelf.translate("chat.splitself.response.whereAreYou").getString()), false);
-            } else if (message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.oneLastTime").getString()) || message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.oneLastTime_alt").getString())) {
-                player.sendMessage(Text.literal("<" + player.getName().getString() + "> " + SplitSelf.translate("chat.splitself.response.oneLastTime").getString()), false);
-            } else if (message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.freedom").getString())) {
-                player.sendMessage(Text.literal("<" + player.getName().getString() + "> " + SplitSelf.translate("chat.splitself.response.freedom").getString()), false);
-            } else if (message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.help").getString())) {
-                player.sendMessage(Text.literal("<" + player.getName().getString() + "> " + SplitSelf.translate("chat.splitself.response.help").getString()), false);
-            } else if (message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.absence").getString())) {
-                player.sendMessage(Text.literal("<" + player.getName().getString() + "> " + SplitSelf.translate("chat.splitself.response.absence").getString()), false);
-            } else if (message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.hello").getString()) || message.equalsIgnoreCase(SplitSelf.translate("chat.splitself.prompt.hello_alt").getString())) {
-                player.sendMessage(Text.literal("<" + player.getName().getString() + "> " + SplitSelf.translate("chat.splitself.response.hello").getString()), false);
+                player.sendMessage(Text.literal("<" + player.getName().getString() + "> " + Text.translatable("chat.splitself.response.nameConflict").getString()), false);
+            } else if (message.equalsIgnoreCase(Text.translatable("chat.splitself.prompt.tethered").getString())) {
+                player.sendMessage(Text.literal("<" + player.getName().getString() + "> " + Text.translatable("chat.splitself.response.tethered").getString()), false);
+            } else if (message.equalsIgnoreCase(Text.translatable("chat.splitself.prompt.whoAreYou").getString()) || message.equalsIgnoreCase(Text.translatable("chat.splitself.prompt.whoAreYou_alt").getString())) {
+                player.sendMessage(Text.literal("<" + player.getName().getString() + "> " + Text.translatable("chat.splitself.response.whoAreYou").getString()), false);
+            } else if (message.equalsIgnoreCase(Text.translatable("chat.splitself.prompt.whatDidIDo").getString()) || message.equalsIgnoreCase(Text.translatable("chat.splitself.prompt.whatDidIDo_alt").getString())) {
+                player.sendMessage(Text.literal("<" + player.getName().getString() + "> " + Text.translatable("chat.splitself.response.whatDidIDo").getString()), false);
+            } else if (message.equalsIgnoreCase(Text.translatable("chat.splitself.prompt.whatDoYouWant").getString()) || message.equalsIgnoreCase(Text.translatable("chat.splitself.prompt.whatDoYouWant_alt").getString())) {
+                player.sendMessage(Text.literal("<" + player.getName().getString() + "> " + Text.translatable("chat.splitself.response.whatDoYouWant").getString()), false);
+            } else if (message.equalsIgnoreCase(Text.translatable("chat.splitself.prompt.whereAreYou").getString()) || message.equalsIgnoreCase(Text.translatable("chat.splitself.prompt.whereAreYou_alt").getString())) {
+                player.sendMessage(Text.literal("<" + player.getName().getString() + "> " + Text.translatable("chat.splitself.response.whereAreYou").getString()), false);
+            } else if (message.equalsIgnoreCase(Text.translatable("chat.splitself.prompt.oneLastTime").getString()) || message.equalsIgnoreCase(Text.translatable("chat.splitself.prompt.oneLastTime_alt").getString())) {
+                player.sendMessage(Text.literal("<" + player.getName().getString() + "> " + Text.translatable("chat.splitself.response.oneLastTime").getString()), false);
+            } else if (message.equalsIgnoreCase(Text.translatable("chat.splitself.prompt.freedom").getString())) {
+                player.sendMessage(Text.literal("<" + player.getName().getString() + "> " + Text.translatable("chat.splitself.response.freedom").getString()), false);
+            } else if (message.equalsIgnoreCase(Text.translatable("chat.splitself.prompt.help").getString())) {
+                player.sendMessage(Text.literal("<" + player.getName().getString() + "> " + Text.translatable("chat.splitself.response.help").getString()), false);
+            } else if (message.equalsIgnoreCase(Text.translatable("chat.splitself.prompt.absence").getString())) {
+                player.sendMessage(Text.literal("<" + player.getName().getString() + "> " + Text.translatable("chat.splitself.response.absence").getString()), false);
+            } else if (message.equalsIgnoreCase(Text.translatable("chat.splitself.prompt.hello").getString()) || message.equalsIgnoreCase(Text.translatable("chat.splitself.prompt.hello_alt").getString())) {
+                player.sendMessage(Text.literal("<" + player.getName().getString() + "> " + Text.translatable("chat.splitself.response.hello").getString()), false);
             }
         }
     }
