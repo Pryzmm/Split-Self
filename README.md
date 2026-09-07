@@ -2,14 +2,13 @@
 
 ## NOTICE TO FUTURE RELEASES
 
-- 4/15/26
-No, this project is NOT dead. I will soon work on this again, and it will be the FINAL update (excluding bug fixes or needed changes). The next update to come will support Multiplayer and have a complete story.
-
 ## ⚠️ DISCLAIMER
 
 This mod will interact with your device **outside of the game**. Rest assured, your PC will not be damaged, and any changes made are easily reversible. If you feel unsafe using this mod, or if it's not supported on your device, you may download the **safe version** from every GitHub full release.
 
 You can read the full disclaimer of all device interactions [here](DISCLAIMER.md)
+
+THIS IS THE SAFE BRANCH OF SPLIT SELF. MOST, IF NOT ALL, PC INTERACTIONS ARE DISABLED APART FROM FILE CREATIONS
 
 ---
 
