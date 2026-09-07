@@ -7,7 +7,6 @@ import com.pryzmm.splitself.block.entity.renderer.BlockEntityRenderers;
 import com.pryzmm.splitself.client.render.ShaderRenderer;
 import com.pryzmm.splitself.entity.client.*;
 import com.pryzmm.splitself.file.BackgroundManager;
-import com.pryzmm.splitself.http.HTTPHandler;
 import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.client.lang.LangToaster;
 import com.pryzmm.splitself.data.ClientData;
@@ -165,8 +164,6 @@ public class SplitSelfClient implements ClientModInitializer {
                 BackgroundManager.restoreUserBackground();
             }
         }));
-
-        HTTPHandler.start(MinecraftClient.getInstance());
 
     }
 

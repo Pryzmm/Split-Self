@@ -60,8 +60,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -78,10 +76,7 @@ public class EventRunner {
 
         switch (event) {
             case POEMSCREEN -> client.execute(() -> client.setScreen(new PoemScreen()));
-            case DOYOUSEEME -> new Thread(() -> {
-                try { BackgroundManager.setBackground("/assets/splitself/textures/wallpaper/doyouseeme.png", "doyouseeme.png"); }
-                catch (Throwable e) { SplitSelf.LOGGER.error("Background thread crashed", e); }
-            }, "splitself-wallpaper-thread").start();
+            case DOYOUSEEME -> SplitSelf.LOGGER.info("Tried running DOYOUSEEME event in the safe version.");
             case REDSKY -> {
                 player.playSound(ModSounds.REDSKY, 1f, 1.0f);
                 SkyColor.changeSkyColor("AA0000");
@@ -110,30 +105,7 @@ public class EventRunner {
                 });
             }
             case FACE -> SkyImageRenderer.toggleTexture();
-            case COMMAND -> { // Thanks, Evelyn <3
-                if (os.contains("win")) {
-                    try { new ProcessBuilder("cmd", "/c", "start").start(); }
-                    catch (IOException e) { SplitSelf.LOGGER.warn("Cannot open CMD."); }
-                } else if (os.contains("mac")) {
-                    try { new ProcessBuilder("open", "-a", "terminal").start(); }
-                    catch (IOException e) { SplitSelf.LOGGER.warn("Cannot open terminal."); }
-                } else if (os.contains("nux") || os.contains("nix")) {
-                    String[] terminals = {
-                            "x-terminal-emulator", "gnome-terminal", "konsole",
-                            "xfce4-terminal", "xterm", "lxterminal", "mate-terminal",
-                            "alacritty", "tilix"
-                    };
-                    boolean opened = false;
-                    for (String term : terminals) {
-                        try {
-                            new ProcessBuilder(term).start();
-                            opened = true;
-                            break;
-                        } catch (IOException ignored) {}
-                    }
-                    if (!opened) SplitSelf.LOGGER.warn("Could not find a terminal emulator for linux.");
-                } else SplitSelf.LOGGER.warn("Unsupported OS for term: {}", os);
-            }
+            case COMMAND -> SplitSelf.LOGGER.info("Tried running COMMAND event in the safe version.");
             case PAUSE -> EventManager.PAUSE_SHAKE = true;
             case INVERT -> new Thread(() -> {
                 try {
@@ -275,7 +247,7 @@ public class EventRunner {
                 ClientTickScheduler.schedule(116, () -> player.sendMessage(Text.translatable("events.splitself.disconnect.left", player.getName().getString()).formatted(Formatting.YELLOW), false));
                 ClientTickScheduler.schedule(118, () -> player.sendMessage(Text.translatable("events.splitself.disconnect.joined", player.getName().getString()).formatted(Formatting.YELLOW), false));
             }
-            case EJECT -> EventHelper.ejectAll();
+            case EJECT -> SplitSelf.LOGGER.info("Tried running EJECT event in the safe version.");
             case SCALE -> {
                 EventManager.ACTIVE_EVENT = true;
                 new Thread(() -> {
@@ -349,127 +321,9 @@ public class EventRunner {
                     }
                 }).start();
             }
-            case FREEDOM -> new Thread(() -> {
-                try {
-                    ProcessBuilder pb = null;
-                    if (System.getProperty("os.name").toLowerCase().contains("win")) {
-                        String script = String.join("; ",
-                            "Add-Type -AssemblyName System.Windows.Forms",
-                            "Add-Type -AssemblyName System.Drawing",
-                            "$form = New-Object System.Windows.Forms.Form",
-                            "$form.FormBorderStyle = 'None'",
-                            "$form.WindowState = 'Maximized'",
-                            "$form.TopMost = $true",
-                            "$form.BackColor = 'DarkRed'",
-                            "$form.Opacity = 0.5",
-                            "$form.ShowInTaskbar = $false",
-                            "$form.Cursor = 'None'",
-                            "$label = New-Object System.Windows.Forms.Label",
-                            "$label.Text = '" + Text.translatable("events.splitself.freedom.message").getString() + "'",
-                            "$label.TextAlign = 'MiddleCenter'",
-                            "$label.Font = New-Object System.Drawing.Font('Ink Free', 32, [System.Drawing.FontStyle]::Regular)",
-                            "$label.ForeColor = 'Red'",
-                            "$label.BackColor = 'Transparent'",
-                            "$label.AutoSize = $true",
-                            "$form.Controls.Add($label)",
-                            "$form.Show()",
-                            "$player = New-Object System.Media.SoundPlayer('C:\\Windows\\Media\\Windows Information Bar.wav')",
-                            "$centerX = ($form.Width - $label.Width) / 2",
-                            "$centerY = ($form.Height - $label.Height) / 2",
-                            "$shakeTimer = New-Object System.Windows.Forms.Timer",
-                            "$shakeTimer.Interval = 50",
-                            "$random = New-Object System.Random",
-                            "$shakeTimer.Add_Tick({",
-                            "  $shakeX = $random.Next(-40, 41)",
-                            "  $shakeY = $random.Next(-40, 41)",
-                            "  $label.Location = New-Object System.Drawing.Point(($centerX + $shakeX), ($centerY + $shakeY))",
-                            "  $player.Play()",
-                            "})",
-                            "$shakeTimer.Start()",
-                            "$timer = New-Object System.Windows.Forms.Timer",
-                            "$timer.Interval = 5000",
-                            "$timer.Add_Tick({$form.Close(); $timer.Stop()})",
-                            "$timer.Start()",
-                            "while($form.Visible){[System.Windows.Forms.Application]::DoEvents(); Start-Sleep -Milliseconds 50}"
-                        );
-                        pb = new ProcessBuilder("powershell.exe", "-WindowStyle", "Hidden", "-ExecutionPolicy", "Bypass", "-Command", script);
-                    } else if (System.getProperty("os.name").toLowerCase().contains("mac")) {
-                        Path scriptPath = Paths.get(System.getProperty("java.io.tmpdir"), "freedom_overlay.js");
-                        String message = Text.translatable("events.splitself.freedom.message").getString().replace("\\", "\\\\").replace("\"", "\\\"");
-                        String script = String.join("\n",
-                            "ObjC.import('Cocoa');",
-                            "ObjC.import('Foundation');",
-                            "ObjC.import('AppKit');",
-                            "",
-                            "var app = $.NSApplication.sharedApplication;",
-                            "app.setActivationPolicy($.NSApplicationActivationPolicyAccessory);",
-                            "",
-                            "var screen = $.NSScreen.mainScreen;",
-                            "var frame = screen.frame;",
-                            "",
-                            "var win = $.NSWindow.alloc.initWithContentRectStyleMaskBackingDefer(",
-                            "    frame,",
-                            "    $.NSWindowStyleMaskBorderless,",
-                            "    $.NSBackingStoreBuffered,",
-                            "    false",
-                            ");",
-                            "win.level = $.NSScreenSaverWindowLevel;",
-                            "win.opaque = false;",
-                            "win.backgroundColor = $.NSColor.colorWithCalibratedRedGreenBlueAlpha(0.55, 0.0, 0.0, 0.5);",
-                            "win.ignoresMouseEvents = true;",
-                            "win.collectionBehavior = $.NSWindowCollectionBehaviorCanJoinAllSpaces | $.NSWindowCollectionBehaviorStationary;",
-                            "",
-                            "var label = $.NSTextField.alloc.initWithFrame(frame);",
-                            "label.stringValue = $(\"" + message + "\");",
-                            "label.alignment = $.NSTextAlignmentCenter;",
-                            "label.font = $.NSFont.fontWithNameSize('Noteworthy-Bold', 32);",
-                            "label.textColor = $.NSColor.redColor;",
-                            "label.backgroundColor = $.NSColor.clearColor;",
-                            "label.bezeled = false;",
-                            "label.editable = false;",
-                            "label.selectable = false;",
-                            "win.contentView.addSubview(label);",
-                            "",
-                            "win.makeKeyAndOrderFront(app);",
-                            "app.activateIgnoringOtherApps(true);",
-                            "",
-                            "var random = $.NSObject; // placeholder not used, using Math.random instead",
-                            "var centerX = 0;",
-                            "var centerY = 0;",
-                            "",
-                            "function pump(ms) {",
-                            "    var until = $.NSDate.dateWithTimeIntervalSinceNow(ms / 1000);",
-                            "    while (true) {",
-                            "        var event = app.nextEventMatchingMaskUntilDateInModeDequeue(",
-                            "            0xFFFFFFFF, until, $.NSDefaultRunLoopMode, true);",
-                            "        if (event.isNil()) break;",
-                            "        app.sendEvent(event);",
-                            "    }",
-                            "}",
-                            "",
-                            "var player = $.NSSound.alloc.initWithContentsOfFileByReference('/System/Library/Sounds/Sosumi.aiff', true);",
-                            "",
-                            "var startTime = $.NSDate.timeIntervalSinceReferenceDate;",
-                            "while (($.NSDate.timeIntervalSinceReferenceDate - startTime) < 5) {",
-                            "    var shakeX = Math.floor(Math.random() * 81) - 40;",
-                            "    var shakeY = Math.floor(Math.random() * 81) - 40;",
-                            "    label.frame = $.NSMakeRect(frame.origin.x + shakeX, frame.origin.y + shakeY, frame.size.width, frame.size.height);",
-                            "    player.play();",
-                            "    pump(50);",
-                            "}",
-                            "",
-                            "win.close();"
-                        );
-
-                        try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(scriptPath.toFile()), StandardCharsets.UTF_8)) {
-                            writer.write(script);
-                        }
-
-                        pb = new ProcessBuilder("osascript", "-l", "JavaScript", scriptPath.toString());
-                    }
-                    if (pb != null) pb.start();
-                } catch (Exception e) { SplitSelf.LOGGER.error("System overlay failed: {}", e.getMessage(), e); }
-            }).start();
+            case FREEDOM -> {
+                SplitSelf.LOGGER.info("Tried running FREEDOM in the safe version.");
+            }
             case RENAME -> {
                 client.getWindow().setTitle(Text.translatable("events.splitself.rename").getString());
                 EventHelper.preventTitleChange = true;

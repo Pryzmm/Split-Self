@@ -54,7 +54,7 @@ public class SplitSelf implements ModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     public static JsonReader CONFIG = null;
 
-    public static final boolean IS_UNSAFE_VERSION = true;
+    public static final boolean IS_UNSAFE_VERSION = false;
 
 	private void onServerStarting(MinecraftServer server) {
         WorldData.loadData(server);
