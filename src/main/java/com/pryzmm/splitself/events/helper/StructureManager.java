@@ -109,25 +109,27 @@ public class StructureManager {
             SplitSelf.LOGGER.info("Error placing structure with rotation: {}", String.valueOf(e));
         }
     }
-
-    public static BlockPos placeStructureRandomRotation(ServerWorld world, PlayerEntity Player, String structureName, Integer MinimumRange, Integer MaximumRange, Integer YOffset, boolean DisableRotation, Float Integrity, boolean ignoreEntities) {
+    public static BlockPos placeStructureRandomRotation(ServerWorld world, PlayerEntity player, String structureName, Integer minimumRange, Integer maximumRange, Integer yOffset, boolean disableRotation, Float integrity, boolean ignoreEntities) {
+        return placeStructureRandomRotation(world, player.getBlockPos(), structureName, minimumRange, maximumRange, yOffset, disableRotation, integrity, ignoreEntities);
+    }
+    public static BlockPos placeStructureRandomRotation(ServerWorld world, BlockPos pos, String structureName, Integer minimumRange, Integer maximumRange, Integer yOffset, boolean disableRotation, Float integrity, boolean ignoreEntities) {
         try {
             Random random = new Random();
-            double distance = MinimumRange + random.nextDouble() * (MaximumRange - MinimumRange);
+            double distance = minimumRange + random.nextDouble() * (maximumRange - minimumRange);
             double angle = random.nextDouble() * 2 * Math.PI;
-            Vec3d playerPos = Player.getPos();
-            double spawnX = playerPos.x + Math.cos(angle) * distance;
-            double spawnZ = playerPos.z + Math.sin(angle) * distance;
+            Vec3d centerPos = pos.toCenterPos();
+            double spawnX = centerPos.x + Math.cos(angle) * distance;
+            double spawnZ = centerPos.z + Math.sin(angle) * distance;
             BlockPos spawnPos = new BlockPos((int) spawnX, 0, (int) spawnZ);
-            int surfaceY = Player.getWorld().getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, spawnPos.getX(), spawnPos.getZ()) + YOffset;
+            int surfaceY = world.getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, spawnPos.getX(), spawnPos.getZ()) + yOffset;
             BlockPos finalSpawnPos = new BlockPos((int) spawnX, surfaceY, (int) spawnZ);
             if (structureName.equals("house")) { // The forgotten
                 WorldData.setTheForgottenLocation(new Location(world, finalSpawnPos, 0, 0));
             }
             BlockRotation rotation;
-            if (!DisableRotation) rotation = BlockRotation.values()[world.getRandom().nextInt(4)];
+            if (!disableRotation) rotation = BlockRotation.values()[world.getRandom().nextInt(4)];
             else rotation = BlockRotation.NONE;
-            if (placeStructure(world, finalSpawnPos, structureName, rotation, BlockMirror.NONE, Integrity, ignoreEntities)) {
+            if (placeStructure(world, finalSpawnPos, structureName, rotation, BlockMirror.NONE, integrity, ignoreEntities)) {
                 return finalSpawnPos;
             }
         } catch (Exception e) {
@@ -138,11 +140,11 @@ public class StructureManager {
 
     private static void placeTemplate(ServerWorld world, BlockPos pos, StructureTemplate template, BlockRotation rotation, BlockMirror mirror, Float Integrity, boolean ignoreEntities) {
         StructurePlacementData placementData = new StructurePlacementData()
-            .setRotation(rotation)
-            .setMirror(mirror)
-            .setIgnoreEntities(ignoreEntities)
-            .setUpdateNeighbors(false)
-            .addProcessor(BlockIgnoreStructureProcessor.IGNORE_AIR_AND_STRUCTURE_BLOCKS);
+                .setRotation(rotation)
+                .setMirror(mirror)
+                .setIgnoreEntities(ignoreEntities)
+                .setUpdateNeighbors(false)
+                .addProcessor(BlockIgnoreStructureProcessor.IGNORE_AIR_AND_STRUCTURE_BLOCKS);
         if (Integrity != null && Integrity < 1.0f) {
             placementData.addProcessor(new IntegrityProcessor(Integrity));
         }
