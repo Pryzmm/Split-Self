@@ -13,8 +13,16 @@ import java.util.List;
 
 public class ElementList extends ElementListWidget<ElementList.Entry> {
 
-    public ElementList(MinecraftClient client, int x, int y, int width, int height) {
+    public ElementList(MinecraftClient client, int y, int width, int height) {
         super(client, width, height, y, 25);
+    }
+
+    public void clearAllEntries() {
+        this.clearEntries();
+    }
+
+    public void resetScroll() {
+        this.setScrollAmount(0);
     }
 
     @Override
@@ -27,28 +35,45 @@ public class ElementList extends ElementListWidget<ElementList.Entry> {
         return this.width / 2;
     }
 
-    public abstract static class Entry extends ElementListWidget.Entry<Entry> {
-    }
+    public abstract static class Entry extends ElementListWidget.Entry<Entry> {}
 
     public static class DoubleButtonEntry extends Entry {
 
         private final DoubleTextButtonWidget button;
         private final String configKey;
+        private final VoskModel voskModel;
         private final String arrayID;
         private final InputType inputType;
 
         public DoubleButtonEntry(String configKey, String arrayID, InputType inputType, ButtonWidget.PressAction onPress) {
             this.configKey = configKey;
+            this.voskModel = null;
             this.arrayID = arrayID;
             this.inputType = inputType;
 
             this.button = new DoubleTextButtonWidget(
-                    0, 0, 200, 20,
-                    Text.literal(configKey),
-                    this::getDisplayValue,
-                    this::getDisplayColor,
-                    null,
-                    onPress
+                0, 0, 200, 20,
+                Text.literal(configKey),
+                this::getDisplayValue,
+                this::getDisplayColor,
+                null,
+                onPress
+            );
+        }
+
+        public DoubleButtonEntry(VoskModel voskModel, String arrayID, ButtonWidget.PressAction onPress) {
+            this.configKey = null;
+            this.voskModel = voskModel;
+            this.arrayID = arrayID;
+            this.inputType = InputType.VOSK;
+
+            this.button = new DoubleTextButtonWidget(
+                0, 0, 200, 20,
+                Text.literal(voskModel.ID().replace("vosk-model-", "")),
+                this::getDisplayValue,
+                this::getDisplayColor,
+                null,
+                onPress
             );
         }
 
@@ -57,6 +82,9 @@ public class ElementList extends ElementListWidget<ElementList.Entry> {
                 // Use the correct method for reading boolean from array
                 boolean value = SplitSelf.CONFIG.getBooleanFromArray(arrayID, configKey);
                 return value ? "True" : "False";
+            } else if (inputType == InputType.VOSK) {
+                if (voskModel.size() <= 999) return voskModel.size() + "Mb";
+                else return ((float) voskModel.size() / 1000) + "Gb";
             } else {
                 return String.valueOf(SplitSelf.CONFIG.getValueFromArray(arrayID, configKey));
             }
@@ -73,8 +101,7 @@ public class ElementList extends ElementListWidget<ElementList.Entry> {
         }
 
         @Override
-        public void render(DrawContext context, int index, int y, int x, int entryWidth, int entryHeight,
-                           int mouseX, int mouseY, boolean hovered, float tickDelta) {
+        public void render(DrawContext context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
             this.button.setPosition(x + (entryWidth - this.button.getWidth()) / 2, y + 2);
             this.button.render(context, mouseX, mouseY, tickDelta);
         }
@@ -87,6 +114,11 @@ public class ElementList extends ElementListWidget<ElementList.Entry> {
         @Override
         public List<? extends Selectable> selectableChildren() {
             return List.of(this.button);
+        }
+
+        public String getLabel() {
+            if (inputType == InputType.VOSK) return voskModel.ID().replace("vosk-model-", "");
+            else return configKey;
         }
     }
 }

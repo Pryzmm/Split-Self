@@ -7,48 +7,82 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.*;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import static com.pryzmm.splitself.config.CustomConfigScreen.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ScrollingConfigScreen extends Screen {
 
     public static final Identifier CONFIG_IMAGE = Identifier.of(SplitSelf.MOD_ID, "textures/gui/title/config_title.png");
-    private final Screen parent;
+    private final CustomConfigScreen parent;
     private ElementList elementList;
 
     public ScrollingConfigScreen(Screen parent) {
         super(Text.literal(""));
-        this.parent = parent;
+        this.parent = (CustomConfigScreen) parent;
     }
 
     @Override
     protected void init() {
         createDoneButton();
         createElementListWidget();
-        populateConfigOptions(arrayID, CustomConfigScreen.ScrollInputType);
+        populateConfigOptions(CustomConfigScreen.arrayID, CustomConfigScreen.ScrollInputType);
+        TextFieldWidget searchWidget = this.addDrawableChild(new TextFieldWidget(
+            this.textRenderer,
+            this.width / 2 - 75, this.height - 40, 150, 20,
+            Text.empty()
+        ));
+        searchWidget.setChangedListener(text -> {
+            searchFilter = text;
+            updateFilter();
+        });
     }
 
     public void createElementListWidget() {
-        this.elementList = this.addDrawableChild(new ElementList(client, 0, 60, this.width, this.height - 110));
+        this.elementList = this.addDrawableChild(new ElementList(client, 60, this.width, this.height - 110));
         this.elementList.getRowWidth();
     }
 
+    private String searchFilter = "";
+    private final List<ElementList.DoubleButtonEntry> allEntries = new ArrayList<>();
+
     private void populateConfigOptions(String arrayID, InputType inputType) {
-        for (String configKey : SplitSelf.CONFIG.getKeysFromObject(arrayID)) {
-            elementList.addEntry(new ElementList.DoubleButtonEntry(
-                configKey,
-                arrayID,
-                inputType,
-                button -> {
-                    if (inputType == InputType.INT || inputType == InputType.DOUBLE) {
-                        createNumericValueWidget(5, this.height - 25, ScrollMinimum, ScrollMaximum, configKey, inputType);
-                    } else if (inputType == InputType.BOOLEAN) {
-                        boolean newValue = !SplitSelf.CONFIG.getBooleanFromArray(arrayID, configKey);
-                        SplitSelf.CONFIG.setBooleanInObject(arrayID, configKey, newValue);
-                        SplitSelf.CONFIG.save();
+        allEntries.clear();
+        if (inputType == InputType.VOSK) {
+            for (VoskModel model : VoskModel.voskModels) {
+                ElementList.DoubleButtonEntry entry = new ElementList.DoubleButtonEntry(
+                    model, arrayID, button -> {
+                        parent.submitVoskPrompt(model.ID());
                     }
-                }
-            ));
+                );
+                allEntries.add(entry);
+            }
+        } else {
+            for (String configKey : SplitSelf.CONFIG.getKeysFromObject(arrayID)) {
+                ElementList.DoubleButtonEntry entry = new ElementList.DoubleButtonEntry(
+                    configKey, arrayID, inputType,
+                    button -> {
+                        if (inputType == InputType.INT || inputType == InputType.DOUBLE) {
+                            createNumericValueWidget(5, this.height - 25, CustomConfigScreen.ScrollMinimum, CustomConfigScreen.ScrollMaximum, configKey, inputType);
+                        } else if (inputType == InputType.BOOLEAN) {
+                            boolean newValue = !SplitSelf.CONFIG.getBooleanFromArray(arrayID, configKey);
+                            SplitSelf.CONFIG.setBooleanInObject(arrayID, configKey, newValue);
+                            SplitSelf.CONFIG.save();
+                        }
+                    }
+                );
+                allEntries.add(entry);
+            }
         }
+        updateFilter();
+    }
+
+    public void updateFilter() {
+        elementList.clearAllEntries();
+        String filter = searchFilter.toLowerCase();
+        for (ElementList.DoubleButtonEntry entry : allEntries) {
+            if (filter.isEmpty() || entry.getLabel().toLowerCase().contains(filter.toLowerCase())) elementList.addEntry(entry);
+        }
+        elementList.resetScroll();
     }
 
     public void createDoneButton() {
@@ -125,7 +159,7 @@ public class ScrollingConfigScreen extends Screen {
                     int newValue = Integer.parseInt(textFieldWidget.getText());
                     if (newValue >= minimum && newValue <= maximum) {
                         textFieldHeaderWidget.setTextColor(0xFFFFFF);
-                        SplitSelf.CONFIG.setIntInObject(arrayID, configValue, newValue);
+                        SplitSelf.CONFIG.setIntInObject(CustomConfigScreen.arrayID, configValue, newValue);
                         SplitSelf.CONFIG.save();
                     } else {
                         throw new NumberFormatException("Invalid value! (Not Within Bounds!)");
@@ -134,7 +168,7 @@ public class ScrollingConfigScreen extends Screen {
                     double newValue = Double.parseDouble(textFieldWidget.getText());
                     if (newValue >= minimum && newValue <= maximum) {
                         textFieldHeaderWidget.setTextColor(0xFFFFFF);
-                        SplitSelf.CONFIG.setDoubleInObject(arrayID, configValue, newValue);
+                        SplitSelf.CONFIG.setDoubleInObject(CustomConfigScreen.arrayID, configValue, newValue);
                         SplitSelf.CONFIG.save();
                     } else {
                         throw new NumberFormatException("Invalid value! (Not Within Bounds!)");
