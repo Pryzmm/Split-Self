@@ -24,7 +24,7 @@ public class HTTPHandler {
         client = c;
         clientID = c.getGameProfile().getId().toString();
         try {
-            socket = new WebSocketHook(new URI("ws://144.126.158.38/ws"));
+            socket = new WebSocketHook(new URI("wss://144.126.158.38/ws"));
             socket.connect();
         } catch (URISyntaxException e) {
             e.printStackTrace();
