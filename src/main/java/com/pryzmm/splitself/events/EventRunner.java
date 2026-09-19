@@ -635,8 +635,9 @@ public class EventRunner {
                 }
             }
             case MINE -> {
-                BlockPos structurePos = StructureManager.placeStructureRandomRotation(world, player, "stripmine", 0, 20, -80, true, 1f, true);
+                BlockPos structurePos = StructureManager.placeStructureRandomRotation(world, player, "stripmine", 50, 80, -49, true, 1f, true);
                 assert structurePos != null;
+                StructureManager.placeStructureRandomRotation(world, structurePos.add(2, 0, 0), "stripmine_top", 0, 0, -43, true, 1f, true);
                 BlockPos signPos = new BlockPos(structurePos.getX() + 5, structurePos.getY() + 5, structurePos.getZ() + 7);
                 BlockEntity mineBlockEntity = world.getBlockEntity(signPos);
                 if (mineBlockEntity instanceof SignBlockEntity signBlockEntity) {

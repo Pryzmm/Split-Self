@@ -11,7 +11,6 @@ import net.minecraft.client.toast.Toast;
 import net.minecraft.client.toast.ToastManager;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Util;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +26,7 @@ public class CustomConfigScreen extends Screen {
     public static double ScrollMaximum;
 
     public enum InputType {
-        INT, DOUBLE, BOOLEAN
+        INT, DOUBLE, BOOLEAN, VOSK
     }
 
     public CustomConfigScreen(Screen parent) {
@@ -65,8 +64,8 @@ public class CustomConfigScreen extends Screen {
     public void createConfigButtons() {
         if (SplitSelf.ShriekInstalled) {
             createBooleanConfigButton(this.width / 2 - 230, 65, "eventsEnabled", DefaultConfig.eventsEnabled, "config.splitself.events_enabled");
-            createVoskConfigButton(this.width / 2 - 75, 65, "https://alphacephei.com/vosk/models", "config.splitself.vosk_model");
             createIntConfigButton(this.width / 2 + 80, 65, "baseSafeRadius", DefaultConfig.baseSafeRadius, 0, 50, "config.splitself.base_safe_radius");
+            createMenuConfigButton(this.width / 2 - 75, 65, "config.splitself.vosk_model", 0, 999999, "voskModel", InputType.VOSK);
         } else {
             createBooleanConfigButton(this.width / 2 - 153, 65, "eventsEnabled", DefaultConfig.eventsEnabled, "config.splitself.events_enabled");
             createIntConfigButton(this.width / 2 + 3, 65, "baseSafeRadius", DefaultConfig.baseSafeRadius, 0, 50, "config.splitself.base_safe_radius");
@@ -119,23 +118,11 @@ public class CustomConfigScreen extends Screen {
         ));
     }
 
-    public void createVoskConfigButton(int x, int y, String link, String translationKey) {
-        this.addDrawableChild(new SingleTextButtonWidget(
-            x, y, 150, 20,
-            Text.translatable(translationKey),
-            Text.translatable(translationKey + ".description", SplitSelf.CONFIG.getString("voskModel")).getString(),
-            button -> {
-                Util.getOperatingSystem().open(link);
-                createVoskValueWidget(5, this.height - 25);
-            }
-        ));
-    }
-
     public void createMenuConfigButton(int x, int y, String translationKey, double minimum, double maximum, String menuID, InputType inputType) {
         this.addDrawableChild(new SingleTextButtonWidget(
             x, y, 150, 20,
             Text.translatable(translationKey),
-            Text.translatable(translationKey + ".description").getString(),
+            Text.translatable(translationKey + ".description", SplitSelf.CONFIG.getString("voskModel")).getString(), // SHOULD only take voskModel param if it has %s
             button -> {
                 assert client != null;
                 arrayID = menuID;
@@ -184,31 +171,6 @@ public class CustomConfigScreen extends Screen {
         ));
     }
 
-    public void createVoskValueWidget(int x, int y) {
-        if (textFieldWidget != null) {
-            this.remove(textFieldWidget);
-            this.remove(textFieldHeaderWidget);
-            this.remove(submitButtonWidget);
-        }
-        textFieldWidget = this.addDrawableChild(new TextFieldWidget(
-            this.textRenderer,
-            x, y, 100, 20,
-            Text.empty() // nothing renders here for some reason :(
-        ));
-        int textWidth = textRenderer.getWidth(Text.translatable("config.splitself.string_value"));
-        textFieldHeaderWidget = this.addDrawableChild(new TextWidget(
-            x, y - 15, textWidth, 20,
-            Text.translatable("config.splitself.string_value"),
-            this.textRenderer
-        ));
-        submitButtonWidget = this.addDrawableChild(new SingleTextButtonWidget(
-            x + 100, y, 50, 20,
-            Text.literal("Submit"),
-            null,
-            button -> submitVoskPrompt(textFieldWidget)
-        ));
-    }
-
     private void submitNumericPrompt(TextFieldWidget textFieldWidget, double minimum, double maximum, InputType inputType, String configValue) {
         try {
             if (textFieldWidget.getText().isEmpty()) {
@@ -240,78 +202,69 @@ public class CustomConfigScreen extends Screen {
     }
 
     @SuppressWarnings("DataFlowIssue")
-    private void submitVoskPrompt(TextFieldWidget textFieldWidget) {
+    public void submitVoskPrompt(String model) {
         try {
-            if (textFieldWidget.getText().isEmpty()) {
-                throw new NumberFormatException("Input a value!");
-            } else if (!textFieldWidget.getText().startsWith("vosk-model-")) {
-                throw new NumberFormatException("Input a model starting with `vosk-model-`!");
-            } else {
-                textFieldHeaderWidget.setTextColor(0xFFFFFF);
-                SplitSelf.CONFIG.setString("voskModel", textFieldWidget.getText().replace(" ", "").replace(".zip", ""));
-                SplitSelf.CONFIG.save();
-                Toast restartToast = new Toast() {
-                    @Override
-                    public Visibility draw(DrawContext context, ToastManager manager, long startTime) {
-                        String message = Text.translatable("mco.error.invalid.session.message").getString();
-                        int maxWidth = 180;
-                        List<String> lines = wrapText(message, maxWidth);
-                        int width = 200;
-                        int lineHeight = client.textRenderer.fontHeight + 2;
-                        int height = Math.max(32, (lines.size() * lineHeight) + 12);
-                        context.fill(0, 0, width, height, 0x88000000);
-                        context.drawBorder(0, 0, width, height, 0xFF888888);
-                        int startY = (height - (lines.size() * lineHeight)) / 2;
-                        for (int i = 0; i < lines.size(); i++) {
-                            String line = lines.get(i);
-                            int textX = (width - client.textRenderer.getWidth(line)) / 2;
-                            int textY = startY + (i * lineHeight);
-                            context.drawText(client.textRenderer, line, textX, textY, 0xFFFFFF, false);
-                        }
-                        return startTime >= 5000L ? Visibility.HIDE : Visibility.SHOW;
+            SplitSelf.CONFIG.setString("voskModel", model);
+            SplitSelf.CONFIG.save();
+            Toast restartToast = new Toast() {
+                @Override
+                public Visibility draw(DrawContext context, ToastManager manager, long startTime) {
+                    String message = Text.translatable("mco.error.invalid.session.message").getString();
+                    int maxWidth = 180;
+                    List<String> lines = wrapText(message, maxWidth);
+                    int width = 200;
+                    int lineHeight = client.textRenderer.fontHeight + 2;
+                    int height = Math.max(32, (lines.size() * lineHeight) + 12);
+                    context.fill(0, 0, width, height, 0x88000000);
+                    context.drawBorder(0, 0, width, height, 0xFF888888);
+                    int startY = (height - (lines.size() * lineHeight)) / 2;
+                    for (int i = 0; i < lines.size(); i++) {
+                        String line = lines.get(i);
+                        int textX = (width - client.textRenderer.getWidth(line)) / 2;
+                        int textY = startY + (i * lineHeight);
+                        context.drawText(client.textRenderer, line, textX, textY, 0xFFFFFF, false);
                     }
-                    private List<String> wrapText(String text, int maxWidth) {
-                        List<String> lines = new ArrayList<>();
-                        String[] words = text.split(" ");
-                        StringBuilder currentLine = new StringBuilder();
-                        for (String word : words) {
-                            String testLine = currentLine.isEmpty() ? word : currentLine + " " + word;
-                            if (client.textRenderer.getWidth(testLine) <= maxWidth) {
-                                currentLine = new StringBuilder(testLine);
+                    return startTime >= 5000L ? Visibility.HIDE : Visibility.SHOW;
+                }
+                private List<String> wrapText(String text, int maxWidth) {
+                    List<String> lines = new ArrayList<>();
+                    String[] words = text.split(" ");
+                    StringBuilder currentLine = new StringBuilder();
+                    for (String word : words) {
+                        String testLine = currentLine.isEmpty() ? word : currentLine + " " + word;
+                        if (client.textRenderer.getWidth(testLine) <= maxWidth) {
+                            currentLine = new StringBuilder(testLine);
+                        } else {
+                            if (!currentLine.isEmpty()) {
+                                lines.add(currentLine.toString());
+                                currentLine = new StringBuilder(word);
                             } else {
-                                if (!currentLine.isEmpty()) {
-                                    lines.add(currentLine.toString());
-                                    currentLine = new StringBuilder(word);
-                                } else {
-                                    lines.add(word);
-                                }
+                                lines.add(word);
                             }
                         }
-                        if (!currentLine.isEmpty()) {
-                            lines.add(currentLine.toString());
-                        }
-                        if (lines.isEmpty()) {
-                            lines.add("");
-                        }
-                        return lines;
                     }
-                    @Override
-                    public int getWidth() {
-                        return 200;
+                    if (!currentLine.isEmpty()) {
+                        lines.add(currentLine.toString());
                     }
-                    @Override
-                    public int getHeight() {
-                        String message = Text.translatable("mco.error.invalid.session.message").getString();
-                        List<String> lines = wrapText(message, 180);
-                        int lineHeight = client.textRenderer.fontHeight + 2;
-                        return Math.max(32, (lines.size() * lineHeight) + 12);
+                    if (lines.isEmpty()) {
+                        lines.add("");
                     }
-                };
-                client.getToastManager().add(restartToast);
-            }
-        } catch (NumberFormatException e) {
-            textFieldHeaderWidget.setTextColor(0xFF0000);
-        }
+                    return lines;
+                }
+                @Override
+                public int getWidth() {
+                    return 200;
+                }
+                @Override
+                public int getHeight() {
+                    String message = Text.translatable("mco.error.invalid.session.message").getString();
+                    List<String> lines = wrapText(message, 180);
+                    int lineHeight = client.textRenderer.fontHeight + 2;
+                    return Math.max(32, (lines.size() * lineHeight) + 12);
+                }
+            };
+            client.getToastManager().add(restartToast);
+        } catch (NumberFormatException ignored) {}
     }
 
     @Override
