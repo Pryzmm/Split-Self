@@ -23,7 +23,6 @@ With all that being said, here are the events that interact with your computer i
 - For some events, the mod will sometimes read the user's system name out to them
   - For some Youtubers, the mod will instead call them by their public name, or a variant of their name
   - Events that do this are namely: PoemScreen, Notepad, Mine
-- The 'Browser' event reveals personal browser history across Firefox, Google, and Opera GX
 - The 'Emergency' event will reveal your city via `GeoIP`. VPNs will counteract this.
 - The 'Freedom' event will temporarily cover your entire screen and say "Let Me Free."
 - The 'Shrink' event will take you out of fullscreen, shrink your game slowly and start shaking.
@@ -39,4 +38,3 @@ With all that being said, here are the events that interact with your computer i
 - The 'PlayerData' event will create a fake player data file on your desktop
 - The 'Spotify' and 'Search' events will open their respective app or search engine
 - Saying 'Hello' to The Forgotten entity will state your devices name
-- The mod connects to an external websocket which is used, AND ONLY USED, for the developer to interact and mess with players with a limited about of tools.
