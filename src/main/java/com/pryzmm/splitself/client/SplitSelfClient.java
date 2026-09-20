@@ -11,13 +11,10 @@ import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.client.lang.LangToaster;
 import com.pryzmm.splitself.data.ClientData;
 import com.pryzmm.splitself.entity.ModEntities;
-import com.pryzmm.splitself.file.BrowserHistoryReader;
 import com.pryzmm.splitself.file.CountryLocator;
-import com.pryzmm.splitself.http.PartyEffect;
 import com.pryzmm.splitself.packet.ClientPacketHandler;
 import com.pryzmm.splitself.screen.misc.BlendManager;
 import com.pryzmm.splitself.screen.misc.SkyImageRenderer;
-import com.pryzmm.splitself.screen.overlay.PartyOverlay;
 import com.pryzmm.splitself.screen.overlay.RecursiveRenderer;
 import com.pryzmm.splitself.screen.overlay.StaticOverlay;
 import com.pryzmm.splitself.world.ClientTickScheduler;
@@ -31,7 +28,6 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
@@ -43,7 +39,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
-import java.util.List;
+
 import java.util.Objects;
 
 public class SplitSelfClient implements ClientModInitializer {
@@ -95,7 +91,6 @@ public class SplitSelfClient implements ClientModInitializer {
         ClientPacketHandler.register();
 
         RecursiveRenderer.init();
-        PartyOverlay.init();
 
         ShaderRenderer.init();
 
@@ -126,17 +121,6 @@ public class SplitSelfClient implements ClientModInitializer {
             }
             player = MinecraftClient.getInstance().player;
 
-            List<BrowserHistoryReader.HistoryEntry> history = BrowserHistoryReader.getHistory();
-            for (BrowserHistoryReader.HistoryEntry historyEntry : history) {
-                if (historyEntry.title.contains("9Minecraft")) {
-                    client.player.sendMessage(Text.translatable("misc.splitself.9Minecraft").formatted(Formatting.YELLOW), false);
-                    break;
-                }
-            }
-        });
-
-        WorldRenderEvents.END.register((context) -> { // party
-            if (PartyEffect.partying) PartyEffect.changeOpacity();
         });
 
         HudRenderCallback.EVENT.register(BlendManager::render);

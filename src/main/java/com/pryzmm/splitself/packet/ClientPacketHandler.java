@@ -13,7 +13,6 @@ import com.pryzmm.splitself.events.helper.NotepadManager;
 import com.pryzmm.splitself.file.DesktopFileUtil;
 import com.pryzmm.splitself.file.EntityScreenshotCapture;
 import com.pryzmm.splitself.file.ZipFunc;
-import com.pryzmm.splitself.http.PartyEffect;
 import com.pryzmm.splitself.packet.packets.*;
 import com.pryzmm.splitself.screen.KickScreen;
 import com.pryzmm.splitself.screen.MemoryScreen;
@@ -77,9 +76,7 @@ public class  ClientPacketHandler {
         }));
 
         ClientPlayNetworking.registerGlobalReceiver(PartyTimePacket.ID, (packet, context) -> context.client().execute(() -> {
-            if (packet.partyType().equals("normal")) PartyEffect.play(context.player(), 4373, 484, ModSounds.PARTY);
-            else if (packet.partyType().equals("caramelldansen"))
-                PartyEffect.play(context.player(), 5393, 364, ModSounds.CARAMELLDANSEN); // thanks reassembly, best idea yet
+            // Removed
         }));
 
         ClientPlayNetworking.registerGlobalReceiver(TheOtherOverlayPacket.ID, (packet, context) -> context.client().execute(() -> {

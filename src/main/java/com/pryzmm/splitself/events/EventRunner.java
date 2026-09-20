@@ -129,37 +129,7 @@ public class EventRunner {
             }
             case STATIC -> ScreenOverlay.executeStaticScreen(player);
             case RECURSIVE -> ScreenOverlay.executeRecursiveScreen(player, 2500, true);
-            case BROWSER -> {
-                List<BrowserHistoryReader.HistoryEntry> history = BrowserHistoryReader.getHistory();
-                List<BrowserHistoryReader.HistoryEntry> mostVisited = BrowserHistoryReader.getMostVisited();
-                if (history == null || history.isEmpty()) return;
-                player.sendMessage(Text.translatable("events.splitself.browser.hello", player.getName().getString()), false);
-                ClientTickScheduler.schedule(60, () -> player.sendMessage(Text.translatable("events.splitself.browser.seeMe", player.getName().getString()), false));
-                ClientTickScheduler.schedule(160, () -> player.sendMessage(Text.translatable("events.splitself.browser.iAmYou", player.getName().getString()), false));
-                ClientTickScheduler.schedule(240, () -> player.sendMessage(Text.translatable("events.splitself.browser.iSeeEverything", player.getName().getString()), false));
-                ClientTickScheduler.schedule(320, () -> player.sendMessage(Text.translatable("events.splitself.browser.browserName", player.getName().getString(), history.getFirst().browser), false));
-                ClientTickScheduler.schedule(400, () -> {
-                    String[] siteName = history.getFirst().title.split(" - ");
-                    String siteURL = history.getFirst().url.replaceFirst("https://", "").split("/")[0];
-                    player.sendMessage(Text.translatable("events.splitself.browser.displayRecentSite", player.getName().getString(), siteName[0]), false);
-                    ClientTickScheduler.schedule(60, () -> {
-                        String mostVisitedSiteURL;
-                        int mostVisitedSiteCount;
-                        int browserIndex;
-                        for (browserIndex = 0; browserIndex < 50; browserIndex++) {
-                            if (mostVisited.get(browserIndex).url.replaceFirst("https://", "").split("/")[0].equals(siteURL)) {
-                                SplitSelf.LOGGER.warn("Skipping index {}", browserIndex);
-                                SplitSelf.LOGGER.warn("{}     {}", siteURL, mostVisited.get(browserIndex).url.replaceFirst("https://", "").split("/")[0]);
-                            } else break;
-                        }
-                        mostVisitedSiteURL = mostVisited.get(browserIndex).url.replaceFirst("https://", "").split("/")[0];
-                        mostVisitedSiteCount = mostVisited.get(browserIndex).visitCount;
-                        player.sendMessage(Text.translatable("events.splitself.browser.displayPopularSite", player.getName().getString(), mostVisitedSiteURL), false);
-                        ClientTickScheduler.schedule(100, () -> player.sendMessage(Text.translatable("events.splitself.browser.displaySiteCount", player.getName().getString(), mostVisitedSiteCount), false));
-                        ClientTickScheduler.schedule(180, () -> player.sendMessage(Text.translatable("events.splitself.browser.imWatching", player.getName().getString()).formatted(Formatting.RED), false));
-                    });
-                });
-            }
+            case BROWSER -> { /* Removed */ }
             case MEMORY -> CompletableFuture.runAsync(() -> {
                 if (os.contains("mac")) {
                     SplitSelf.LOGGER.error("Tried running event MEMORY but it is not supported on Mac devices!");
