@@ -7,7 +7,6 @@
     "BackgroundRenderMixin",
     "BrokenSkyMixin",
     "BrokenUIMixin",
-    "ChatMixin",
     "ColorOverlayMixin",
     "DrawContextMixin",
     "ExperimentalMixin",

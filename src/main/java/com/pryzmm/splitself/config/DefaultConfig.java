@@ -65,7 +65,6 @@ public class DefaultConfig {
         updateEventOptions("TNT",                   new EventOptions(0,   0, false, EventType.GLOBAL));
         updateEventOptions("IRONTRAP",              new EventOptions(10,  0, false, EventType.GLOBAL));
         updateEventOptions("LAVA",                  new EventOptions(10,  1, false, EventType.GLOBAL));
-        updateEventOptions("BROWSER",               new EventOptions(3,   1, true,  EventType.CLIENT));
         updateEventOptions("KICK",                  new EventOptions(5,   1, false, EventType.GLOBAL));
         updateEventOptions("SIGN",                  new EventOptions(10,  1, false, EventType.GLOBAL));
         updateEventOptions("SCALE",                 new EventOptions(10,  0, false, EventType.CLIENT));
