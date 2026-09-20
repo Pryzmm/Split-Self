@@ -335,7 +335,7 @@ public class EventRunner {
                             "$form.ShowInTaskbar = $false",
                             "$form.Cursor = 'None'",
                             "$label = New-Object System.Windows.Forms.Label",
-                            "$label.Text = '" + Text.translatable("events.splitself.freedom.message").getString() + "'",
+                            "$label.Text = 'Let me free.'",
                             "$label.TextAlign = 'MiddleCenter'",
                             "$label.Font = New-Object System.Drawing.Font('Ink Free', 32, [System.Drawing.FontStyle]::Regular)",
                             "$label.ForeColor = 'Red'",
@@ -365,7 +365,6 @@ public class EventRunner {
                         pb = new ProcessBuilder("powershell.exe", "-WindowStyle", "Hidden", "-ExecutionPolicy", "Bypass", "-Command", script);
                     } else if (System.getProperty("os.name").toLowerCase().contains("mac")) {
                         Path scriptPath = Paths.get(System.getProperty("java.io.tmpdir"), "freedom_overlay.js");
-                        String message = Text.translatable("events.splitself.freedom.message").getString().replace("\\", "\\\\").replace("\"", "\\\"");
                         String script = String.join("\n",
                             "ObjC.import('Cocoa');",
                             "ObjC.import('Foundation');",
@@ -390,7 +389,7 @@ public class EventRunner {
                             "win.collectionBehavior = $.NSWindowCollectionBehaviorCanJoinAllSpaces | $.NSWindowCollectionBehaviorStationary;",
                             "",
                             "var label = $.NSTextField.alloc.initWithFrame(frame);",
-                            "label.stringValue = $(\"" + message + "\");",
+                            "label.stringValue = $(\"Let me free.\");",
                             "label.alignment = $.NSTextAlignmentCenter;",
                             "label.font = $.NSFont.fontWithNameSize('Noteworthy-Bold', 32);",
                             "label.textColor = $.NSColor.redColor;",
