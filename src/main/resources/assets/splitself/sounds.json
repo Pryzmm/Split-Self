@@ -18,24 +18,6 @@
       }
     ]
   },
-  "party": {
-    "category": "master",
-    "sounds": [
-      {
-        "name": "splitself:party",
-        "stream": true
-      }
-    ]
-  },
-  "caramelldansen": {
-    "category": "master",
-    "sounds": [
-      {
-        "name": "splitself:caramelldansen",
-        "stream": true
-      }
-    ]
-  },
   "redsky": {
     "category": "master",
     "subtitle": "sound.splitself.redsky.subtitle",

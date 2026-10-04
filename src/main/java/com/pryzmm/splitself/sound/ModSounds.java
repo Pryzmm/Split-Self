@@ -11,8 +11,6 @@ import net.minecraft.util.Identifier;
 
 public class ModSounds {
 
-    public static final SoundEvent PARTY = registerSoundEvent("party");
-    public static final SoundEvent CARAMELLDANSEN = registerSoundEvent("caramelldansen");
     public static final SoundEvent REDSKY = registerSoundEvent("redsky");
     public static final SoundEvent STATIC = registerSoundEvent("static");
     public static final SoundEvent STATIC2 = registerSoundEvent("static2");
