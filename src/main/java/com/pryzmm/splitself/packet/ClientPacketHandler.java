@@ -12,7 +12,6 @@ import com.pryzmm.splitself.events.ScreenOverlay;
 import com.pryzmm.splitself.events.helper.NotepadManager;
 import com.pryzmm.splitself.file.DesktopFileUtil;
 import com.pryzmm.splitself.file.EntityScreenshotCapture;
-import com.pryzmm.splitself.file.ZipFunc;
 import com.pryzmm.splitself.packet.packets.*;
 import com.pryzmm.splitself.screen.KickScreen;
 import com.pryzmm.splitself.screen.MemoryScreen;
@@ -24,10 +23,14 @@ import com.pryzmm.splitself.world.ClientTickScheduler;
 import com.pryzmm.splitself.events.FinaleRenderer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 
 public class  ClientPacketHandler {
 
@@ -61,7 +64,7 @@ public class  ClientPacketHandler {
         ClientPlayNetworking.registerGlobalReceiver(TransitionPacket.ID, (packet, context) -> context.client().execute(() -> {
             try {
                 VideoHandleFactory factory = SplitSelfClient.videoManager.getVideoHandleFactory();
-                VideoHandle idHandle = factory.getVideoHandle(ZipFunc.getVideo("transition").toURI().toURL());
+                VideoHandle idHandle = factory.getVideoHandle(getTransitionFile().toUri().toURL());
                 VideoScreen screen = new VideoScreen(SplitSelfClient.videoPlayer);
                 context.client().getSoundManager().stopAll();
                 context.client().setScreen(screen);
@@ -70,8 +73,8 @@ public class  ClientPacketHandler {
                     ClientTickScheduler.schedule(1, () -> context.client().setScreen(new ServerClosedScreen()));
                 });
                 SplitSelfClient.videoPlayer.getMediaInterface().play(idHandle);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+            } catch (Exception e) {
+                SplitSelf.LOGGER.error("Error in TransitionPacket: {}", e.getMessage());
             }
         }));
 
@@ -153,6 +156,22 @@ public class  ClientPacketHandler {
             }
         }));
 
+    }
+
+    private static Path transitionTmp;
+
+    private static Path getTransitionFile() throws IOException {
+        if (transitionTmp != null && Files.exists(transitionTmp)) return transitionTmp;
+
+        Path src = FabricLoader.getInstance()
+                .getModContainer("splitself").orElseThrow()
+                .findPath("data/splitself/videos/transition.mp4").orElseThrow();
+
+        Path tmp = Files.createTempFile("splitself_transition", ".mp4");
+        Files.copy(src, tmp, StandardCopyOption.REPLACE_EXISTING);
+        tmp.toFile().deleteOnExit();
+        transitionTmp = tmp;
+        return tmp;
     }
 
 }

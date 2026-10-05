@@ -3,8 +3,6 @@ package com.pryzmm.splitself.mixin;
 import com.pryzmm.splitself.SplitSelf;
 import com.pryzmm.splitself.client.SplitSelfClient;
 import com.pryzmm.splitself.data.ClientData;
-import com.pryzmm.splitself.file.ZipFunc;
-import com.pryzmm.splitself.screen.LoadingResourcesScreen;
 import com.pryzmm.splitself.screen.PreMainScreen;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ButtonTextures;
@@ -24,8 +22,7 @@ class TitleScreenMixin {
     @Inject(method = "init", at = @At("TAIL"))
     private void onInit(CallbackInfo ci) {
 
-        if (ZipFunc.needsVideoDownloads()) MinecraftClient.getInstance().setScreen(new LoadingResourcesScreen());
-        else if (!PreMainScreen.viewedScreen) MinecraftClient.getInstance().setScreen(new PreMainScreen());
+        if (!PreMainScreen.viewedScreen) MinecraftClient.getInstance().setScreen(new PreMainScreen());
 
         SplitSelfClient.panorama = ClientData.getPanoramaStage();
 
