@@ -1,10 +1,10 @@
-package com.pryzmm.splitself.client.lang;
+package com.pryzmm.splitself.forge;
 
-import com.pryzmm.splitself.file.CountryLocator;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.resource.Resource;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,8 +96,8 @@ public final class LanguageAdvisor {
     }
 
     // Returns a human-friendly label for a language code
-    public static Text prettyName(String code) {
-        if (code == null || code.isBlank()) return Text.literal("Unknown");
+    public static Component prettyName(String code) {
+        if (code == null || code.isBlank()) return Component.literal("Unknown");
         Locale loc = toLocale(code);
 
         String lang = capitalizeFirst(loc.getDisplayLanguage(loc), loc);
@@ -105,9 +105,9 @@ public final class LanguageAdvisor {
         String country = loc.getCountry();
         if (!country.isEmpty()) {
             String reg = loc.getDisplayCountry(loc);
-            return Text.literal(lang + " (" + reg + ")");
+            return Component.literal(lang + " (" + reg + ")");
         }
-        return Text.literal(lang);
+        return Component.literal(lang);
     }
 
     private static void ensureLoaded(ResourceManager rm) {
@@ -116,10 +116,10 @@ public final class LanguageAdvisor {
             if (LOADED.get()) return;
             SUPPORTED.clear();
             try {
-                Map<Identifier, Resource> found = rm.findResources("lang", id ->
+                Map<ResourceLocation, Resource> found = rm.listResources("lang", id ->
                         "splitself".equals(id.getNamespace()) &&
                                 id.getPath().endsWith(".json"));
-                for (Identifier id : found.keySet()) {
+                for (ResourceLocation id : found.keySet()) {
                     String path = id.getPath(); // lang/pt_br.json
                     int slash = path.lastIndexOf('/');
                     int dot   = path.lastIndexOf('.');
@@ -191,6 +191,7 @@ public final class LanguageAdvisor {
 
     // Gets cached IP country or kicks off a non-blocking async fetch.
     private static Optional<String> getIpCountryCachedOrStart() {
+        if(!ExternalConsent.enabled()||!ExternalConsent.personalAllowed())return Optional.empty();
         String cached = IP_COUNTRY;
         if (cached != null && !cached.isBlank()) {
             return Optional.of(cached);
