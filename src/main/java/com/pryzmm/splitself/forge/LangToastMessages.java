@@ -1,11 +1,11 @@
-package com.pryzmm.splitself.client.lang;
+package com.pryzmm.splitself.forge;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import net.minecraft.resource.Resource;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.InputStreamReader;
@@ -16,14 +16,14 @@ import java.util.*;
 public final class LangToastMessages {
 
     public record Lines(String title, String body) {
-        Text titleText() { return Text.literal(title); }
-        Text bodyText(String prettyLang) { return Text.literal(body.replace("{language}", prettyLang)); }
+        Component titleComponent() { return Component.literal(title); }
+        Component bodyComponent(String prettyLang) { return Component.literal(body.replace("{language}", prettyLang)); }
     }
 
     private static final Gson GSON = new Gson();
 
     // This big boy here is the path for the .json file that we can add how many translations supports we want
-    private static final Identifier FILE = Identifier.of("splitself", "lang_overlay_mgs.json");
+    private static final ResourceLocation FILE = new ResourceLocation("splitself", "lang_overlay_mgs.json");
 
     private static Map<String, Lines> map = Collections.emptyMap();
     private static Map<String, String> aliases = Collections.emptyMap();
@@ -56,7 +56,7 @@ public final class LangToastMessages {
                 return;
             }
 
-            try (var in = new InputStreamReader(res.get().getInputStream(), StandardCharsets.UTF_8)) {
+            try (var in = new InputStreamReader(res.get().open(), StandardCharsets.UTF_8)) {
                 JsonObject root = GSON.fromJson(in, JsonObject.class);
 
                 if (root.has("default")) {
