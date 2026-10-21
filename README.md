@@ -36,6 +36,8 @@ identity, permission defaults and revocation, event rules, transition recovery,
 dialogue, structure NBT, localization and resource/catalog consistency. They do
 not launch Minecraft, a server, desktop applications, or microphone recognition.
 
+Then you need to be sure [Forge](https://files.minecraftforge.net/net/minecraftforge/forge/index_1.20.1.html) version 47.4.23 (recommend) or 47.2.20 are downloaded to Minecraft version 1.20.1
+
 ## Editions and permissions
 
 Both editions have mod ID `splitself`: **install exactly one**.
