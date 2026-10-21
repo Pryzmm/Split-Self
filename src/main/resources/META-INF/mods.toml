@@ -1,0 +1,30 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="CC0-1.0"
+
+[[mods]]
+modId="splitself"
+version="${modVersion}"
+displayName="Split Self ${edition} (Forge port)"
+authors="Pryzmm (original); unofficial port"
+description='''Unofficial Forge 1.20.1 / Java 17 port of Pryzmm's Fabric mod. ${edition} edition; install only one edition.
+
+Changes from the original: Forge registries, networking and configuration; separate SAFE/UNSAFE permission files; local controls for external effects, personal information, microphone and computer interactions; transition recovery and diagnostic commands. Video uses bundled Windows JavaCV/FFmpeg, speech uses Windows System.Speech, menus use native widgets, and world data/structures are adapted to 1.20.1.
+
+Information is available in both editions with the original warning text, Continue and Toggle PII; only personal-data visibility is controlled on this screen. UNSAFE permissions default ON. SAFE omits the executable implementations of DOYOUSEEME, COMMAND, EJECT, FREEDOM and Notepad typing, matching the original SAFE exclusions; other integrations require local permissions.
+
+Includes ports of all 67 event handlers, with the original SAFE exclusions. See CHANGES.md and README.md for details and known limitations. Offline checks do not establish full gameplay parity.'''
+
+[[dependencies.splitself]]
+modId="forge"
+mandatory=true
+versionRange="[47,)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.splitself]]
+modId="minecraft"
+mandatory=true
+versionRange="[1.20.1,1.20.2)"
+ordering="NONE"
+side="BOTH"

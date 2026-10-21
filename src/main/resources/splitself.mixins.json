@@ -1,38 +1,13 @@
 {
   "required": true,
-  "package": "com.pryzmm.splitself.mixin",
-  "compatibilityLevel": "JAVA_21",
-  "client": [
-    "BackgroundRendererAccessor",
-    "BackgroundRenderMixin",
-    "BrokenSkyMixin",
-    "BrokenUIMixin",
-    "ColorOverlayMixin",
-    "DrawContextMixin",
-    "ExperimentalMixin",
-    "GameMenuMixin",
-    "GameRendererMixin",
-    "LanguageEntryMixin",
-    "LevelLoadMixin",
-    "OptionsScreenMixin",
-    "PanoramaMixin",
-    "PauseMixin",
-    "ScreenAccessor",
-    "SignMixin",
-    "SkyRenderMixin",
-    "SoundManagerMixin",
-    "TitleScreenMixin",
-    "WindowMixin"
+  "minVersion": "0.8",
+  "package": "com.pryzmm.splitself.forge.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "CoralWaterMixin",
+    "SignTextMixin"
   ],
   "injectors": {
     "defaultRequire": 1
-  },
-  "mixins": [
-    "CoralMixin",
-    "FallDamageMixin",
-    "MiningMixin",
-    "PlayerChangeWorldMixin",
-    "SleepMixin",
-    "WolfMixin"
-  ]
+  }
 }
