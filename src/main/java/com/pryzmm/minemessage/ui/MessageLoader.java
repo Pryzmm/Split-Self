@@ -1,7 +1,7 @@
 package com.pryzmm.minemessage.ui;
 
 import com.pryzmm.minemessage.MineMessage;
-import net.minecraft.text.Text;
+import com.pryzmm.minemessage.Messages;
 import javax.swing.*;
 import java.awt.*;
 import java.time.LocalDate;
@@ -40,7 +40,7 @@ public class MessageLoader {
         if (isConnecting) return;
         new Thread(() -> {
             try {
-                JLabel label = new JLabel(Text.translatable("game.splitself.minemeassage.connecting").getString());
+                JLabel label = new JLabel(Messages.translatable("game.splitself.minemeassage.connecting").getString());
                 label.setForeground(Color.WHITE);
                 label.setFont(new Font("Arial", Font.BOLD, 30));
 
@@ -65,7 +65,7 @@ public class MessageLoader {
                         MineMessage.messageListPanel.add(message);
                     }
                 } else {
-                    label = new JLabel(Text.translatable("game.splitself.minemeassage.connectfail").getString());
+                    label = new JLabel(Messages.translatable("game.splitself.minemeassage.connectfail").getString());
                     label.setForeground(Color.WHITE);
                     label.setFont(new Font("Arial", Font.BOLD, 30));
                     MineMessage.messageListPanel.add(label);

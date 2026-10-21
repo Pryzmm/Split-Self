@@ -1,6 +1,6 @@
 package com.pryzmm.minemessage.ui;
 
-import net.minecraft.text.Text;
+import com.pryzmm.minemessage.Messages;
 import javax.swing.*;
 import java.awt.*;
 import java.time.LocalDate;
@@ -20,7 +20,7 @@ public class MessageObject extends JComponent {
     }
 
     public MessageObject(String content, boolean sentByUser, LocalDate timestamp) {
-        this.content = Text.translatable(content).getString();
+        this.content = Messages.translatable(content).getString();
         this.sentByUser = sentByUser;
         this.timestamp = timestamp;
     }
