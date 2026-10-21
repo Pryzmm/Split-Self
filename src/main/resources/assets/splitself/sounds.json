@@ -154,11 +154,11 @@
   "whisper": {
     "category": "master",
     "sounds": [
-      {"name": "splitself:whisper1"},
-      {"name": "splitself:whisper2"},
-      {"name": "splitself:whisper3"},
-      {"name": "splitself:whisper4"},
-      {"name": "splitself:whisper5"}
+      {"name": "splitself:whisper_loud1"},
+      {"name": "splitself:whisper_loud2"},
+      {"name": "splitself:whisper_loud3"},
+      {"name": "splitself:whisper_loud4"},
+      {"name": "splitself:whisper_loud5"}
     ]
   },
   "glitch": {

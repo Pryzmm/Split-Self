@@ -1,13 +1,64 @@
 {
-  "variants": {
-    "facing=north,activated=false": { "model": "splitself:block/computer" },
-    "facing=south,activated=false": { "model": "splitself:block/computer", "y": 180 },
-    "facing=east,activated=false": { "model": "splitself:block/computer",  "y": 90 },
-    "facing=west,activated=false": { "model": "splitself:block/computer",  "y": 270 },
-    "facing=north,activated=true": { "model": "splitself:block/computer_sent" },
-    "facing=south,activated=true": { "model": "splitself:block/computer_sent", "y": 180 },
-    "facing=east,activated=true": { "model": "splitself:block/computer_sent",  "y": 90 },
-    "facing=west,activated=true": { "model": "splitself:block/computer_sent",  "y": 270 }
-  }
-
+    "variants":  {
+                     "facing=north,activated=false,activating=false":  {
+                                                                           "model":  "splitself:block/computer"
+                                                                       },
+                     "facing=north,activated=false,activating=true":  {
+                                                                          "model":  "splitself:block/computer"
+                                                                      },
+                     "facing=north,activated=true,activating=false":  {
+                                                                          "model":  "splitself:block/computer_sent"
+                                                                      },
+                     "facing=north,activated=true,activating=true":  {
+                                                                         "model":  "splitself:block/computer_sent"
+                                                                     },
+                     "facing=south,activated=false,activating=false":  {
+                                                                           "model":  "splitself:block/computer",
+                                                                           "y":  180
+                                                                       },
+                     "facing=south,activated=false,activating=true":  {
+                                                                          "model":  "splitself:block/computer",
+                                                                          "y":  180
+                                                                      },
+                     "facing=south,activated=true,activating=false":  {
+                                                                          "model":  "splitself:block/computer_sent",
+                                                                          "y":  180
+                                                                      },
+                     "facing=south,activated=true,activating=true":  {
+                                                                         "model":  "splitself:block/computer_sent",
+                                                                         "y":  180
+                                                                     },
+                     "facing=east,activated=false,activating=false":  {
+                                                                          "model":  "splitself:block/computer",
+                                                                          "y":  90
+                                                                      },
+                     "facing=east,activated=false,activating=true":  {
+                                                                         "model":  "splitself:block/computer",
+                                                                         "y":  90
+                                                                     },
+                     "facing=east,activated=true,activating=false":  {
+                                                                         "model":  "splitself:block/computer_sent",
+                                                                         "y":  90
+                                                                     },
+                     "facing=east,activated=true,activating=true":  {
+                                                                        "model":  "splitself:block/computer_sent",
+                                                                        "y":  90
+                                                                    },
+                     "facing=west,activated=false,activating=false":  {
+                                                                          "model":  "splitself:block/computer",
+                                                                          "y":  270
+                                                                      },
+                     "facing=west,activated=false,activating=true":  {
+                                                                         "model":  "splitself:block/computer",
+                                                                         "y":  270
+                                                                     },
+                     "facing=west,activated=true,activating=false":  {
+                                                                         "model":  "splitself:block/computer_sent",
+                                                                         "y":  270
+                                                                     },
+                     "facing=west,activated=true,activating=true":  {
+                                                                        "model":  "splitself:block/computer_sent",
+                                                                        "y":  270
+                                                                    }
+                 }
 }
