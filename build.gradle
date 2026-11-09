@@ -61,10 +61,12 @@ def runtimeLibraries = tasks.register('prepareRuntimeLibraries', Sync) {
         !(entry.path.startsWith('META-INF/maven/org.bytedeco/') && entry.path.endsWith('/pom.properties')) }
 }
 tasks.named('processResources') {
-    inputs.property('runtimeCleanupVersion', 1)
+    inputs.property('runtimeCleanupVersion', 2)
     // Copy tasks retain removed input files: discard obsolete flattened metadata.
     doFirst {
-        ['logback.xml', 'module-info.class', 'fabric.mod.json'].each { name ->
+        ['logback.xml', 'module-info.class', 'fabric.mod.json',
+         'assets/splitself/textures/entity/ui_button/cancel.png',
+         'assets/splitself/textures/entity/ui_button/delete.png'].each { name ->
             delete new File(destinationDir, name)
         }
     }
@@ -259,3 +261,21 @@ tasks.register('runtimeDependenciesProbe', JavaExec) {
     mainClass = 'com.pryzmm.splitself.forge.RuntimeDependenciesProbe'
 }
 tasks.named('probe') { dependsOn 'runtimeDependenciesProbe' }
+
+// Hashes pinned to the original Fabric tree; no private checkout is needed.
+tasks.register('verifyOriginalTextures') {
+    inputs.file('src/test/resources/original-textures.json')
+    inputs.files(fileTree('src/main/resources/assets') { include '**/textures/**' },
+        fileTree('src/unsafe/resources/assets') { include '**/textures/**' })
+    doLast {
+        def originals = new groovy.json.JsonSlurper().parse(file('src/test/resources/original-textures.json'))
+        originals.each { path, expected ->
+            def texture = file(path)
+            if (!texture.exists() || java.security.MessageDigest.getInstance('SHA-256')
+                    .digest(texture.bytes).encodeHex().toString() != expected)
+                throw new GradleException('Original texture changed or missing: ' + path)
+        }
+        logger.lifecycle('Original texture audit PASS: ' + originals.size() + ' unchanged files')
+    }
+}
+tasks.named('check') { dependsOn 'verifyOriginalTextures' }
