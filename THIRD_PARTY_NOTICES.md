@@ -13,7 +13,7 @@ and asset credits are retained where present.
 ## Discord RPC 1.0.3
 
 `libs/discord-rpc-1.0.3.jar` is the library used by the original mod, preserved
-unchanged. Only `dev/firstdark/rpc/**` is embedded in the mod JAR; Fabric metadata
+unchanged. The `dev/firstdark/rpc/**` classes are embedded in both mod JARs and the dev runtime; Fabric metadata
 and logging configuration are omitted.
 
 Copyright (c) 2024 HypherionSA and Contributors. MIT license, copied verbatim to
@@ -23,7 +23,7 @@ Source: https://github.com/firstdarkdev/discord-rpc
 
 ## Video runtime
 
-The all-in-one JAR embeds JavaCV 1.5.10, JavaCPP 1.5.10, FFmpeg JavaCPP presets
+Both JARs and the dev runtime embed JavaCV 1.5.10, JavaCPP 1.5.10, FFmpeg JavaCPP presets
 6.1.1-1.5.10, and the Windows x86-64 JavaCPP/FFmpeg native artifacts from Maven
 Central. Their Java classes and native files are copied unchanged. Module
 descriptors and dependency META-INF entries are excluded to avoid JavaCV's
