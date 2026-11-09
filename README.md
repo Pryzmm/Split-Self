@@ -28,8 +28,16 @@ Forge, Maven Central and Minecraft repositories. Default edition: SAFE.
 
 `build` runs the isolated probes through `check` and produces edition-named JARs
 in `build/libs/`. Install the **`-all.jar`** for your chosen edition; it includes
-the Discord RPC and Windows video runtime dependencies. The smaller JAR is not
-a standalone distribution. Build output is ignored by Git.
+the Discord RPC and Windows video runtime dependencies. Both JARs contain the same flattened RPC and FFmpeg runtime. Build output is ignored by Git.
+
+For IntelliJ, import this directory as a Gradle project using JDK 17, then run
+`./gradlew genIntellijRuns -PsplitselfEdition=SAFE` and refresh Gradle before
+selecting the generated `runClient` configuration. Use Gradle build/run delegation
+so `prepareRuntimeLibraries` runs before launch. Regenerate configurations after
+switching editions. `./gradlew runClient -PsplitselfEdition=SAFE` uses the same
+runtime without IntelliJ. The dependency probe loads RPC and the native FFmpeg
+libraries without opening Minecraft or connecting to Discord:
+`./gradlew runtimeDependenciesProbe -PsplitselfEdition=SAFE`.
 
 Run `./gradlew probe -PsplitselfEdition=SAFE` for probes alone. They check edition
 identity, permission defaults and revocation, event rules, transition recovery,
