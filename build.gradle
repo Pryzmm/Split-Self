@@ -36,26 +36,42 @@ minecraft {
 repositories { mavenCentral() }
 dependencies {
     minecraft 'net.minecraftforge:forge:1.20.1-47.2.20'
-    implementation files('libs/discord-rpc-1.0.3.jar')
-    minecraftLibrary('org.bytedeco:javacv:1.5.10') { transitive = false }
-    minecraftLibrary('org.bytedeco:javacpp:1.5.10') { transitive = false }
-    minecraftLibrary('org.bytedeco:ffmpeg:6.1.1-1.5.10') { transitive = false }
-    minecraftLibrary 'org.bytedeco:javacpp:1.5.10:windows-x86_64'
-    minecraftLibrary 'org.bytedeco:ffmpeg:6.1.1-1.5.10:windows-x86_64'
-    // JavaCV's JPMS descriptor requires every optional camera backend. Bundle the
-    // FFmpeg runtime classes in the mod module instead of resolving that descriptor.
-    nativeVideo('org.bytedeco:javacv:1.5.10') { transitive = false }
-    nativeVideo('org.bytedeco:javacpp:1.5.10') { transitive = false }
-    nativeVideo('org.bytedeco:ffmpeg:6.1.1-1.5.10') { transitive = false }
-    nativeVideo('org.bytedeco:javacpp:1.5.10:windows-x86_64') { transitive = false }
-    nativeVideo('org.bytedeco:ffmpeg:6.1.1-1.5.10:windows-x86_64') { transitive = false }
-}
-tasks.named('jarJar') {
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    from({ project.configurations.nativeVideo.collect { zipTree(it) } }) {
-        exclude 'META-INF/**', 'module-info.class'
+    // These libraries become part of the mod output in BOTH dev runs and releases.
+    // Do not place JavaCV's module descriptor on Forge's module path: it requires
+    // optional camera backends which the FFmpeg-only player never uses.
+    compileOnly files('libs/discord-rpc-1.0.3.jar')
+    nativeVideo files('libs/discord-rpc-1.0.3.jar')
+    ['org.bytedeco:javacv:1.5.10', 'org.bytedeco:javacpp:1.5.10',
+     'org.bytedeco:ffmpeg:6.1.1-1.5.10',
+     'org.bytedeco:javacpp:1.5.10:windows-x86_64',
+     'org.bytedeco:ffmpeg:6.1.1-1.5.10:windows-x86_64'].each { coordinate ->
+        compileOnly(coordinate) { transitive = false }
+        nativeVideo(coordinate) { transitive = false }
     }
 }
+// ForgeGradle's MOD_CLASSES includes processed resources in both Gradle and
+// IntelliJ runs. Merge runtime classes there so Forge loads them with the mod.
+def runtimeLibraries = tasks.register('prepareRuntimeLibraries', Sync) {
+    inputs.property('runtimeLayoutVersion', 2)
+    from({ configurations.nativeVideo.collect { zipTree(it) } })
+    into layout.buildDirectory.dir('generated-runtime')
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    exclude 'module-info.class', 'fabric.mod.json', 'logback.xml'
+    exclude { entry -> !entry.directory && entry.path.startsWith('META-INF/') &&
+        !(entry.path.startsWith('META-INF/maven/org.bytedeco/') && entry.path.endsWith('/pom.properties')) }
+}
+tasks.named('processResources') {
+    inputs.property('runtimeCleanupVersion', 1)
+    // Copy tasks retain removed input files: discard obsolete flattened metadata.
+    doFirst {
+        ['logback.xml', 'module-info.class', 'fabric.mod.json'].each { name ->
+            delete new File(destinationDir, name)
+        }
+    }
+    dependsOn runtimeLibraries
+    from(runtimeLibraries)
+}
+
 tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8' }
 jar.finalizedBy('reobfJar')
 
@@ -110,8 +126,6 @@ tasks.register('batchEventsProbe', JavaExec) {
 jar { manifest { attributes(["MixinConfigs": "splitself.client.mixins.json,splitself.mixins.json"]) } }
 tasks.named("jarJar") { manifest { attributes(["MixinConfigs": "splitself.client.mixins.json,splitself.mixins.json"]) } }
 
-// Same Discord IPC library embedded by the pinned original; omit Fabric loader metadata/logging config.
-['jar','jarJar'].each { name -> tasks.named(name) { from(zipTree('libs/discord-rpc-1.0.3.jar')) { include 'dev/firstdark/rpc/**' } } }
 tasks.register('remainingEventsProbe', JavaExec) { dependsOn tasks.named('transitionTestClasses'); classpath=sourceSets.transitionTest.runtimeClasspath; mainClass='com.pryzmm.splitself.forge.RemainingEventsProbe'; args projectDir.absolutePath }
 
 // Child JVM payload is independent of Forge's union filesystem and of Minecraft libraries.
@@ -237,3 +251,11 @@ tasks.register('verifyEditionArchive') {
     }
 }
 tasks.named('check') { dependsOn 'verifyEditionArchive' }
+
+// Deliberately omit compileClasspath: only the actual dev runtime may satisfy these loads.
+tasks.register('runtimeDependenciesProbe', JavaExec) {
+    dependsOn tasks.named('transitionTestClasses'), tasks.named('prepareRuntimeLibraries')
+    classpath = sourceSets.transitionTest.runtimeClasspath
+    mainClass = 'com.pryzmm.splitself.forge.RuntimeDependenciesProbe'
+}
+tasks.named('probe') { dependsOn 'runtimeDependenciesProbe' }
