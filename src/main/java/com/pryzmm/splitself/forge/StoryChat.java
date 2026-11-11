@@ -47,8 +47,12 @@ final class StoryChat {
         String response = responseKey(language, player.getGameProfile().getName(), message);
         if (response == null) return;
         String prefix = forgotten ? "<████████████> " : "<" + player.getGameProfile().getName() + "> ";
-        player.sendSystemMessage(Component.literal(prefix).append(Component.translatable(
-                "chat.splitself." + (forgotten ? "forgottenResponse." : "response.") + response)));
+        if (forgotten && response.equals("hello")) {
+            StoryNetwork.clientEvent(player, "FORGOTTEN_HELLO");
+        } else {
+            player.sendSystemMessage(Component.literal(prefix).append(Component.translatable(
+                    "chat.splitself." + (forgotten ? "forgottenResponse." : "response.") + response)));
+        }
         // Original broadcasts the reply and grants each recipient a disc for this response.
         // No client packet can request an arbitrary reward in this adaptation.
         if (forgotten && response.equals("freedom")) {
