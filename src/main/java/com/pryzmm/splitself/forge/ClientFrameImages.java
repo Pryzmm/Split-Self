@@ -26,28 +26,26 @@ public final class ClientFrameImages {
     private static int permissions(){return (ExternalConsent.enabled()?1:0)|(ExternalConsent.computerAllowed()?2:0)|(ExternalConsent.personalAllowed()?4:0);}
     private static void syncPermissions(){int bits=permissions();if(bits!=lastPermissions){clear();lastPermissions=bits;}}
     private ClientFrameImages(){}
-    private static boolean allowed(){return ExternalConsent.enabled();}
     static ResourceLocation texture(ImageFrameBlockEntity frame){
         syncPermissions();
-        if(!allowed())return null;
         KNOWN.add(frame);
         if(frame.imageId()==null||!TEXTURES.containsKey(frame.imageId())){if(pending==null)loadNext(frame);return null;}
         return TEXTURES.get(frame.imageId());
     }
     static void loadNext(ImageFrameBlockEntity frame){
-        if(!allowed()||pending!=null)return;
+        if(pending!=null)return;
         pending=frame;var client=Minecraft.getInstance();var level=client.level;int token=generation;
         boolean pictures=ExternalConsent.personalAllowed()&&FrameImageFiles.preferPictures(completed,java.util.concurrent.ThreadLocalRandom.current().nextBoolean());
         RemainingClientEvents.worker(()->{
             try{
-                if(token!=generation||!allowed()||permissions()!=lastPermissions)return;
+                if(token!=generation||permissions()!=lastPermissions)return;
                 Set<Path> roots=new LinkedHashSet<>();roots.add(client.gameDirectory.toPath().resolve("screenshots"));
                 String appdata=System.getenv("APPDATA");if(ExternalConsent.computerAllowed()&&appdata!=null)roots.add(Path.of(appdata,".minecraft","screenshots"));
                 List<Path> files=new ArrayList<>();
                 if(pictures)files.addAll(FrameImageFiles.images(FrameImageFiles.pictureRoots(),true));
                 files.addAll(FrameImageFiles.images(roots,false));
                 for(Path file:files){
-                    if(token!=generation||!allowed()||permissions()!=lastPermissions)return;
+                    if(token!=generation||permissions()!=lastPermissions)return;
                     try{
                         BufferedImage image=FrameImageFiles.decode(file);
                         client.execute(()->{try{if(valid(frame,level,token))assign(frame,image);}finally{finish(frame,token);}});return;
@@ -71,7 +69,7 @@ public final class ClientFrameImages {
     private static int swap(int color){return (color&0xff00ff00)|((color&255)<<16)|((color>>>16)&255);}
     private static void finish(ImageFrameBlockEntity frame,int token){if(token==generation&&pending==frame)pending=null;}
     private static boolean valid(ImageFrameBlockEntity frame,net.minecraft.client.multiplayer.ClientLevel level,int token){
-        return token==generation&&Minecraft.getInstance().level==level&&!frame.isRemoved()&&allowed()&&permissions()==lastPermissions;
+        return token==generation&&Minecraft.getInstance().level==level&&!frame.isRemoved()&&permissions()==lastPermissions;
     }
     private static void assign(ImageFrameBlockEntity frame,BufferedImage source){
         double scale=Math.min(1,2048.0/Math.max(source.getWidth(),source.getHeight()));
