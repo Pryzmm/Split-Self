@@ -14,13 +14,14 @@ final class ClientSettingsScreen extends Screen{
     private static void flatten(UnmodifiableConfig config,String prefix,List<Setting> entries){for(var entry:config.valueMap().entrySet()){String path=prefix+entry.getKey();if(entry.getValue() instanceof ForgeConfigSpec.ConfigValue<?> value)entries.add(new Setting(path,value));else if(entry.getValue() instanceof UnmodifiableConfig child)flatten(child,path+".",entries);}}
     @Override protected void init(){
         int x=width/2-155;
-        String[] groups={"events","eventWeights","eventStages","oneTimeEvents"};for(int i=0;i<groups.length;i++){String id=groups[i];addRenderableWidget(Button.builder(Component.literal(id),b->{group=id;page=0;rebuildWidgets();}).bounds(x+i*78,35,76,20).build());}
+        String[] groups={"events","eventWeights","eventStages","oneTimeEvents"};for(int i=0;i<groups.length;i++){String id=groups[i];addRenderableWidget(Button.builder(Component.translatable("config.splitself.tab."+id),b->{group=id;page=0;rebuildWidgets();}).bounds(x+i*78,35,76,20).build());}
         List<Setting> all=new ArrayList<>();flatten(SplitSelfConfig.SPEC.getValues(),"",all);all.removeIf(setting->!setting.path.startsWith(group+"."));
         int rows=Math.max(1,(height-115)/25),pages=Math.max(1,(all.size()+rows-1)/rows);page=Math.min(page,pages-1);
         boolean local=minecraft.getConnection()==null||minecraft.getSingleplayerServer()!=null;
         for(int i=page*rows;i<Math.min(all.size(),(page+1)*rows);i++){Setting setting=all.get(i);String key=setting.path.substring(setting.path.indexOf('.')+1);Button button=Button.builder(Component.literal(key+": "+setting.value.get()),b->minecraft.setScreen(new ValueScreen(this,setting))).bounds(x,65+(i-page*rows)*25,310,20).build();button.active=local;addRenderableWidget(button);}
         addRenderableWidget(Button.builder(Component.literal("<"),b->{page=Math.max(0,page-1);rebuildWidgets();}).bounds(x,height-40,40,20).build());
         addRenderableWidget(Button.builder(Component.literal(">"),b->{page=Math.min(pages-1,page+1);rebuildWidgets();}).bounds(x+45,height-40,40,20).build());
+        addRenderableWidget(Button.builder(Component.translatable("config.splitself.local_permissions"),b->minecraft.setScreen(new LocalPermissionsScreen(this))).bounds(x+90,height-40,115,20).build());
         addRenderableWidget(Button.builder(Component.translatable("gui.done"),b->{SplitSelfConfig.SPEC.save();onClose();}).bounds(x+210,height-40,100,20).build());
     }
     @Override public void onClose(){minecraft.setScreen(parent);}

@@ -440,5 +440,15 @@
     "warning.splitself.computer_control":  "Computer interactions: %s",
     "warning.splitself.computer_description":  "Without PC interactions: minigame and game screenshots; no weather or desktop events.",
     "warning.splitself.personal_control": "Personal information: %s",
-    "warning.splitself.microphone_control": "Microphone: %s"
+    "warning.splitself.microphone_control": "Microphone: %s",
+    "config.splitself.local_permissions": "Local permissions",
+    "config.splitself.permissions_help": "Desktop actions require External effects and Computer interactions. Personal information and Microphone require their own switches too. SAFE excludes the original unsafe actions.",
+    "config.splitself.permission.externalEffects": "External effects",
+    "config.splitself.permission.computerInteractions": "Computer interactions",
+    "config.splitself.permission.personalInformation": "Personal information",
+    "config.splitself.permission.microphone": "Microphone",
+    "config.splitself.tab.events": "General",
+    "config.splitself.tab.eventWeights": "Weights",
+    "config.splitself.tab.eventStages": "Stages",
+    "config.splitself.tab.oneTimeEvents": "One time"
 }
