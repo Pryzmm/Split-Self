@@ -6,11 +6,10 @@ import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-/** Native 1.20.1 editor for every global/weight/stage/one-time config entry. */
 final class ClientSettingsScreen extends Screen{
     private record Setting(String path,ForgeConfigSpec.ConfigValue<?> value){}
     private final Screen parent;private int page;private String group="events";
-    private ClientSettingsScreen(Screen parent){super(Component.translatable("config.splitself.title"));this.parent=parent;}
+    ClientSettingsScreen(Screen parent){super(Component.translatable("config.splitself.title"));this.parent=parent;}
     static void open(Screen parent){net.minecraft.client.Minecraft.getInstance().setScreen(new ClientSettingsScreen(parent));}
     private static void flatten(UnmodifiableConfig config,String prefix,List<Setting> entries){for(var entry:config.valueMap().entrySet()){String path=prefix+entry.getKey();if(entry.getValue() instanceof ForgeConfigSpec.ConfigValue<?> value)entries.add(new Setting(path,value));else if(entry.getValue() instanceof UnmodifiableConfig child)flatten(child,path+".",entries);}}
     @Override protected void init(){
