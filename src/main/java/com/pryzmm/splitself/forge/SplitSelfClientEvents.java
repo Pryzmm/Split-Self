@@ -10,6 +10,14 @@ public final class SplitSelfClientEvents {
     private SplitSelfClientEvents() {}
 
     @SubscribeEvent
+    public static void setup(net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent event) {
+        net.minecraftforge.fml.ModLoadingContext.get().registerExtensionPoint(
+                net.minecraftforge.client.ConfigScreenHandler.ConfigScreenFactory.class,
+                () -> new net.minecraftforge.client.ConfigScreenHandler.ConfigScreenFactory(
+                        (minecraft, parent) -> new ClientSettingsScreen(parent)));
+    }
+
+    @SubscribeEvent
     public static void registerLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
         event.registerLayerDefinition(UIButtonRenderer.LAYER,UIButtonRenderer::layer);
         event.registerLayerDefinition(TheForgottenModel.LAYER, TheForgottenModel::layer);
