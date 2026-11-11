@@ -265,6 +265,17 @@ public final class ClientTransitionEffects {
             textureId = null;
         }
 
+        @Override public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+            if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE) {
+                if (Minecraft.getInstance().screen == this && !closed) {
+                    if (preview) Minecraft.getInstance().setScreen(null);
+                    else finishVideo(id);
+                }
+                return true;
+            }
+            return super.keyPressed(keyCode, scanCode, modifiers);
+        }
+
         @Override public boolean isPauseScreen() { return false; }
         @Override public boolean shouldCloseOnEsc() { return false; }
     }
