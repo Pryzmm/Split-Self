@@ -23,6 +23,7 @@ minecraft {
     runs {
         client {
             workingDirectory project.file('run')
+            args '--mixin', 'splitself.client.mixins.json', '--mixin', 'splitself.mixins.json'
             mods { splitself { source sourceSets.main } }
         }
         server {

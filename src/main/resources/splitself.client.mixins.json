@@ -10,7 +10,8 @@
     "FinaleGuiMixin",
     "FinaleHotbarMixin",
     "FinaleCloudMixin",
-    "LanguageSupportMixin"
+    "LanguageSupportMixin",
+    "PanoramaMixin"
   ],
   "injectors": {
     "defaultRequire": 1
