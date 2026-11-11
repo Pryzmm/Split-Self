@@ -29,10 +29,18 @@ public final class ClientEventEffects {
     private static final int[] DISCONNECT_TICKS = {0, 2, 36, 38, 116, 118};
     private ClientEventEffects() {}
 
+    static Component forgottenGreeting() {
+        return Component.translatable("chat.splitself.forgottenResponse.hello", System.getProperty("user.name"));
+    }
+
     static void start(String name) {
         if (!EditionPolicy.eventAllowed(name)) return;
         var client = Minecraft.getInstance();
         if (client.player == null || STARTED.containsKey(name)) return;
+        if (name.equals("FORGOTTEN_HELLO")) {
+            client.player.sendSystemMessage(Component.literal("<████████████> " + forgottenGreeting().getString()));
+            return;
+        }
         if(name.equals("DEBUG_FULLSCREEN")){client.player.sendSystemMessage(Component.literal(client.getWindow().isFullscreen()?"In fullscreen":"NOT in fullscreen"));return;}
         if(name.equals("DEBUG_INVERT")){ClientBlendEffects.toggle();return;}
         if(name.equals("DEBUG_VIDEO")){ClientTransitionEffects.preview();return;}
