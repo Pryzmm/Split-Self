@@ -28,6 +28,11 @@ public final class ExternalClientEvents {
 
     @SubscribeEvent public static void commands(RegisterClientCommandsEvent event) {
         event.getDispatcher().register(Commands.literal("splitselfclient")
+                .then(Commands.literal("settings").executes(context -> {
+                    Minecraft client = Minecraft.getInstance();
+                    client.execute(() -> ClientSettingsScreen.open(null));
+                    return 1;
+                }))
                 .then(Commands.literal("external")
                         .executes(context -> {
                             report("External effects: " + ExternalConsent.enabled()); return 1;

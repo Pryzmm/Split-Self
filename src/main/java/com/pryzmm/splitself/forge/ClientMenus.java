@@ -16,6 +16,10 @@ public final class ClientMenus{
     private ClientMenus(){}
     @SubscribeEvent public static void init(ScreenEvent.Init.Post event){
         var screen=event.getScreen();var client=Minecraft.getInstance();
+        if (screen instanceof PauseScreen) {
+            event.addListener(Button.builder(Component.translatable("config.splitself.title"),
+                    button -> ClientSettingsScreen.open(screen)).bounds(Math.max(0,screen.width-110),6,104,20).build());
+        }
         if(!(screen instanceof TitleScreen title))return;
         for(var child:screen.children())if(child instanceof Button button){String text=button.getMessage().getString();if(text.equals(Component.translatable("menu.multiplayer").getString())||text.equals(Component.translatable("menu.online").getString())){button.active=false;button.setTooltip(Tooltip.create(Component.translatable(text.equals(Component.translatable("menu.online").getString())?"misc.splitself.realms":"misc.splitself.multiplayer")));}}
         OPEN.put(title,System.nanoTime());BANNERS.remove(title);addBanner(event,title);
