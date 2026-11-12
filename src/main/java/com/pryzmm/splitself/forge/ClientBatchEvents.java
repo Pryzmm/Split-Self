@@ -32,6 +32,11 @@ public final class ClientBatchEvents {
     private ClientBatchEvents() {}
     static boolean captureBusy() { return capturing; }
     public static boolean cancelPause() { return PAUSE.cancel(ClientActivity.active() || freeze!=null || frozen!=null || RemainingClientEvents.windowActive() || RemainingClientEvents.emergencyActive()); }
+    @SubscribeEvent public static void opening(ScreenEvent.Opening event) {
+        if (event.getNewScreen() instanceof net.minecraft.client.gui.screens.PauseScreen && cancelPause()) {
+            event.setCanceled(true);
+        }
+    }
     static void start(String event) {
         var client=Minecraft.getInstance();
         if(client.player==null)return;
