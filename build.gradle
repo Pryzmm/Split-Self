@@ -186,9 +186,8 @@ tasks.named('check') { dependsOn 'probe' }
     }
 }
 
-['jar', 'jarJar'].each { taskName ->
-    tasks.named(taskName) { destinationDirectory = layout.projectDirectory.dir('build/libs') }
-}
+tasks.named('jar') { destinationDirectory = layout.buildDirectory.dir('intermediates') }
+tasks.named('jarJar') { destinationDirectory = layout.projectDirectory.dir('build/libs') }
 if (splitselfEdition == 'UNSAFE') {
     sourceSets.transitionTest.java.srcDir('src/unsafeTest/java')
     tasks.register('unsafeDesktopProbe', JavaExec) {
