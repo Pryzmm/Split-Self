@@ -13,9 +13,10 @@ public final class UnsafeDesktopProbe {
         check(UnsafeDriveRules.eject("linux","/dev/sr0").equals(List.of("eject","/dev/sr0")),"Linux args separate");
         check(UnsafeDriveRules.eject("mac os x","1").equals(List.of("drutil","-drive","1","tray","eject")),"Mac args separate");
 
-        var process=CommandEventScript.process("test user");
-        check(process.command().contains("-EncodedCommand"),"Fixed command script still packaged");
-        check(process.environment().get("SPLITSELF_COMMAND_USER").equals("test user"),"User is data");
+        check(CommandEventScript.commands("Windows 11").equals(List.of(List.of("cmd.exe","/c","start"))),"Original empty Windows terminal, no text or script");
+        check(CommandEventScript.commands("Mac OS X").equals(List.of(List.of("open","-a","terminal"))),"Original macOS terminal");
+        check(CommandEventScript.commands("Linux").size()==9,"Original Linux terminal fallback list");
+        check(CommandEventScript.commands("unknown").isEmpty(),"Unsupported OS has no terminal command");
         check(EditionDesktopIntegrations.typingAvailable(),"UNSAFE implementation selected");
         System.out.println("UnsafeDesktopProbe PASS: drive rules and command construction; no process started");
     }

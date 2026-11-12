@@ -1,23 +1,28 @@
 package com.pryzmm.splitself.forge;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 
 /** Fixed script; personal text is passed as data, never interpolated into shell code. */
 final class CommandEventScript {
     private CommandEventScript() {}
 
-    static ProcessBuilder process(String displayedUser) throws IOException {
-        String script;
-        try (var input = CommandEventScript.class.getResourceAsStream("/assets/splitself/command-event.ps1")) {
-            if (input == null) throw new IOException("COMMAND script missing");
-            script = new String(input.readAllBytes(), StandardCharsets.UTF_8);
+    static java.util.List<java.util.List<String>> commands(String os) {
+        String name = os.toLowerCase(java.util.Locale.ROOT);
+        if (name.startsWith("win")) return java.util.List.of(java.util.List.of("cmd.exe", "/c", "start"));
+        if (name.contains("mac")) return java.util.List.of(java.util.List.of("open", "-a", "terminal"));
+        if (name.contains("nux") || name.contains("nix")) return java.util.stream.Stream.of(
+                "x-terminal-emulator", "gnome-terminal", "konsole", "xfce4-terminal", "xterm",
+                "lxterminal", "mate-terminal", "alacritty", "tilix").map(java.util.List::of).toList();
+        return java.util.List.of();
+    }
+
+    static void open() throws IOException {
+        IOException failure = new IOException("No supported terminal found");
+        for (var command : commands(System.getProperty("os.name"))) {
+            if (!ExternalConsent.computerAllowed()) return;
+            try { new ProcessBuilder(command).start(); return; }
+            catch (IOException error) { failure = error; }
         }
-        String encoded = Base64.getEncoder().encodeToString(script.getBytes(StandardCharsets.UTF_16LE));
-        ProcessBuilder process = new ProcessBuilder("cmd.exe", "/d", "/c", "start",
-                "cmd.exe", "/d", "/k", "powershell.exe", "-NoLogo", "-NoProfile", "-EncodedCommand", encoded);
-        process.environment().put("SPLITSELF_COMMAND_USER", displayedUser);
-        return process;
+        throw failure;
     }
 }
