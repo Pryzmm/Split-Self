@@ -107,6 +107,7 @@ public final class ClientTransitionEffects {
         private int frameWidth;
         private int frameHeight;
         private boolean uploaded;
+        private long skipConfirmation = -3_000_000_000L;
 
         private final java.util.UUID id;
         private final boolean preview;
@@ -230,6 +231,7 @@ public final class ClientTransitionEffects {
                         frameWidth, frameHeight, frameWidth, frameHeight);
                 RenderSystem.disableBlend();
             }
+            if (System.nanoTime() - skipConfirmation < 3_000_000_000L) graphics.drawCenteredString(font, Component.translatable("screen.splitself.transition.confirm_skip"), width / 2, height - 30, 0xFFFFFF);
         }
 
         private void upload(BufferedImage frame) {
@@ -268,6 +270,7 @@ public final class ClientTransitionEffects {
         @Override public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
             if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE) {
                 if (Minecraft.getInstance().screen == this && !closed) {
+                    if (System.nanoTime() - skipConfirmation >= 3_000_000_000L) { skipConfirmation = System.nanoTime(); return true; }
                     if (preview) Minecraft.getInstance().setScreen(null);
                     else finishVideo(id);
                 }

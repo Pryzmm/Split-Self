@@ -450,5 +450,6 @@
     "config.splitself.tab.events": "General",
     "config.splitself.tab.eventWeights": "Weights",
     "config.splitself.tab.eventStages": "Stages",
-    "config.splitself.tab.oneTimeEvents": "One time"
+    "config.splitself.tab.oneTimeEvents": "One time",
+    "screen.splitself.transition.confirm_skip": "Press Escape again to skip"
 }
