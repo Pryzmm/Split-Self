@@ -12,7 +12,11 @@ final class SplitSelfCommands {
     private SplitSelfCommands() {}
 
     static void register(RegisterCommandsEvent event) {
-        event.getDispatcher().register(Commands.literal("splitself")
+        registerCommands(event.getDispatcher());
+    }
+
+    static void registerCommands(com.mojang.brigadier.CommandDispatcher<net.minecraft.commands.CommandSourceStack> dispatcher) {
+        dispatcher.register(Commands.literal("splitself")
                 .executes(context -> {
                     context.getSource().sendSuccess(
                             () -> Component.translatable("command.splitself.empty_command"), false);
@@ -39,6 +43,8 @@ final class SplitSelfCommands {
                                     }
                                     return 1;
                                 })))
+                .then(Commands.literal("runTests")
+                        .requires(source -> source.hasPermission(2))
                 .then(Commands.literal("testTnt")
                         .requires(source -> source.hasPermission(2))
                         .executes(context -> WorldManifestations.testTnt(context.getSource().getPlayerOrException()) ? 1 : 0))
@@ -79,7 +85,8 @@ final class SplitSelfCommands {
                                     return SleepSystem.debugRun(player, IntegerArgumentType.getInteger(context, "stage")) ? 1 : 0;
                                 })))
                 .then(Commands.literal("testFinale").requires(source->source.hasPermission(2)).then(Commands.argument("mode",StringArgumentType.word()).suggests((c,bb)->net.minecraft.commands.SharedSuggestionProvider.suggest(java.util.List.of("INTRO","CANCEL","VISUAL","STOP"),bb)).executes(c->{String mode=StringArgumentType.getString(c,"mode").toUpperCase(java.util.Locale.ROOT);if(!java.util.Set.of("INTRO","CANCEL","VISUAL","STOP").contains(mode))return 0;StoryNetwork.clientEvent(c.getSource().getPlayerOrException(),"FINALE_"+mode);return 1;})))
-                .then(Commands.literal("testSpeech").requires(source->source.hasPermission(2)).executes(c->{c.getSource().sendSuccess(()->Component.literal("/splitself testSpeech <text> — can you hear me / ты слышишь меня / привет; без микрофона"),false);return 1;}).then(Commands.argument("text",StringArgumentType.greedyString()).executes(c->{return ServerSpeech.test(c.getSource().getPlayerOrException(),StringArgumentType.getString(c,"text"));})))
+                .then(Commands.literal("testSpeech").requires(source->source.hasPermission(2)).executes(c->{c.getSource().sendSuccess(()->Component.literal("/splitself runTests testSpeech <text> — can you hear me / ты слышишь меня / привет; без микрофона"),false);return 1;}).then(Commands.argument("text",StringArgumentType.greedyString()).executes(c->{return ServerSpeech.test(c.getSource().getPlayerOrException(),StringArgumentType.getString(c,"text"));})))
+                )
                 .then(Commands.literal("debug")
                         .then(Commands.literal("debugFullscreen").requires(source->source.hasPermission(2)).executes(c->{StoryNetwork.clientEvent(c.getSource().getPlayerOrException(),"DEBUG_FULLSCREEN");return 1;}))
                         .then(Commands.literal("debugSendVec3d").requires(source->source.hasPermission(2)).executes(c->{var p=c.getSource().getPlayerOrException();var pos=WorldManifestationRules.moveVectorFromBase(new net.minecraft.world.phys.Vec3(p.getX(),319,p.getZ()),p.getRespawnDimension().equals(p.level().dimension())?p.getRespawnPosition():null,EventCatalog.baseSafeRadius());c.getSource().sendSuccess(()->Component.literal(pos.toString()),false);return 1;}))

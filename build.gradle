@@ -287,3 +287,10 @@ tasks.register('forgottenGreetingProbe', JavaExec) {
     mainClass = 'com.pryzmm.splitself.forge.ForgottenGreetingProbe'
 }
 tasks.named('probe') { dependsOn 'forgottenGreetingProbe' }
+
+tasks.register('commandTreeProbe', JavaExec) {
+    dependsOn tasks.named('transitionTestClasses')
+    classpath = sourceSets.transitionTest.runtimeClasspath
+    mainClass = 'com.pryzmm.splitself.forge.CommandTreeProbe'
+}
+tasks.named('probe') { dependsOn 'commandTreeProbe' }
