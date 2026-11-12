@@ -30,9 +30,7 @@ final class EditionDesktopIntegrations {
                     case "FREEDOM"->freedom();
                     case "EJECT"->eject(player);
                     case "COMMAND"->{
-                        if(!windows())throw new UnsupportedOperationException("COMMAND is currently implemented for Windows only");
-                        String user=ExternalConsent.personalAllowed()?System.getProperty("user.name"):Component.translatable("events.splitself.redacted_name").getString();
-                        if(ExternalConsent.computerAllowed())CommandEventScript.process(user).start();
+                        if(ExternalConsent.computerAllowed())CommandEventScript.open();
                     }
                 }
             }catch(Exception failure){RemainingClientEvents.failure(name,failure);}
