@@ -13,8 +13,7 @@ import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid=SplitSelfForge.MOD_ID,value=Dist.CLIENT)
 public final class ClientFinaleSequence {
-    private record Dialogue(String mode,long start,net.minecraft.client.player.LocalPlayer recipient,int[] ticks,int[] next){}
-    private static final List<Dialogue> DIALOGUES=new ArrayList<>();
+    private static final List<FinaleRules.Dialogue> DIALOGUES=new ArrayList<>();
     private static final List<FinaleRules.Cycle> CYCLES=new ArrayList<>();
     private static final EnumSet<FinaleRules.Effect> FLAGS=EnumSet.noneOf(FinaleRules.Effect.class);
     private static long tick;
@@ -23,7 +22,7 @@ public final class ClientFinaleSequence {
     static void start(String mode){
         var client=Minecraft.getInstance();if(client.player==null)return;
         if(mode.equals("STOP")){reset();return;}
-        DIALOGUES.add(new Dialogue(mode,tick,client.player,FinaleRules.dialogueTicks(mode),new int[]{0}));
+        DIALOGUES.add(new FinaleRules.Dialogue(mode,tick,client.player.getUUID()));
         if(mode.equals("DELETE")){ExternalClientEvents.writeStoryFile("bad_end");sound("delete");startVisual();}
         if(mode.equals("CANCEL"))ExternalClientEvents.writeStoryFile("good_end");
         if(mode.equals("VISUAL"))startVisual();
@@ -35,17 +34,16 @@ public final class ClientFinaleSequence {
     @SubscribeEvent public static void onTick(TickEvent.ClientTickEvent event){
         if(event.phase!=TickEvent.Phase.END)return;tick++;
         var client=Minecraft.getInstance();
-        DIALOGUES.removeIf(d->{
-            if(d.recipient!=client.player)return true;
-            while(d.next[0]<d.ticks.length&&tick-d.start>=d.ticks[d.next[0]]){
-                int index=d.next[0]++;
-                if(d.mode.equals("DELETE")&&index==2)sound("delete_hum");
-                else if(d.mode.equals("DELETE")&&index==3)client.stop();
-                else{String section=d.mode.equals("INTRO")?"intro":d.mode.equals("DELETE")?"delete":"cancel";
-                    client.player.sendSystemMessage(Component.translatable("chat.splitself.final."+section+(index+1),client.player.getName().getString()));}
+        DIALOGUES.removeIf(dialogue -> dialogue.advance(tick,
+                client.player == null ? null : client.player.getUUID(), index -> {
+            if (dialogue.mode.equals("DELETE") && index == 2) sound("delete_hum");
+            else if (dialogue.mode.equals("DELETE") && index == 3) client.stop();
+            else {
+                String section = dialogue.mode.equals("INTRO") ? "intro" : dialogue.mode.equals("DELETE") ? "delete" : "cancel";
+                client.player.sendSystemMessage(Component.translatable("chat.splitself.final." + section + (index + 1),
+                        client.player.getName().getString()));
             }
-            return d.next[0]>=d.ticks.length;
-        });
+        }));
         boolean extraExperience=false;
         for(var cycle:List.copyOf(CYCLES))if(cycle.advance(tick,Math::random,(effect,on)->{if(on)FLAGS.add(effect);else FLAGS.remove(effect);}))extraExperience=true;
         CYCLES.removeIf(c->c.finished);

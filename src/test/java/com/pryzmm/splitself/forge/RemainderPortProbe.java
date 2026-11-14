@@ -24,7 +24,7 @@ public final class RemainderPortProbe{
         check(FrameImageRules.rotation(Direction.NORTH)==0&&FrameImageRules.rotation(Direction.EAST)==270&&FrameImageRules.rotation(Direction.SOUTH)==180&&FrameImageRules.rotation(Direction.WEST)==90,"four source frame rotations");
         for(int flags=0;flags<4;flags++)check(FrameImageRules.allowed((flags&1)!=0,(flags&2)!=0)==(flags==3),"frame local privacy matrix");
         check(Arrays.equals(FinaleRules.dialogueTicks("INTRO"),new int[]{100,190,280,370,460}),"intro timeline");
-        check(Arrays.equals(FinaleRules.dialogueTicks("DELETE"),new int[]{30,120,270,1800}),"delete timeline");
+        check(Arrays.equals(FinaleRules.dialogueTicks("DELETE"),new int[]{30,120,270,1200}),"delete timeline");
         check(Arrays.equals(FinaleRules.dialogueTicks("CANCEL"),new int[]{30,110}),"cancel timeline");
         for(var effect:FinaleRules.Effect.values()){
             check(FinaleRules.delay(effect,false,0)==(effect==FinaleRules.Effect.SCREEN?100:0),"initial delay min "+effect);
