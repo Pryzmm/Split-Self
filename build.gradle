@@ -1,138 +1,302 @@
 plugins {
-	id 'fabric-loom' version "${loom_version}"
-	id 'maven-publish'
+    id 'java'
+    id 'net.minecraftforge.gradle' version '6.0.54'
 }
 
-version = project.mod_version
-group = project.maven_group
+// Separate work directories prevent classes/resources leaking when switching editions.
+def splitselfEdition = providers.gradleProperty('splitselfEdition').getOrElse('SAFE').toUpperCase(java.util.Locale.ROOT)
+if (!(splitselfEdition in ['SAFE','UNSAFE'])) throw new GradleException('splitselfEdition must be SAFE or UNSAFE')
+def editionSource = splitselfEdition.toLowerCase(java.util.Locale.ROOT)
+layout.buildDirectory = layout.projectDirectory.dir('build/' + editionSource)
+sourceSets.main.java.srcDir('src/' + editionSource + '/java')
+sourceSets.main.resources.srcDir('src/' + editionSource + '/resources')
 
-base {
-	archivesName = project.archives_base_name
-}
+group = 'com.pryzmm.splitself'
+version = '1.0.2-forge-1.20.1-dev'
+base { archivesName = 'split-self-forge-' + editionSource }
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+jarJar.enable()
+configurations { nativeVideo }
 
-repositories {
-	maven {
-		name = "Terraformers"
-		url = "https://maven.terraformersmc.com/"
-	}
-    maven {
-        name = "Modrinth"
-        url = "https://api.modrinth.com/maven"
+minecraft {
+    mappings channel: 'official', version: '1.20.1'
+    runs {
+        client {
+            workingDirectory project.file('run')
+            args '--mixin', 'splitself.client.mixins.json', '--mixin', 'splitself.mixins.json'
+            mods { splitself { source sourceSets.main } }
+        }
+        server {
+            workingDirectory project.file('run-server')
+            args '--nogui'
+            mods { splitself { source sourceSets.main } }
+        }
     }
-	maven {
-		name = "FDD Maven"
-		url = "https://maven.firstdark.dev/releases"
-	}
-	maven {
-		name = 'Ladysnake Mods'
-		url = 'https://maven.ladysnake.org/releases'
-		content {
-			includeGroup 'io.github.ladysnake'
-			includeGroup 'org.ladysnake'
-			includeGroupByRegex 'dev\\.onyxstudios.*'
-		}
-	}
-
-	ivy {
-		name = "libs"
-		url = uri("libs")
-		patternLayout {
-			artifact("[artifact]-[revision](-[classifier]).[ext]")
-		}
-		metadataSources { artifact() }
-	}
 }
 
-loom {
-    accessWidenerPath = file("src/main/resources/splitself.accesswidener")
-	runs {
-		client {
-			vmArg "-Djava.awt.headless=false"
-		}
-	}
-}
-
-fabricApi {
-	configureDataGeneration {
-		client = true
-	}
-}
-
+repositories { mavenCentral() }
 dependencies {
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-
-    implementation 'com.google.code.gson:gson:2.10.1'
-    include 'com.google.code.gson:gson:2.10.1'
-
-	implementation 'dev.firstdark.discordrpc:discord-rpc:1.0.3'
-	include 'dev.firstdark.discordrpc:discord-rpc:1.0.3'
-
-	implementation 'org.java-websocket:Java-WebSocket:1.5.6'
-	include 'org.java-websocket:Java-WebSocket:1.5.6'
-
-	modImplementation "local:videolib:1.0.1:all"
-//	include "local:videolib:1.0.1:all"
-
-//	modImplementation 'org.xerial:sqlite-jdbc:3.53.2.1'
-//	include 'org.xerial:sqlite-jdbc:3.53.2.1'
-
-	modImplementation "org.ladysnake:satin:${satin_version}"
-	include "org.ladysnake:satin:${satin_version}"
-
-    modImplementation "maven.modrinth:architectury-api:${project.architectury_version}+fabric"
-    modImplementation "maven.modrinth:shriek:${project.shriek_version}+fabric"
-
-    modImplementation "com.terraformersmc:modmenu:${project.mod_menu_version}"
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    minecraft 'net.minecraftforge:forge:1.20.1-47.2.20'
+    // These libraries become part of the mod output in BOTH dev runs and releases.
+    // Do not place JavaCV's module descriptor on Forge's module path: it requires
+    // optional camera backends which the FFmpeg-only player never uses.
+    compileOnly files('libs/discord-rpc-1.0.3.jar')
+    nativeVideo files('libs/discord-rpc-1.0.3.jar')
+    ['org.bytedeco:javacv:1.5.10', 'org.bytedeco:javacpp:1.5.10',
+     'org.bytedeco:ffmpeg:6.1.1-1.5.10',
+     'org.bytedeco:javacpp:1.5.10:windows-x86_64',
+     'org.bytedeco:ffmpeg:6.1.1-1.5.10:windows-x86_64'].each { coordinate ->
+        compileOnly(coordinate) { transitive = false }
+        nativeVideo(coordinate) { transitive = false }
+    }
+}
+// ForgeGradle's MOD_CLASSES includes processed resources in both Gradle and
+// IntelliJ runs. Merge runtime classes there so Forge loads them with the mod.
+def runtimeLibraries = tasks.register('prepareRuntimeLibraries', Sync) {
+    inputs.property('runtimeLayoutVersion', 2)
+    from({ configurations.nativeVideo.collect { zipTree(it) } })
+    into layout.buildDirectory.dir('generated-runtime')
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    exclude 'module-info.class', 'fabric.mod.json', 'logback.xml'
+    exclude { entry -> !entry.directory && entry.path.startsWith('META-INF/') &&
+        !(entry.path.startsWith('META-INF/maven/org.bytedeco/') && entry.path.endsWith('/pom.properties')) }
+}
+tasks.named('processResources') {
+    inputs.property('runtimeCleanupVersion', 2)
+    // Copy tasks retain removed input files: discard obsolete flattened metadata.
+    doFirst {
+        ['logback.xml', 'module-info.class', 'fabric.mod.json',
+         'assets/splitself/textures/entity/ui_button/cancel.png',
+         'assets/splitself/textures/entity/ui_button/delete.png'].each { name ->
+            delete new File(destinationDir, name)
+        }
+    }
+    dependsOn runtimeLibraries
+    from(runtimeLibraries)
 }
 
-processResources {
-	inputs.property "version", project.version
+tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8' }
+jar.finalizedBy('reobfJar')
 
-	filesMatching("fabric.mod.json") {
-		expand "version": inputs.properties.version
-	}
+// Isolated production-policy/NBT probes. These do not launch Minecraft or a server.
+sourceSets {
+    test { java.setSrcDirs([]) }
+    transitionTest {
+        java.srcDir 'src/test/java'
+        compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
+        runtimeClasspath += sourceSets.main.output + sourceSets.main.runtimeClasspath
+    }
+}
+['TransitionRecoveryTest', 'TransitionIntentTest', 'TransitionMenuTimelineTest', 'PanoramaStateTest', 'StoryChainProbe', 'WorldManifestationsProbe', 'ResourceProbe'].each { probe ->
+    tasks.register(probe, JavaExec) {
+        dependsOn tasks.named('transitionTestClasses')
+        classpath = sourceSets.transitionTest.runtimeClasspath
+        mainClass = 'com.pryzmm.splitself.forge.' + probe
+        args projectDir.absolutePath
+    }
+}
+tasks.register('transitionProbe') {
+    dependsOn 'TransitionRecoveryTest', 'TransitionIntentTest', 'TransitionMenuTimelineTest'
 }
 
-remapJar {
-	nestedJars.from(file("libs/videolib-1.0.1-all.jar"))
-	addNestedDependencies = true
+tasks.register('coralProbe', JavaExec) {
+    dependsOn tasks.named('transitionTestClasses')
+    classpath = sourceSets.transitionTest.runtimeClasspath
+    mainClass = 'com.pryzmm.splitself.forge.CoralProbe'
+    args projectDir.absolutePath
 }
 
-tasks.withType(JavaCompile).configureEach {
-	it.options.release = 21
+tasks.register('lavaProbe', JavaExec) {
+    dependsOn tasks.named('transitionTestClasses')
+    classpath = sourceSets.transitionTest.runtimeClasspath
+    mainClass = 'com.pryzmm.splitself.forge.LavaProbe'
 }
 
-java {
-	withSourcesJar()
-
-	sourceCompatibility = JavaVersion.VERSION_21
-	targetCompatibility = JavaVersion.VERSION_21
+tasks.register('simpleEventsProbe', JavaExec) {
+    dependsOn tasks.named('transitionTestClasses')
+    classpath = sourceSets.transitionTest.runtimeClasspath
+    mainClass = 'com.pryzmm.splitself.forge.SimpleEventsProbe'
+    args projectDir.absolutePath
+}
+tasks.register('batchEventsProbe', JavaExec) {
+    dependsOn tasks.named('transitionTestClasses')
+    classpath = sourceSets.transitionTest.runtimeClasspath
+    mainClass = 'com.pryzmm.splitself.forge.BatchEventsProbe'
+    args projectDir.absolutePath
 }
 
-jar {
-	inputs.property "archivesName", project.base.archivesName
+// Client-only render hook; explicit dev/SRG aliases are audited against pinned mappings.
+jar { manifest { attributes(["MixinConfigs": "splitself.client.mixins.json,splitself.mixins.json"]) } }
+tasks.named("jarJar") { manifest { attributes(["MixinConfigs": "splitself.client.mixins.json,splitself.mixins.json"]) } }
 
-	from("LICENSE") {
-		rename { "${it}_${inputs.properties.archivesName}"}
-	}
+tasks.register('remainingEventsProbe', JavaExec) { dependsOn tasks.named('transitionTestClasses'); classpath=sourceSets.transitionTest.runtimeClasspath; mainClass='com.pryzmm.splitself.forge.RemainingEventsProbe'; args projectDir.absolutePath }
 
-	manifest {
-		attributes(
-			'Main-Class': 'com.pryzmm.Main'
-		)
-	}
+// Child JVM payload is independent of Forge's union filesystem and of Minecraft libraries.
+tasks.register('desktopAppsJar', Jar) {
+    dependsOn tasks.named('compileJava')
+    archiveFileName = 'desktop-apps.jar'
+    destinationDirectory = layout.buildDirectory.dir('generated-desktop')
+    from(tasks.named('compileJava').flatMap { it.destinationDirectory }) { include 'com/pryzmm/memory/**', 'com/pryzmm/minemessage/**', 'com/pryzmm/desktop/**' }
+    from('src/main/resources') { include 'assets/memory/**', 'assets/minemessage/**' }
+}
+tasks.named('processResources') { dependsOn tasks.named('desktopAppsJar'); from(tasks.named('desktopAppsJar').flatMap { it.archiveFile }) { into 'assets/splitself' } }
+
+
+tasks.register('remainderPortProbe', JavaExec) {dependsOn tasks.named('transitionTestClasses');classpath=sourceSets.transitionTest.runtimeClasspath;mainClass='com.pryzmm.splitself.forge.RemainderPortProbe';args projectDir.absolutePath}
+
+tasks.register('runtimeFixesProbe', JavaExec) { dependsOn tasks.named('transitionTestClasses');classpath=sourceSets.transitionTest.runtimeClasspath;mainClass='com.pryzmm.splitself.forge.RuntimeFixesProbe' }
+
+def editionDir = layout.buildDirectory.dir('generated-edition')
+tasks.register('generateEdition') {
+    inputs.property('edition', splitselfEdition)
+    outputs.dir(editionDir)
+    doLast {
+        def output = editionDir.get().file('splitself-edition.properties').asFile
+        output.parentFile.mkdirs()
+        output.setText('edition=' + splitselfEdition + '\n', 'UTF-8')
+    }
+}
+tasks.named('processResources') {
+    dependsOn tasks.named('generateEdition')
+    from(editionDir)
+    inputs.property('edition', splitselfEdition)
+    filesMatching('META-INF/mods.toml') {
+        expand(modVersion: project.version, edition: splitselfEdition)
+    }
+}
+tasks.register('editionProbe', JavaExec) {
+    dependsOn tasks.named('transitionTestClasses')
+    classpath = sourceSets.transitionTest.runtimeClasspath
+    mainClass = 'com.pryzmm.splitself.forge.EditionProbe'
+    args splitselfEdition
+}
+// Run every isolated probe as part of the normal build/check lifecycle.
+tasks.register('probe') {
+    dependsOn 'transitionProbe', 'PanoramaStateTest', 'StoryChainProbe', 'ResourceProbe',
+        'WorldManifestationsProbe', 'coralProbe', 'lavaProbe', 'simpleEventsProbe',
+        'batchEventsProbe', 'remainingEventsProbe', 'remainderPortProbe',
+        'runtimeFixesProbe', 'editionProbe'
+}
+tasks.named('check') { dependsOn 'probe' }
+
+['jar', 'jarJar'].each { taskName ->
+    tasks.named(taskName) {
+        from('licenses') { into 'META-INF/licenses' }
+        from(files('THIRD_PARTY_NOTICES.md', 'CREDITS.md', 'CHANGES.md', 'README.md')) { into 'META-INF' }
+    }
 }
 
-publishing {
-	publications {
-		create("mavenJava", MavenPublication) {
-			artifactId = project.archives_base_name
-			from components.java
-		}
-	}
-
-	repositories {}
+tasks.named('jar') { destinationDirectory = layout.buildDirectory.dir('intermediates') }
+tasks.named('jarJar') { destinationDirectory = layout.projectDirectory.dir('build/libs') }
+if (splitselfEdition == 'UNSAFE') {
+    sourceSets.transitionTest.java.srcDir('src/unsafeTest/java')
+    tasks.register('unsafeDesktopProbe', JavaExec) {
+        dependsOn tasks.named('transitionTestClasses')
+        classpath = sourceSets.transitionTest.runtimeClasspath
+        mainClass = 'com.pryzmm.splitself.forge.UnsafeDesktopProbe'
+    }
+    tasks.named('probe') { dependsOn 'unsafeDesktopProbe' }
 }
+
+// Inspect executable payloads, including embedded desktop applications. Event
+// names and honest documentation are retained; they are not implementations.
+tasks.register('verifyEditionArchive') {
+    dependsOn tasks.named('reobfJarJar')
+    dependsOn tasks.named('reobfJar')
+    inputs.file(tasks.named('jarJar').flatMap { it.archiveFile })
+    inputs.file(tasks.named('jar').flatMap { it.archiveFile })
+    inputs.property('edition', splitselfEdition)
+    doLast {
+        def archive = tasks.named('jarJar').get().archiveFile.get().asFile
+        def unsafeEntries = [
+            'com/pryzmm/splitself/forge/CommandEventScript.class',
+            'com/pryzmm/splitself/forge/UnsafeDriveRules.class',
+            'com/pryzmm/desktop/DesktopTypingWindow.class',
+            'assets/splitself/command-event.ps1', 'assets/splitself/freedom.ps1',
+            'assets/splitself/freedom.js', 'assets/splitself/textures/wallpaper/doyouseeme.png'
+        ]
+        def signatures = ['Win32_CDROMDrive', "InvokeVerb('Eject')", 'SystemParametersInfo',
+            'splitself-wallpaper', 'splitself-freedom-', 'SPLITSELF_COMMAND_USER',
+            'command-event.ps1', 'com/pryzmm/desktop/DesktopTypingWindow',
+            'com/pryzmm/splitself/forge/CommandEventScript',
+            'com/pryzmm/splitself/forge/UnsafeDriveRules']
+        def found = [] as Set
+        def inspect
+        inspect = { InputStream input, String location ->
+            new java.util.zip.ZipInputStream(input).withCloseable { zip ->
+                java.util.zip.ZipEntry entry
+                while ((entry = zip.nextEntry) != null) {
+                    if (entry.directory) continue
+                    byte[] data = zip.readAllBytes()
+                    if (unsafeEntries.contains(entry.name)) {
+                        found.add(entry.name)
+                        if (splitselfEdition == 'SAFE') throw new GradleException("Unsafe payload in ${location}: ${entry.name}")
+                    }
+                    if (splitselfEdition == 'SAFE' && entry.name.endsWith('.class')) {
+                        String constants = new String(data, java.nio.charset.StandardCharsets.ISO_8859_1)
+                        signatures.each { signature ->
+                            if (constants.contains(signature)) throw new GradleException("Excluded implementation in ${location}/${entry.name}: ${signature}")
+                        }
+                        if (entry.name == 'com/pryzmm/desktop/DesktopCompanion.class' && constants.contains('typing'))
+                            throw new GradleException('Typing handler leaked into SAFE desktop companion')
+                    }
+                    if (entry.name.endsWith('.jar')) inspect(new ByteArrayInputStream(data), location + '/' + entry.name)
+                }
+            }
+        }
+        archive.withInputStream { inspect(it, archive.name) }
+        def plainArchive = tasks.named('jar').get().archiveFile.get().asFile
+        plainArchive.withInputStream { inspect(it, plainArchive.name) }
+        if (splitselfEdition == 'UNSAFE' && !found.containsAll(unsafeEntries))
+            throw new GradleException('UNSAFE payload missing: ' + (unsafeEntries - found))
+        logger.lifecycle('Edition archive audit PASS: ' + splitselfEdition + ' plain/all including embedded JARs')
+    }
+}
+tasks.named('check') { dependsOn 'verifyEditionArchive' }
+
+// Deliberately omit compileClasspath: only the actual dev runtime may satisfy these loads.
+tasks.register('runtimeDependenciesProbe', JavaExec) {
+    dependsOn tasks.named('transitionTestClasses'), tasks.named('prepareRuntimeLibraries')
+    classpath = sourceSets.transitionTest.runtimeClasspath
+    mainClass = 'com.pryzmm.splitself.forge.RuntimeDependenciesProbe'
+}
+tasks.named('probe') { dependsOn 'runtimeDependenciesProbe' }
+
+// Hashes pinned to the original Fabric tree; no private checkout is needed.
+tasks.register('verifyOriginalTextures') {
+    inputs.file('src/test/resources/original-textures.json')
+    inputs.files(fileTree('src/main/resources/assets') { include '**/textures/**' },
+        fileTree('src/unsafe/resources/assets') { include '**/textures/**' })
+    doLast {
+        def originals = new groovy.json.JsonSlurper().parse(file('src/test/resources/original-textures.json'))
+        originals.each { path, expected ->
+            def texture = file(path)
+            if (!texture.exists() || java.security.MessageDigest.getInstance('SHA-256')
+                    .digest(texture.bytes).encodeHex().toString() != expected)
+                throw new GradleException('Original texture changed or missing: ' + path)
+        }
+        logger.lifecycle('Original texture audit PASS: ' + originals.size() + ' unchanged files')
+    }
+}
+tasks.named('check') { dependsOn 'verifyOriginalTextures' }
+
+tasks.register('forgottenGreetingProbe', JavaExec) {
+    dependsOn tasks.named('transitionTestClasses')
+    classpath = sourceSets.transitionTest.runtimeClasspath
+    mainClass = 'com.pryzmm.splitself.forge.ForgottenGreetingProbe'
+}
+tasks.named('probe') { dependsOn 'forgottenGreetingProbe' }
+
+tasks.register('commandTreeProbe', JavaExec) {
+    dependsOn tasks.named('transitionTestClasses')
+    classpath = sourceSets.transitionTest.runtimeClasspath
+    mainClass = 'com.pryzmm.splitself.forge.CommandTreeProbe'
+}
+tasks.named('probe') { dependsOn 'commandTreeProbe' }
+
+tasks.register('finaleDialogueProbe', JavaExec) {
+    dependsOn tasks.named('transitionTestClasses')
+    classpath = sourceSets.transitionTest.runtimeClasspath
+    mainClass = 'com.pryzmm.splitself.forge.FinaleDialogueProbe'
+}
+tasks.named('probe') { dependsOn 'finaleDialogueProbe' }

@@ -1,0 +1,416 @@
+{
+    "globals":  {
+                    "eventsEnabled":  true,
+                    "eventTickInterval":  60,
+                    "eventChance":  0.01,
+                    "eventCooldown":  600,
+                    "startEventsAfter":  3000,
+                    "guaranteedEvent":  15600,
+                    "repeatEventsAfter":  5,
+                    "baseSafeRadius":  15
+                },
+    "events":  {
+                   "SPAWNTHEOTHER":  {
+                                         "weight":  120,
+                                         "stage":  0,
+                                         "oneTime":  false,
+                                         "type":  "GLOBAL"
+                                     },
+                   "POEMSCREEN":  {
+                                      "weight":  5,
+                                      "stage":  1,
+                                      "oneTime":  false,
+                                      "type":  "CLIENT"
+                                  },
+                   "DOYOUSEEME":  {
+                                      "weight":  10,
+                                      "stage":  2,
+                                      "oneTime":  false,
+                                      "type":  "CLIENT"
+                                  },
+                   "UNDERGROUNDMINING":  {
+                                             "weight":  10,
+                                             "stage":  0,
+                                             "oneTime":  false,
+                                             "type":  "GLOBAL"
+                                         },
+                   "REDSKY":  {
+                                  "weight":  10,
+                                  "stage":  1,
+                                  "oneTime":  false,
+                                  "type":  "CLIENT"
+                              },
+                   "NOTEPAD":  {
+                                   "weight":  10,
+                                   "stage":  1,
+                                   "oneTime":  true,
+                                   "type":  "CLIENT"
+                               },
+                   "SCREENOVERLAY":  {
+                                         "weight":  10,
+                                         "stage":  1,
+                                         "oneTime":  false,
+                                         "type":  "CLIENT"
+                                     },
+                   "WHITESCREENOVERLAY":  {
+                                              "weight":  10,
+                                              "stage":  0,
+                                              "oneTime":  false,
+                                              "type":  "CLIENT"
+                                          },
+                   "INVENTORYOVERLAY":  {
+                                            "weight":  10,
+                                            "stage":  0,
+                                            "oneTime":  false,
+                                            "type":  "CLIENT"
+                                        },
+                   "THEOTHERSCREENSHOT":  {
+                                              "weight":  10,
+                                              "stage":  1,
+                                              "oneTime":  false,
+                                              "type":  "GLOBAL"
+                                          },
+                   "DESTROYCHUNK":  {
+                                        "weight":  10,
+                                        "stage":  1,
+                                        "oneTime":  false,
+                                        "type":  "GLOBAL"
+                                    },
+                   "FROZENSCREEN":  {
+                                        "weight":  10,
+                                        "stage":  2,
+                                        "oneTime":  false,
+                                        "type":  "CLIENT"
+                                    },
+                   "HOUSE":  {
+                                 "weight":  10,
+                                 "stage":  1,
+                                 "oneTime":  false,
+                                 "type":  "GLOBAL"
+                             },
+                   "PILLAR":  {
+                                  "weight":  10,
+                                  "stage":  0,
+                                  "oneTime":  false,
+                                  "type":  "GLOBAL"
+                              },
+                   "BILLY":  {
+                                 "weight":  3,
+                                 "stage":  0,
+                                 "oneTime":  true,
+                                 "type":  "GLOBAL"
+                             },
+                   "FACE":  {
+                                "weight":  3,
+                                "stage":  1,
+                                "oneTime":  false,
+                                "type":  "CLIENT"
+                            },
+                   "COMMAND":  {
+                                   "weight":  10,
+                                   "stage":  1,
+                                   "oneTime":  false,
+                                   "type":  "CLIENT"
+                               },
+                   "INVERT":  {
+                                  "weight":  10,
+                                  "stage":  0,
+                                  "oneTime":  false,
+                                  "type":  "CLIENT"
+                              },
+                   "EMERGENCY":  {
+                                     "weight":  10,
+                                     "stage":  2,
+                                     "oneTime":  true,
+                                     "type":  "CLIENT"
+                                 },
+                   "TNT":  {
+                               "weight":  0,
+                               "stage":  0,
+                               "oneTime":  false,
+                               "type":  "GLOBAL"
+                           },
+                   "IRONTRAP":  {
+                                    "weight":  10,
+                                    "stage":  0,
+                                    "oneTime":  false,
+                                    "type":  "GLOBAL"
+                                },
+                   "LAVA":  {
+                                "weight":  10,
+                                "stage":  1,
+                                "oneTime":  false,
+                                "type":  "GLOBAL"
+                            },
+                   "KICK":  {
+                                "weight":  5,
+                                "stage":  1,
+                                "oneTime":  false,
+                                "type":  "GLOBAL"
+                            },
+                   "SIGN":  {
+                                "weight":  10,
+                                "stage":  1,
+                                "oneTime":  false,
+                                "type":  "GLOBAL"
+                            },
+                   "SCALE":  {
+                                 "weight":  10,
+                                 "stage":  0,
+                                 "oneTime":  false,
+                                 "type":  "CLIENT"
+                             },
+                   "FREEDOM":  {
+                                   "weight":  5,
+                                   "stage":  2,
+                                   "oneTime":  false,
+                                   "type":  "CLIENT"
+                               },
+                   "MINE":  {
+                                "weight":  15,
+                                "stage":  0,
+                                "oneTime":  false,
+                                "type":  "GLOBAL"
+                            },
+                   "DOOR":  {
+                                "weight":  10,
+                                "stage":  0,
+                                "oneTime":  false,
+                                "type":  "GLOBAL"
+                            },
+                   "SHRINK":  {
+                                  "weight":  10,
+                                  "stage":  2,
+                                  "oneTime":  false,
+                                  "type":  "CLIENT"
+                              },
+                   "PAUSE":  {
+                                 "weight":  10,
+                                 "stage":  1,
+                                 "oneTime":  false,
+                                 "type":  "CLIENT"
+                             },
+                   "ITEM":  {
+                                "weight":  10,
+                                "stage":  0,
+                                "oneTime":  false,
+                                "type":  "GLOBAL"
+                            },
+                   "FRAME":  {
+                                 "weight":  10,
+                                 "stage":  1,
+                                 "oneTime":  false,
+                                 "type":  "GLOBAL"
+                             },
+                   "NAME":  {
+                                "weight":  10,
+                                "stage":  2,
+                                "oneTime":  false,
+                                "type":  "CLIENT"
+                            },
+                   "WHISPER":  {
+                                   "weight":  10,
+                                   "stage":  1,
+                                   "oneTime":  false,
+                                   "type":  "CLIENT"
+                               },
+                   "ESCAPE":  {
+                                  "weight":  10,
+                                  "stage":  2,
+                                  "oneTime":  false,
+                                  "type":  "CLIENT"
+                              },
+                   "LIFT":  {
+                                "weight":  10,
+                                "stage":  1,
+                                "oneTime":  false,
+                                "type":  "GLOBAL"
+                            },
+                   "SURROUND":  {
+                                    "weight":  5,
+                                    "stage":  3,
+                                    "oneTime":  true,
+                                    "type":  "GLOBAL"
+                                },
+                   "LOGS":  {
+                                "weight":  10,
+                                "stage":  3,
+                                "oneTime":  true,
+                                "type":  "CLIENT"
+                            },
+                   "DISCONNECT":  {
+                                      "weight":  10,
+                                      "stage":  2,
+                                      "oneTime":  false,
+                                      "type":  "CLIENT"
+                                  },
+                   "FORGOTTEN":  {
+                                     "weight":  5,
+                                     "stage":  3,
+                                     "oneTime":  false,
+                                     "type":  "GLOBAL"
+                                 },
+                   "EJECT":  {
+                                 "weight":  10,
+                                 "stage":  2,
+                                 "oneTime":  false,
+                                 "type":  "CLIENT"
+                             },
+                   "FREEZE":  {
+                                  "weight":  10,
+                                  "stage":  1,
+                                  "oneTime":  false,
+                                  "type":  "CLIENT"
+                              },
+                   "BLU":  {
+                               "weight":  10,
+                               "stage":  3,
+                               "oneTime":  true,
+                               "type":  "GLOBAL"
+                           },
+                   "MEMORY":  {
+                                  "weight":  10,
+                                  "stage":  1,
+                                  "oneTime":  false,
+                                  "type":  "CLIENT"
+                              },
+                   "REMINDER":  {
+                                    "weight":  10,
+                                    "stage":  2,
+                                    "oneTime":  false,
+                                    "type":  "CLIENT"
+                                },
+                   "RENAME":  {
+                                  "weight":  10,
+                                  "stage":  0,
+                                  "oneTime":  false,
+                                  "type":  "CLIENT"
+                              },
+                   "FOV":  {
+                               "weight":  10,
+                               "stage":  1,
+                               "oneTime":  false,
+                               "type":  "CLIENT"
+                           },
+                   "WEATHER":  {
+                                   "weight":  10,
+                                   "stage":  1,
+                                   "oneTime":  false,
+                                   "type":  "CLIENT"
+                               },
+                   "MEMORIES":  {
+                                    "weight":  10,
+                                    "stage":  0,
+                                    "oneTime":  true,
+                                    "type":  "CLIENT"
+                                },
+                   "MORSE":  {
+                                 "weight":  10,
+                                 "stage":  1,
+                                 "oneTime":  true,
+                                 "type":  "CLIENT"
+                             },
+                   "CORAL":  {
+                                 "weight":  10,
+                                 "stage":  2,
+                                 "oneTime":  true,
+                                 "type":  "GLOBAL"
+                             },
+                   "STATIC":  {
+                                  "weight":  10,
+                                  "stage":  1,
+                                  "oneTime":  false,
+                                  "type":  "CLIENT"
+                              },
+                   "INVERTCOLOR":  {
+                                       "weight":  10,
+                                       "stage":  2,
+                                       "oneTime":  false,
+                                       "type":  "CLIENT"
+                                   },
+                   "CLIPBOARD":  {
+                                     "weight":  10,
+                                     "stage":  0,
+                                     "oneTime":  true,
+                                     "type":  "CLIENT"
+                                 },
+                   "RPC":  {
+                               "weight":  10,
+                               "stage":  1,
+                               "oneTime":  true,
+                               "type":  "CLIENT"
+                           },
+                   "RECORD":  {
+                                  "weight":  10,
+                                  "stage":  2,
+                                  "oneTime":  true,
+                                  "type":  "CLIENT"
+                              },
+                   "DISCORDNAME":  {
+                                       "weight":  10,
+                                       "stage":  2,
+                                       "oneTime":  true,
+                                       "type":  "CLIENT"
+                                   },
+                   "DEADCHUNK":  {
+                                     "weight":  10,
+                                     "stage":  2,
+                                     "oneTime":  false,
+                                     "type":  "GLOBAL"
+                                 },
+                   "RECURSIVE":  {
+                                     "weight":  10,
+                                     "stage":  3,
+                                     "oneTime":  false,
+                                     "type":  "CLIENT"
+                                 },
+                   "PLAYERDATA":  {
+                                      "weight":  10,
+                                      "stage":  2,
+                                      "oneTime":  true,
+                                      "type":  "CLIENT"
+                                  },
+                   "BRAIN":  {
+                                 "weight":  15,
+                                 "stage":  3,
+                                 "oneTime":  false,
+                                 "type":  "GLOBAL"
+                             },
+                   "BOOK":  {
+                                "weight":  10,
+                                "stage":  0,
+                                "oneTime":  false,
+                                "type":  "GLOBAL"
+                            },
+                   "SPOTIFY":  {
+                                   "weight":  10,
+                                   "stage":  3,
+                                   "oneTime":  true,
+                                   "type":  "CLIENT"
+                               },
+                   "SEARCH":  {
+                                  "weight":  10,
+                                  "stage":  2,
+                                  "oneTime":  true,
+                                  "type":  "CLIENT"
+                              },
+                   "STATUE":  {
+                                  "weight":  5,
+                                  "stage":  3,
+                                  "oneTime":  false,
+                                  "type":  "GLOBAL"
+                              },
+                   "BRIGHTNESS":  {
+                                      "weight":  10,
+                                      "stage":  1,
+                                      "oneTime":  false,
+                                      "type":  "CLIENT"
+                                  },
+                   "HALLWAY":  {
+                                   "weight":  10,
+                                   "stage":  2,
+                                   "oneTime":  false,
+                                   "type":  "GLOBAL"
+                               }
+               }
+}

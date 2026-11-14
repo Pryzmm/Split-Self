@@ -1,40 +1,19 @@
-# gradle
-
+# Gradle and development output
 .gradle/
 build/
-out/
-classes/
-
-# eclipse
-
-*.launch
-
-# idea
-
+run/
+run-server/
+logs/
+*.log
+# Editors and machine-local settings
 .idea/
 *.iml
-*.ipr
-*.iws
-
-# vscode
-
-.settings/
 .vscode/
-bin/
 .classpath
 .project
-
-# macos
-
-*.DS_Store
-
-# fabric
-
-run/
-
-# java
-
-hs_err_*.log
-replay_*.log
+.settings/
+.DS_Store
+Thumbs.db
+local.properties
+.env
 *.hprof
-*.jfr
