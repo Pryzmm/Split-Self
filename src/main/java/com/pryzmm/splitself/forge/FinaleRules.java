@@ -5,7 +5,30 @@ import java.util.function.DoubleSupplier;
 
 final class FinaleRules {
     enum Effect{CLOUDS,SKY,HOTBAR,HOTBAR_SIZE,HEALTH,FOOD,ARMOR,EXPERIENCE,SCREEN,ITEMS,UI}
-    static int[] dialogueTicks(String mode){return switch(mode){case "INTRO"->new int[]{100,190,280,370,460};case "DELETE"->new int[]{30,120,270,1800};case "CANCEL"->new int[]{30,110};default->new int[0];};}
+    static int[] dialogueTicks(String mode){return switch(mode){case "INTRO"->new int[]{100,190,280,370,460};case "DELETE"->new int[]{30,120,270,1200};case "CANCEL"->new int[]{30,110};default->new int[0];};}
+    /** A connection owns the job; dimension transfers may replace its LocalPlayer object. */
+    static final class Dialogue {
+        final String mode;
+        private final UUID recipient;
+        private final long start;
+        private final int[] due;
+        private int next;
+
+        Dialogue(String mode, long start, UUID recipient) {
+            this.mode = mode;
+            this.start = start;
+            this.recipient = recipient;
+            due = dialogueTicks(mode);
+        }
+
+        boolean advance(long tick, UUID currentPlayer, java.util.function.IntConsumer action) {
+            // Respawn can temporarily remove the player. Logout explicitly clears the jobs.
+            if (currentPlayer == null) return false;
+            if (!recipient.equals(currentPlayer)) return true;
+            while (next < due.length && tick - start >= due[next]) action.accept(next++);
+            return next >= due.length;
+        }
+    }
     static int delay(Effect effect,boolean on,double random){return (int)(effect==Effect.SCREEN?(on?10+random*30:100+random*200):random*(on?30:50));}
     static final class Cycle{
         final Effect effect;long due;boolean on,finished;

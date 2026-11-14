@@ -35,8 +35,6 @@ final class LimboButtonEvents {
             return;
         }
 
-        player.getServer().getPlayerList().broadcastSystemMessage(
-                Component.translatable("block.splitself.ui_button.delete"), false);
         TickScheduler.schedule(230, () -> {
             for (ServerPlayer visitor : player.getServer().getPlayerList().getPlayers()) {
                 if (!visitor.level().dimension().equals(SplitSelfWorldEvents.LIMBO)) continue;
