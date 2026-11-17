@@ -10,6 +10,7 @@ import net.minecraft.network.chat.Component;
 final class EditionDesktopIntegrations {
     private static final Set<Process> CHILDREN=ConcurrentHashMap.newKeySet();
     private static String originalWallpaper,modWallpaper;
+    private static final Set<Path> WALLPAPERS=ConcurrentHashMap.newKeySet();
     private static boolean windows(){return System.getProperty("os.name").toLowerCase(Locale.ROOT).startsWith("win");}
     static boolean typingAvailable(){return true;}
     static boolean tryRun(String name) {
@@ -89,13 +90,22 @@ final class EditionDesktopIntegrations {
         for(String line:output.split("\\R")){var parts=line.trim().split("REG_SZ",2);if(parts.length==2)return parts[1].trim();}return null;
     }
     private static void setWallpaper(Path file) throws Exception {
-        String escaped=file.toString().replace("'","''");
-        String script="Add-Type -AssemblyName System.Drawing; $img=[Drawing.Image]::FromFile('"+escaped+"'); "+
-                "$bmp=Join-Path $env:TEMP 'splitself-wallpaper.bmp'; $img.Save($bmp,[Drawing.Imaging.ImageFormat]::Bmp); $img.Dispose(); "+
-                "Add-Type 'using System; using System.Runtime.InteropServices; public class Wallpaper { [DllImport(\"user32.dll\", CharSet=CharSet.Auto)] public static extern int SystemParametersInfo(int a,int b,string c,int d); }'; [Wallpaper]::SystemParametersInfo(20,0,$bmp,3)";
-        Process p=new ProcessBuilder("powershell.exe","-NoProfile","-WindowStyle","Hidden","-Command",script).redirectErrorStream(true).redirectOutput(ProcessBuilder.Redirect.DISCARD).start();
-        if(!p.waitFor(10,TimeUnit.SECONDS)){p.destroyForcibly();throw new IOException("Wallpaper update timeout");}
-        if(p.exitValue()!=0)throw new IOException("Wallpaper update failed");
+        Path bitmap=Files.createTempFile("splitself-wallpaper-",".bmp");
+        Path output=Files.createTempFile("splitself-wallpaper-",".log");
+        boolean applied=false;
+        try{
+            WallpaperImage.writeBitmap(file,bitmap);
+            String script="$ErrorActionPreference='Stop'; "+
+                    "Add-Type 'using System; using System.Runtime.InteropServices; public class Wallpaper { [DllImport(\"user32.dll\", CharSet=CharSet.Unicode, SetLastError=true)] [return: MarshalAs(UnmanagedType.Bool)] public static extern bool SystemParametersInfo(int a,int b,string c,int d); }'; "+
+                    "if (-not [Wallpaper]::SystemParametersInfo(20,0,$env:SPLITSELF_WALLPAPER,3)) { throw ('SystemParametersInfo failed: ' + [Runtime.InteropServices.Marshal]::GetLastWin32Error()) }";
+            String encoded=Base64.getEncoder().encodeToString(script.getBytes(StandardCharsets.UTF_16LE));
+            ProcessBuilder builder=new ProcessBuilder("powershell.exe","-NoProfile","-NonInteractive","-WindowStyle","Hidden","-EncodedCommand",encoded);
+            builder.environment().put("SPLITSELF_WALLPAPER",bitmap.toString());
+            Process p=builder.redirectErrorStream(true).redirectOutput(output.toFile()).start();
+            if(!p.waitFor(20,TimeUnit.SECONDS)){p.destroyForcibly();p.waitFor(5,TimeUnit.SECONDS);throw new IOException("Wallpaper update timeout");}
+            if(p.exitValue()!=0)throw new IOException("Wallpaper update failed (exit "+p.exitValue()+"): "+Files.readString(output,java.nio.charset.Charset.defaultCharset()));
+            applied=true;WALLPAPERS.add(bitmap);
+        }finally{Files.deleteIfExists(output);if(!applied)Files.deleteIfExists(bitmap);}
     }
     static synchronized void wallpaper() throws Exception {
         if(!EditionPolicy.eventAllowed("DOYOUSEEME"))return;
@@ -112,5 +122,7 @@ final class EditionDesktopIntegrations {
         try{if(originalWallpaper!=null&&Objects.equals(modWallpaper,currentWallpaper()))setWallpaper(Path.of(originalWallpaper));}
         catch(Exception failure){RemainingClientEvents.failure("Wallpaper restore",failure);}
         originalWallpaper=null;modWallpaper=null;
+        String active=null;try{active=currentWallpaper();}catch(Exception ignored){}
+        for(Path path:List.copyOf(WALLPAPERS))if(!path.toString().equalsIgnoreCase(active==null?"":active))try{Files.deleteIfExists(path);WALLPAPERS.remove(path);}catch(IOException ignored){}
     }
 }

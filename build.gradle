@@ -300,3 +300,12 @@ tasks.register('finaleDialogueProbe', JavaExec) {
     mainClass = 'com.pryzmm.splitself.forge.FinaleDialogueProbe'
 }
 tasks.named('probe') { dependsOn 'finaleDialogueProbe' }
+
+if (splitselfEdition == 'UNSAFE') {
+    tasks.register('wallpaperProbe', JavaExec) {
+        dependsOn tasks.named('transitionTestClasses')
+        classpath = sourceSets.transitionTest.runtimeClasspath
+        mainClass = 'com.pryzmm.splitself.forge.WallpaperProbe'
+    }
+    tasks.named('probe') { dependsOn 'wallpaperProbe' }
+}

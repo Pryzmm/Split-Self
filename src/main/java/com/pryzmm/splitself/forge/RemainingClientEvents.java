@@ -166,7 +166,11 @@ public final class RemainingClientEvents {
         screenshotAt=0;
         captureEntity=client.level.getEntitiesOfClass(TheOtherEntity.class,client.player.getBoundingBox().inflate(100),net.minecraft.world.entity.Entity::isAlive)
                 .stream().min(Comparator.comparingDouble(client.player::distanceToSqr)).orElse(null);
-        if(captureEntity==null){frameCapture=null;return;} // Source does not capture anything without a nearby The Other.
+        if(captureEntity==null){
+            frameCapture=null;
+            org.slf4j.LoggerFactory.getLogger("splitself").info("No TheOtherEntity found nearby (within 100 blocks)");
+            return;
+        } // Source does not capture anything without a nearby The Other.
         oldCameraEntity=client.getCameraEntity();oldCameraType=client.options.getCameraType();capturing=true;
         client.setCameraEntity(captureEntity);client.options.setCameraType(net.minecraft.client.CameraType.THIRD_PERSON_BACK);
     }

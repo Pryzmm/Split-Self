@@ -19,6 +19,9 @@ public final class RuntimeFixesProbe {
         var windows=DesktopLinks.command("Windows 11",target);check(!String.join(" ",windows).contains(target));check(windows.get(0).equals("powershell.exe"));
         check(DesktopLinks.command("Linux",target).equals(List.of("xdg-open",target)));
         check(DesktopLinks.command("Mac OS X",target).equals(List.of("open",target)));
+        var screenshot=java.nio.file.Path.of(System.getProperty("java.io.tmpdir"),"splitself снимок ' test.png").toAbsolutePath();
+        check(DesktopLinks.nativeTarget(screenshot.toUri().toString()).equals(screenshot.toString()));
+        check(DesktopLinks.nativeTarget(target).equals(target));
         var sky=new FaceRules.Sky();sky.toggle();check(sky.visible);sky.frame(true,2);check(!sky.visible);
         sky.toggle();boolean captured=false;for(int i=0;i<1500;i++)captured|=sky.frame(true,3);check(captured&&!sky.visible);
         System.out.println("RuntimeFixesProbe PASS: "+count+" assertions; no desktop/network/game execution");
