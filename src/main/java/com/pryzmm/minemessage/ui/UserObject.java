@@ -60,6 +60,9 @@ public class UserObject extends JComponent {
         });
     }
 
+    @Override public Dimension getMinimumSize() { return getPreferredSize(); }
+    @Override public Dimension getMaximumSize() { return new Dimension(Integer.MAX_VALUE, getPreferredSize().height); }
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);

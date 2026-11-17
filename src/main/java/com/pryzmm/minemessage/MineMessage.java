@@ -64,7 +64,7 @@ public class MineMessage extends JPanel implements Runnable {
 
         MessageLoader.setupUnknownMessageList();
 
-        JPanel userListPanel = new JPanel();
+        JPanel userListPanel = new com.pryzmm.minemessage.ui.MessageListPanel();
         userListPanel.setLayout(new BoxLayout(userListPanel, BoxLayout.PAGE_AXIS));
         userListPanel.add(new UserObject("Pryzmm",          avatar_Pryzmm,        "game.splitself.minemessage.last.pryzmm"));
         userListPanel.add(new UserObject("AquaLoco",        avatar_AquaLoco,      "game.splitself.minemessage.last.aqualoco"));
@@ -78,7 +78,7 @@ public class MineMessage extends JPanel implements Runnable {
         userListPanel.add(new UserObject("CqllMeToxic",     avatar_CqllMeToxic,   "game.splitself.minemessage.last.cqllmetoxic"));
         userListPanel.add(new UserObject("DuckyBlade_",     avatar_DuckyBlade_,   "game.splitself.minemessage.last.duckyblade"));
         userListPanel.add(new UserObject("████████",        avatar_Unknown,       "game.splitself.minemessage.last.unknown"));
-        JScrollPane scrollPane = new JScrollPane(userListPanel, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        JScrollPane scrollPane = new JScrollPane(userListPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setOpaque(false);
         scrollPane.setBorder(null);
         scrollPane.getViewport().setOpaque(false);
@@ -87,9 +87,9 @@ public class MineMessage extends JPanel implements Runnable {
         add(scrollPane);
         scrollPane.setBounds(32, 58, 250, 698);
 
-        messageListPanel = new JPanel();
+        messageListPanel = new com.pryzmm.minemessage.ui.MessageListPanel();
         messageListPanel.setLayout(new BoxLayout(messageListPanel, BoxLayout.PAGE_AXIS));
-        JScrollPane messageScrollPane = new JScrollPane(messageListPanel, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        JScrollPane messageScrollPane = new JScrollPane(messageListPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         messageScrollPane.setOpaque(false);
         messageScrollPane.setBorder(null);
         messageScrollPane.getViewport().setOpaque(false);

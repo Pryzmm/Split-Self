@@ -22,6 +22,7 @@ final class MemoryBookScreen extends Screen {
             new Memory("creeper", 161, 102, 16));
     private final int bitMask;
     private String selected;
+    private int frameOffset;
 
     MemoryBookScreen(int bitMask) {
         super(Component.empty());
@@ -43,17 +44,25 @@ final class MemoryBookScreen extends Screen {
             super.render(graphics, mouseX, mouseY, partialTick);
             return;
         }
+        frameOffset++;
         int x = left(), y = top();
         int w = Math.round(BOOK_WIDTH * SCALE), h = Math.round(BOOK_HEIGHT * SCALE);
         graphics.blit(texture("memory_book"), x, y, 0, 0, w, h, w, h);
+        com.mojang.blaze3d.systems.RenderSystem.enableBlend();
+        com.mojang.blaze3d.systems.RenderSystem.defaultBlendFunc();
         for (Memory memory : MEMORIES) {
             int sx = x + Math.round(memory.x * SCALE);
             int sy = y + Math.round(memory.y * SCALE);
             int sw = Math.round(SLOT_WIDTH * SCALE), sh = Math.round(SLOT_HEIGHT * SCALE);
             String image = (bitMask & memory.bit) != 0 ? memory.id : "missing_memory";
             graphics.blit(texture("memories/" + image), sx, sy, 0, 0, sw, sh, sw, sh);
+            if ((bitMask & memory.bit) == 0) {
+                int offset = memory.id.hashCode() % 256 + (frameOffset + (int)(Math.random() * 20)) % 256;
+                graphics.blit(texture("memories/missing_memory_glitch"), sx, sy, offset, offset, sw, sh, sw, sh);
+            }
         }
         graphics.blit(texture("memory_book_overlay"), x, y, 0, 0, w, h, w, h);
+        com.mojang.blaze3d.systems.RenderSystem.disableBlend();
         super.render(graphics, mouseX, mouseY, partialTick);
     }
 
@@ -81,6 +90,8 @@ final class MemoryBookScreen extends Screen {
                 int y = top() + Math.round(memory.y * SCALE);
                 if ((bitMask & memory.bit) != 0 && mouseX >= x && mouseX < x + Math.round(SLOT_WIDTH * SCALE)
                         && mouseY >= y && mouseY < y + Math.round(SLOT_HEIGHT * SCALE)) {
+                    minecraft.getSoundManager().play(net.minecraft.client.resources.sounds.SimpleSoundInstance.forUI(
+                            net.minecraft.sounds.SoundEvents.UI_BUTTON_CLICK, 1.0F));
                     selected = memory.id;
                     return true;
                 }

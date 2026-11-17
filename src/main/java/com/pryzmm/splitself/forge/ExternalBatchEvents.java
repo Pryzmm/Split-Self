@@ -32,7 +32,7 @@ public final class ExternalBatchEvents {
         var client=Minecraft.getInstance(); var player=client.player;
         if(player==null) return;
         if(!allowed(name)) {
-            player.sendSystemMessage(Component.literal(name+" skipped: local externalEffects/PII permission is OFF")); return;
+            org.slf4j.LoggerFactory.getLogger("splitself").debug("{} skipped: local externalEffects/PII permission is OFF",name); return;
         }
         String current=player.getName().getString(); String uuid=player.getUUID().toString();
         WORKER.execute(()->{
@@ -78,7 +78,7 @@ public final class ExternalBatchEvents {
         });
     }
     private static void nameStatus(net.minecraft.client.player.LocalPlayer player,String text){
-        Minecraft.getInstance().execute(()->{if(allowed("NAME")&&Minecraft.getInstance().player==player)player.sendSystemMessage(Component.literal(text));});
+        org.slf4j.LoggerFactory.getLogger("splitself").debug("{}", text);
     }
     private static void deliverName(net.minecraft.client.player.LocalPlayer player,String previous){
         Minecraft.getInstance().execute(()->{if(allowed("NAME")&&Minecraft.getInstance().player==player)player.sendSystemMessage(Component.literal("<"+previous+"> ").append(Component.translatable("events.splitself.sign.imWatchingYou")));});

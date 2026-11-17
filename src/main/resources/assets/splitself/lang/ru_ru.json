@@ -1,4 +1,6 @@
 {
+    "screen.splitself.surround.low_disk.title": "Мало места на диске",
+    "screen.splitself.surround.low_disk.description": "На диске заканчивается свободное место. Освободите место, чтобы продолжить игру.",
     "block.splitself.image_frame":  "Рамка с картинкой",
     "block.splitself.brain":  "Мозги",
     "block.splitself.brain.not_enough_memories":  "У меня пока недостаточно воспоминаний...",
