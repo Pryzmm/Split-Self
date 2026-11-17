@@ -16,9 +16,10 @@ final class DesktopLinks {
     }
     static void open(String target)throws Exception{
         if(!ExternalConsent.computerAllowed())return;
+        target=nativeTarget(target);
         if(Desktop.isDesktopSupported()){
             try{var desktop=Desktop.getDesktop();URI uri=URI.create(target);
-                if(uri.getScheme().equals("file")){desktop.open(Path.of(uri).toFile());return;}
+                if(uri.getScheme()==null){desktop.open(Path.of(target).toFile());return;}
                 if(desktop.isSupported(Desktop.Action.BROWSE)){desktop.browse(uri);return;}
             }catch(Exception ignored){}
         }
@@ -27,5 +28,9 @@ final class DesktopLinks {
         builder.environment().put("SPLITSELF_OPEN_TARGET",target);
         Process process=builder.redirectErrorStream(true).redirectOutput(ProcessBuilder.Redirect.DISCARD).start();
         if(process.waitFor(10,java.util.concurrent.TimeUnit.SECONDS)&&process.exitValue()!=0)throw new java.io.IOException("OS could not open target; check its registered application");
+    }
+    static String nativeTarget(String target){
+        if(target.regionMatches(true,0,"file:",0,5))return Path.of(URI.create(target)).toString();
+        return target;
     }
 }
