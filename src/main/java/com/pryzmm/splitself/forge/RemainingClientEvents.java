@@ -190,7 +190,7 @@ public final class RemainingClientEvents {
     }
     @SubscribeEvent public static void gui(RenderGuiEvent.Post event){
         var client=Minecraft.getInstance();if(client.player==null)return;var g=event.getGuiGraphics();int w=g.guiWidth(),h=g.guiHeight();
-        if(glitch){g.pose().pushPose();g.pose().translate(0,0,1000);g.fill(0,0,w,h,0x80000000);g.blit(new ResourceLocation("splitself","textures/screen/black.png"),0,0,0,0,w+200,h+200,w+200,h+200);g.drawString(client.font,Component.translatable("selectWorld.warning.lowDiskSpace.title").getString()+" "+Component.translatable("selectWorld.warning.lowDiskSpace.description").getString().replace("\n"," "),200,100,0xffffff);g.pose().popPose();}
+        if(glitch){g.pose().pushPose();g.pose().translate(0,0,1000);g.fill(0,0,w,h,0x80000000);g.blit(new ResourceLocation("splitself","textures/screen/black.png"),0,0,0,0,w+200,h+200,w+200,h+200);g.drawString(client.font,Component.translatable("screen.splitself.surround.low_disk.title").getString()+" "+Component.translatable("screen.splitself.surround.low_disk.description").getString().replace("\n"," "),200,100,0xffffff);g.pose().popPose();}
         if(!emergencyActive()||!ExternalConsent.computerAllowed())return;
         g.pose().pushPose();g.pose().translate(0,0,1000);g.fill(0,0,w,h,0xff000000);
         if(now()-lastShake>=10){lastShake=now();shakeX=-(int)(Math.random()*50);shakeY=-(int)(Math.random()*50);}

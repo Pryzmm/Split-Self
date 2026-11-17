@@ -129,6 +129,13 @@ tasks.register('batchEventsProbe', JavaExec) {
 jar { manifest { attributes(["MixinConfigs": "splitself.client.mixins.json,splitself.mixins.json"]) } }
 tasks.named("jarJar") { manifest { attributes(["MixinConfigs": "splitself.client.mixins.json,splitself.mixins.json"]) } }
 
+tasks.register('surroundLocalizationProbe', JavaExec) {
+    dependsOn tasks.named('transitionTestClasses')
+    classpath = sourceSets.transitionTest.runtimeClasspath
+    mainClass = 'com.pryzmm.splitself.forge.SurroundLocalizationProbe'
+}
+tasks.matching { it.name == 'probe' }.configureEach { dependsOn 'surroundLocalizationProbe' }
+
 tasks.register('remainingEventsProbe', JavaExec) { dependsOn tasks.named('transitionTestClasses'); classpath=sourceSets.transitionTest.runtimeClasspath; mainClass='com.pryzmm.splitself.forge.RemainingEventsProbe'; args projectDir.absolutePath }
 
 // Child JVM payload is independent of Forge's union filesystem and of Minecraft libraries.
@@ -309,3 +316,11 @@ if (splitselfEdition == 'UNSAFE') {
     }
     tasks.named('probe') { dependsOn 'wallpaperProbe' }
 }
+
+tasks.register('reminderScrollProbe', JavaExec) {
+    dependsOn tasks.named('transitionTestClasses')
+    classpath = sourceSets.transitionTest.runtimeClasspath
+    mainClass = 'com.pryzmm.splitself.forge.ReminderScrollProbe'
+    jvmArgs '-Djava.awt.headless=true'
+}
+tasks.named('probe') { dependsOn 'reminderScrollProbe' }

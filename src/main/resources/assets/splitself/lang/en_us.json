@@ -1,4 +1,6 @@
 {
+    "screen.splitself.surround.low_disk.title": "Low disk space",
+    "screen.splitself.surround.low_disk.description": "You are running out of disk space. Free up some space to continue playing.",
     "block.splitself.image_frame":  "Image Frame",
     "block.splitself.brain":  "Brain",
     "block.splitself.brain.not_enough_memories":  "I don\u0027t have enough memories yet...",

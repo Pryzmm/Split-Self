@@ -50,6 +50,9 @@ public class MessageObject extends JComponent {
         return new Dimension(getParent() != null ? getParent().getWidth() : 471, getBubbleHeight(fm) + 20);
     }
 
+    @Override public Dimension getMinimumSize() { return getPreferredSize(); }
+    @Override public Dimension getMaximumSize() { return new Dimension(Integer.MAX_VALUE, getPreferredSize().height); }
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
