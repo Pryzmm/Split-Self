@@ -14,7 +14,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-/** Local images only. The first three successful assignments per connection are game screenshots. */
+/** Game screenshots with the original nearest-The-Other capture fallback. */
 @Mod.EventBusSubscriber(modid=SplitSelfForge.MOD_ID,value=Dist.CLIENT)
 public final class ClientFrameImages {
     private static final Map<Integer,ResourceLocation> TEXTURES=new HashMap<>();
@@ -35,15 +35,13 @@ public final class ClientFrameImages {
     static void loadNext(ImageFrameBlockEntity frame){
         if(pending!=null)return;
         pending=frame;var client=Minecraft.getInstance();var level=client.level;int token=generation;
-        boolean pictures=ExternalConsent.personalAllowed()&&FrameImageFiles.preferPictures(completed,java.util.concurrent.ThreadLocalRandom.current().nextBoolean());
+
         RemainingClientEvents.worker(()->{
             try{
                 if(token!=generation||permissions()!=lastPermissions)return;
-                Set<Path> roots=new LinkedHashSet<>();roots.add(client.gameDirectory.toPath().resolve("screenshots"));
-                String appdata=System.getenv("APPDATA");if(ExternalConsent.computerAllowed()&&appdata!=null)roots.add(Path.of(appdata,".minecraft","screenshots"));
-                List<Path> files=new ArrayList<>();
-                if(pictures)files.addAll(FrameImageFiles.images(FrameImageFiles.pictureRoots(),true));
-                files.addAll(FrameImageFiles.images(roots,false));
+                String appdata=System.getenv("APPDATA");
+                Path legacy=appdata==null?null:Path.of(appdata,".minecraft","screenshots");
+                List<Path> files=FrameImageFiles.screenshots(legacy,client.gameDirectory.toPath().resolve("screenshots"),ExternalConsent.computerAllowed());
                 for(Path file:files){
                     if(token!=generation||permissions()!=lastPermissions)return;
                     try{
@@ -53,11 +51,10 @@ public final class ClientFrameImages {
                 }
                 client.execute(()->{
                     try{if(valid(frame,level,token)){
-                        try(NativeImage image=Screenshot.takeScreenshot(client.getMainRenderTarget())){
-                            BufferedImage copy=new BufferedImage(image.getWidth(),image.getHeight(),BufferedImage.TYPE_INT_ARGB);
-                            for(int y=0;y<image.getHeight();y++)for(int x=0;x<image.getWidth();x++)copy.setRGB(x,y,swap(image.getPixelRGBA(x,y)));
-                            assign(frame,copy);
-                        }
+                        RemainingClientEvents.requestFrameCapture(file->{
+                            try{if(file!=null&&valid(frame,level,token))assign(frame,FrameImageFiles.decode(file));}
+                            catch(Exception error){org.slf4j.LoggerFactory.getLogger("splitself").warn("Frame capture decode failed",error);}
+                        });
                     }}finally{finish(frame,token);}
                 });
             }catch(Exception failure){

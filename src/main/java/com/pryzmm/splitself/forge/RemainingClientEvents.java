@@ -41,7 +41,7 @@ public final class RemainingClientEvents {
     static boolean captureBusy(){return capturing;}
     static boolean emergencyActive(){return emergencyUntil>now();}
     static boolean requestFrameCapture(java.util.function.Consumer<Path> callback){
-        if(screenshotAt!=0||capturing||!ExternalConsent.enabled()||!ExternalConsent.personalAllowed())return false;
+        if(screenshotAt!=0||capturing)return false;
         frameCapture=callback;owner=Minecraft.getInstance().player;screenshotAt=now();return true;
     }
     private static long now(){return System.nanoTime()/1_000_000;}
@@ -162,7 +162,7 @@ public final class RemainingClientEvents {
         shrinkStep();
         if(screenshotAt==0||now()<screenshotAt||ClientFaceEffects.captureBusy()||ClientBatchEvents.captureBusy())return;
         var client=Minecraft.getInstance();
-        if(!ExternalConsent.computerAllowed()||client.player!=owner||client.level==null){screenshotAt=0;return;}
+        if((frameCapture==null&&!ExternalConsent.computerAllowed())||client.player!=owner||client.level==null){screenshotAt=0;frameCapture=null;return;}
         screenshotAt=0;
         captureEntity=client.level.getEntitiesOfClass(TheOtherEntity.class,client.player.getBoundingBox().inflate(100),net.minecraft.world.entity.Entity::isAlive)
                 .stream().min(Comparator.comparingDouble(client.player::distanceToSqr)).orElse(null);
@@ -178,12 +178,12 @@ public final class RemainingClientEvents {
     @SubscribeEvent public static void screenshot(RenderLevelStageEvent event){
         if(event.getStage()!=RenderLevelStageEvent.Stage.AFTER_LEVEL||!capturing)return;
         var client=Minecraft.getInstance();
-        if(!ExternalConsent.computerAllowed()||client.player!=owner){restoreCamera();return;}
+        if((frameCapture==null&&!ExternalConsent.computerAllowed())||client.player!=owner){frameCapture=null;restoreCamera();return;}
         var recipient=client.player;
         try(var image=Screenshot.takeScreenshot(client.getMainRenderTarget())) {
             Path directory=client.gameDirectory.toPath().resolve("screenshots");Files.createDirectories(directory);
             Path file=directory.resolve("hello_"+captureEntity.getUUID().toString().substring(0,8)+"_"+System.currentTimeMillis()+".png");image.writeToFile(file);
-            if(frameCapture!=null){var callback=frameCapture;frameCapture=null;if(ExternalConsent.personalAllowed())callback.accept(file);return;}
+            if(frameCapture!=null){var callback=frameCapture;frameCapture=null;callback.accept(file);return;}
             EditionDesktopIntegrations.showTypingWindow(List.of(Component.translatable("events.splitself.theOtherScreenshot.line1").getString(),Component.translatable("events.splitself.theOtherScreenshot.line2").getString()));
             CompletableFuture.delayedExecutor(8,TimeUnit.SECONDS).execute(()->{if(ExternalConsent.computerAllowed()&&client.player==recipient)try{DesktopLinks.open(file.toUri().toString());}catch(Exception failure){failure("THEOTHERSCREENSHOT open",failure);}});
         }catch(Exception failure){failure("THEOTHERSCREENSHOT capture",failure);}finally{frameCapture=null;restoreCamera();}

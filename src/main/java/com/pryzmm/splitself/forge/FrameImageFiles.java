@@ -10,6 +10,10 @@ import javax.imageio.ImageIO;
 
 final class FrameImageFiles {
     private FrameImageFiles(){}
+    static List<Path> screenshots(Path legacy, Path game, boolean externalAllowed){
+        List<Path> files=externalAllowed&&legacy!=null?images(List.of(legacy),false):List.of();
+        return files.isEmpty()?images(List.of(game),false):files;
+    }
     static boolean preferPictures(int completed,boolean coin){return completed>=3&&coin;}
     static Set<Path> pictureRoots(){
         Set<Path> roots=new LinkedHashSet<>();Path home=Path.of(System.getProperty("user.home"));
