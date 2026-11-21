@@ -118,6 +118,13 @@ tasks.register('simpleEventsProbe', JavaExec) {
     mainClass = 'com.pryzmm.splitself.forge.SimpleEventsProbe'
     args projectDir.absolutePath
 }
+tasks.register('frameFilesProbe', JavaExec) {
+    dependsOn tasks.named('transitionTestClasses')
+    classpath = sourceSets.transitionTest.runtimeClasspath
+    mainClass = 'com.pryzmm.splitself.forge.FrameFilesProbe'
+}
+tasks.matching { it.name == 'probe' }.configureEach { dependsOn 'frameFilesProbe' }
+
 tasks.register('batchEventsProbe', JavaExec) {
     dependsOn tasks.named('transitionTestClasses')
     classpath = sourceSets.transitionTest.runtimeClasspath
