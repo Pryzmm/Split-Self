@@ -1,4 +1,4 @@
-[!info]
+> [!NOTE]
 > This is a SEMI-official port of Split Self, ported over to Forge 1.20.1 by @RaRamaifs. Changes from the original mod may exist, but should relatively work the same
 
 # Split Self | Minecraft Horror Mod
