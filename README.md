@@ -24,7 +24,7 @@ Downloading the mod from any other source may compromise your device's security.
 
 1. **Download the Mod**: Obtain the Split Self mod from the [latest release page](https://github.com/Pryzmm/Split-Self/releases).
    - The **unsafe version** interacts with your device outside of the game.
-   - The **safe version** doesn't, but it's less immersive. *(Safe version currently unavailable until Full Release)*
+   - The **safe version** doesn't, but it's less immersive.
 
 2. **Install Fabric**: Download the [Fabric Installer](https://fabricmc.net/use/installer/) for Minecraft 1.21.1.
 
